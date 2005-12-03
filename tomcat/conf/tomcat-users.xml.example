@@ -1,0 +1,4 @@
+<!-- you might need to change parade.properties when you change this file -->
+<tomcat-users>
+  <user name="someuser" password="somepass" roles="manager" />
+</tomcat-users>
