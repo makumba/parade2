@@ -1,0 +1,9 @@
+# org.makumba.devel.PageCategory
+# $Id$
+# Categories for the to-do tool for Makumba application development
+
+
+name=char[100]	;Category name
+
+description=text
+asociatedColor=char[100]	;HTML color code: "purple","#dd22ff"...

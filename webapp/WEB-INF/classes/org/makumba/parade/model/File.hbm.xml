@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+      "-//Hibernate/Hibernate Mapping DTD//EN"
+      "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+      
+<hibernate-mapping package="org.makumba.parade.model">
+	<class name="File">
+		<id name="id">
+			<generator class="native" />
+		</id>
+
+		<many-to-one name="row" column="id_row" not-null="true"/>
+        
+         <map name="filedata" outer-join="true" cascade="all" inverse="true" access="field" order-by="data">
+		    <cache usage="read-write" />
+			<key><column name="FILEDATA_ID" not-null="false"/></key>
+			<index column="data" type="string"/>
+			<one-to-many class="AbstractFileData" />
+		</map>
+		
+	</class>
+		
+</hibernate-mapping>
+		

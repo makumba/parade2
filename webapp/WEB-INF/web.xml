@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- NOTE for co-developers: 
+     Tomcat may reload the webapp automatically when this file changes. However, sometimes an explicit reload, or even an uninstall/reinstall may be needed.
+     Tomcat 4.1 XML parser used to demand a certain order in the tags below. This is no longer true for Tomcat 5.
+-->
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+<!-- Tomcat 5 honours welcome files before any filtering.
+      This is not suitable for the VHostFilter or the UriRewriteFilter (in BEST webpass).
+      (in general, it misses a lot of the servlets' flexibility)
+-->
+
+<!-- put your  handler filters and it's mapping -->
+  <filter>
+     <filter-name>makumba_controller</filter-name>
+     <filter-class>org.makumba.controller.http.ControllerFilter</filter-class>
+  </filter>
+
+<!-- after all redirections are done, the makumba controller is applied -->
+  <filter-mapping>
+    <filter-name>makumba_controller</filter-name>
+    <url-pattern>*.jsp</url-pattern>
+  </filter-mapping>
+
+<!-- ============  DEFINE servlets to handle ============== -->
+    <servlet>
+        <servlet-name>init</servlet-name>
+        <servlet-class>org.makumba.parade.InitServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>log</servlet-name>
+        <servlet-class>org.makumba.parade.LogServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>mddLinker</servlet-name>
+        <servlet-class>org.makumba.devel.SourceViewServlet</servlet-class>
+    </servlet>
+
+ <servlet>
+    <servlet-name>invoker</servlet-name>
+    <servlet-class>org.apache.catalina.servlets.InvokerServlet</servlet-class>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>0</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>invoker</servlet-name>
+    <url-pattern>/servlet/*</url-pattern>
+  </servlet-mapping>
+
+<!-- other examples -->
+<!--
+<servlet>
+    <servlet-name>Reference</servlet-name>
+    <jsp-file>/litreview/referenceHandler.jsp</jsp-file>
+</servlet>
+-->
+
+<!-- =========== MAP servlets with URL ================= -->
+    <servlet-mapping>
+	<servlet-name>mddLinker</servlet-name>
+	<url-pattern>*.jspx</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>mddLinker</servlet-name>
+	<url-pattern>*.jspxp</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>mddLinker</servlet-name>
+	<url-pattern>/dataDefinitions/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>mddLinker</servlet-name>
+	<url-pattern>/classes/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+	<servlet-name>mddLinker</servlet-name>
+	<url-pattern>/logic/*</url-pattern>
+    </servlet-mapping>
+
+<!-- other examples -->
+<!--
+    <servlet-mapping>
+	<servlet-name>Reference</servlet-name>
+	<url-pattern>/ref/*</url-pattern>
+    </servlet-mapping>
+-->
+
+<!--
+    <taglib>
+      <taglib-uri>http://jakarta.apache.org/taglibs/mailer</taglib-uri>
+      <taglib-location>/WEB-INF/mailer.tld</taglib-location>
+    </taglib>
+-->
+
+</web-app>

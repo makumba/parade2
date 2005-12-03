@@ -1,0 +1,30 @@
+# org.makumba.devel.PageInfo
+# $Id$
+# A to-do tool for Makumba application development
+
+
+title=char[100]	;Descriptive page title
+page=char[255]	;Full jsp page name from root (eg: private/somePage.jsp)
+#automagically prepended with "/" or full "http://"+servername+":"+portNumber+"/"
+#source is shown by appending x
+
+#category=ptr org.makumba.devel.PageCategory
+category=int{"Not Categorized"=11,"LBG info"=0,"Archive&Repository"=1,"Members&Registration"=2,"Interenal events"=3,"Johnny"=4,"Minerva"=5,"Admin"=6,"Merger"=7,"Negotiation Wizard"=8,"Groups"=9,"Test"=10}	;Page category
+
+description=text	;DID (detailed interface design) in words
+
+status=int{"Specification"=0,"DesignApproved"=1,"Started"=2,"Developing"=3,"Stable"=4,"Frozen"=5,"Dropped"=6}	;Page development status
+author=char[200]
+
+#source=text	;JSP source, to be edited via web
+
+#some specific pages with data (test cases)
+examples=set
+	examples->URLparameters=char[255]	;Parameters for this page, urlencoded
+	examples->type=int{"test case (make it work!)"=0,"buggy"=1,"working"=2}	;type
+	examples->description=text	;What is/was wrong, errors, observations
+
+similarPage=set
+	similarPage->page=ptr org.makumba.devel.PageInfo	;Similar pages
+
+

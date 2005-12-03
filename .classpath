@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="webapp/WEB-INF/classes"/>
+	<classpathentry excluding="webapp/WEB-INF/classes/" kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/ant-1.6.5.jar"/>
+	<classpathentry kind="lib" path="lib/ant-antlr-1.6.5.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-2.7.5H3.jar"/>
+	<classpathentry kind="lib" path="lib/asm.jar"/>
+	<classpathentry kind="lib" path="lib/cglib-2.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-dbcp-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-pool-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/connector.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/jta.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.11.jar"/>
+	<classpathentry kind="lib" path="lib/mysql.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/spring.jar"/>
+	<classpathentry kind="lib" path="lib/tomcat-bootstrap.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/antlr.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/makumba.jar"/>
+	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
+</classpath>

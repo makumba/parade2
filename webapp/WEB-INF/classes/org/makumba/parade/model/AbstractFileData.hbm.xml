@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+      "-//Hibernate/Hibernate Mapping DTD//EN"
+      "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+      
+<hibernate-mapping package="org.makumba.parade.model">
+
+<class name="AbstractFileData" table="FileData">
+    <id name="id" type="long" column="FILEDATA_ID">
+        <generator class="native"/>
+    </id>
+    
+   <many-to-one name="row" column="id_row" not-null="true"/>
+    
+    <joined-subclass name="FileCVS" table="FILE_CVS">
+        <key column="FILEDATA_ID"/>
+        
+        
+    </joined-subclass>
+    
+    <joined-subclass name="FileTracker" table="FILE_TRACKER">
+        <key column="FILEDATA_ID"/>
+        
+    </joined-subclass>
+    
+    <joined-subclass name="DirCVS" table="DIR_CVS">
+        <key column="FILEDATA_ID"/>
+        
+    </joined-subclass>
+    
+    <joined-subclass name="DirTracker" table="DIR_TRACKER">
+        <key column="FILEDATA_ID"/>
+        
+    </joined-subclass>
+    
+</class>
+
+</hibernate-mapping>

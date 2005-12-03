@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+      "-//Hibernate/Hibernate Mapping DTD//EN"
+      "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.makumba.parade.model">
+	<class name="AbstractRowData">
+		<id name="id" type="long" column="ROWDATA_ID">
+        	<generator class="native"/>
+    	</id>
+		
+        <!-- <many-to-one name="row" column="id_row" not-null="true"/> -->
+    
+    <joined-subclass name="RowAnt" table="ROW_ANT">
+        <key column="ROWDATA_ID"/>
+        
+    </joined-subclass>
+    
+    <joined-subclass name="RowTracker" table="ROW_TRACKER">
+        <key column="ROWDATA_ID"/>
+        
+    </joined-subclass>
+    
+    <joined-subclass name="RowCVS" table="ROW_CVS">
+        <key column="ROWDATA_ID"/>
+        
+    </joined-subclass>
+    
+    <joined-subclass name="RowWebapp" table="ROW_WEBAPP">
+        <key column="ROWDATA_ID"/>
+        
+    </joined-subclass>
+    
+    <joined-subclass name="RowMakumba" table="ROW_MAKUMBA">
+        <key column="ROWDATA_ID"/>
+        
+    </joined-subclass>
+    
+</class>
+
+</hibernate-mapping>
+		
