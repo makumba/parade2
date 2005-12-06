@@ -11,7 +11,7 @@ public class RowProperties {
 	
 	public RowProperties() {
 		
-		this.addRowDefinition("manu-k","e:/bundle/manu/karamba","manu messing it all up again");
+		this.addRowDefinition("test-k","e:/my projects/hibernateExample", "the ultimate parade2 test row");
 	}
 	
 	
@@ -29,7 +29,7 @@ public class RowProperties {
 		row.put("path",path);
 		row.put("desc",description);
 		
-		rowDefinitions.put("name",row);
+		rowDefinitions.put(name,row);
 		
 	}
 	
