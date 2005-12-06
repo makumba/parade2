@@ -5,7 +5,7 @@ import org.makumba.parade.model.Row;
 
 public class CVSManager implements DirectoryRefresher {
 
-	public void directoryRefresh(Row row, java.io.File dir) {
+	public void directoryRefresh(Row row, String path) {
 		// TODO Auto-generated method stub
 		
 	}

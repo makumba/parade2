@@ -30,7 +30,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 		try {
 			java.io.File f = new java.io.File(row.getRowpath());
 			root.setName("_root_");
-			root.setPath(f);
+			root.setPath(f.getPath());
 			root.setRow(row);
 			root.setDate(new Long(new java.util.Date().getTime()));
 			root.setAge(new Long(0));
@@ -55,9 +55,10 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 		
 	}
 
-	public void directoryRefresh(Row row, java.io.File currDir) {
+	public void directoryRefresh(Row row, String path) {
+		java.io.File currDir = new java.io.File(path);
 		
-		if(currDir.isDirectory()) {
+		if(currDir.isDirectory() && !path.contains("_root_")) {
 			
 			java.io.File[] dir = currDir.listFiles();
 	        for (int i = 0; i < dir.length; i++) {
@@ -84,8 +85,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 	/* adding file to Row files */
 	private void addFile(Row row, File fileData) {
 		Map files = row.getFiles();
-		String key = fileData.getPath() + fileData.getName();
-		files.put(key,fileData);
+		files.put(fileData.getPath(),fileData);
 		row.setFiles(files);
 		
 		logger.warn("Added file: "+fileData.getName());
@@ -96,7 +96,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 		File dirData = new File();
 		dirData.setIsDir(isDir);
 		dirData.setRow(row);
-		dirData.setPath(file);
+		dirData.setPath(file.getPath());
 		dirData.setName(file.getName());
 		dirData.setDate(new Long(file.lastModified()));
 		dirData.setAge(new Long((new Date()).getTime() - file.lastModified()));

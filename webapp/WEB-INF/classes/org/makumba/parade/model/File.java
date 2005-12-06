@@ -27,7 +27,7 @@ public class File {
 	
 	private Row row;
 	
-	private java.io.File path;
+	private String path;
 
 	
 	/* Calls the refresh() directoryRefresh() on the directory managers */
@@ -44,7 +44,7 @@ public class File {
 	
 	
 	
-	public void setPath(java.io.File path) {
+	public void setPath(String path) {
 		this.path = path;
 	}
 
@@ -112,7 +112,7 @@ public class File {
 		this.isDir = isDir;
 	}
 
-	public java.io.File getPath() {
+	public String getPath() {
 		return path;
 	}
 
