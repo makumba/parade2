@@ -5,18 +5,34 @@
       
 <hibernate-mapping package="org.makumba.parade.model">
 	<class name="File">
-		<id name="id">
+		<id name="id" > <!-- unsaved-value="undefined" -->
 			<generator class="native" />
 		</id>
-
+		
+		<property name="name" />
+		<property name="date" />
+		<property name="age" />
+		<property name="size" />
+		<property name="path" type="java.io.File"/>
+		<property name="isDir" />
+		
 		<many-to-one name="row" column="id_row" not-null="true"/>
-        
+		        
          <map name="filedata" outer-join="true" cascade="all" inverse="true" access="field" order-by="data">
 		    <cache usage="read-write" />
-			<key><column name="FILEDATA_ID" not-null="false"/></key>
+			<key><column name="id" not-null="false"/></key>
 			<index column="data" type="string"/>
 			<one-to-many class="AbstractFileData" />
 		</map>
+		
+		<!-- 
+		<list name="children" outer-join="true" table="file_children" cascade="all" inverse="true" access="field">
+		    <cache usage="read-write" />
+			<key><column name="id" not-null="false"/></key>
+			<index column="name" type="string"/>
+			<one-to-many class="File" />
+		</list>
+		 -->
 		
 	</class>
 		

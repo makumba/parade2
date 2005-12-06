@@ -5,10 +5,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.InitServlet;
+import org.makumba.parade.FileManager;
 import org.makumba.parade.ParadeProperties;
 import org.makumba.parade.RowStoreManager;
-import org.makumba.parade.dao.ParadeDAO;
 
 public class Parade {
 	
@@ -32,23 +31,27 @@ public class Parade {
 		this.paradeBase = (String) ParadeProperties.getConf().get("paradeBase");
 		
 		RowStoreManager rowMgr = new RowStoreManager();
+		FileManager fileMgr = new FileManager();
 		
 		/* TODO: read in config class/file which managers are parade managers
 		 * and launch paradeRefresh() for all of them
 		 */
 		rowMgr.paradeRefresh(this);
 		
+		
 		/* TODO: read in config class/file which managers are row managers
 		 * and and launch rowRefresh(row)) for all of them
 		 */
 		
-		
-		
 		Iterator i = rows.keySet().iterator();
 		while(i.hasNext()) {
 			
+			Row r = (Row) rows.get((String) i.next());
 			
+			fileMgr.rowRefresh(r);
 		}
+		
+		
 		
 		
 	}

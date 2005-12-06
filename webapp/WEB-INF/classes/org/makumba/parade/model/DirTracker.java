@@ -1,8 +1,7 @@
 package org.makumba.parade.model;
 
-import org.makumba.parade.ifc.Directory;
 
-public class DirTracker extends AbstractFileData implements Directory {
+public class DirTracker extends AbstractFileData {
 	
 	private Long id;
 	

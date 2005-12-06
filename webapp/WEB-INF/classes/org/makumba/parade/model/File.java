@@ -1,10 +1,19 @@
 package org.makumba.parade.model;
 
+import java.util.ArrayList;
 import java.util.Map;
+
+import org.makumba.parade.CVSManager;
+import org.makumba.parade.FileManager;
+import org.makumba.parade.TrackerManager;
 
 public class File {
 	
 	private Long id;
+	
+	private boolean isDir;
+	
+	private String name;
 	
 	private Long date;
 	
@@ -14,7 +23,30 @@ public class File {
 	
 	private Map filedata;
 	
+	private ArrayList children;
+	
 	private Row row;
+	
+	private java.io.File path;
+
+	
+	/* Calls the refresh() directoryRefresh() on the directory managers */
+	public void refresh() {
+		FileManager fileMgr = new FileManager();
+		CVSManager CVSMgr = new CVSManager();
+		TrackerManager trackerMgr = new TrackerManager();
+		
+		fileMgr.directoryRefresh(row, this.getPath());
+		
+		
+		
+	}
+	
+	
+	
+	public void setPath(java.io.File path) {
+		this.path = path;
+	}
 
 	public Row getRow() {
 		return row;
@@ -62,6 +94,34 @@ public class File {
 
 	public void setSize(Long size) {
 		this.size = size;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean getIsDir() {
+		return isDir;
+	}
+
+	public void setIsDir(boolean isDir) {
+		this.isDir = isDir;
+	}
+
+	public java.io.File getPath() {
+		return path;
+	}
+
+	public ArrayList getChildren() {
+		return children;
+	}
+
+	public void setChildren(ArrayList children) {
+		this.children = children;
 	}
 
 }

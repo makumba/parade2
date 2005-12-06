@@ -14,9 +14,12 @@ public class Row {
 	
 	private Map files;
 	
+	//private File root;
+	
 	private Map rowdata;
 	
 	private Parade parade;
+	
 
 	public String getDescription() {
 		return description;
@@ -75,7 +78,15 @@ public class Row {
 	public void setRowdata(Map rowdata) {
 		this.rowdata = rowdata;
 	}
-	
-	//private RowProperties rowDefs = new RowProperties();
 
+	/*
+	public File getRoot() {
+		return root;
+	}
+
+	public void setRoot(File root) {
+		this.root = root;
+	}
+	*/
+	
 }
