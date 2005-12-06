@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.dao.ParadeDAO;
-import org.makumba.parade.dao.RowDAO;
 import org.makumba.parade.ifc.ParadeRefresher;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
@@ -17,15 +15,11 @@ public class RowStoreManager implements ParadeRefresher {
 	
 	static Logger logger = Logger.getLogger(RowStoreManager.class.getName());
 	
-	private RowDAO rDAO = new RowDAO(); 
-	private ParadeDAO pDAO = new ParadeDAO();
-	
 	/* Reads the row definitions of RowProperties,
 	 * compares if they're changes to the current rowstore
 	 * and creates the Rows
 	 */
 	public void paradeRefresh(Parade p) {
-		
 		
 		Map rows = p.getRows();
 		
@@ -33,22 +27,22 @@ public class RowStoreManager implements ParadeRefresher {
 		if(rowstore.isEmpty()) {
     		logger.warn("No row definitions found, check RowProperties");
 		}
-		Map result = createRows(rowstore, rows);
-		
-		pDAO.saveRows(result,p);
+		Map result = createRows(rowstore, rows, p);
+		p.setRows(result);
 		
 	}
 	
 	/* Creates/updates rows */
-    private Map createRows(Map changedRows, Map rows) {
+    private Map createRows(Map rowstore, Map rows, Parade p) {
     	
     	Map result = new HashMap();
     	
-    	Iterator i = changedRows.keySet().iterator();
+    	Iterator i = rowstore.keySet().iterator();
 	   
     	while(i.hasNext()) {
-    		Map row = (Map) changedRows.get((String) i.next());
+    		Map row = (Map) rowstore.get((String) i.next());
     		String rowname = (String) row.get("name");
+    		logger.warn(("Now going through row: "+rowname));
     		
     		// looks if the row with the same name already exists and updates if necessary
     		if(rows.containsKey(rowname)) {
@@ -64,7 +58,6 @@ public class RowStoreManager implements ParadeRefresher {
 					logger.warn("The description of row "+rowname+" was updated to "+(String)row.get("desc"));
 				}
 				
-				rDAO.update(storedRow);
 				
 				result.put(rowname,storedRow);
     		
@@ -75,11 +68,8 @@ public class RowStoreManager implements ParadeRefresher {
 	            r.setRowname((String)row.get("name"));
 	            r.setRowpath((String) row.get("path"));
 	            r.setDescription((String)row.get("desc"));
-	            r.setParade(pDAO.getParade());
-	            rows.put((String)row.get("name"),r);
-	            
-	            rDAO.save(r);
-	            
+	            r.setParade(p);
+	            	            
 	            logger.warn("Created new row "+rowname);
 	            
 	            result.put(rowname,r);
