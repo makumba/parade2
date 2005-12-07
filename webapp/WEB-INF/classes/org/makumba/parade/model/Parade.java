@@ -5,9 +5,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.makumba.parade.CVSManager;
 import org.makumba.parade.FileManager;
 import org.makumba.parade.ParadeProperties;
 import org.makumba.parade.RowStoreManager;
+import org.makumba.parade.TrackerManager;
 
 public class Parade {
 	
@@ -32,6 +34,8 @@ public class Parade {
 		
 		RowStoreManager rowMgr = new RowStoreManager();
 		FileManager fileMgr = new FileManager();
+		TrackerManager trackerMgr = new TrackerManager();
+		CVSManager CVSMgr = new CVSManager();
 		
 		/* TODO: read in config class/file which managers are parade managers
 		 * and launch paradeRefresh() for all of them
@@ -49,6 +53,8 @@ public class Parade {
 			Row r = (Row) rows.get((String) i.next());
 			
 			fileMgr.rowRefresh(r);
+			CVSMgr.rowRefresh(r);
+			trackerMgr.rowRefresh(r);
 		}
 		
 		
