@@ -4,12 +4,14 @@
       "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.makumba.parade.model">
-	<class name="AbstractRowData">
+	<class name="RowData">
 		<id name="id" type="long" column="ROWDATA_ID">
         	<generator class="native"/>
     	</id>
-		
-        <!-- <many-to-one name="row" column="id_row" not-null="true"/> -->
+	
+	<property name="dataType" />
+	<many-to-one name="row" column="id_row" not-null="true"/>
+	
     
     <joined-subclass name="RowAnt" table="ROW_ANT">
         <key column="ROWDATA_ID"/>

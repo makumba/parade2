@@ -5,6 +5,16 @@ public class AbstractRowData {
 	private Long id;
 	
 	private Row row;
+	
+	private String dataType;
+
+	public String getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
 
 	public Long getId() {
 		return id;

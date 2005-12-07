@@ -10,7 +10,8 @@
         <generator class="native"/>
     </id>
     
-   <many-to-one name="row" column="id_row" not-null="true"/>
+   <property name="managername" />
+   <many-to-one name="file" column="id_file" not-null="true"/>
     
     <joined-subclass name="FileCVS" table="FILE_CVS">
         <key column="FILEDATA_ID"/>

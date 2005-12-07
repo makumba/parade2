@@ -37,6 +37,7 @@ public class File {
 		TrackerManager trackerMgr = new TrackerManager();
 		
 		fileMgr.directoryRefresh(row, this.getPath());
+		CVSMgr.directoryRefresh(row,this.getPath());
 		
 		
 		

@@ -4,14 +4,16 @@ public class AbstractFileData {
 
 	private Long id;
 	
-	private Row row;
+	private File file;
+	
+	private String managername;
 
-	public Row getRow() {
-		return row;
+	public String getManagername() {
+		return managername;
 	}
 
-	public void setRow(Row row) {
-		this.row = row;
+	public void setManagername(String managername) {
+		this.managername = managername;
 	}
 
 	public Long getId() {
@@ -20,6 +22,14 @@ public class AbstractFileData {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
 	}
 	
 }
