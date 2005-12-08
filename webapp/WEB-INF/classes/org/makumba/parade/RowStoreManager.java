@@ -7,6 +7,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.makumba.parade.ifc.ParadeRefresher;
+import org.makumba.parade.ifc.RowData;
+import org.makumba.parade.ifc.RowRefresher;
+import org.makumba.parade.model.AbstractRowData;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 
@@ -27,15 +30,12 @@ public class RowStoreManager implements ParadeRefresher {
 		if(rowstore.isEmpty()) {
     		logger.warn("No row definitions found, check RowProperties");
 		}
-		Map result = createRows(rowstore, rows, p);
-		p.setRows(result);
+		createRows(rowstore, rows, p);
 		
 	}
 	
 	/* Creates/updates rows */
-    private Map createRows(Map rowstore, Map rows, Parade p) {
-    	
-    	Map result = new HashMap();
+    private void createRows(Map rowstore, Map rows, Parade p) {
     	
     	Iterator i = rowstore.keySet().iterator();
 	   
@@ -58,9 +58,8 @@ public class RowStoreManager implements ParadeRefresher {
 					logger.warn("The description of row "+rowname+" was updated to "+(String)row.get("desc"));
 				}
 				
+				p.getRows().put(rowname,storedRow);
 				
-				result.put(rowname,storedRow);
-    		
     		} else {
     			
     			// creating Row object and passing the information
@@ -72,12 +71,18 @@ public class RowStoreManager implements ParadeRefresher {
 	            	            
 	            logger.warn("Created new row "+rowname);
 	            
-	            result.put(rowname,r);
+	            p.getRows().put(rowname,r);
 				
     		}
     	}
-    	return result;
     }
+    
+    public void addManagerData(RowData data, Row r) {
+    	
+    	data.setRow(r);
+    	r.getRowdata().put(data.getDataType(),data);
+    }
+
     
     /*
     public String view(String rowname) {

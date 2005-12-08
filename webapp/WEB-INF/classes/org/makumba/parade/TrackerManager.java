@@ -22,15 +22,10 @@ public class TrackerManager implements DirectoryRefresher, RowRefresher {
 		/* Some example data */
 		RowTracker trackerdata = new RowTracker();
 		trackerdata.setDataType("tracker");
-		trackerdata.setRow(row);
 		
-		Map rowdata = row.getRowdata();
-		if(rowdata == null) {
-			rowdata = new HashMap();
-		}
-				
-		rowdata.put("tracker",trackerdata);
-		row.setRowdata(rowdata);
+		RowStoreManager rowMgr = new RowStoreManager();
+		rowMgr.addManagerData(trackerdata,row);		
+		
 		
 	}
 	

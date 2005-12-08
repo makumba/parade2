@@ -26,7 +26,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 			
 			if(file.getIsDir()) {
 				DirCVS dircvsdata = new DirCVS();
-				dircvsdata.setManagername("dircvs");
+				dircvsdata.setDataType("dircvs");
 				dircvsdata.setFile(file);
 				
 //				do something useful
@@ -36,7 +36,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 				
 			} else {
 				FileCVS filecvsdata = new FileCVS();
-				filecvsdata.setManagername("filecvs");
+				filecvsdata.setDataType("filecvs");
 				filecvsdata.setFile(file);
 				
 //				do something useful
@@ -53,17 +53,9 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 		/* Some example data */
 		RowCVS cvsdata = new RowCVS();
 		cvsdata.setDataType("cvs");
-		cvsdata.setRow(row);
 		
-		Map rowdata = row.getRowdata();
-		if(rowdata == null) {
-			rowdata = new HashMap();
-		}
-		
-		rowdata.put("cvs",cvsdata);
-		row.setRowdata(rowdata);
-		
-		
+		RowStoreManager rowMgr = new RowStoreManager();
+		rowMgr.addManagerData(cvsdata,row);
 	}
 
 }

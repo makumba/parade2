@@ -36,16 +36,10 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 			root.setAge(new Long(0));
 			root.setFiledata(new HashMap());
 			root.setSize(new Long(0));
-			root.setId(row.getId());
 			
-			Map files = row.getFiles();
-			if(files == null) {
-				files = new HashMap();
-			}
-			files.clear();
-			row.setFiles(files);
-			files.put("_root_",root);
-			row.setFiles(files);
+			row.getFiles().clear();
+			row.getFiles().put("_root_",root);
+			row.getParade().addRow(row);
 			
 		} catch(Throwable t) {
 			logger.error("Couldn't access row path of row "+row.getRowname(),t);
@@ -84,9 +78,8 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 	
 	/* adding file to Row files */
 	private void addFile(Row row, File fileData) {
-		Map files = row.getFiles();
-		files.put(fileData.getPath(),fileData);
-		row.setFiles(files);
+		
+		row.getFiles().put(fileData.getPath(),fileData);
 		
 		logger.warn("Added file: "+fileData.getName());
 	}

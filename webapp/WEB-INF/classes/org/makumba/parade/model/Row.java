@@ -1,5 +1,6 @@
 package org.makumba.parade.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Row {
@@ -12,11 +13,11 @@ public class Row {
 	
 	private String description;
 	
-	private Map files;
+	private Map files = new HashMap();
 	
 	//private File root;
 	
-	private Map rowdata;
+	private Map rowdata = new HashMap();
 	
 	private Parade parade;
 	
