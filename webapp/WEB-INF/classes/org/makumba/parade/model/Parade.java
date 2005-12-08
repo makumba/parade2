@@ -62,6 +62,13 @@ public class Parade {
 		
 	}
 	
+	
+	public void addRow(Row r) {
+		r.setParade(this);
+		rows.put(r.getRowname(),r);
+		
+	}
+	
 		
 	public Long getId() {
 		return id;
