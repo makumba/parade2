@@ -68,21 +68,14 @@ public class InitServlet extends HttpServlet {
                 	
                 	session.save(p);
                 }
-               
-                tx.commit();
                 
                 p.refresh();
                 
+                tx.commit();
+                
+                
+                
                 session.close();
-                
-                Session s2 = sessionFactory.openSession();
-                Transaction tx2 = s2.beginTransaction();
-                
-                s2.merge(p);
-                
-                tx2.commit();
-                s2.close();
-                
                 
                 System.out.println("INFO: Launching ParaDe finished at "+new java.util.Date());
             
