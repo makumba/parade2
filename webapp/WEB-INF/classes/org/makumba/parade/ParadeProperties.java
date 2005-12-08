@@ -1,5 +1,6 @@
 package org.makumba.parade;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +11,8 @@ public class ParadeProperties {
 	private static void init() {
 	
 		//has maybe to be generated automcatically
-		conf.put("paradeBase","e:/bundle/server/parade2/");
+		
+		conf.put("paradeBase",(new java.io.File("").getAbsolutePath()));
 		
 		
 		conf.put("tomcat.output", "tomcat/logs");

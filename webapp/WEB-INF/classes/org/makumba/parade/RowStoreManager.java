@@ -65,7 +65,8 @@ public class RowStoreManager implements ParadeRefresher {
     			// creating Row object and passing the information
 	            Row r = new Row();
 	            r.setRowname((String)row.get("name"));
-	            r.setRowpath((String) row.get("path"));
+	            String relativePath = ((String) row.get("path"));
+	            r.setRowpath(relativePath);
 	            r.setDescription((String)row.get("desc"));
 	            r.setParade(p);
 	            	            
