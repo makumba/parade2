@@ -6,14 +6,14 @@ public class AbstractFileData {
 	
 	private File file;
 	
-	private String managername;
+	private String dataType;
 
-	public String getManagername() {
-		return managername;
+	public String getDataType() {
+		return dataType;
 	}
 
-	public void setManagername(String managername) {
-		this.managername = managername;
+	public void setDataType(String managername) {
+		this.dataType = managername;
 	}
 
 	public Long getId() {

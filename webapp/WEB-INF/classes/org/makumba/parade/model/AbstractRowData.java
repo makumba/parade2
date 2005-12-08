@@ -7,7 +7,7 @@ public class AbstractRowData {
 	private Row row;
 	
 	private String dataType;
-
+	
 	public String getDataType() {
 		return dataType;
 	}
