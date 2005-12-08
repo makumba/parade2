@@ -1,6 +1,8 @@
 package org.makumba.parade.model;
 
-public class RowCVS extends AbstractRowData {
+import org.makumba.parade.ifc.RowData;
+
+public class RowCVS extends AbstractRowData implements RowData {
 	
 	private Long id;
 
