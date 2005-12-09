@@ -15,10 +15,12 @@
 		<property name="size" />
 		<property name="path" />
 		<property name="isDir" />
+		<property name="notOnDisk" />
+		
 		
 		<many-to-one name="row" column="id_row" not-null="true"/>
 		
-         <map name="filedata" outer-join="true" cascade="all" inverse="true" access="field" order-by="dataType">
+         <map name="filedata" outer-join="true" cascade="all-delete-orphan" inverse="true" access="field" order-by="dataType">
 		    <cache usage="read-write" />
 			<key><column name="id_file" not-null="false"/></key>
 			<index column="dataType" type="string"/>

@@ -1,17 +1,20 @@
 package org.makumba.parade.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.makumba.parade.CVSManager;
-import org.makumba.parade.FileManager;
-import org.makumba.parade.TrackerManager;
+import org.makumba.parade.managers.CVSManager;
+import org.makumba.parade.managers.FileManager;
+import org.makumba.parade.managers.TrackerManager;
 
 public class File {
 	
 	private Long id;
 	
 	private boolean isDir;
+	
+	private boolean notOnDisk;
 	
 	private String name;
 	
@@ -21,9 +24,9 @@ public class File {
 	
 	private Long size;
 	
-	private Map filedata;
+	private Map filedata = new HashMap();
 	
-	private ArrayList children;
+	private ArrayList children = new ArrayList();
 	
 	private Row row;
 	
@@ -123,6 +126,18 @@ public class File {
 
 	public void setChildren(ArrayList children) {
 		this.children = children;
+	}
+
+
+
+	public boolean isNotOnDisk() {
+		return notOnDisk;
+	}
+
+
+
+	public void setNotOnDisk(boolean onDisk) {
+		this.notOnDisk = onDisk;
 	}
 
 }
