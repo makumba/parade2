@@ -1,4 +1,4 @@
-package org.makumba.parade;
+package org.makumba.parade.managers;
 
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.makumba.parade.SimpleFileFilter;
 import org.makumba.parade.ifc.DirectoryRefresher;
 import org.makumba.parade.ifc.RowRefresher;
 import org.makumba.parade.model.File;
@@ -36,6 +37,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 			root.setAge(new Long(0));
 			root.setFiledata(new HashMap());
 			root.setSize(new Long(0));
+			root.setNotOnDisk(true);
 			
 			row.getFiles().clear();
 			row.getFiles().put("_root_",root);
@@ -81,7 +83,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 		
 		row.getFiles().put(fileData.getPath(),fileData);
 		
-		logger.warn("Added file: "+fileData.getName());
+		//logger.warn("Added file: "+fileData.getName());
 	}
 
 	/* setting File informations */
@@ -95,6 +97,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 		dirData.setAge(new Long((new Date()).getTime() - file.lastModified()));
 		dirData.setSize(new Long(file.length()));
 		dirData.setChildren(new ArrayList());
+		dirData.setNotOnDisk(false);
 		return dirData;
 	}
 	

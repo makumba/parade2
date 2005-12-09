@@ -5,11 +5,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.CVSManager;
-import org.makumba.parade.FileManager;
+import org.makumba.parade.InitServlet;
 import org.makumba.parade.ParadeProperties;
-import org.makumba.parade.RowStoreManager;
-import org.makumba.parade.TrackerManager;
+import org.makumba.parade.managers.CVSManager;
+import org.makumba.parade.managers.FileManager;
+import org.makumba.parade.managers.RowStoreManager;
+import org.makumba.parade.managers.TrackerManager;
 
 public class Parade {
 	
