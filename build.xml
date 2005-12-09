@@ -1,0 +1,23 @@
+<!-- $Header$ -->
+<project name="PARADE" basedir=".">
+	<target name="appletCopy">
+	<copy toDir="webapp/" overwrite="true">
+         <fileset dir="webapp/WEB-INF/classes">
+          <include name="org/makumba/parade/applets/*.class" />
+          <include name="org/makumba/parade/sourceedit/*.class" />
+         </fileset>
+	</copy>
+<echo>Press x in the Java Plugin console to make it forget old applets. If you have no java console, hold Shift while pressing Refresh in the browser.
+</echo>
+	</target>
+
+	<target name="triggerCopy">
+	<copy toDir="triggerClasses/" overwrite="true">
+         <fileset dir="webapp/WEB-INF/classes">
+          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
+          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
+         </fileset>
+	</copy>
+	</target>
+</project>
+
