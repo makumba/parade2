@@ -11,8 +11,8 @@ public class RowProperties {
 	
 	public RowProperties() {
 		
-		this.addRowDefinition("test-k","../../../my projects/hibernateExample", "the ultimate parade2 test row");
-		this.addRowDefinition("test2-k","e:/my projects/hibernateExample", "the ultimate parade2 test2 row");
+		this.addRowDefinition("test-k",".", "the ultimate parade2 test row");
+		this.addRowDefinition("test2-k","../parade", "the old parade row");
 		//this.addRowDefinition("vilius-k","E:/My Projects/ITC/merger/vilius","vilius playing with PA Guidelines");
 	}
 	
