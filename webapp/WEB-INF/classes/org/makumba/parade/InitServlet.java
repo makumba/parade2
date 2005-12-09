@@ -51,6 +51,7 @@ public class InitServlet extends HttpServlet {
         public void init(ServletConfig conf) throws ServletException
         {
         	System.out.println("init: Starting Parade initialization at " + new java.util.Date());
+        	long start = System.currentTimeMillis();
             System.out.flush();
         	super.init();
         	    
@@ -78,6 +79,12 @@ public class InitServlet extends HttpServlet {
                 session.close();
                 
                 System.out.println("INFO: Launching ParaDe finished at "+new java.util.Date());
+                long end = System.currentTimeMillis();
+                
+                long refresh = end-start;
+                System.out.println("INFO: Initialisation took "+refresh+" ms");
+                
+                
             
         }
         
