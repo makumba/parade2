@@ -15,6 +15,10 @@
     
     <joined-subclass name="FileCVS" table="FILE_CVS">
         <key column="FILEDATA_ID"/>
+        <property name="status" />
+        <property name="revision" />
+        <property name="date" />
+        <property name="isCVSDir" />
         
         
     </joined-subclass>

@@ -27,6 +27,10 @@
     <joined-subclass name="RowCVS" table="ROW_CVS">
         <key column="ROWDATA_ID"/>
         
+        <property name="user" />
+        <property name="module" />
+        <property name="branch" />
+        
     </joined-subclass>
     
     <joined-subclass name="RowWebapp" table="ROW_WEBAPP">
