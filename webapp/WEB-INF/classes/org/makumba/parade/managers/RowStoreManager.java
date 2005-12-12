@@ -34,23 +34,24 @@ public class RowStoreManager implements ParadeRefresher {
 	/* Creates/updates rows */
     private void createRows(Map rowstore, Parade p) {
     	
-    	/*
+    	
     	Iterator t = p.getRows().keySet().iterator();
+    	int ti = 0;
     	while(t.hasNext()) {
-    		logger.warn("************* "+((String)t.next()));
+    		
+    		logger.warn("************* "+ti++ +": "+ ((String)t.next()));
     		
     	}
-    	*/
+    	
     	
     	Iterator i = rowstore.keySet().iterator();
     	Map row = new HashMap();
     	String rowname = "";
-    	Row r = new Row();
-	   
+    	
     	while(i.hasNext()) {
     		row = (Map) rowstore.get((String) i.next());
     		rowname = ((String) row.get("name")).trim();
-    		//logger.warn("************ "+rowname);
+    		logger.warn("************ Now in "+rowname);
     		
     		// looks if the row with the same name already exists and updates if necessary
     		if(p.getRows().containsKey(rowname)) {
@@ -67,17 +68,18 @@ public class RowStoreManager implements ParadeRefresher {
 					logger.warn("The description of row "+rowname+" was updated to "+(String)row.get("desc"));
 				}
 				
-				p.getRows().put(rowname,storedRow);
+				p.addRow(storedRow);
 				
     		} else {
     			
     			// creating Row object and passing the information
-	            r = new Row();
-	            r.setRowname(((String)row.get("name")).trim());
+    			Row r = new Row();
+	            String name = ((String) row.get("name")).trim();
+	            r.setRowname(name);
 	            String relativePath = (((String) row.get("path")).trim());
 	            r.setRowpath(relativePath);
 	            r.setDescription((String)row.get("desc"));
-	            	            
+
 	            logger.warn("Created new row "+rowname);
 	            p.addRow(r);
 				
