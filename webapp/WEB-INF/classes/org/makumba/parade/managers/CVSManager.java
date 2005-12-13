@@ -17,9 +17,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.makumba.parade.ifc.DirectoryRefresher;
-import org.makumba.parade.ifc.RowData;
 import org.makumba.parade.ifc.RowRefresher;
-import org.makumba.parade.model.DirCVS;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
@@ -58,21 +56,12 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 		
 		java.io.File currDir = new java.io.File(path);
 		
+		// we will go through the CVS entries of the real directories
 		if(!currDir.exists() || !currDir.isDirectory()) return;
 		
 		File currFile = (File) row.getFiles().get(path);
-		
-		/*
-		Iterator i = row.getFiles().keySet().iterator();
-		while(i.hasNext()) {
-			File file = (File) row.getFiles().get(i.next());
-			Map filedata = file.getFiledata();
-			if(filedata == null) {
-				filedata = new HashMap();
-			}
-			*/
 			
-			if(!(currFile == null) &&currFile.getIsDir()) {
+			if(!(currFile == null) && currFile.getIsDir()) {
 				
 				Map filedata = currFile.getFiledata();
 				FileCVS filecvsdata = (FileCVS) filedata.get("cvs");
