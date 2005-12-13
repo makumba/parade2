@@ -41,9 +41,7 @@ public class File {
 		
 		fileMgr.directoryRefresh(row, this.getPath());
 		CVSMgr.directoryRefresh(row,this.getPath());
-		
-		
-		
+		trackerMgr.directoryRefresh(row,this.getPath());
 	}
 	
 	
