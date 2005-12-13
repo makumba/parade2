@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.InitServlet;
 import org.makumba.parade.ParadeProperties;
 import org.makumba.parade.managers.AntManager;
 import org.makumba.parade.managers.CVSManager;
@@ -36,7 +35,6 @@ public class Parade {
 		
 		RowStoreManager rowMgr = new RowStoreManager();
 		FileManager fileMgr = new FileManager();
-		TrackerManager trackerMgr = new TrackerManager();
 		CVSManager CVSMgr = new CVSManager();
 		AntManager antMgr = new AntManager();
 		
@@ -57,21 +55,14 @@ public class Parade {
 			
 			fileMgr.rowRefresh(r);
 			CVSMgr.rowRefresh(r);
-			trackerMgr.rowRefresh(r);
-			antMgr.rowRefresh(r);
+						antMgr.rowRefresh(r);
 		}
-		
-		
-		
-		
 	}
 	
 	
 	public void addRow(Row r) {
 		r.setParade(this);
-		logger.warn("Adding row "+r.getRowname()+" to parade rows");
 		rows.put(r.getRowname(),r);
-		
 	}
 	
 		
