@@ -41,7 +41,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 			
 			row.getFiles().clear();
 			row.getFiles().put("_root_",root);
-			row.getParade().addRow(row);
+			//row.getParade().addRow(row);
 			
 		} catch(Throwable t) {
 			logger.error("Couldn't access row path of row "+row.getRowname(),t);
