@@ -26,15 +26,12 @@
     <joined-subclass name="FileTracker" table="FILE_TRACKER">
         <key column="FILEDATA_ID"/>
         
-    </joined-subclass>
-    
-    <joined-subclass name="DirCVS" table="DIR_CVS">
-        <key column="FILEDATA_ID"/>
+        <property name="tracked" />
+        <property name="title" />
+        <property name="description" />
+        <property name="author" />
+        <property name="status" />
         
-    </joined-subclass>
-    
-    <joined-subclass name="DirTracker" table="DIR_TRACKER">
-        <key column="FILEDATA_ID"/>
         
     </joined-subclass>
     
