@@ -56,6 +56,13 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 	
 	public void directoryRefresh(Row row, String path) {
 		
+		java.io.File currDir = new java.io.File(path);
+		
+		if(!currDir.exists() || !currDir.isDirectory()) return;
+		
+		File currFile = (File) row.getFiles().get(path);
+		
+		/*
 		Iterator i = row.getFiles().keySet().iterator();
 		while(i.hasNext()) {
 			File file = (File) row.getFiles().get(i.next());
@@ -63,28 +70,27 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 			if(filedata == null) {
 				filedata = new HashMap();
 			}
+			*/
 			
-			if(file.getIsDir()) {
+			if(!(currFile == null) &&currFile.getIsDir()) {
 				
+				Map filedata = currFile.getFiledata();
 				FileCVS filecvsdata = (FileCVS) filedata.get("cvs");
 				if(filecvsdata == null) {
 					filecvsdata = new FileCVS();
 					filecvsdata.setDataType("cvs");
-					filecvsdata.setFile(file);
+					filecvsdata.setFile(currFile);
 				}
 				
-				readFiles(row,file,filecvsdata);
+				readFiles(row,currFile,filecvsdata);
 				
 				filedata.put("filecvs",filecvsdata);
-				file.setFiledata(filedata);
+				currFile.setFiledata(filedata);
 			}
-		}
-		
 	}
 
 	public void rowRefresh(Row row) {
 		
-		/* Some example data */
 		RowCVS cvsdata = new RowCVS();
 		cvsdata.setDataType("cvs");
 		
