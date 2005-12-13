@@ -18,9 +18,9 @@
         <key column="ROWDATA_ID"/>
         
         <property name="lastmodified" />
+        <property name="buildfile" type="java.io.File" />
         
-        <!-- 
-        
+        <!--  
         <list name="topTargets" table="ROW_ANT_TOPTARGETS">
 		    <cache usage="read-write" />
 			<key><column name="ROWDATA_ID" not-null="false"/></key>
@@ -34,8 +34,8 @@
 			<index column="POSITION"/>
 			<element type="string" column="subTargets" />
 		</list>
+		-->
 		
-		 -->
        
     </joined-subclass>
     

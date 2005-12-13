@@ -1,8 +1,5 @@
 package org.makumba.parade.model;
 
-import java.util.ArrayList;
-
-
 import org.makumba.parade.ifc.RowData;
 
 public class RowAnt extends AbstractRowData implements RowData {
@@ -11,24 +8,14 @@ public class RowAnt extends AbstractRowData implements RowData {
 	
 	private Long lastmodified;
 	
-	private ArrayList topTargets = new ArrayList();
+	private java.io.File buildfile;
 	
-	private ArrayList subTargets = new ArrayList();
-	
-	public ArrayList getSubTargets() {
-		return subTargets;
+	public java.io.File getBuildfile() {
+		return buildfile;
 	}
 
-	public void setSubTargets(ArrayList subTargets) {
-		this.subTargets = subTargets;
-	}
-
-	public ArrayList getTopTargets() {
-		return topTargets;
-	}
-
-	public void setTopTargets(ArrayList topTargets) {
-		this.topTargets = topTargets;
+	public void setBuildfile(java.io.File buildfile) {
+		this.buildfile = buildfile;
 	}
 
 	public Long getId() {
