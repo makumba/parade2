@@ -13,11 +13,10 @@
 		
 		<map name="rows" outer-join="true" cascade="all-delete-orphan" inverse="true" access="field" order-by="rowname">
 		    <cache usage="read-write" />
-			<key><column name="id" not-null="false"/></key>
+			<key><column name="id_parade" not-null="false"/></key>
 			<index column="rowname" type="string"/>
 			<one-to-many class="Row" />
 		</map>
-		
 		
 	</class>
 </hibernate-mapping>
