@@ -33,17 +33,7 @@ public class RowStoreManager implements ParadeRefresher {
 	
 	/* Creates/updates rows */
     private void createRows(Map rowstore, Parade p) {
-    	
-    	
-    	Iterator t = p.getRows().keySet().iterator();
-    	int ti = 0;
-    	while(t.hasNext()) {
-    		
-    		logger.warn("************* "+ti++ +": "+ ((String)t.next()));
-    		
-    	}
-    	
-    	
+
     	Iterator i = rowstore.keySet().iterator();
     	Map row = new HashMap();
     	String rowname = "";
@@ -51,11 +41,9 @@ public class RowStoreManager implements ParadeRefresher {
     	while(i.hasNext()) {
     		row = (Map) rowstore.get((String) i.next());
     		rowname = ((String) row.get("name")).trim();
-    		logger.warn("************ Now in "+rowname);
     		
     		// looks if the row with the same name already exists and updates if necessary
     		if(p.getRows().containsKey(rowname)) {
-    			logger.warn(("Now going through row: "+rowname));
     			
     			Row storedRow = (Row) p.getRows().get(rowname);
 				
@@ -80,7 +68,6 @@ public class RowStoreManager implements ParadeRefresher {
 	            r.setRowpath(relativePath);
 	            r.setDescription((String)row.get("desc"));
 
-	            logger.warn("Created new row "+rowname);
 	            p.addRow(r);
 				
     		}
