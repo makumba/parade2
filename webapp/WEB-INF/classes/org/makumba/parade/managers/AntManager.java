@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildEvent;
@@ -22,11 +21,6 @@ import org.makumba.parade.model.RowAnt;
 
 public class AntManager implements RowRefresher {
 	
-	/*
-	 * We only need to persist the modification time and the list of sub&toptargets
-	 * somehow hibernate fails - the mappings may be false, but I don't see where
-	 */
-	
 	static Logger logger = Logger.getLogger(AntManager.class.getName());
 	
 	public void rowRefresh(Row row) {
@@ -34,8 +28,10 @@ public class AntManager implements RowRefresher {
 		antdata.setDataType("ant");
 				
 		Project p = setBuildFile(row, antdata);
-        if (p == null)
+        if (p == null) {
+        	logger.error("AntManager: couldn't initialise the project");
             return;
+        }
         setTargets(antdata, p);
         
 		RowStoreManager rowMgr = new RowStoreManager();
@@ -46,9 +42,12 @@ public class AntManager implements RowRefresher {
 	private Project setBuildFile(Row row, RowAnt data) {
         File dir = new File(row.getRowpath());
 
-        File buildFile = new File(dir, "build.xml");
-        if (!buildFile.exists())
-            return null;
+        File buildFile = data.getBuildfile();
+        if(buildFile == null) {
+        	buildFile = new File(dir, "build.xml");
+        	if (!buildFile.exists()) return null;
+        	data.setBuildfile(buildFile);
+        }
         
         return getProject(buildFile, row, data);
     }
@@ -83,32 +82,29 @@ public class AntManager implements RowRefresher {
     }
 	
 	private void setTargets(RowAnt antdata, Project p) {
-       Enumeration ptargets = p.getTargets().elements();
-        
+		Project project = p;
+        Enumeration ptargets = project.getTargets().elements();
+
+        ArrayList topTargets = new ArrayList();
+        ArrayList subTargets = new ArrayList();
+
         while (ptargets.hasMoreElements()) {
             Target currentTarget = (Target) ptargets.nextElement();
 
             if (currentTarget.getDescription() == null)
-            	antdata.getSubTargets().add(currentTarget.getName());
+                subTargets.add(currentTarget.getName());
             else {
-                String obj = currentTarget.getName()+"&"+currentTarget.getDescription();
-                antdata.getTopTargets().add(obj);
+                String obj[] = { currentTarget.getName(),
+                        currentTarget.getDescription() };
+                topTargets.add(obj);
             }
         }
-        /* not sure about the sorting, there's a sort="natural" but didn't see it for lists 
-        Collections.sort(antdata.getSubTargets());
-        
-        Collections.sort(antdata.getTopTargets(), new Comparator() {
+        Collections.sort(subTargets);
+        Collections.sort(topTargets, new Comparator() {
             public int compare(Object o1, Object o2) {
-            	String s1 = (String) o1;
-            	String s2 = (String) o2;
-            	String o1name = s1.substring(0,s1.indexOf("&"));
-            	String o2name = s2.substring(0,s2.indexOf("&"));
-            	
-                return (o1name).compareTo(o2name);
+                return ((String[]) o1)[0].compareTo(((String[]) o2)[0]);
             }
         });
-        */
         
         
     }
