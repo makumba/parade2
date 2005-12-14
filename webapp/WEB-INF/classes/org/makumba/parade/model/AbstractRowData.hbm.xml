@@ -55,6 +55,11 @@
     
     <joined-subclass name="RowWebapp" table="ROW_WEBAPP">
         <key column="ROWDATA_ID"/>
+       
+        <property name="path" />
+        <property name="name" />
+        <property name="status" />
+        
         
     </joined-subclass>
     
