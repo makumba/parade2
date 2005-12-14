@@ -8,12 +8,10 @@ import java.net.URLConnection;
 public class ForeignHttpAuthorizer implements Authorizer {
     String url;
 
-    public static HttpURLConnection sendAuth(URL u, String username,
-            String password) throws java.io.IOException {
+    public static HttpURLConnection sendAuth(URL u, String username, String password) throws java.io.IOException {
         HttpURLConnection uc = (HttpURLConnection) u.openConnection();
         uc.setRequestProperty("connection", "close");
-        uc.setRequestProperty("Authorization", "Basic "
-                + Base64.encode((username + ":" + password).getBytes()));
+        uc.setRequestProperty("Authorization", "Basic " + Base64.encode((username + ":" + password).getBytes()));
         uc.setUseCaches(false);
         uc.connect();
         return uc;
@@ -33,16 +31,6 @@ public class ForeignHttpAuthorizer implements Authorizer {
             return false;
         }
         return true;
-    }
-
-    public static void main(String[] argv) {
-        System.out.println(new ForeignHttpAuthorizer(
-                "http://private.best.eu.org:3030/tigro/archive.nsf").auth(
-                argv[0], argv[1]));
-        System.out.println(new ForeignHttpAuthorizer(
-                "http://private.best.eu.org:3030/tigro/archive.nsf").auth(
-                "shit", "gugu"));
-
     }
 
 }
