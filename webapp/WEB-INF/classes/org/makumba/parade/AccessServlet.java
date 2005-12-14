@@ -1,5 +1,8 @@
 package org.makumba.parade;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -9,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.makumba.parade.tools.Authorizer;
 import org.makumba.parade.tools.DatabaseAuthorizer;
 import org.makumba.parade.tools.HttpLogin;
@@ -21,6 +25,8 @@ import org.makumba.parade.tools.PerThreadPrintStream;
  */
 public class AccessServlet extends HttpServlet {
     ServletContext context;
+    
+    static Logger logger = Logger.getLogger(AccessServlet.class.getName());
 
     HttpLogin checker;
 
@@ -29,12 +35,24 @@ public class AccessServlet extends HttpServlet {
     public void init() {
         Object o = PerThreadPrintStream.class;
         context = getServletConfig().getServletContext();
-
-        String authClass = (String) ParadeProperties.getConf().get("parade.authorizerClass");
-        String authMessage = (String) ParadeProperties.getConf().get("parade.authorizationMessage");
+        
+        /// TODO make this work and map to Parade root object
+        String serverurl="";
+        int serverport=0;
+        try {
+        	serverurl = this.getServletContext().getResource("/").getRef();
+        	serverport = getServletContext().getResource("/").getPort();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			logger.warn("******* "+serverurl + " port "+serverport);
+		
+        String authClass = (String) ParadeProperties.getProperty("parade.authorizerClass");
+        String authMessage = (String) ParadeProperties.getProperty("parade.authorizationMessage");
         if (authClass == null)
             return;
-        String db = (String) ParadeProperties.getConf().get("parade.authorizationDB");
+        String db = (String) ParadeProperties.getProperty("parade.authorizationDB");
         try {
             Authorizer auth = (Authorizer) getClass().getClassLoader()
                     .loadClass(authClass).newInstance();
