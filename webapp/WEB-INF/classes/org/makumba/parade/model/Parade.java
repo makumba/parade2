@@ -11,6 +11,7 @@ import org.makumba.parade.managers.CVSManager;
 import org.makumba.parade.managers.FileManager;
 import org.makumba.parade.managers.RowStoreManager;
 import org.makumba.parade.managers.TrackerManager;
+import org.makumba.parade.managers.WebappManager;
 
 public class Parade {
 	
@@ -31,12 +32,13 @@ public class Parade {
 	 */
 	public void refresh() {
 		
-		this.paradeBase = (String) ParadeProperties.getConf().get("paradeBase");
+		this.paradeBase = (String) ParadeProperties.getProperty("parade.paradeBase");
 		
 		RowStoreManager rowMgr = new RowStoreManager();
 		FileManager fileMgr = new FileManager();
 		CVSManager CVSMgr = new CVSManager();
 		AntManager antMgr = new AntManager();
+		WebappManager webappMgr = new WebappManager();
 		
 		/* TODO: read in config class/file which managers are parade managers
 		 * and launch paradeRefresh() for all of them
@@ -55,7 +57,8 @@ public class Parade {
 			
 			fileMgr.rowRefresh(r);
 			CVSMgr.rowRefresh(r);
-						antMgr.rowRefresh(r);
+			antMgr.rowRefresh(r);
+			webappMgr.rowRefresh(r);
 		}
 	}
 	
