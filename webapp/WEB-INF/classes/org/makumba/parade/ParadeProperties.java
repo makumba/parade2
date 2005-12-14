@@ -1,41 +1,39 @@
 package org.makumba.parade;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+import org.makumba.parade.managers.WebappManager;
 
 public class ParadeProperties {
 	
-	static Map conf = new HashMap();
+	static public String paradeBase = "." + java.io.File.separator;
+	static String fileName = paradeBase + "parade.properties";
 	
-	private static void init() {
+	private static Properties config;
 	
-		//has maybe to be generated automcatically
-		
-		conf.put("paradeBase",(new java.io.File("").getAbsolutePath()));
-		
-		
-		conf.put("tomcat.output", "tomcat/logs");
-		
-		conf.put("parade.authorizerClass","");
-		conf.put("parade.authorizationMessage","Please enter your username and password");
-		conf.put("parade.authorizationDB","");
-		
-		/*
-		boolean RowStore = true;
-		boolean FileManager = false;
-		boolean CvsManager = false;
-		boolean ServletContextManager = true;
-		boolean AntManager = false;
-		boolean MakumbaManager = false;
-		*/
-		
-	}
+	static public String paradeBaseRelativeToTomcatWebapps = ".."
+        + File.separator + "..";
 	
-	public static Map getConf() {
-		init();
-		return conf;
+	static Logger logger = Logger.getLogger(ParadeProperties.class.getName());
 	
-	}
+	static {
+		
+        try {
+            config = new Properties();
+            config.load(new FileInputStream(fileName));
+        } catch (Throwable t) {
+            logger.error("Error while loading parade.properties",t);
+        }
+    }
+	
+	public static String getProperty(String configProperty) {
+        return config.getProperty(configProperty);
+    }
+	
+	
 	
 }
