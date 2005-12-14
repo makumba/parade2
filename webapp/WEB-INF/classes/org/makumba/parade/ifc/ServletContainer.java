@@ -1,4 +1,4 @@
-package org.makumba.parade;
+package org.makumba.parade.ifc;
 
 public interface ServletContainer {
     public static final int NOT_INSTALLED = 0;
@@ -12,8 +12,7 @@ public interface ServletContainer {
 
     public void init(java.util.Properties config);
 
-    public void makeConfig(java.util.Properties config,
-            javax.servlet.jsp.PageContext pc);
+    public void makeConfig(java.util.Properties config);
 
     public int getContextStatus(String contextName);
 
