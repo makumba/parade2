@@ -93,9 +93,9 @@ public class WebappManager implements RowRefresher {
 		    }
 		}
 		if (!s.equals("NO WEBINF")) {
-			webappdata.setPath(s);
-			webappdata.setName("/" + row.getRowname());
-			webappdata.setStatus(new Integer(getServletContainer().getContextStatus(webappdata.getName())));	
+			webappdata.setContextpath(s);
+			webappdata.setContextname("/" + row.getRowname());
+			webappdata.setStatus(new Integer(getServletContainer().getContextStatus(webappdata.getContextname())));	
 		}
 	}
 	
@@ -106,7 +106,7 @@ public class WebappManager implements RowRefresher {
 		RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
 		setWebappInfo(row, data);
 		
-		if (!isParadeCheck(row)) return getServletContainer().startContext(data.getName());
+		if (!isParadeCheck(row)) return getServletContainer().startContext(data.getContextname());
 		return "ParaDe is already running";
 	}
 	
@@ -115,7 +115,7 @@ public class WebappManager implements RowRefresher {
 		//TODO not sure if Hibernate likes this!
 		RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
 		setWebappInfo(row, data);
-		if (!isParadeCheck(row)) return getServletContainer().stopContext(data.getName());
+		if (!isParadeCheck(row)) return getServletContainer().stopContext(data.getContextname());
 		return "Internal error";
 	}
 	
@@ -176,7 +176,7 @@ public class WebappManager implements RowRefresher {
 					row.getParade().getParadeBase()
 					+ java.io.File.separator
 					+ java.io.File.separator
-					+ data.getPath()
+					+ data.getContextpath()
 					);
 		}
 		return "Internal error";
@@ -187,7 +187,7 @@ public class WebappManager implements RowRefresher {
 		RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
 		setWebappInfo(row, data);
 		
-		if (!isParadeCheck(row)) return getServletContainer().unInstallContext(data.getName());
+		if (!isParadeCheck(row)) return getServletContainer().unInstallContext(data.getContextname());
 		return "Internal error";
 	}
 	
