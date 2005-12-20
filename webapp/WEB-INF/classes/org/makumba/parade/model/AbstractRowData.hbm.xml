@@ -56,8 +56,8 @@
     <joined-subclass name="RowWebapp" table="ROW_WEBAPP">
         <key column="ROWDATA_ID"/>
        
-        <property name="path" />
-        <property name="name" />
+        <property name="contextpath" />
+        <property name="contextname" />
         <property name="status" />
         
         
@@ -65,6 +65,8 @@
     
     <joined-subclass name="RowMakumba" table="ROW_MAKUMBA">
         <key column="ROWDATA_ID"/>
+        
+        <property name="version" />
         
     </joined-subclass>
     
