@@ -1,8 +1,15 @@
 package org.makumba.parade;
 
+import java.io.PrintWriter;
+import java.util.Iterator;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,6 +17,12 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.makumba.parade.model.Parade;
+import org.makumba.parade.model.Row;
+import org.makumba.parade.view.AntViewManager;
+import org.makumba.parade.view.CVSViewManager;
+import org.makumba.parade.view.MakumbaViewManager;
+import org.makumba.parade.view.RowStoreViewManager;
+import org.makumba.parade.view.ViewManager;
 
 
 public class InitServlet extends HttpServlet {
@@ -25,6 +38,8 @@ public class InitServlet extends HttpServlet {
     private static Long one = new Long(1);
     
     private Session session = null;
+    
+    private Parade p = null;
     
     {
     	/* Initializing Hibernate */
@@ -54,42 +69,50 @@ public class InitServlet extends HttpServlet {
         	long start = System.currentTimeMillis();
             System.out.flush();
         	super.init();
-        	    
-                /* Getting Parade, creating one if none found */
-                
-        		session = sessionFactory.openSession();
-        		
-        		Transaction tx = session.beginTransaction();
-        		
-        		
-                Parade p = (Parade) session.get(Parade.class, new Long(1));
-                if (p == null) {
-                	p = new Parade();
-                	p.setId(one);
-                	
-                	session.save(p);
-                }
-                
-                p.refresh();
-                
-                tx.commit();
-                
-                
-                
-                session.close();
-                
-                System.out.println("INFO: Launching ParaDe finished at "+new java.util.Date());
-                long end = System.currentTimeMillis();
-                
-                long refresh = end-start;
-                System.out.println("INFO: Initialisation took "+refresh+" ms");
-                
-                
+        	        	    
+            /* Getting Parade, creating one if none found */
+            
+    		session = sessionFactory.openSession();
+    		
+    		Transaction tx = session.beginTransaction();
+    		        		
+            p = (Parade) session.get(Parade.class, new Long(1));
+            if (p == null) {
+            	p = new Parade();
+            	p.setId(one);
+            	
+            	session.save(p);
+            }
+            
+            p.refresh();
+            
+            tx.commit();
+            
+            
+            
+            session.close();
+            
+            
+            System.out.println("INFO: Launching ParaDe finished at "+new java.util.Date());
+            long end = System.currentTimeMillis();
+            
+            long refresh = end-start;
+            System.out.println("INFO: Initialisation took "+refresh+" ms");
             
         }
+        
+        public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
+
+    		PrintWriter out = resp.getWriter();
+    		ViewManager viewMgr = new ViewManager(p, req);
+    		viewMgr.getView(out);
+    	
+    	}
+        
         
         public static SessionFactory getSessionFactory() {
         	return sessionFactory;
         }
+
 
 }
