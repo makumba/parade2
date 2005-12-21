@@ -7,6 +7,11 @@ import org.makumba.parade.model.RowAnt;
 
 public class AntViewManager implements ParadeView, ToolView {
 
+	public String getParadeViewHeader() {
+		String header = "<b>Ant buildfile</b>";
+		return header;
+	}
+	
 	public String getParadeView(Row r) {
 		RowAnt antdata = (RowAnt) r.getRowdata().get("ant");
 		
@@ -18,5 +23,7 @@ public class AntViewManager implements ParadeView, ToolView {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 
 }

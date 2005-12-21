@@ -8,6 +8,11 @@ import org.makumba.parade.model.RowCVS;
 
 public class CVSViewManager implements ParadeView, FileBrowserView {
 
+	public String getParadeViewHeader() {
+		String header = "<b>CVS module, user, branch</b>";
+		return header;
+	}
+	
 	public String getParadeView(Row r) {
 		RowCVS cvsdata = (RowCVS) r.getRowdata().get("cvs");
 		
