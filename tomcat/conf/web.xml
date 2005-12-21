@@ -94,10 +94,15 @@ aded! -->
         </init-param>
         <init-param>
             <param-name>listings</param-name>
-            <param-value>true</param-value>
+            <param-value>false</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    
+    <servlet>
+    	<servlet-name>parade</servlet-name>
+    	<servlet-class>org.makumba.parade.InitServlet</servlet-class>
+  	</servlet>
 
 
   <!-- The "invoker" servlet, which executes anonymous servlet classes      -->
@@ -378,6 +383,11 @@ aded! -->
         <url-pattern>/cgi-bin/*</url-pattern>
     </servlet-mapping>
 -->
+
+	<servlet-mapping>
+	    <servlet-name>parade</servlet-name>
+	    <url-pattern>/</url-pattern>
+	</servlet-mapping>
 
 
   <!-- ==================== Default Session Configuration ================= -->
