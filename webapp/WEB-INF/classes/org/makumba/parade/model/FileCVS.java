@@ -11,10 +11,7 @@ public class FileCVS extends AbstractFileData {
 	private String revision="";
 	
 	private Date date;
-	
-	private boolean isCVSDir;
-	
-	
+
 	
 	public Date getDate() {
 		return date;
@@ -22,14 +19,6 @@ public class FileCVS extends AbstractFileData {
 
 	public void setDate(Date date) {
 		this.date = date;
-	}
-
-	public boolean getIsCVSDir() {
-		return isCVSDir;
-	}
-
-	public void setIsCVSDir(boolean isCVSDir) {
-		this.isCVSDir = isCVSDir;
 	}
 
 	public String getRevision() {
