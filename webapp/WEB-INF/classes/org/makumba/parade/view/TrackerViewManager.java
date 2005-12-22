@@ -11,4 +11,9 @@ public class TrackerViewManager implements FileBrowserView {
 		return null;
 	}
 
+	public String getFileViewHeader() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
