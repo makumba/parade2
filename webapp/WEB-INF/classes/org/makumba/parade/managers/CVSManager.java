@@ -1,6 +1,7 @@
 package org.makumba.parade.managers;
 
 import java.io.BufferedReader;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.makumba.parade.SimpleFileFilter;
 import org.makumba.parade.ifc.DirectoryRefresher;
 import org.makumba.parade.ifc.RowRefresher;
 import org.makumba.parade.model.File;
@@ -25,27 +27,30 @@ import org.makumba.parade.model.RowCVS;
 
 public class CVSManager implements DirectoryRefresher, RowRefresher {
 	
-	static Logger logger = Logger.getLogger(CVSManager.class.getName());
+	public static Logger logger = Logger.getLogger(CVSManager.class.getName());
 
-	static Integer IGNORED = new Integer(101);
+	public static Integer IGNORED = new Integer(101);
 
-    static Integer UNKNOWN = new Integer(-1);
+	public static Integer UNKNOWN = new Integer(-1);
 
-    static Integer UP_TO_DATE = new Integer(100);
+	public static Integer UP_TO_DATE = new Integer(100);
 
-    static Integer LOCALLY_MODIFIED = new Integer(1);
+	public static Integer LOCALLY_MODIFIED = new Integer(1);
 
-    static Integer NEEDS_CHECKOUT = new Integer(2);
+	public static Integer NEEDS_CHECKOUT = new Integer(2);
 
-    static Integer NEEDS_UPDATE = new Integer(3);
+	public static Integer NEEDS_UPDATE = new Integer(3);
 
-    static Integer ADDED = new Integer(4);
+	public static Integer ADDED = new Integer(4);
 
-    static Integer DELETED = new Integer(5);
+	public static Integer DELETED = new Integer(5);
 
-    static Integer CONFLICT = new Integer(6);
+	public static Integer CONFLICT = new Integer(6);
 	
 	public static DateFormat cvsDateFormat;
+	
+	private FileFilter filter = new SimpleFileFilter();
+	
     static {
         cvsDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy",
                 Locale.UK);
@@ -53,29 +58,24 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
     }
 	
 	public void directoryRefresh(Row row, String path) {
-		
 		java.io.File currDir = new java.io.File(path);
 		
-		// we will go through the CVS entries of the real directories
-		if(!currDir.exists() || !currDir.isDirectory()) return;
-		
-		File currFile = (File) row.getFiles().get(path);
+		// we will go through the CVS entries of the real directory
+		if(currDir.isDirectory() && filter.accept(currDir) && !(currDir.getName() == null)) {
+			logger.warn("CVS: looking for path "+path);
 			
+			// getting the File object mapped to this dir
+			File currFile = (File) row.getFiles().get(path);
+			
+			// you never know
 			if(!(currFile == null) && currFile.getIsDir()) {
+				logger.warn("CVS: got file "+currFile.getName());
 				
-				Map filedata = currFile.getFiledata();
-				FileCVS filecvsdata = (FileCVS) filedata.get("cvs");
-				if(filecvsdata == null) {
-					filecvsdata = new FileCVS();
-					filecvsdata.setDataType("cvs");
-					filecvsdata.setFile(currFile);
-				}
+				readFiles(row,currFile);
 				
-				readFiles(row,currFile,filecvsdata);
 				
-				filedata.put("filecvs",filecvsdata);
-				currFile.setFiledata(filedata);
 			}
+		}
 	}
 
 	public void rowRefresh(Row row) {
@@ -134,55 +134,67 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 
     }
 	
-	private void readFiles(Row r, File f, FileCVS cvsdata) {
+	private void readFiles(Row r, File f) {
 		
-		readCVSEntries(r, f, cvsdata);
-		readCVSIgnore(r, f, cvsdata);
+		readCVSEntries(r, f);
+		readCVSIgnore(r, f);
 		// readCVSCheckUpdate(paradeRow, data, pc);
 	}
 	
 	/* Reads Entries file and extracts information */
-    private void readCVSEntries(Row r, File file, FileCVS cvsdata) {
-    	
-        java.io.File f = new java.io.File((r.getRowpath() + "/" + file.getPath() + "/" +"CVS/Entries").replace('/',java.io.File.separatorChar));
-        if (!f.exists()) {
-            cvsdata.setIsCVSDir(false);
-            return;
-        }
-
-        cvsdata.setIsCVSDir(true);
+    private void readCVSEntries(Row r, File file) {
+    	java.io.File f = new java.io.File((file.getPath() + "/" +"CVS/Entries").replace('/',java.io.File.separatorChar));
+        if (!f.exists()) return;
+        
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line = null;
             while ((line = br.readLine()) != null) {
+            	
+            	// if the Entry is a file
                 if (line.startsWith("/")) {
                     int n = line.indexOf('/', 1);
-                    if (n == -1)
-                        continue;
+                    if (n == -1) continue;
                     String name = line.substring(1, n);
-                    File cvsfile = (File) r.getFiles().get(name);
+                    logger.warn("Looking for CVS file: "+name);
+                    
+                    // checking if the file we are looking for is mapped
+                    File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + name);
+                    
                     if (cvsfile == null) {
                     	cvsfile = new File();
-                    	file.setName(name);
-                        file.setNotOnDisk(true);
-                        file.setIsDir(true);
-                        file.setRow(r);
-                        file.getFiledata().put("cvs",cvsdata);
-                        
+                    	cvsfile.setName(name);
+                    	cvsfile.setPath(file.getPath() + java.io.File.separator + name);
+                    	cvsfile.setNotOnDisk(true);
+                    	cvsfile.setIsDir(false);
+                    	cvsfile.setRow(r);
+                    	r.getFiles().put(file.getPath() + java.io.File.separator + name,cvsfile);
                     }
+                    FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
+                    if(cvsdata == null) {
+                    	cvsdata = new FileCVS();
+                    	cvsdata.setDataType("cvs");
+                    	cvsdata.setFile(cvsfile);
+                    	cvsdata.setStatus(NEEDS_CHECKOUT);
+                    	
+                    	cvsfile.getFiledata().put("cvs",cvsdata);
+                    }
+                    	
+                        
+                    
+                    // setting CVS status
                     cvsdata.setStatus(UNKNOWN);
                     line = line.substring(n + 1);
                     n = line.indexOf('/');
-                    if (n == -1)
-                        continue;
+                    if (n == -1) continue;
                     String revision = line.substring(0, n);
                     cvsdata.setRevision(revision);
                     line = line.substring(n + 1);
                     n = line.indexOf('/');
-                    if (n == -1)
-                        continue;
+                    if (n == -1) continue;
 
-                    java.io.File fl = new java.io.File(file.getPath());
+                    // we check if the file exists on the disk
+                    java.io.File fl = new java.io.File(cvsfile.getPath());
 
                     if (fl == null && !revision.startsWith("-")) {
                         cvsdata.setStatus(NEEDS_CHECKOUT);
@@ -235,25 +247,36 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
                     // if(l<0)
                     // System.out.println(l);
                     continue;
+
+                // if the entry is a dir
                 } else if (line.startsWith("D/")) {
-                    int n = line.indexOf('/', 2);
-                    if (n == -1)
-                        continue;
-                    String name = line.substring(2, n);
-                    File cvsfile = (File) r.getFiles().get(name);
+                	int n = line.indexOf('/', 2);
+					if (n == -1) continue;
+					String name = line.substring(2, n);
+					
+					// checking if the file we are looking for is mapped
+					File cvsfile = (File) r.getFiles().get(file.getPath()+java.io.File.separator+name);
+					if (cvsfile == null) {
+						cvsfile = new File();
+						cvsfile.setName(name);
+						cvsfile.setPath(file.getPath() + java.io.File.separator + name);
+						cvsfile.setNotOnDisk(true);
+						cvsfile.setIsDir(true);
+						cvsfile.setRow(r);
+						r.getFiles().put(file.getPath() + java.io.File.separator + name,cvsfile);
+					}
+					
+					FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
+                    if(cvsdata == null) {
+                    	cvsdata = new FileCVS();
+                    	cvsdata.setDataType("cvs");
+                    	cvsdata.setFile(cvsfile);
+                    	cvsdata.setStatus(NEEDS_CHECKOUT);
+                    	cvsfile.getFiledata().put("cvs",cvsdata);
                     
-                    if (cvsfile == null) {
-                    	cvsfile = new File();
-                    	file.setName(name);
-                        file.setNotOnDisk(true);
-                        file.setIsDir(true);
-                        file.setRow(r);
-                        file.getFiledata().put("cvs",cvsdata);
-                        cvsdata.setIsCVSDir(true);
-                        cvsdata.setStatus(NEEDS_CHECKOUT);
                     } else {
-                        cvsdata.setStatus(UP_TO_DATE);
-                        cvsdata.setRevision("(dir)");
+					    cvsdata.setStatus(UP_TO_DATE);
+					    cvsdata.setRevision("(dir)");
                     }
                 }
             }
@@ -264,23 +287,29 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
     }
     
     /* Reads .cvsignore */
-    private void readCVSIgnore(Row r, File file, FileCVS cvsdata) {
-    	if (!cvsdata.getIsCVSDir()) return;
+    private void readCVSIgnore(Row r, File file) {
+    	if (!file.getIsDir()) return;
     	
-    	java.io.File f = new java.io.File((r.getRowpath() + "/" + file.getPath() + "/" + ".cvsignore").replace('/',java.io.File.separatorChar));
+    	java.io.File f = new java.io.File((file.getPath() + "/" + ".cvsignore").replace('/',java.io.File.separatorChar));
         
-    	if (!f.exists())
-            return;
+    	if (!f.exists()) return;
 
+    	FileCVS cvsdata = (FileCVS) file.getFiledata().get("cvs");
+    	
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line = null;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
                 File cvsfile = (File) r.getFiles().get(line);
-                if (cvsfile == null)
-                    continue;
-                cvsdata.setStatus(IGNORED);
+                if (cvsfile == null) continue;
+                cvsdata = new FileCVS();
+            	cvsdata.setDataType("cvs");
+            	cvsdata.setFile(cvsfile);
+            	cvsdata.setStatus(IGNORED);
+            	
+            	cvsfile.getFiledata().put("cvs",cvsdata);
+                
             }
             br.close();
         } catch (Throwable t) {
