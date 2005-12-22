@@ -29,9 +29,9 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 		File root = new File();
 		
 		try {
-			java.io.File f = new java.io.File(row.getRowpath());
+			java.io.File rootPath = new java.io.File(row.getRowpath());
 			root.setName("_root_");
-			root.setPath(f.getPath());
+			root.setPath(rootPath.getAbsolutePath());
 			root.setRow(row);
 			root.setDate(new Long(new java.util.Date().getTime()));
 			root.setAge(new Long(0));
@@ -88,17 +88,17 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 
 	/* setting File informations */
 	private File setFileData(Row row, java.io.File file, boolean isDir) {
-		File dirData = new File();
-		dirData.setIsDir(isDir);
-		dirData.setRow(row);
-		dirData.setPath(file.getPath());
-		dirData.setName(file.getName());
-		dirData.setDate(new Long(file.lastModified()));
-		dirData.setAge(new Long((new Date()).getTime() - file.lastModified()));
-		dirData.setSize(new Long(file.length()));
-		dirData.setChildren(new ArrayList());
-		dirData.setNotOnDisk(false);
-		return dirData;
+		File fileData = new File();
+		fileData.setIsDir(isDir);
+		fileData.setRow(row);
+		fileData.setPath(file.getAbsolutePath());
+		fileData.setName(file.getName());
+		fileData.setDate(new Long(file.lastModified()));
+		fileData.setAge(new Long((new Date()).getTime() - file.lastModified()));
+		fileData.setSize(new Long(file.length()));
+		fileData.setChildren(new ArrayList());
+		fileData.setNotOnDisk(false);
+		return fileData;
 	}
 	
 	
