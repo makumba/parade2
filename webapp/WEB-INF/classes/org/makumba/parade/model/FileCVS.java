@@ -6,9 +6,9 @@ public class FileCVS extends AbstractFileData {
 	
 	private Long id;
 	
-	private Integer status;
+	private Integer status = new Integer(0);
 	
-	private String revision;
+	private String revision="";
 	
 	private Date date;
 	
