@@ -1,4 +1,6 @@
-package org.makumba.parade.model;
+package org.makumba.parade.model.interfaces;
+
+import org.makumba.parade.model.Row;
 
 
 public interface DirectoryRefresher {

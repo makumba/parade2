@@ -13,7 +13,7 @@ import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowAnt;
-import org.makumba.parade.model.RowRefresher;
+import org.makumba.parade.model.interfaces.RowRefresher;
 
 public class AntManager implements RowRefresher {
 	

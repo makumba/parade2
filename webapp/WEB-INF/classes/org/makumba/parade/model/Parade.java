@@ -15,7 +15,7 @@ import org.makumba.parade.model.managers.MakumbaManager;
 import org.makumba.parade.model.managers.RowStoreManager;
 import org.makumba.parade.model.managers.TrackerManager;
 import org.makumba.parade.model.managers.WebappManager;
-import org.makumba.parade.view.RowStoreViewManager;
+import org.makumba.parade.view.managers.RowStoreViewManager;
 
 public class Parade {
 	

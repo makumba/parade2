@@ -15,8 +15,8 @@ import org.apache.log4j.Logger;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
-import org.makumba.parade.model.RowRefresher;
 import org.makumba.parade.model.RowWebapp;
+import org.makumba.parade.model.interfaces.RowRefresher;
 
 public class WebappManager implements RowRefresher {
 	

@@ -15,8 +15,8 @@ import java.util.jar.Manifest;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.RowMakumba;
-import org.makumba.parade.model.RowRefresher;
 import org.makumba.parade.model.RowWebapp;
+import org.makumba.parade.model.interfaces.RowRefresher;
 
 public class MakumbaManager implements RowRefresher {
 	

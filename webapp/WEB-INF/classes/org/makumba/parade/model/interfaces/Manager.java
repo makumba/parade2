@@ -1,4 +1,4 @@
-package org.makumba.parade.model;
+package org.makumba.parade.model.interfaces;
 
 public interface Manager {
 	

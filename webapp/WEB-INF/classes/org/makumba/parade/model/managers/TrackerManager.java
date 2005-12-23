@@ -4,10 +4,10 @@ package org.makumba.parade.model.managers;
 
 import java.util.Map;
 
-import org.makumba.parade.model.DirectoryRefresher;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileTracker;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.interfaces.DirectoryRefresher;
 
 
 public class TrackerManager implements DirectoryRefresher {

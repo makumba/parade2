@@ -12,12 +12,12 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.model.DirectoryRefresher;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
-import org.makumba.parade.model.RowRefresher;
+import org.makumba.parade.model.interfaces.DirectoryRefresher;
+import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.SimpleFileFilter;
 
 public class CVSManager implements DirectoryRefresher, RowRefresher {

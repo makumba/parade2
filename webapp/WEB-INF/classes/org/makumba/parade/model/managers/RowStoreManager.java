@@ -8,9 +8,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.Parade;
-import org.makumba.parade.model.ParadeRefresher;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowData;
+import org.makumba.parade.model.interfaces.ParadeRefresher;
 
 
 public class RowStoreManager implements ParadeRefresher {

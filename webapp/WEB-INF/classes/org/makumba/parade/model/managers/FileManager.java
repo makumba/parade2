@@ -9,10 +9,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
-import org.makumba.parade.model.DirectoryRefresher;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowRefresher;
+import org.makumba.parade.model.interfaces.DirectoryRefresher;
+import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.SimpleFileFilter;
 
 public class FileManager implements RowRefresher, DirectoryRefresher {
