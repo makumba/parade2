@@ -1,7 +1,6 @@
 package org.makumba.parade.view;
 
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Iterator;

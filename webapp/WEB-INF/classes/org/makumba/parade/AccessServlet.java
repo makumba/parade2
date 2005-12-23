@@ -1,8 +1,6 @@
 package org.makumba.parade;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;

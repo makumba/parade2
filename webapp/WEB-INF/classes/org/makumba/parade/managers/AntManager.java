@@ -1,17 +1,13 @@
 package org.makumba.parade.managers;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;

@@ -1,14 +1,12 @@
 package org.makumba.parade;
 
 import java.io.PrintWriter;
-import java.util.Iterator;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -17,11 +15,6 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.makumba.parade.model.Parade;
-import org.makumba.parade.model.Row;
-import org.makumba.parade.view.AntViewManager;
-import org.makumba.parade.view.CVSViewManager;
-import org.makumba.parade.view.MakumbaViewManager;
-import org.makumba.parade.view.RowStoreViewManager;
 import org.makumba.parade.view.ViewManager;
 
 

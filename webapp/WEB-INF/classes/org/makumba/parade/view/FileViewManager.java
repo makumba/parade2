@@ -1,11 +1,8 @@
 package org.makumba.parade.view;
 
-import java.io.BufferedWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
