@@ -15,7 +15,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.makumba.parade.model.Parade;
-import org.makumba.parade.view.ViewManager;
+import org.makumba.parade.view.managers.ViewManager;
 
 
 public class InitServlet extends HttpServlet {
@@ -93,15 +93,6 @@ public class InitServlet extends HttpServlet {
             System.out.println("INFO: Initialisation took "+refresh+" ms");
             
         }
-        
-        public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
-
-    		PrintWriter out = resp.getWriter();
-    		ViewManager viewMgr = new ViewManager(p, req);
-    		viewMgr.getView(out);
-    	
-    	}
-        
         
         public static SessionFactory getSessionFactory() {
         	return sessionFactory;
