@@ -37,26 +37,56 @@
         <servlet-class>org.makumba.parade.access.LogServlet</servlet-class>
 	<load-on-startup>1</load-on-startup>
     </servlet>
-
+    
     <servlet>
         <servlet-name>mddLinker</servlet-name>
         <servlet-class>org.makumba.devel.SourceViewServlet</servlet-class>
     </servlet>
 
- <servlet>
-    <servlet-name>invoker</servlet-name>
-    <servlet-class>org.apache.catalina.servlets.InvokerServlet</servlet-class>
-    <init-param>
-      <param-name>debug</param-name>
-      <param-value>0</param-value>
-    </init-param>
-    <load-on-startup>2</load-on-startup>
-  </servlet>
+	<servlet>
+	   <servlet-name>invoker</servlet-name>
+	   <servlet-class>org.apache.catalina.servlets.InvokerServlet</servlet-class>
+	   <init-param>
+	     <param-name>debug</param-name>
+	     <param-value>0</param-value>
+	   </init-param>
+	   <load-on-startup>2</load-on-startup>
+	 </servlet>
+	 
+	 <servlet>
+	   <servlet-name>index</servlet-name>
+	   <servlet-class>org.makumba.parade.view.IndexServlet</servlet-class>
+	 </servlet>
+	 
+	 <servlet>
+	   <servlet-name>tree</servlet-name>
+	   <servlet-class>org.makumba.parade.view.TreeServlet</servlet-class>
+	 </servlet>
+	 
+	 <servlet>
+	   <servlet-name>header</servlet-name>
+	   <servlet-class>org.makumba.parade.view.HeaderServlet</servlet-class>
+	 </servlet>
+	 
+	 <servlet>
+	   <servlet-name>file</servlet-name>
+	   <servlet-class>org.makumba.parade.view.FileBrowserServlet</servlet-class>
+	 </servlet>
+	 
+	 <servlet>
+	   <servlet-name>command</servlet-name>
+	   <servlet-class>org.makumba.parade.view.CommandServlet</servlet-class>
+	 </servlet>
   
-  <servlet-mapping>
-    <servlet-name>invoker</servlet-name>
-    <url-pattern>/servlet/*</url-pattern>
-  </servlet-mapping>
+	 <servlet-mapping>
+	   <servlet-name>invoker</servlet-name>
+	   <url-pattern>/servlet/*</url-pattern>
+	 </servlet-mapping>
+	 
+	 <servlet-mapping>
+	   <servlet-name>index</servlet-name>
+	   <url-pattern>/</url-pattern>
+	 </servlet-mapping>
   
   
 
