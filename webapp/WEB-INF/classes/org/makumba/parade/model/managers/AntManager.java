@@ -1,4 +1,4 @@
-package org.makumba.parade.managers;
+package org.makumba.parade.model.managers;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
-import org.makumba.parade.ifc.RowRefresher;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowAnt;
+import org.makumba.parade.model.RowRefresher;
 
 public class AntManager implements RowRefresher {
 	

@@ -1,6 +1,5 @@
 package org.makumba.parade.view;
 
-import org.makumba.parade.ifc.FileBrowserView;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
 

@@ -1,4 +1,4 @@
-package org.makumba.parade.managers;
+package org.makumba.parade.model.managers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,10 +12,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import org.makumba.parade.ifc.RowRefresher;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.RowMakumba;
+import org.makumba.parade.model.RowRefresher;
 import org.makumba.parade.model.RowWebapp;
 
 public class MakumbaManager implements RowRefresher {

@@ -1,9 +1,10 @@
-package org.makumba.parade.managers;
+package org.makumba.parade.model.managers;
 
 
 
 import java.util.Map;
-import org.makumba.parade.ifc.DirectoryRefresher;
+
+import org.makumba.parade.model.DirectoryRefresher;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileTracker;
 import org.makumba.parade.model.Row;

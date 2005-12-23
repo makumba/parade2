@@ -1,4 +1,4 @@
-package org.makumba.parade;
+package org.makumba.parade.access;
 
 import java.net.MalformedURLException;
 import javax.servlet.ServletContext;
@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.tools.Authorizer;
 import org.makumba.parade.tools.DatabaseAuthorizer;
 import org.makumba.parade.tools.HttpLogin;

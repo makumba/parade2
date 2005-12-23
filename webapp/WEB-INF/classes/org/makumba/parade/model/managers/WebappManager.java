@@ -1,4 +1,4 @@
-package org.makumba.parade.managers;
+package org.makumba.parade.model.managers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,11 +12,10 @@ import java.util.Properties;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.ParadeProperties;
-import org.makumba.parade.ifc.RowRefresher;
-import org.makumba.parade.ifc.ServletContainer;
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
+import org.makumba.parade.model.RowRefresher;
 import org.makumba.parade.model.RowWebapp;
 
 public class WebappManager implements RowRefresher {

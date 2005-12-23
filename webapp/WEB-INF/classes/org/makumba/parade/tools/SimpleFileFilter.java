@@ -1,4 +1,4 @@
-package org.makumba.parade;
+package org.makumba.parade.tools;
 
 import java.io.File;
 import java.io.FileFilter;

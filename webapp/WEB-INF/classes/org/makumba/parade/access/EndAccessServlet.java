@@ -1,4 +1,4 @@
-package org.makumba.parade;
+package org.makumba.parade.access;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;

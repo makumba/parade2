@@ -7,8 +7,6 @@ import java.util.Set;
 
 import javax.servlet.ServletRequest;
 
-import org.makumba.parade.ifc.FileBrowserView;
-import org.makumba.parade.ifc.TreeView;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
 

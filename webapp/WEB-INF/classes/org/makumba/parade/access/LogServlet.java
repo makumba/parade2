@@ -1,4 +1,4 @@
-package org.makumba.parade;
+package org.makumba.parade.access;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.makumba.HtmlUtils;
+import org.makumba.parade.init.ParadeProperties;
 
 public class LogServlet extends HttpServlet {
 

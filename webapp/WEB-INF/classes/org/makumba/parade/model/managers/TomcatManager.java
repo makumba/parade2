@@ -1,4 +1,4 @@
-package org.makumba.parade.managers;
+package org.makumba.parade.model.managers;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,8 +13,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.ParadeProperties;
-import org.makumba.parade.ifc.ServletContainer;
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.tools.ForeignHttpAuthorizer;
 
 public class TomcatManager implements ServletContainer {
@@ -36,7 +35,7 @@ public class TomcatManager implements ServletContainer {
     	
     	//dummy
     	config.put("parade.servletContext.tomcatServerName", "localhost");
-        config.put("parade.servletContext.tomcatServerPort", "8080");
+        config.put("parade.servletContext.tomcatServerPort", ParadeProperties.getProperty("http.port"));
     }
 
     public void init(java.util.Properties config) {
@@ -51,12 +50,12 @@ public class TomcatManager implements ServletContainer {
     	String result="";
         try {
         	HttpURLConnection uc = ForeignHttpAuthorizer.sendAuth(new URL(managerURL + s), user, pass);
-            logger.warn("connected to "+(managerURL+s));
+            logger.warn("connected to "+(managerURL+s)+" with user: "+user + " and pass: "+ pass);
             // PROBLEM HERE !!!
             
-            if (uc.getResponseCode() != 200) logger.error(new RuntimeException(uc.getResponseMessage()));
+            if (uc.getResponseCode() != 200) logger.error(uc.getResponseMessage());
             logger.warn("checks 1 ok");
-            if (uc.getContentLength() == 0) logger.error(new RuntimeException("content zero"));
+            if (uc.getContentLength() == 0) logger.error("content zero");
             logger.warn("checks 2 ok");
             
             

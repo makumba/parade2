@@ -1,4 +1,4 @@
-package org.makumba.parade;
+package org.makumba.parade.init;
 
 import java.io.File;
 import java.io.FileInputStream;

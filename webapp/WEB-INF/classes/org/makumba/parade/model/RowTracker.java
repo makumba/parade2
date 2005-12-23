@@ -1,6 +1,5 @@
 package org.makumba.parade.model;
 
-import org.makumba.parade.ifc.RowData;
 
 public class RowTracker extends AbstractRowData implements RowData {
 	

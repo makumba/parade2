@@ -16,10 +16,10 @@ aded! -->
                  <param-value>/</param-value>
       </init-param>
       <init-param><param-name>beforeServlet</param-name>
-                 <param-value>/servlet/org.makumba.parade.AccessServlet</param-value>
+                 <param-value>/servlet/org.makumba.parade.access.AccessServlet</param-value>
       </init-param>
       <init-param><param-name>afterServlet</param-name>
-                 <param-value>/servlet/org.makumba.parade.EndAccessServlet</param-value>
+                 <param-value>/servlet/org.makumba.parade.access.EndAccessServlet</param-value>
       </init-param>
    </filter>
 
@@ -99,10 +99,7 @@ aded! -->
         <load-on-startup>1</load-on-startup>
     </servlet>
     
-    <servlet>
-    	<servlet-name>parade</servlet-name>
-    	<servlet-class>org.makumba.parade.InitServlet</servlet-class>
-  	</servlet>
+    
 
 
   <!-- The "invoker" servlet, which executes anonymous servlet classes      -->
@@ -383,11 +380,6 @@ aded! -->
         <url-pattern>/cgi-bin/*</url-pattern>
     </servlet-mapping>
 -->
-
-	<servlet-mapping>
-	    <servlet-name>parade</servlet-name>
-	    <url-pattern>/</url-pattern>
-	</servlet-mapping>
 
 
   <!-- ==================== Default Session Configuration ================= -->

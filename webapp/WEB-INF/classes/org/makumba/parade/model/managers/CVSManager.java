@@ -1,4 +1,4 @@
-package org.makumba.parade.managers;
+package org.makumba.parade.model.managers;
 
 import java.io.BufferedReader;
 import java.io.FileFilter;
@@ -12,13 +12,13 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.SimpleFileFilter;
-import org.makumba.parade.ifc.DirectoryRefresher;
-import org.makumba.parade.ifc.RowRefresher;
+import org.makumba.parade.model.DirectoryRefresher;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
+import org.makumba.parade.model.RowRefresher;
+import org.makumba.parade.tools.SimpleFileFilter;
 
 public class CVSManager implements DirectoryRefresher, RowRefresher {
 	
@@ -57,14 +57,14 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 		
 		// we will go through the CVS entries of the real directory
 		if(currDir.isDirectory() && filter.accept(currDir) && !(currDir.getName() == null)) {
-			logger.warn("CVS: looking for path "+path);
+			//logger.warn("CVS: looking for path "+path);
 			
 			// getting the File object mapped to this dir
 			File currFile = (File) row.getFiles().get(path);
 			
 			// you never know
 			if(!(currFile == null) && currFile.getIsDir()) {
-				logger.warn("CVS: got file "+currFile.getName());
+				//logger.warn("CVS: got file "+currFile.getName());
 				
 				readFiles(row,currFile);
 				
@@ -151,7 +151,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
                     int n = line.indexOf('/', 1);
                     if (n == -1) continue;
                     String name = line.substring(1, n);
-                    logger.warn("Looking for CVS file: "+name);
+                    //logger.warn("Looking for CVS file: "+name);
                     
                     // checking if the file we are looking for is mapped
                     File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + name);

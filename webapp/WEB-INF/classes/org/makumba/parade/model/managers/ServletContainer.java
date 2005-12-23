@@ -1,4 +1,4 @@
-package org.makumba.parade.ifc;
+package org.makumba.parade.model.managers;
 
 public interface ServletContainer {
     public static final int NOT_INSTALLED = 0;

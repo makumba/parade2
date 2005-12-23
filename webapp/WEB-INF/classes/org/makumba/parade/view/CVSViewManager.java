@@ -6,8 +6,6 @@ import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletRequest;
 
-import org.makumba.parade.ifc.FileBrowserView;
-import org.makumba.parade.ifc.ParadeView;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;

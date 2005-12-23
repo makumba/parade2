@@ -1,18 +1,21 @@
 package org.makumba.parade.model;
 
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.ParadeProperties;
-import org.makumba.parade.managers.AntManager;
-import org.makumba.parade.managers.CVSManager;
-import org.makumba.parade.managers.FileManager;
-import org.makumba.parade.managers.MakumbaManager;
-import org.makumba.parade.managers.RowStoreManager;
-import org.makumba.parade.managers.TrackerManager;
-import org.makumba.parade.managers.WebappManager;
+
+import org.makumba.parade.init.ParadeProperties;
+import org.makumba.parade.model.managers.AntManager;
+import org.makumba.parade.model.managers.CVSManager;
+import org.makumba.parade.model.managers.FileManager;
+import org.makumba.parade.model.managers.MakumbaManager;
+import org.makumba.parade.model.managers.RowStoreManager;
+import org.makumba.parade.model.managers.TrackerManager;
+import org.makumba.parade.model.managers.WebappManager;
+import org.makumba.parade.view.RowStoreViewManager;
 
 public class Parade {
 	
@@ -71,7 +74,7 @@ public class Parade {
 		rows.put(r.getRowname(),r);
 	}
 	
-		
+			
 	public Long getId() {
 		return id;
 	}

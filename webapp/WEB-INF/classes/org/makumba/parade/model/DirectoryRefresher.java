@@ -1,6 +1,5 @@
-package org.makumba.parade.ifc;
+package org.makumba.parade.model;
 
-import org.makumba.parade.model.Row;
 
 public interface DirectoryRefresher {
 

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.makumba.parade.managers.CVSManager;
-import org.makumba.parade.managers.FileManager;
-import org.makumba.parade.managers.TrackerManager;
+import org.makumba.parade.model.managers.CVSManager;
+import org.makumba.parade.model.managers.FileManager;
+import org.makumba.parade.model.managers.TrackerManager;
 
 public class File {
 	

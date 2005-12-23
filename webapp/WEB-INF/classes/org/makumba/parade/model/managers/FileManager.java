@@ -1,4 +1,4 @@
-package org.makumba.parade.managers;
+package org.makumba.parade.model.managers;
 
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -9,11 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
-import org.makumba.parade.SimpleFileFilter;
-import org.makumba.parade.ifc.DirectoryRefresher;
-import org.makumba.parade.ifc.RowRefresher;
+import org.makumba.parade.model.DirectoryRefresher;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.RowRefresher;
+import org.makumba.parade.tools.SimpleFileFilter;
 
 public class FileManager implements RowRefresher, DirectoryRefresher {
 

@@ -1,4 +1,4 @@
-package org.makumba.parade.managers;
+package org.makumba.parade.model.managers;
 
 
 import java.util.HashMap;
@@ -6,11 +6,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.RowProperties;
-import org.makumba.parade.ifc.ParadeRefresher;
-import org.makumba.parade.ifc.RowData;
+import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.Parade;
+import org.makumba.parade.model.ParadeRefresher;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.RowData;
 
 
 public class RowStoreManager implements ParadeRefresher {

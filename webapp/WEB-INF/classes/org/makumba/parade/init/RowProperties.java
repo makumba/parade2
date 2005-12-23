@@ -1,4 +1,4 @@
-package org.makumba.parade;
+package org.makumba.parade.init;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ public class RowProperties {
 		
 		this.addRowDefinition("test-k",".", "the ultimate parade2 test row");
 		this.addRowDefinition("test2-k","../parade", "the old parade row");
-		//this.addRowDefinition("vilius-k","E:/My Projects/ITC/merger/vilius","vilius playing with PA Guidelines");
+		//this.addRowDefinition("manu-k","E:/_Projects/ITC/karamba","manu messing it all up again");
 	}
 	
 	

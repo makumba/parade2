@@ -29,12 +29,12 @@
 <!-- ============  DEFINE servlets to handle ============== -->
     <servlet>
         <servlet-name>init</servlet-name>
-        <servlet-class>org.makumba.parade.InitServlet</servlet-class>
+        <servlet-class>org.makumba.parade.init.InitServlet</servlet-class>
 	<load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
         <servlet-name>log</servlet-name>
-        <servlet-class>org.makumba.parade.LogServlet</servlet-class>
+        <servlet-class>org.makumba.parade.access.LogServlet</servlet-class>
 	<load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -57,6 +57,8 @@
     <servlet-name>invoker</servlet-name>
     <url-pattern>/servlet/*</url-pattern>
   </servlet-mapping>
+  
+  
 
 <!-- other examples -->
 <!--
