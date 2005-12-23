@@ -1,7 +1,8 @@
-package org.makumba.parade.view;
+package org.makumba.parade.view.managers;
 
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowMakumba;
+import org.makumba.parade.view.interfaces.ParadeView;
 
 public class MakumbaViewManager implements ParadeView {
 

@@ -1,7 +1,9 @@
-package org.makumba.parade.view;
+package org.makumba.parade.view.managers;
 
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowAnt;
+import org.makumba.parade.view.interfaces.ParadeView;
+import org.makumba.parade.view.interfaces.ToolView;
 
 public class AntViewManager implements ParadeView, ToolView {
 

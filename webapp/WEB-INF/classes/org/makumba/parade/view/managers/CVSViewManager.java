@@ -1,19 +1,17 @@
-package org.makumba.parade.view;
+package org.makumba.parade.view.managers;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
-import javax.servlet.ServletRequest;
-
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
+import org.makumba.parade.view.interfaces.FileView;
+import org.makumba.parade.view.interfaces.ParadeView;
 
-public class CVSViewManager implements ParadeView, FileBrowserView {
-
-	private ServletRequest req;
+public class CVSViewManager implements ParadeView, FileView {
 
 	public String getParadeViewHeader() {
 		String header = "<b>CVS module, user, branch</b>";
@@ -54,7 +52,7 @@ public class CVSViewManager implements ParadeView, FileBrowserView {
 			
 			} else { // show options to add to cvs
 				out.print(cvscommand+"add&reload=><img src='/images/cvs-add.gif' alt='add' border='0'></a>"+
-							cvscommand+"add&cvs.op.-kb=&reload=><img src='images/cvs-add-binary.gif' alt='add binary' border='0'></a>");
+							cvscommand+"add&cvs.op.-kb=&reload=><img src='/images/cvs-add-binary.gif' alt='add binary' border='0'></a>");
 			}
 			return result.toString();
 		}
@@ -75,41 +73,41 @@ public class CVSViewManager implements ParadeView, FileBrowserView {
 		
 		case 1:{ // LOCALLY_MODIFIED
 			out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
-					  cvscommitt+"<img src='images/cvs-committ.gif' alt='CVS committ' border='0'></a>"+
-					  cvscommand+"diff><img src='images/cvs-diff.gif' alt='CVS diff' border='0'></a>");
+					  cvscommitt+"<img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>"+
+					  cvscommand+"diff><img src='/images/cvs-diff.gif' alt='CVS diff' border='0'></a>");
 			
 		}
 		break;
 		
 		case 2:{ // NEEDS_CHECKOUT
 			out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
-						cvscommand+"update&reload=><img src='images/cvs-update.gif' alt='CVS checkout' border='0'></a>"+
-						cvscommand+"delete&reload=><img src='images/cvs-remove.gif' alt='CVS remove' border='0'></a>");
+						cvscommand+"update&reload=><img src='/images/cvs-update.gif' alt='CVS checkout' border='0'></a>"+
+						cvscommand+"delete&reload=><img src='/images/cvs-remove.gif' alt='CVS remove' border='0'></a>");
 		}
 		break;
 		
 		case 3:{ // NEEDS_UPDATE
 			out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
-						cvscommand+"update&reload=><img src='images/cvs-update.gif' alt='CVS update' border='0'></a>");
+						cvscommand+"update&reload=><img src='/images/cvs-update.gif' alt='CVS update' border='0'></a>");
 		}
 		break;
 		
 		case 4:{ // ADDED %>
 			out.print(cvsdata.getRevision()+
-					cvscommitt+"><img src='images/cvs-committ.gif' alt='CVS committ' border='0'></a>");
+					cvscommitt+"><img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>");
 		}
 		break;
 		
 		case 5:{ // DELETED
 			out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
-					cvscommitt+"><img src='images/cvs-committ.gif' alt='CVS committ' border='0'></a>");
+					cvscommitt+"><img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>");
 		}
 		break;
 		
 		case 6:{ // CONFLICT
 		out.print("<a href='"+cvswebLink+"' title='CVS log'><b><font color='red'>Conflict</font></b> "+cvsdata.getRevision()+"</a>"+
-					cvscommitt+"<img src='images/cvs-committ.gif' alt='CVS committ' border='0'></a>"+
-					cvscommand+"diff><img src='images/cvs-diff.gif' alt='CVS diff' border='0'></a>");
+					cvscommitt+"<img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>"+
+					cvscommand+"diff><img src='/images/cvs-diff.gif' alt='CVS diff' border='0'></a>");
 		}
 		break;
 		}
@@ -120,10 +118,6 @@ public class CVSViewManager implements ParadeView, FileBrowserView {
 	public String getFileViewHeader() {
 		String header = "<b>CVS</b>";
 		return header;
-	}
-	
-	public CVSViewManager(ServletRequest req) {
-		this.req = req;
 	}
 
 }

@@ -1,32 +1,25 @@
-package org.makumba.parade.view;
+package org.makumba.parade.view.managers;
 
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.io.StringWriter;
 import java.util.Iterator;
 
-import javax.servlet.ServletRequest;
-
-import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 
 public class ViewManager {
 	
-	private Parade p;
-	private ServletRequest req;
-	
-	public void getView(PrintWriter out) {
+	public String getView(Parade p, String context) {
 		
-		String browse = (String)req.getParameter("browse");
-		String tree = (String)req.getParameter("tree");
-		String file = (String)req.getParameter("file");
+		StringWriter result = new StringWriter();
+		PrintWriter out = new PrintWriter(result);
 		
 		//we are in the browse view
-		if(browse != null) {
+		if(context != null) {
 			
-			Row r = (Row) p.getRows().get(browse);
+			Row r = (Row) p.getRows().get(context);
 			
+			/*
 			//we print the tree
 			if(tree != null) {
 				FileViewManager fileV = new FileViewManager(req);
@@ -63,36 +56,32 @@ public class ViewManager {
 			
 			//general browse view
 			} else {
-				out.println("<HTML><HEAD><TITLE>"+browse+" browser</TITLE>"+
-				"</HEAD><BODY><CENTER>");
-	
-				out.println("Welcome to the browser!<br>" +
-						"Here you can see the <a href='?browse="+r.getRowname()+"&tree=small'>files</a> of this row!");
-				/*
-				out.println("<FRAMESET rows='30,*'>"+      
-								"<FRAME name='header' src='"
-								
-								+"' marginwidth='1' marginheight='1'>"+
-								"<FRAMESET cols='190,*'>"+
-									"<FRAME name='tree' src='tree.jsp?context=<%=context%>' marginwidth='0' marginheight='5'>"+
-									"<FRAMESET rows='*,20%'>"+      
-										"<FRAME name='directory' src='files.jsp?context='>"+
-										"<FRAME name='command' src='tipOfTheDay.jsp' marginwidth='1' marginheight='1'>"+
-									"</FRAMESET>"+
-								"</FRAMESET>"+
-							"</FRAMESET>");
-				*/
-				
+			*/
 			
-				out.println("</TABLE></CENTER></BODY></HTML>");
-			}
+				out.println("<HTML><HEAD><TITLE>"+context+" browser</TITLE>"+
+				"</HEAD>");
+	
+				out.println("<FRAMESET rows=\"30,*\">"+      
+						"<FRAME name=\"header\" src=\"/servlet/header?context="+r.getRowname()+"\""+
+						" marginwidth=\"1\" marginheight=\"1\">"+
+						"<FRAMESET cols=\"190,*\">"+
+							"<FRAME name=\"tree\" src=\"/servlet/tree?context="+r.getRowname()+"\" marginwidth=\"0\" marginheight=\"5\">"+
+							"<FRAMESET rows=\"*,20%\">"+      
+								"<FRAME name=\"directory\" src=\"/servlet/file?context="+r.getRowname()+"\">"+
+								"<FRAME name=\"command\" src=\"/servlet/command\" marginwidth=\"1\" marginheight=\"1\">"+
+							"</FRAMESET>"+
+						"</FRAMESET>"+
+					"</FRAMESET>");
+				
+				out.println("</HTML>");
+			
 			
 		}
 		
 		//we are in the table view
-		if(browse == null) {
+		if(context == null) {
 			RowStoreViewManager rowstoreV = new RowStoreViewManager();
-			CVSViewManager cvsV = new CVSViewManager(req);
+			CVSViewManager cvsV = new CVSViewManager();
 			AntViewManager antV = new AntViewManager();
 			MakumbaViewManager makV = new MakumbaViewManager();
 			
@@ -149,7 +138,7 @@ public class ViewManager {
 		}
 		
 		
-		
+		return result.toString();
 		
 	}
 	
@@ -209,7 +198,6 @@ public class ViewManager {
         String unit = "seconds";
 
         // now try to give it a meaning:
-        Long s = new Long(secs);
 
         long[] breaks = { 31536000, 2628000, 604800, 86400, 3600, 60, 1 };
         String[] desc = { "year", "month", "week", "day", "hour", "minute",
@@ -232,11 +220,5 @@ public class ViewManager {
 
         return (retval);
     }
-	
-
-	public ViewManager(Parade p, ServletRequest req) {
-		this.p = p;
-		this.req = req;
-	}
 
 }

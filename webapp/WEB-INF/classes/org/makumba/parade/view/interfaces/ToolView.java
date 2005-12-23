@@ -1,4 +1,4 @@
-package org.makumba.parade.view;
+package org.makumba.parade.view.interfaces;
 
 import org.makumba.parade.model.Row;
 
