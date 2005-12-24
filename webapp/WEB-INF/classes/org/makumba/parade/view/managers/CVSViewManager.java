@@ -9,9 +9,10 @@ import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.view.interfaces.FileView;
+import org.makumba.parade.view.interfaces.HeaderView;
 import org.makumba.parade.view.interfaces.ParadeView;
 
-public class CVSViewManager implements ParadeView, FileView {
+public class CVSViewManager implements ParadeView, FileView, HeaderView {
 
 	public String getParadeViewHeader() {
 		String header = "<b>CVS module, user, branch</b>";
@@ -118,6 +119,22 @@ public class CVSViewManager implements ParadeView, FileView {
 	public String getFileViewHeader() {
 		String header = "<b>CVS</b>";
 		return header;
+	}
+
+	public String getHeaderView(Row r) {
+		/*
+		<%-- $Header$ --%>
+<br>CVS: 
+<%
+String cvscommand="<a target='command' href=command.jsp?"+pageContext.findAttribute("parade.sameDir")+"&cvs.perDir=&op=cvs&cvs.op=";
+%>
+<%=cvscommand%>update&cvs.-l=&cvs.-n=&cvs.op.-d=&cvs.op.-P=>check status</a>
+<%=cvscommand%>update&cvs.op.-d=&cvs.op.-P=&cvs.op.-l=&reload=>local update</a>
+<%=cvscommand%>update&cvs.op.-d=&cvs.op.-P=&reload=>recursive update</a>
+
+		 * 
+		 */
+		return null;
 	}
 
 }

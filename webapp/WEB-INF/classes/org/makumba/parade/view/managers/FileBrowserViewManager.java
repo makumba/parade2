@@ -9,12 +9,9 @@ import org.makumba.parade.view.interfaces.FileBrowserView;
 
 public class FileBrowserViewManager implements FileBrowserView {
 
-	public String getFileBrowserView(Parade p, String context, String path) {
+	public String getFileBrowserView(Parade p, Row r, String path) {
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
-		
-		Row r = (Row) p.getRows().get(context);
-		if(r==null) return "Unknown context "+context;
 		
 		if(path==null) path="/";
 		path=path.replace(java.io.File.separatorChar, '/');
@@ -25,7 +22,7 @@ public class FileBrowserViewManager implements FileBrowserView {
 		CVSViewManager cvsV = new CVSViewManager();
 		
 		
-		out.println("<HTML><HEAD><TITLE>"+context+" files</TITLE>"+
+		out.println("<HTML><HEAD><TITLE>"+r.getRowname()+" files</TITLE>"+
 				"</HEAD><BODY>");
 		
 		out.println("<p align='left'" +

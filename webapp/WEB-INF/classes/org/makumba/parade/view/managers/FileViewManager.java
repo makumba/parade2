@@ -33,14 +33,12 @@ public class FileViewManager implements FileView, TreeView {
 		return result.toString();
 	}
 
-	public String getTreeView(Parade p, String context) {
-		Row r = (Row) p.getRows().get(context);
-		if(r==null) return "Unknown context "+context;
+	public String getTreeView(Parade p, Row r) {
 		
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		
-		out.println("<HTML><HEAD><TITLE>"+context+" tree</TITLE>"+
+		out.println("<HTML><HEAD><TITLE>"+r.getRowname()+" tree</TITLE>"+
 		"</HEAD><BODY><CENTER>");
 		
 		Set files = r.getFiles().keySet();
@@ -69,6 +67,14 @@ public class FileViewManager implements FileView, TreeView {
 	private String getJSTreeView(Parade p, String context, String s) {
 		Row r = (Row) p.getRows().get(context);
 		if(r==null) return "Unknown context "+context;
+		
+		// get a list of all the dirs
+		
+		
+		
+		
+		
+		
 		
 		
 		StringWriter result = new StringWriter();
