@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
+import org.makumba.parade.model.Row;
 import org.makumba.parade.view.managers.FileBrowserViewManager;
 
 public class FileBrowserServlet extends HttpServlet {
@@ -26,20 +27,25 @@ public class FileBrowserServlet extends HttpServlet {
 	}
 	
 	public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
-
+		PrintWriter out = resp.getWriter();
+		
 		Session s = InitServlet.getSessionFactory().openSession();
 		Transaction tx = s.beginTransaction();
+		
 		
 		Parade p = (Parade) s.get(Parade.class, new Long(1));
 		String context = (String)req.getParameter("context");
 		String path = (String)req.getParameter("path");
 		
 		
-		resp.setContentType("text/html");
-		PrintWriter out = resp.getWriter();
-		
-		FileBrowserViewManager filebrowserV = new FileBrowserViewManager();
-		out.println(filebrowserV.getFileBrowserView(p,context,path));
+		Row r = (Row)p.getRows().get(context);
+		if(r == null) {
+			out.println("Unknown context "+context);
+		} else {
+			resp.setContentType("text/html");
+			FileBrowserViewManager filebrowserV = new FileBrowserViewManager();
+			out.println(filebrowserV.getFileBrowserView(p,r,path));
+		}
 		
 		tx.commit();
 		

@@ -26,15 +26,16 @@ public class IndexServlet extends HttpServlet {
 	}
 
 	public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
-
+		PrintWriter out = resp.getWriter();
+		
 		Session s = InitServlet.getSessionFactory().openSession();
 		Transaction tx = s.beginTransaction();
 		
 		Parade p = (Parade) s.get(Parade.class, new Long(1));
+		String context = (String) req.getParameter("context");
 		
 		resp.setContentType("text/html");
-		String context = (String) req.getParameter("context");
-		PrintWriter out = resp.getWriter();
+		
 		ViewManager viewMgr = new ViewManager();
 		out.print(viewMgr.getView(p,context));
 		
