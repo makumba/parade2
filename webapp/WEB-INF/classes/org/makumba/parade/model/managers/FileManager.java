@@ -1,13 +1,13 @@
 package org.makumba.parade.model.managers;
 
 import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
@@ -96,64 +96,75 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 		fileData.setDate(new Long(file.lastModified()));
 		fileData.setAge(new Long((new Date()).getTime() - file.lastModified()));
 		fileData.setSize(new Long(file.length()));
-		fileData.setChildren(new ArrayList());
 		fileData.setNotOnDisk(false);
 		return fileData;
 	}
 	
 	
-		
-	/* adding file to parent children, if it's not the root 
-	private void setParentChildren(Row row, File fileData) {
-		File parent = (File) row.getFiles().get(fileData.getPath());
-		if(!(parent == null)) {
-			ArrayList children = parent.getChildren();
-			if(children == null) {
-				children = new ArrayList();
-			}
-			children.add(fileData);
-			parent.setChildren(children);
-			}
-		}
-
-	
-	*/
-	
-	/* getting a file from a complete path
-	private File getFile(ArrayList children, String path) {
-		
-		path.replaceAll("\\",java.io.File.pathSeparator);
-		StringTokenizer st = new StringTokenizer(path,java.io.File.pathSeparator);
-		if(!st.hasMoreTokens()) {
-			return (File)children.get("path");
-		} else {
-			while(st.hasMoreTokens()) {
-				String next = st.nextToken();
-				File subdir = (File) children.get(next);
-				String subpath = path.substring(next.length()+1);
-				getFile(subdir.getChildren(),subpath);
-			}
-		}
-		return null;
-		
-	}
-	*/
-	
-	/* printing the Tree 
-	public void printTree(StringBuffer sb, List files) {
-		Iterator i = files.iterator();
-		int j =0;
-		while(i.hasNext() && j<files.size()) {
-			File f = (File) files.get(j++);
-			if(!f.getIsDir()) return;
-			sb.append(f.getName());
-			logger.warn("Appended "+f.getName());
-			sb.append("\n");
-			sb.append("  ");
-			printTree(sb, f.getChildren());
-		}
+	public static File setVirtualFileData(Row r, File path, String name, boolean dir) {
+		File cvsfile = new File();
+		cvsfile.setName(name);
+		cvsfile.setPath(path.getPath() + java.io.File.separator + name);
+		cvsfile.setNotOnDisk(true);
+		cvsfile.setIsDir(dir);
+		cvsfile.setRow(r);
+		cvsfile.setDate(new Long((new Date()).getTime()));
+		cvsfile.setAge(new Long(0));
+		cvsfile.setSize(new Long(0));
+		return cvsfile;
 	}
 	
-	*/
+	/* returns a List of the keys of the subdirs of a given path */
+	public static List getSubdirs(Row r, String path) {
+		
+		Set keySet = r.getFiles().keySet();
+		
+		List subDirs = new LinkedList();
+		
+		for(Iterator i = keySet.iterator(); i.hasNext();) {
+			String currentKey = (String) i.next();
+			if(currentKey.startsWith(path) && currentKey.substring(0,path.length()).length() > 0) {
+				File f = (File) r.getFiles().get(currentKey);
+				if (f.getIsDir()) {
+					subDirs.add(currentKey);
+				}
+			}
+		}
+		
+		return subDirs;
+		
+	}
+	
+	/* returns a List of the direct children (files, dirs) of a given Path */
+	public static List getChildren(Row r, String path) {
+		String keyPath = path;
+		
+		String absoulteRowPath = (new java.io.File(r.getRowpath()).getAbsolutePath());
+		if(keyPath == null || keyPath=="") keyPath=absoulteRowPath;
+		keyPath=keyPath.replace('/',java.io.File.separatorChar);
+		
+		Set keySet = r.getFiles().keySet();
+		
+		List children = new LinkedList();
+		
+		for(Iterator i = keySet.iterator(); i.hasNext();) {
+			String currentKey = (String) i.next();
+			boolean isChild = currentKey.startsWith(keyPath);
+			if(isChild)  {
+				boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
+				if (isNotRoot) {
+					String childKey = currentKey.substring(keyPath.length()+1,currentKey.length());
+					boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
+					if(isDirectChild) {
+						children.add(r.getFiles().get(currentKey));
+					}
+				}
+				
+			}
+			
+		}
+		
+		return children;
+	}
 
 }
