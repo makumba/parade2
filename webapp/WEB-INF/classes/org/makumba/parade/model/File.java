@@ -26,8 +26,6 @@ public class File {
 	
 	private Map filedata = new HashMap();
 	
-	private ArrayList children = new ArrayList();
-	
 	private Row row;
 	
 	private String path;
@@ -118,21 +116,9 @@ public class File {
 		return path;
 	}
 
-	public ArrayList getChildren() {
-		return children;
-	}
-
-	public void setChildren(ArrayList children) {
-		this.children = children;
-	}
-
-
-
 	public boolean isNotOnDisk() {
 		return notOnDisk;
 	}
-
-
 
 	public void setNotOnDisk(boolean onDisk) {
 		this.notOnDisk = onDisk;
