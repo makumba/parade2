@@ -157,12 +157,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
                     File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + name);
                     
                     if (cvsfile == null) {
-                    	cvsfile = new File();
-                    	cvsfile.setName(name);
-                    	cvsfile.setPath(file.getPath() + java.io.File.separator + name);
-                    	cvsfile.setNotOnDisk(true);
-                    	cvsfile.setIsDir(false);
-                    	cvsfile.setRow(r);
+                    	cvsfile = FileManager.setVirtualFileData(r, file, name,false);
                     	r.getFiles().put(file.getPath() + java.io.File.separator + name,cvsfile);
                     }
                     FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
@@ -252,12 +247,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 					// checking if the file we are looking for is mapped
 					File cvsfile = (File) r.getFiles().get(file.getPath()+java.io.File.separator+name);
 					if (cvsfile == null) {
-						cvsfile = new File();
-						cvsfile.setName(name);
-						cvsfile.setPath(file.getPath() + java.io.File.separator + name);
-						cvsfile.setNotOnDisk(true);
-						cvsfile.setIsDir(true);
-						cvsfile.setRow(r);
+						cvsfile = FileManager.setVirtualFileData(r, file, name,true);
 						r.getFiles().put(file.getPath() + java.io.File.separator + name,cvsfile);
 					}
 					
@@ -280,6 +270,8 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
             logger.error("Error while trying to set CVS information for file "+file.getName(),t);
         }
     }
+
+	
     
     /* Reads .cvsignore */
     private void readCVSIgnore(Row r, File file) {
