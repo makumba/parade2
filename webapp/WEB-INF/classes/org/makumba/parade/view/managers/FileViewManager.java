@@ -2,12 +2,13 @@ package org.makumba.parade.view.managers;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.List;
 
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.view.interfaces.FileView;
 import org.makumba.parade.view.interfaces.TreeView;
 
@@ -15,7 +16,10 @@ public class FileViewManager implements FileView, TreeView {
 
 	
 	public String getFileViewHeader() {
-		String header = "<b>Name</b></td><td align='center'><b>Age</b></td><td align='center'><b>Size</b>";
+		String header = "<td align='left'></td>" + //type
+						"<td align='center'><b>Name</b></td>" +
+						"<td align='left'><b>Age</b></td>" +
+						"<td align='left'><b>Size</b></td>";
 		return header;
 	}
 	
@@ -23,12 +27,15 @@ public class FileViewManager implements FileView, TreeView {
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		if(f.getIsDir()) {
-			out.print("<b>"+f.getName()+"</b>");
+			out.print("<td align='left'><img src='/images/folder.gif'></td>"+
+					"<td align='left'><b><a href='/servlet/file?context="+r.getRowname()+
+						"&path="+f.getPath()+"'>"+f.getName()+"</a></b></td>");
 		} else {
-			out.print(f.getName());
+			out.print("<td align='left'><img src='/images/layout.gif'></td>"+
+					"<td align='left'>"+f.getName()+"</td>");
 		}
-		out.print("</td><td>"+ViewManager.readableTime(f.getAge().longValue()));
-		out.print("</td><td>"+ViewManager.readableBytes(f.getSize().longValue()));
+		out.print("</td><td align='left'>"+ViewManager.readableTime(f.getAge().longValue()));
+		out.print("</td><td align='left'>"+ViewManager.readableBytes(f.getSize().longValue()));
 
 		return result.toString();
 	}
@@ -39,27 +46,17 @@ public class FileViewManager implements FileView, TreeView {
 		PrintWriter out = new PrintWriter(result);
 		
 		out.println("<HTML><HEAD><TITLE>"+r.getRowname()+" tree</TITLE>"+
-		"</HEAD><BODY><CENTER>");
+		"</HEAD><BODY>");
 		
-		Set files = r.getFiles().keySet();
-		Object[] filesArray = files.toArray();
+		String absoulteRowPath = (new java.io.File(r.getRowpath())).getAbsolutePath();
+		List dirs = FileManager.getSubdirs(r,absoulteRowPath);
 		
-		for(int i =0; i<filesArray.length;i++) {
-			File f = (File) r.getFiles().get(filesArray[i]);
-			try {
-				if(f.getIsDir()) {
-					out.println("<b><a href='?context="+r.getRowname()+"&file="+java.net.URLEncoder.encode((String)filesArray[i],"UTF-8")+"'>"+(String)filesArray[i]+"</a></b><br>");
-				} else {
-					out.println("<a href='?context="+r.getRowname()+"&file="+java.net.URLEncoder.encode((String)filesArray[i],"UTF-8")+"'>"+(String)filesArray[i]+"</a><br>");
-				}
-				
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		for(Iterator i = dirs.iterator(); i.hasNext();) {
+			String curDir = (String)i.next();
+			out.println("<b><a href='file?context="+r.getRowname()+"&path="+curDir+"' target='directory'>"+curDir.substring(absoulteRowPath.length(),curDir.length())+"</a><br>");
 		}
 		
-		out.println("</CENTER></BODY></HTML>");
+		out.println("</BODY></HTML>");
 		
 		return result.toString();
 	}

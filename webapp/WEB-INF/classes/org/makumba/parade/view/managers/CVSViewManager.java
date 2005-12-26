@@ -33,6 +33,8 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
 		FileCVS cvsdata = (FileCVS) f.getFiledata().get("cvs");
 		RowCVS rowcvsdata = (RowCVS) r.getRowdata().get("cvs");
 		
+		out.print("<td align='left'>");
+		
 		String cvscommand="";
 		String cvscommitt="";
 		try {
@@ -113,11 +115,13 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
 		break;
 		}
 		
+		out.print("</td>");
+		
 		return result.toString();
 	}
 
 	public String getFileViewHeader() {
-		String header = "<b>CVS</b>";
+		String header = "<td align='left'><b>CVS</b></td>";
 		return header;
 	}
 
