@@ -50,14 +50,9 @@ public class TomcatManager implements ServletContainer {
     	String result="";
         try {
         	HttpURLConnection uc = ForeignHttpAuthorizer.sendAuth(new URL(managerURL + s), user, pass);
-            logger.warn("connected to "+(managerURL+s)+" with user: "+user + " and pass: "+ pass);
-            // PROBLEM HERE !!!
             
             if (uc.getResponseCode() != 200) logger.error(uc.getResponseMessage());
-            logger.warn("checks 1 ok");
             if (uc.getContentLength() == 0) logger.error("content zero");
-            logger.warn("checks 2 ok");
-            
             
             StringWriter sw = new StringWriter();
             InputStreamReader ir = new InputStreamReader(uc.getInputStream());
@@ -107,8 +102,7 @@ public class TomcatManager implements ServletContainer {
         }
     }
 
-    public synchronized String installContext(String contextName,
-            String contextPath) {
+    public synchronized String installContext(String contextName, String contextPath) {
         if (getContextStatus(contextName) != NOT_INSTALLED)
             return "context " + contextName + " already installed";
         try {
