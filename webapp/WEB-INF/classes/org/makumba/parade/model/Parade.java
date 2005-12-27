@@ -36,7 +36,9 @@ public class Parade {
 	 */
 	public void refresh() {
 		
-		this.paradeBase = (String) ParadeProperties.getProperty("parade.paradeBase");
+		this.paradeBase = new java.io.File((String) ParadeProperties.getProperty("webapp.path") +
+											java.io.File.separator +
+											"..").getAbsolutePath();
 		
 		RowStoreManager rowMgr = new RowStoreManager();
 		FileManager fileMgr = new FileManager();
