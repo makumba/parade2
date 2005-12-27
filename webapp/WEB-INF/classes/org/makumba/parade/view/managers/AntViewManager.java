@@ -15,7 +15,7 @@ public class AntViewManager implements ParadeView, HeaderView {
 	public String getParadeView(Row r) {
 		RowAnt antdata = (RowAnt) r.getRowdata().get("ant");
 		
-		String view = antdata.getBuildfile().getAbsolutePath();
+		String view = antdata.getBuildfile();
 		return view;
 	}
 
