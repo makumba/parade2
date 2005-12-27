@@ -22,31 +22,47 @@ public class AntManager implements RowRefresher {
 	public void rowRefresh(Row row) {
 		RowAnt antdata = new RowAnt();
 		antdata.setDataType("ant");
-				
-		Project p = setBuildFile(row, antdata);
-        if (p == null) {
-        	logger.error("AntManager: couldn't initialise the project");
-            return;
-        }
-        setTargets(antdata, p);
-        
+		
+		File buildFile = setBuildFile(row, antdata);
+		if(buildFile == null || !buildFile.exists()) {
+			logger.error("AntManager: no build file found for row "+row.getRowname());
+		} else {
+			Project p = getProject(buildFile, row, antdata);
+	        if (p == null) {
+	        	logger.error("AntManager: couldn't initialise the project");
+	        }
+	        setTargets(antdata, p);
+		}
+		
 		RowStoreManager rowMgr = new RowStoreManager();
 		rowMgr.addManagerData(antdata,row);
 		
 	}
 	
-	private Project setBuildFile(Row row, RowAnt data) {
+	private java.io.File setBuildFile(Row row, RowAnt data) {
         File dir = new File(row.getRowpath());
 
-        File buildFile = data.getBuildfile();
-        if(buildFile == null) {
-        	buildFile = new File(dir, "build.xml");
-        	if (!buildFile.exists()) return null;
-        	data.setBuildfile(buildFile);
-        }
+        String buildFilePath = data.getBuildfile();
+        File buildFile = null;
         
-        return getProject(buildFile, row, data);
+        if(buildFilePath == "") {
+        	buildFile = setBuildFilePath(row, data, dir);
+        }
+    	
+        return buildFile;
+        
     }
+
+	private java.io.File setBuildFilePath(Row row, RowAnt data, File dir) {
+		File buildFile;
+		buildFile = new java.io.File(dir + File.separator + "build.xml");
+		if (!buildFile.exists()) {
+			data.setBuildfile("No build file");
+		} else {
+			data.setBuildfile(buildFile.getAbsolutePath());
+		}
+		return buildFile;
+	}
 	
 	
 	private synchronized Project getProject(File buildFile, Row row, RowAnt data) {

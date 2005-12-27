@@ -7,13 +7,13 @@ public class RowAnt extends AbstractRowData implements RowData {
 	
 	private Long lastmodified;
 	
-	private java.io.File buildfile;
+	private String buildfile="";
 	
-	public java.io.File getBuildfile() {
+	public String getBuildfile() {
 		return buildfile;
 	}
 
-	public void setBuildfile(java.io.File buildfile) {
+	public void setBuildfile(String buildfile) {
 		this.buildfile = buildfile;
 	}
 
