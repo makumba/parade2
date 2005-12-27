@@ -43,6 +43,7 @@ public class FileBrowserServlet extends HttpServlet {
 			out.println("Unknown context "+context);
 		} else {
 			resp.setContentType("text/html");
+			resp.setCharacterEncoding("UTF-8");
 			FileBrowserViewManager filebrowserV = new FileBrowserViewManager();
 			out.println(filebrowserV.getFileBrowserView(p,r,path));
 		}

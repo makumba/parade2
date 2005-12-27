@@ -41,6 +41,7 @@ public class HeaderServlet extends HttpServlet {
 			out.println("Unknown context "+context);
 		} else {
 			resp.setContentType("text/html");
+			resp.setCharacterEncoding("UTF-8");
 						
 			HeaderViewManager hdrV = new HeaderViewManager();
 			out.println(hdrV.getHeaderView(r));

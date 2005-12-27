@@ -23,6 +23,7 @@ public class IndexServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 	public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
@@ -33,11 +34,14 @@ public class IndexServlet extends HttpServlet {
 		
 		Parade p = (Parade) s.get(Parade.class, new Long(1));
 		String context = (String) req.getParameter("context");
+		String op = (String) req.getParameter("op");
+		String handler = (String) req.getParameter("handler");
 		
 		resp.setContentType("text/html");
+		resp.setCharacterEncoding("UTF-8");
 		
 		ViewManager viewMgr = new ViewManager();
-		out.print(viewMgr.getView(p,context));
+		out.print(viewMgr.getView(p,context,handler,op));
 		
 		tx.commit();
 		

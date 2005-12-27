@@ -33,6 +33,8 @@ public class CommandServlet extends HttpServlet {
 		String context = (String)req.getParameter("context");
 		
 		resp.setContentType("text/html");
+		resp.setCharacterEncoding("UTF-8");
+		
 		PrintWriter out = resp.getWriter();
 		/*
 		FileViewManager fileV = new FileViewManager();

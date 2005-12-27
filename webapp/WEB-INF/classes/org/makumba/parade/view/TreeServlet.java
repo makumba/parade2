@@ -41,6 +41,7 @@ PrintWriter out = resp.getWriter();
 			out.println("Unknown context "+context);
 		} else {
 			resp.setContentType("text/html");
+			resp.setCharacterEncoding("UTF-8");
 			FileViewManager fileV = new FileViewManager();
 			out.println(fileV.getTreeView(p,r));
 		}
