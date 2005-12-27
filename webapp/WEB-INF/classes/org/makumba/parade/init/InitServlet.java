@@ -18,7 +18,7 @@ import org.makumba.parade.model.Parade;
 import org.makumba.parade.view.managers.ViewManager;
 
 
-public class InitServlet extends HttpServlet {
+public class InitServlet extends HttpServlet  implements Runnable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -58,10 +58,20 @@ public class InitServlet extends HttpServlet {
         
         public void init(ServletConfig conf) throws ServletException
         {
-        	System.out.println("init: Starting Parade initialization at " + new java.util.Date());
+             new Thread(this).start();
+        }
+
+        public void run()
+        {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            System.out.println("init: Starting Parade initialization at " + new java.util.Date());
         	long start = System.currentTimeMillis();
             System.out.flush();
-        	super.init();
         	        	    
             /* Getting Parade, creating one if none found */
             

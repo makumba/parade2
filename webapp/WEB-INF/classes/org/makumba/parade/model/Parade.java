@@ -63,7 +63,7 @@ public class Parade {
 			fileMgr.rowRefresh(r);
 			CVSMgr.rowRefresh(r);
 			antMgr.rowRefresh(r);
-			//webappMgr.rowRefresh(r);
+			webappMgr.rowRefresh(r);
 			makMgr.rowRefresh(r);
 		}
 	}
