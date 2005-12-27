@@ -5,8 +5,6 @@ public class RowWebapp extends AbstractRowData implements RowData {
 	
 	private Long id;
 	
-	private String contextpath;
-	
 	private String contextname;
 	
 	private Integer status;
@@ -17,14 +15,6 @@ public class RowWebapp extends AbstractRowData implements RowData {
 
 	public void setContextname(String name) {
 		this.contextname = name;
-	}
-
-	public String getContextpath() {
-		return contextpath;
-	}
-
-	public void setContextpath(String path) {
-		this.contextpath = path;
 	}
 
 	public Integer getStatus() {

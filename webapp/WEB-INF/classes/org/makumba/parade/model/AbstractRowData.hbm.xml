@@ -18,7 +18,7 @@
         <key column="ROWDATA_ID"/>
         
         <property name="lastmodified" />
-        <property name="buildfile" type="java.io.File" />
+        <property name="buildfile" />
         
         <!--  
         <list name="topTargets" table="ROW_ANT_TOPTARGETS">
@@ -56,7 +56,6 @@
     <joined-subclass name="RowWebapp" table="ROW_WEBAPP">
         <key column="ROWDATA_ID"/>
        
-        <property name="contextpath" />
         <property name="contextname" />
         <property name="status" />
         

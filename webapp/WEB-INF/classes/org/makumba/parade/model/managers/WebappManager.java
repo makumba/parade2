@@ -25,13 +25,9 @@ public class WebappManager implements RowRefresher {
 
 	ServletContainer container;
 	
-	Map containerInitParams;
-	
 	Properties config;
 	
 	String fileName = (String) ParadeProperties.paradeBase + "servletContext.properties";
-	
-	Map webinfCache = new HashMap();
 	
 	static Logger logger = Logger.getLogger(WebappManager.class.getName());
 	
@@ -83,16 +79,20 @@ public class WebappManager implements RowRefresher {
 	
 	/* stores information about Row's servletContext */
 	public void setWebappInfo(Row row, RowWebapp webappdata) {
-		String p = row.getRowpath();
-		String s = null;
-		synchronized (webinfCache) {
-			s = (String) webinfCache.get(p);
-		    if (s == null || !new File(p + java.io.File.separator + s).isDirectory()) {
-		    	webinfCache.put(p, s = searchWebinf(p, new File(p)));
-		    }
-		}
-		if (!s.equals("NO WEBINF")) {
-			webappdata.setContextpath(s);
+		
+		// checks if there's a WEB-INF dir
+		String webinfDir = row.getRowpath() +
+							java.io.File.separator +
+							row.getWebappPath() +
+							java.io.File.separator + 
+							"WEB-INF";
+		
+	    if (!new File(webinfDir).isDirectory()) {
+	    	webinfDir = "NO WEBINF";
+	    	row.setWebappPath("NO WEBINF");
+	    	webappdata.setStatus(new Integer(ServletContainer.NOT_INSTALLED));
+	    }
+		if (!webinfDir.equals("NO WEBINF")) {
 			webappdata.setContextname("/" + row.getRowname());
 			webappdata.setStatus(new Integer(getServletContainer().getContextStatus(webappdata.getContextname())));	
 		}
@@ -100,34 +100,37 @@ public class WebappManager implements RowRefresher {
 	
 	
 	public String servletContextStartRow(Row row) {
-		
-		//TODO not sure if Hibernate likes this!
 		RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-		setWebappInfo(row, data);
 		
-		if (!isParadeCheck(row)) return getServletContainer().startContext(data.getContextname());
+		if (!isParadeCheck(row)) {
+			String result = getServletContainer().startContext(data.getContextname());
+			setWebappInfo(row,data);
+			return result;
+		}
+		
 		return "ParaDe is already running";
 	}
 	
 	
 	public String servletContextStopRow(Row row) {
-		//TODO not sure if Hibernate likes this!
 		RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-		setWebappInfo(row, data);
-		if (!isParadeCheck(row)) return getServletContainer().stopContext(data.getContextname());
+		
+		if (!isParadeCheck(row)) {
+			String result = getServletContainer().stopContext(data.getContextname());
+			setWebappInfo(row,data);
+			return result;
+		}
+		
 		return "Internal error";
 	}
 	
-	public String[] servletContextReloadRow(Row row) {
-//		TODO not sure if Hibernate likes this!
-		setWebappInfo(row, (RowWebapp) row.getRowdata().get("webapp"));
+	public String servletContextReloadRow(Row row) {
 		
-		String[] result = new String[2];
+		String result = "";
 		
 		// must check if it's not this one
 		if (!isParade(row)) {
-			result[0] = getServletContainer().reloadContext(row.getRowname());
-			result[1] = "0";
+			result = getServletContainer().reloadContext(row.getRowname());
 		} else {
 		    try {
 		        String antCommand = "ant";
@@ -152,11 +155,11 @@ public class WebappManager implements RowRefresher {
 		            
 		        loadConfig();
 		        //TODO make this work
-		        result[1] = config.getProperty("parade.servletContext.selfReloadWait");
+		        result = config.getProperty("parade.servletContext.selfReloadWait");
 		        
 		
 		    } catch (IOException e) {
-		        result[0] = "Cannot reload Parade " + e;
+		        result = "Cannot reload Parade " + e;
 		        logger.error("Cannot reload ParaDe",e);
 		    }
 		}
@@ -164,60 +167,33 @@ public class WebappManager implements RowRefresher {
 		return result;
 	}
 	
-	public String servletContextInstallSimple(Row row) {
-//		TODO not sure if Hibernate likes this!
+	
+	public String servletContextInstallRow(Row row) {
 		RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-		setWebappInfo(row, data);
-		
+
 		if (!isParadeCheck(row)) {
-			return getServletContainer().installContext(
-					row.getRowname(),
-					row.getParade().getParadeBase()
-					+ java.io.File.separator
-					+ java.io.File.separator
-					+ data.getContextpath()
-					);
+		String webapp = row.getRowpath() + File.separator + row.getWebappPath();
+			String result = getServletContainer().installContext(data.getContextname(),webapp);
+			setWebappInfo(row,data);
+			return result;
 		}
 		return "Internal error";
 	}
 	
+	
 	public String servletContextRemoveRow(Row row) {
-//		TODO not sure if Hibernate likes this!
 		RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-		setWebappInfo(row, data);
 		
-		if (!isParadeCheck(row)) return getServletContainer().unInstallContext(data.getContextname());
+		if (!isParadeCheck(row)) {
+			String result = getServletContainer().unInstallContext(data.getContextname());
+			setWebappInfo(row,data);
+			return result;
+		}
 		return "Internal error";
 	}
 	
-	/* locates WEB-INF within a given path */
-	public static String searchWebinf(String original, java.io.File p) {
-	String[] s = p.list();
-	if (s == null)
-	    throw new RuntimeException(original + " is not a correct pathname.");
 	
-	for (int i = 0; i < s.length; i++) {
-	    java.io.File f = new java.io.File(p, s[i]);
-	    if (f.isDirectory()
-	            && !f.getName().equals("serialized")
-	            && f.toString().indexOf("tomcat" + java.io.File.separator + "logs") == -1) {
-	        if (f.getName().equals("WEB-INF")
-	                && new File(f, "web.xml").exists()) {
-	            if (f.getParent().toString().equals(original))
-	                return ".";
-	            return (f.getParent().toString().substring(original
-	                    .length() + 1)).replace(File.separatorChar, '/');
-	        } else {
-	            String ret = searchWebinf(original, f);
-	            if (!ret.equals("NO WEBINF"))
-	                return ret;
-	        }
-	    }
-	}
-	return "NO WEBINF";
-	}
-	
-	public static boolean isParadeCheck(Row row) {
+	private boolean isParadeCheck(Row row) {
 		if (isParade(row)) {
 		    //row.put("result", "You can only reload Parade!");
 		    return true;
@@ -225,7 +201,7 @@ public class WebappManager implements RowRefresher {
 		return false;
 	}
 	
-	public static boolean isParade(Row row) {
+	private boolean isParade(Row row) {
 		try {
 		    return row.getRowpath().equals(new File(ParadeProperties.paradeBase).getCanonicalPath());
 		} catch (Throwable t) {
@@ -233,18 +209,5 @@ public class WebappManager implements RowRefresher {
 		}
 		return true;
 	}
-	
-	public static void main(String[] argv) throws IOException {
-		WebappManager s = new WebappManager();
-		PrintStream ps = new PrintStream(new FileOutputStream(reloadLog));
-		ps.flush();
-		ps
-		        .println(s
-		                .getServletContainer()
-		                .reloadContext(
-		                        "/"
-		                                + s.config
-		                                        .getProperty("parade.servletContext.paradeContext")));
-		}
 	
 }
