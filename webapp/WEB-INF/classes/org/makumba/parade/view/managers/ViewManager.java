@@ -6,105 +6,105 @@ import java.util.Iterator;
 
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.managers.WebappManager;
 
 public class ViewManager {
 	
-	public String getView(Parade p, String context) {
+	public String getView(Parade p, String context, String handler, String op) {
 		
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		
+		Row r = null;
+		if(context != null) r = (Row) p.getRows().get(context);
+		
+		//operation to handle
+		//TODO - move this somewhere else
+		
+		String opResult = "";
+		
+		if(handler != null && op != null) {
+			
+			
+			if(handler.equals("webapp")) {
+				WebappManager webappMgr = new WebappManager();
+				
+				if(op.equals("servletContextStart")) {
+					opResult=webappMgr.servletContextStartRow(r);
+				}
+				if(op.equals("servletContextStop")) {
+					opResult=webappMgr.servletContextStopRow(r);
+				}
+				if(op.equals("servletContextReload")) {
+					opResult=webappMgr.servletContextReloadRow(r);
+				}
+				if(op.equals("servletContextRemove")) {
+					opResult=webappMgr.servletContextRemoveRow(r);
+				}
+				if(op.equals("servletContextInstall")) {
+					opResult=webappMgr.servletContextInstallRow(r);
+				}
+			}
+			
+		}
+		
 		//we are in the browse view
-		if(context != null) {
+		if(context != null && handler == null) {
 			
-			Row r = (Row) p.getRows().get(context);
+			out.println("<HTML><HEAD><TITLE>"+context+" browser</TITLE>"+
+						"</HEAD>");
 			
-			/*
-			//we print the tree
-			if(tree != null) {
-				FileViewManager fileV = new FileViewManager(req);
-				out.println(fileV.getTreeView(r));
-			
-			//we are in the file view - a test view, as files will be printed alltogether
-			//for some strange reason the key of a directory spins, it returns some random file in the dir!
-			} else if(file != null) {
-				String fileKey = null;
-				try {
-					fileKey = URLDecoder.decode(file,"UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if(fileKey != null) {
-					File f = (File) r.getFiles().get(fileKey);
-					FileViewManager fileV = new FileViewManager(req);
-					CVSViewManager cvsV = new CVSViewManager(req);
-					
-					out.println("<HTML><HEAD><TITLE>"+fileKey+" viewer</TITLE>"+
-					"</HEAD><BODY><CENTER>");
-					
-					out.println("<table>" +
-								"<tr bgcolor=#ddddff><td align='center'>"+fileV.getFileViewHeader()+"</td><td align='center'>"+cvsV.getFileViewHeader()+"</td></tr>"+
-								
-								"<tr bgcolor=#f5f5ff><td>"+fileV.getFileView(r,f)+"</td><td>"+cvsV.getFileView(r,f)+"</td></tr>"+
-								
-								"</table>");
-					
-					out.println("</TABLE></CENTER></BODY></HTML>");
-				}
-				
-			
-			//general browse view
-			} else {
-			*/
-			
-				out.println("<HTML><HEAD><TITLE>"+context+" browser</TITLE>"+
-				"</HEAD>");
-	
-				out.println("<FRAMESET rows=\"30,*\">"+      
-						"<FRAME name=\"header\" src=\"/servlet/header?context="+r.getRowname()+"\""+
-						" marginwidth=\"1\" marginheight=\"1\">"+
-						"<FRAMESET cols=\"190,*\">"+
-							"<FRAME name=\"tree\" src=\"/servlet/tree?context="+r.getRowname()+"\" marginwidth=\"0\" marginheight=\"5\">"+
-							"<FRAMESET rows=\"*,20%\">"+      
-								"<FRAME name=\"directory\" src=\"/servlet/file?context="+r.getRowname()+"\">"+
-								"<FRAME name=\"command\" src=\"/servlet/command\" marginwidth=\"1\" marginheight=\"1\">"+
-							"</FRAMESET>"+
+			out.println("<FRAMESET rows=\"30,*\">"+      
+					"<FRAME name=\"header\" src=\"/servlet/header?context="+r.getRowname()+"\""+
+					" marginwidth=\"1\" marginheight=\"1\">"+
+					"<FRAMESET cols=\"190,*\">"+
+						"<FRAME name=\"tree\" src=\"/servlet/tree?context="+r.getRowname()+"\" marginwidth=\"0\" marginheight=\"5\">"+
+						"<FRAMESET rows=\"*,20%\">"+      
+							"<FRAME name=\"directory\" src=\"/servlet/file?context="+r.getRowname()+"\">"+
+							"<FRAME name=\"command\" src=\"/servlet/command\" marginwidth=\"1\" marginheight=\"1\">"+
 						"</FRAMESET>"+
-					"</FRAMESET>");
-				
-				out.println("</HTML>");
+					"</FRAMESET>"+
+				"</FRAMESET>");
 			
+			out.println("</HTML>");
+		
 			
 		}
 		
 		//we are in the table view
-		if(context == null) {
+		if(context == null || (context != null && handler != null)) {
 			RowStoreViewManager rowstoreV = new RowStoreViewManager();
 			CVSViewManager cvsV = new CVSViewManager();
 			AntViewManager antV = new AntViewManager();
+			WebappViewManager webappV = new WebappViewManager();
 			MakumbaViewManager makV = new MakumbaViewManager();
 			
 			
 			out.println("<HTML><HEAD><TITLE>Welcome to ParaDe</TITLE>"+
-						"</HEAD><BODY><CENTER>"+
-						"<TABLE>");
+						"</HEAD><BODY><CENTER>");
+			
+			if(!opResult.equals("")) out.println(opResult+"<br>");
+			
+			out.println("<TABLE>");
 			
 			// printing headers
-			out.print("<TR bgcolor=#ddddff>");
+			out.println("<TR bgcolor=#ddddff>");
 			
-			out.print("<TD align='center'>");
+			out.println("<TD align='center'>");
 			out.println(rowstoreV.getParadeViewHeader());
-			out.print("</TD>");
-			out.print("<TD align='center'>");
+			out.println("</TD>");
+			out.println("<TD align='center'>");
 			out.println(cvsV.getParadeViewHeader());
-			out.print("</TD>");
-			out.print("<TD align='center'>");
+			out.println("</TD>");
+			out.println("<TD align='center'>");
 			out.println(antV.getParadeViewHeader());
-			out.print("</TD>");
-			out.print("<TD align='center'>");
+			out.println("</TD>");
+			out.println("<TD align='center'>");
+			out.println(webappV.getParadeViewHeader());
+			out.println("</TD>");
+			out.println("<TD align='center'>");
 			out.println(makV.getParadeViewHeader());
-			out.print("</TD>");
+			out.println("</TD>");
 			
 			
 			out.print("</TR>");
@@ -114,23 +114,26 @@ public class ViewManager {
 			while(i.hasNext()) {
 				String key = (String) i.next();
 				
-				out.print("<TR bgcolor=#f5f5ff>");
+				out.println("<TR bgcolor=#f5f5ff>");
 				
-				out.print("<TD align='center'>");
+				out.println("<TD align='center'>");
 				out.println(rowstoreV.getParadeView((Row) p.getRows().get(key)));
-				out.print("</TD>");
-				out.print("<TD align='center'>");
+				out.println("</TD>");
+				out.println("<TD align='center'>");
 				out.println(cvsV.getParadeView((Row) p.getRows().get(key)));
-				out.print("</TD>");
-				out.print("<TD align='center'>");
+				out.println("</TD>");
+				out.println("<TD align='center'>");
 				out.println(antV.getParadeView((Row) p.getRows().get(key)));
-				out.print("</TD>");
-				out.print("<TD align='center'>");
+				out.println("</TD>");
+				out.println("<TD align='center'>");
+				out.println(webappV.getParadeView((Row) p.getRows().get(key)));
+				out.println("</TD>");
+				out.println("<TD align='center'>");
 				out.println(makV.getParadeView((Row) p.getRows().get(key)));
-				out.print("</TD>");
+				out.println("</TD>");
 				
 				
-				out.print("</TR>");
+				out.println("</TR>");
 
 			}
 
