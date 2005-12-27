@@ -11,9 +11,9 @@ public class RowProperties {
 	
 	public RowProperties() {
 		
-		this.addRowDefinition("test-k",".", "the ultimate parade2 test row");
-		this.addRowDefinition("test2-k","../parade", "the old parade row");
-		//this.addRowDefinition("manu-k","E:/_Projects/ITC/karamba","manu messing it all up again");
+		this.addRowDefinition("test-k", ".", "", "the ultimate parade2 test row");
+		this.addRowDefinition("test2-k", "../parade", "",  "the old parade row");
+		//this.addRowDefinition("manu-k", "F:/bundle_k/sources/karamba", "public_html", "manu messing it all up again");
 	}
 	
 	
@@ -25,10 +25,11 @@ public class RowProperties {
 	}
 	
 	/* Add a row definition */
-	public void addRowDefinition(String name, String path, String description) {
+	public void addRowDefinition(String name, String path, String webapp, String description) {
 		Map row = new HashMap();
 		row.put("name",name);
 		row.put("path",path);
+		row.put("webapp",webapp);
 		row.put("desc",description);
 		
 		rowDefinitions.put(name,row);

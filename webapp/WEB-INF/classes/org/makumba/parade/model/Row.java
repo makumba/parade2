@@ -13,6 +13,8 @@ public class Row {
 	
 	private String description;
 	
+	private String webappPath;
+	
 	private Map files = new HashMap();
 	
 	//private File root;
@@ -78,6 +80,14 @@ public class Row {
 
 	public void setRowdata(Map rowdata) {
 		this.rowdata = rowdata;
+	}
+
+	public String getWebappPath() {
+		return webappPath;
+	}
+
+	public void setWebappPath(String webappPath) {
+		this.webappPath = webappPath;
 	}
 
 	/*

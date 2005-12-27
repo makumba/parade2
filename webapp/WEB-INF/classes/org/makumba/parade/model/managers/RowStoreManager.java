@@ -51,6 +51,10 @@ public class RowStoreManager implements ParadeRefresher {
 					storedRow.setRowpath((String)row.get("path"));
 					logger.warn("The path of row "+rowname+" was updated to "+(String)row.get("path"));
 				}
+				if(!((String) row.get("webapp")).trim().equals(storedRow.getWebappPath())) {
+					storedRow.setWebappPath((String)row.get("webapp"));
+					logger.warn("The webapp path of row "+rowname+" was updated to "+(String)row.get("webapp"));
+				}
 				if(!((String)row.get("desc")).trim().equals(storedRow.getDescription())) {
 					storedRow.setDescription((String)row.get("desc"));
 					logger.warn("The description of row "+rowname+" was updated to "+(String)row.get("desc"));
@@ -67,6 +71,7 @@ public class RowStoreManager implements ParadeRefresher {
 	            String relativePath = (((String) row.get("path")).trim());
 	            r.setRowpath(relativePath);
 	            r.setDescription((String)row.get("desc"));
+	            r.setWebappPath((String)row.get("webapp"));
 
 	            p.addRow(r);
 				

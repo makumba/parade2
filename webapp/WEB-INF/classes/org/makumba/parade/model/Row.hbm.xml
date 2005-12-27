@@ -11,7 +11,9 @@
 
 		<property name="rowname"/>
         <property name="rowpath"/>
+        <property name="webappPath"/>
         <property name="description"/>
+        
         
         <many-to-one name="parade" column="id_parade" not-null="true"/>
         
