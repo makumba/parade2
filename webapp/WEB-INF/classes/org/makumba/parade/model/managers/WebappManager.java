@@ -16,9 +16,10 @@ import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.RowWebapp;
+import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 
-public class WebappManager implements RowRefresher {
+public class WebappManager implements RowRefresher, ParadeManager {
 	
 	static String reloadLog = (String) ParadeProperties.getProperty("paradeBase") + "tomcat" + java.io.File.separator
     + "logs" + java.io.File.separator + "paradeReloadResult.txt";
@@ -36,19 +37,24 @@ public class WebappManager implements RowRefresher {
 	}
 	
 	
-	public void rowRefresh(Row row) {
+	public void newRow(String name, Row r, Map m) {
 		
 		RowWebapp webappdata = new RowWebapp();
 		webappdata.setDataType("webapp");
-		
-		setWebappInfo(row,webappdata);
-		
-		RowStoreManager rowMgr = new RowStoreManager();
-		rowMgr.addManagerData(webappdata,row);
-		
+		webappdata.setWebappPath((String)m.get("webapp"));
+		r.addManagerData(webappdata);
 	}
 	
-	void loadConfig() {
+	public void rowRefresh(Row row) {
+		RowWebapp webappdata = (RowWebapp) row.getRowdata().get("webapp");
+		
+		setWebappInfo(row,webappdata);
+		row.addManagerData(webappdata);
+	}
+	
+	
+	
+	private void loadConfig() {
 		try {
 		    config = new Properties();
 		    config.load(new FileInputStream(fileName));
@@ -57,7 +63,7 @@ public class WebappManager implements RowRefresher {
 		}
 	}
 	
-	synchronized ServletContainer getServletContainer() {
+	private synchronized ServletContainer getServletContainer() {
 		if (container == null)
 			try {
 		        container = (ServletContainer) ParadeProperties.class
@@ -83,13 +89,13 @@ public class WebappManager implements RowRefresher {
 		// checks if there's a WEB-INF dir
 		String webinfDir = row.getRowpath() +
 							java.io.File.separator +
-							row.getWebappPath() +
+							webappdata.getWebappPath() +
 							java.io.File.separator + 
 							"WEB-INF";
 		
 	    if (!new File(webinfDir).isDirectory()) {
 	    	webinfDir = "NO WEBINF";
-	    	row.setWebappPath("NO WEBINF");
+	    	webappdata.setWebappPath("NO WEBINF");
 	    	webappdata.setStatus(new Integer(ServletContainer.NOT_INSTALLED));
 	    }
 		if (!webinfDir.equals("NO WEBINF")) {
@@ -172,7 +178,7 @@ public class WebappManager implements RowRefresher {
 		RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
 
 		if (!isParadeCheck(row)) {
-		String webapp = row.getRowpath() + File.separator + row.getWebappPath();
+		String webapp = row.getRowpath() + File.separator + data.getWebappPath();
 			String result = getServletContainer().installContext(data.getContextname(),webapp);
 			setWebappInfo(row,data);
 			return result;

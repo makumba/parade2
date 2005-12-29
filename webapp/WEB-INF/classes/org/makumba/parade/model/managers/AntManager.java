@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.DefaultLogger;
@@ -13,9 +14,10 @@ import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowAnt;
+import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 
-public class AntManager implements RowRefresher {
+public class AntManager implements RowRefresher, ParadeManager {
 	
 	static Logger logger = Logger.getLogger(AntManager.class.getName());
 	
@@ -34,8 +36,7 @@ public class AntManager implements RowRefresher {
 	        setTargets(antdata, p);
 		}
 		
-		RowStoreManager rowMgr = new RowStoreManager();
-		rowMgr.addManagerData(antdata,row);
+		row.addManagerData(antdata);
 		
 	}
 	
@@ -120,6 +121,11 @@ public class AntManager implements RowRefresher {
         
         
     }
+
+	public void newRow(String name, Row r, Map m) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/* executes an Ant command 
 	public void executeAntCommandSimple(RowAnt data, Row row) throws IOException {

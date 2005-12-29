@@ -31,7 +31,7 @@ public class FileBrowserViewManager implements FileBrowserView {
 		
 		out.println("<p align='left'" +
 					"<font size=+1>[<a href='/servlet/file?context="+r.getRowname()+"'>"+
-					r.getRowname()+"</a>]"+getParentDir(r,path)+
+					r.getRowname()+"</a>]/"+getParentDir(r, path)+
 					"</font>");
 		out.println("<img src='/images/folder-open.gif'>"+
 					"<br><font size=-2>"+r.getRowpath()+"</font>");
@@ -46,7 +46,7 @@ public class FileBrowserViewManager implements FileBrowserView {
 					"</tr>");
 		
 		//files
-		List files = FileManager.getChildren(r,path);
+		List files = FileManager.getChildren(r, path);
 		FileComparator fc = new FileComparator();
 		
 		Collections.sort(files, fc);
@@ -55,8 +55,8 @@ public class FileBrowserViewManager implements FileBrowserView {
 		for(Iterator j = files.iterator(); j.hasNext();) {
 			File currentFile = (File) j.next();
 			out.println("<tr bgcolor="+(((counter % 2) == 0) ? "#ffffff" : "#f5f5ff")+" valign=top>" +
-						fileV.getFileView(r,currentFile)+
-						cvsV.getFileView(r,currentFile)+
+						fileV.getFileView(r, currentFile)+
+						cvsV.getFileView(r, currentFile)+
 						"</td></tr>");
 			
 			counter++;

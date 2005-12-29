@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
@@ -17,10 +18,11 @@ import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.interfaces.DirectoryRefresher;
+import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.SimpleFileFilter;
 
-public class CVSManager implements DirectoryRefresher, RowRefresher {
+public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManager {
 	
 	public static Logger logger = Logger.getLogger(CVSManager.class.getName());
 
@@ -80,8 +82,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
 		
 		readUserAndModule(row, cvsdata);
 		
-		RowStoreManager rowMgr = new RowStoreManager();
-		rowMgr.addManagerData(cvsdata,row);
+		row.addManagerData(cvsdata);
 	}
 
 	
@@ -303,6 +304,11 @@ public class CVSManager implements DirectoryRefresher, RowRefresher {
             logger.error("Error while trying to read .cvsignore of directory "+file.getName(),t);
         }
     }
+
+	public void newRow(String name, Row r, Map m) {
+		// TODO Auto-generated method stub
+		
+	}
 
     /*
     public void cvs(java.util.Map data, javax.servlet.jsp.PageContext pc) {

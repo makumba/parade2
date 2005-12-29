@@ -2,23 +2,21 @@ package org.makumba.parade.model.managers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.Properties;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.RowMakumba;
-import org.makumba.parade.model.RowWebapp;
+import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 
-public class MakumbaManager implements RowRefresher {
+public class MakumbaManager implements RowRefresher, ParadeManager {
 	
 	static {
         // force a class load
@@ -32,8 +30,7 @@ public class MakumbaManager implements RowRefresher {
         String root = row.getRowpath() + File.separator + "public_html";
         makumbadata.setVersion(getMakumbaVersion(root));
         		
-		RowStoreManager rowMgr = new RowStoreManager();
-		rowMgr.addManagerData(makumbadata,row);
+		row.addManagerData(makumbadata);
 	}
 	
 	public String getMakumbaVersion(String p) {
@@ -107,5 +104,10 @@ public class MakumbaManager implements RowRefresher {
             return "development version";
         return ret;
     }
+
+	public void newRow(String name, Row r, Map m) {
+		// TODO Auto-generated method stub
+		
+	}
     
 }

@@ -6,16 +6,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.DirectoryRefresher;
+import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.SimpleFileFilter;
 
-public class FileManager implements RowRefresher, DirectoryRefresher {
+public class FileManager implements RowRefresher, DirectoryRefresher, ParadeManager {
 
 	static Logger logger = Logger.getLogger(FileManager.class.getName());
 	
@@ -165,6 +167,11 @@ public class FileManager implements RowRefresher, DirectoryRefresher {
 		}
 		
 		return children;
+	}
+
+	public void newRow(String name, Row r, Map m) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

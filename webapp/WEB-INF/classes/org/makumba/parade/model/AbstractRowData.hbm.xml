@@ -57,6 +57,7 @@
         <key column="ROWDATA_ID"/>
        
         <property name="contextname" />
+		<property name="webappPath"/>
         <property name="status" />
         
         

@@ -7,8 +7,10 @@ public class RowWebapp extends AbstractRowData implements RowData {
 	
 	private String contextname;
 	
+	private String webappPath;
+	
 	private Integer status;
-
+	
 	public String getContextname() {
 		return contextname;
 	}
@@ -31,6 +33,14 @@ public class RowWebapp extends AbstractRowData implements RowData {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getWebappPath() {
+		return webappPath;
+	}
+
+	public void setWebappPath(String webappPath) {
+		this.webappPath = webappPath;
 	}
 
 }

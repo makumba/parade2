@@ -8,9 +8,10 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileTracker;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.DirectoryRefresher;
+import org.makumba.parade.model.interfaces.ParadeManager;
 
 
-public class TrackerManager implements DirectoryRefresher {
+public class TrackerManager implements DirectoryRefresher, ParadeManager {
 
 	//"Specification"=0,"DesignApproved"=1,"Started"=2,"Developing"=3,"Stable"=4,"Frozen"=5,"Dropped"=6
 	
@@ -46,5 +47,10 @@ public class TrackerManager implements DirectoryRefresher {
 			filedata.put("filetracker",filetrackerdata);
 			currFile.setFiledata(filedata);
 		}
+	}
+
+	public void newRow(String name, Row r, Map m) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -13,8 +13,6 @@ public class Row {
 	
 	private String description;
 	
-	private String webappPath;
-	
 	private Map files = new HashMap();
 	
 	//private File root;
@@ -22,6 +20,14 @@ public class Row {
 	private Map rowdata = new HashMap();
 	
 	private Parade parade;
+	
+	
+	
+	public void addManagerData(RowData data) {
+		
+		data.setRow(this);
+		getRowdata().put(data.getDataType(),data);
+	}
 	
 
 	public String getDescription() {
@@ -80,14 +86,6 @@ public class Row {
 
 	public void setRowdata(Map rowdata) {
 		this.rowdata = rowdata;
-	}
-
-	public String getWebappPath() {
-		return webappPath;
-	}
-
-	public void setWebappPath(String webappPath) {
-		this.webappPath = webappPath;
 	}
 
 	/*
