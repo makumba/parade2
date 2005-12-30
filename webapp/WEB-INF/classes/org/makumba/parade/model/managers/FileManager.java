@@ -1,6 +1,7 @@
 package org.makumba.parade.model.managers;
 
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -171,6 +172,42 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 
 	public void newRow(String name, Row r, Map m) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	public String newFile(Row r, String path, String entry) {
+		java.io.File f = new java.io.File((path+"/"+entry).replace('/',java.io.File.separatorChar));
+		if(f.exists()) return "This file already exists";
+		try {
+			if(f.getParent() == null) f.mkdirs();
+			f.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return("Error while trying to create file "+entry);
+		}
+		
+		File newFile = setFileData(r, f, false);
+		r.getFiles().put(f.getAbsolutePath(), newFile);
+		
+		return "OK#"+f.getAbsolutePath();
+		
+	}
+
+	public String newDir(Row r, String path, String entry) {
+		System.out.println("newDir: "+entry + "path: "+path);
+		java.io.File f = new java.io.File((path+"/"+entry+"/").replace('/',java.io.File.separatorChar));
+		if(f.exists()) return "This directory already exists";
+		
+		boolean success = f.mkdirs();
+		
+		File newFile = setFileData(r, f, true);
+		r.getFiles().put(f.getAbsolutePath(), newFile);
+		
+		if(success) {
+			return "OK#"+f.getAbsolutePath();
+		}
+		
+		return "Error while trying to create directory "+entry;
 		
 	}
 
