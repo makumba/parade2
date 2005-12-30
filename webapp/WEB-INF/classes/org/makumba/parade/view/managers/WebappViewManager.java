@@ -49,17 +49,17 @@ public class WebappViewManager implements HeaderView, ParadeView {
 			*/
 		} else {
 			if(status == ServletContainer.RUNNING) {
-				out.println("<a href='index.jsp?context="+r.getRowname()+"&handler=webapp&op=servletContextReload'>reload</a> " +
-							"<a href='index.jsp?context="+r.getRowname()+"&handler=webapp&op=servletContextStop'>stop</a> ");
+				out.println("<a href='index.jsp?entry="+r.getRowname()+"&handler=webapp&op=servletContextReload'>reload</a> " +
+							"<a href='index.jsp?entry="+r.getRowname()+"&handler=webapp&op=servletContextStop'>stop</a> ");
 			}
 			if(status == ServletContainer.STOPPED) {
-				out.println("<a href='index.jsp?context="+r.getRowname()+"&handler=webapp&op=servletContextStart'>start</a> ");
+				out.println("<a href='index.jsp?entry="+r.getRowname()+"&handler=webapp&op=servletContextStart'>start</a> ");
 			}
 			if(status != ServletContainer.NOT_INSTALLED) {
-				out.println("<a href='index.jsp?context="+r.getRowname()+"&handler=webapp&op=servletContextRemove'>uninstall</a>");
+				out.println("<a href='index.jsp?entry="+r.getRowname()+"&handler=webapp&op=servletContextRemove'>uninstall</a>");
 			}
 			if(status == ServletContainer.NOT_INSTALLED) {
-				out.println("<a href='index.jsp?context="+r.getRowname()+"&handler=webapp&op=servletContextInstall'>install</a>");
+				out.println("<a href='index.jsp?entry="+r.getRowname()+"&handler=webapp&op=servletContextInstall'>install</a>");
 			}
 		}
 				

@@ -12,6 +12,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
+import org.makumba.parade.model.Row;
+import org.makumba.parade.view.managers.CommandViewManager;
+import org.makumba.parade.view.managers.FileBrowserViewManager;
 
 public class CommandServlet extends HttpServlet {
 	
@@ -30,17 +33,23 @@ public class CommandServlet extends HttpServlet {
 		Transaction tx = s.beginTransaction();
 		
 		Parade p = (Parade) s.get(Parade.class, new Long(1));
-		String context = (String)req.getParameter("context");
+		String context = req.getParameter("context");
+		String view = req.getParameter("view");
+		String path = req.getParameter("path");
+		String file = req.getParameter("file");
 		
 		resp.setContentType("text/html");
 		resp.setCharacterEncoding("UTF-8");
 		
 		PrintWriter out = resp.getWriter();
-		/*
-		FileViewManager fileV = new FileViewManager();
-		out.println(fileV.getTreeView(p,context));
-		*/
-		out.println("<HTML><BODY>Here will come the command output</BODY></HTML>");
+		
+		Row r = (Row) p.getRows().get(context);
+	
+		resp.setContentType("text/html");
+		resp.setCharacterEncoding("UTF-8");
+		CommandViewManager cmdV = new CommandViewManager();
+		out.println(cmdV.getCommandView(view, r, path, file));
+	
 		tx.commit();
 		
 		s.close();

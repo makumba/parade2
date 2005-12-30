@@ -26,7 +26,7 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
 		return view;
 	}
 
-	public String getFileView(Row r, File f) {
+	public String getFileView(Row r, String path, File f) {
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		
@@ -120,7 +120,7 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
 		return result.toString();
 	}
 
-	public String getFileViewHeader() {
+	public String getFileViewHeader(Row r, String path) {
 		String header = "<td align='left'><b>CVS</b></td>";
 		return header;
 	}

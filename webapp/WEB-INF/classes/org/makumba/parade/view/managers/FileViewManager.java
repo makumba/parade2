@@ -2,6 +2,7 @@ package org.makumba.parade.view.managers;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,24 +16,31 @@ import org.makumba.parade.view.interfaces.TreeView;
 public class FileViewManager implements FileView, TreeView {
 
 	
-	public String getFileViewHeader() {
+	public String getFileViewHeader(Row r, String path) {
 		String header = "<td align='left'></td>" + //type
 						"<td align='center'><b>Name</b></td>" +
+						"<td align='left'>" +
+						"<a href='command?view=newFile&context="+r.getRowname()+"&path="+path+"' target='command'><img src='/images/newfile.gif' border=0></a>" +
+						"<a href='command?view=newDir&context="+r.getRowname()+"&path="+path+"' target='command'><img src='/images/newfolder.gif' border=0></a>" +
+						"</td>"+
 						"<td align='left'><b>Age</b></td>" +
 						"<td align='left'><b>Size</b></td>";
 		return header;
 	}
 	
-	public String getFileView(Row r, File f) {
+	public String getFileView(Row r, String path, File f) {
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		if(f.getIsDir()) {
 			out.print("<td align='left'><img src='/images/folder.gif'></td>"+
 					"<td align='left'><b><a href='/servlet/file?context="+r.getRowname()+
-						"&path="+f.getPath()+"'>"+f.getName()+"</a></b></td>");
+					"&path="+f.getPath()+"'>"+f.getName()+
+					"<td></td>"+
+					"</a></b></td>");
 		} else {
 			out.print("<td align='left'><img src='/images/layout.gif'></td>"+
-					"<td align='left'>"+f.getName()+"</td>");
+					"<td align='left'>"+f.getName()+"</td>"+
+					"<td align='left'><a href=edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a></td>");
 		}
 		out.print("</td><td align='left'>"+ViewManager.readableTime(f.getAge().longValue()));
 		out.print("</td><td align='left'>"+ViewManager.readableBytes(f.getSize().longValue()));

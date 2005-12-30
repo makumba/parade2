@@ -34,8 +34,9 @@ public class FileBrowserServlet extends HttpServlet {
 		
 		
 		Parade p = (Parade) s.get(Parade.class, new Long(1));
-		String context = (String)req.getParameter("context");
-		String path = (String)req.getParameter("path");
+		String context = req.getParameter("context");
+		String path = req.getParameter("path");
+		String opResult = req.getParameter("opResult");
 		
 		
 		Row r = (Row)p.getRows().get(context);
@@ -45,7 +46,7 @@ public class FileBrowserServlet extends HttpServlet {
 			resp.setContentType("text/html");
 			resp.setCharacterEncoding("UTF-8");
 			FileBrowserViewManager filebrowserV = new FileBrowserViewManager();
-			out.println(filebrowserV.getFileBrowserView(p,r,path));
+			out.println(filebrowserV.getFileBrowserView(p, r, path, opResult));
 		}
 		
 		tx.commit();
