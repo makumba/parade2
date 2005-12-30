@@ -36,17 +36,19 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
 		out.print("<td align='left'>");
 		
 		String cvscommand="";
-		String cvscommitt="";
+		String cvscommit="";
 		try {
 			cvscommand = "<a target='command' href=command.jsp?&entry="+java.net.URLEncoder.encode(f.getPath(),"UTF-8")+"&op=cvs&cvs.op=";
-			cvscommitt = "<a target='command' href=cvsCommit.jsp?reload=&entry="+java.net.URLEncoder.encode(f.getPath(),"UTF-8");
+			cvscommit = "<a target='command' href=cvsCommit.jsp?reload=&entry="+java.net.URLEncoder.encode(f.getPath(),"UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		String cvsweb="http://cvs.makumba.org/cgi-bin/cvsweb.cgi/"; //this should go to 
-		String cvswebLink=cvsweb+rowcvsdata.getModule()+"/"+f.getPath();
+		// TODO make this personaliseable. should go with the application definition, once admin interface done
+		String cvsweb="http://cvs.makumba.org/cgi-bin/cvsweb.cgi/";
+		String webPath = (f.getPath().substring(f.getRow().getRowpath().length())).replace(java.io.File.separatorChar,'/');
+		String cvswebLink=cvsweb+rowcvsdata.getModule()+webPath;
 		
 		// if there's no CVS data
 		if(cvsdata == null || f.isNotOnDisk()) {
@@ -60,62 +62,84 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
 			return result.toString();
 		}
 		switch(cvsdata.getStatus().intValue()){
-		case 101:{ // IGNORED %>
+		
+		case 101:{ // IGNORED
 			out.print("<i><font size=-2><font color='#999999'><i>ignored</i></font></font></i>");
-			break;
 		}
+		break;
+		
 		case -1:{ // UNKNOWN
 			out.print("???");
 		}
 		break;
 		
 		case 100:{ // UP_TO_DATE
-			out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>");
+			if(f.getIsDir()) {
+				out.print("<a href='"+cvswebLink+"' title='CVS log'>(dir)</a>");
+			} else {
+				out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>");
+			}
+			
 		}
 		break;
 		
 		case 1:{ // LOCALLY_MODIFIED
-			out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
-					  cvscommitt+"<img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>"+
-					  cvscommand+"diff><img src='/images/cvs-diff.gif' alt='CVS diff' border='0'></a>");
+			if(f.getIsDir()) {
+				out.print("<a href='"+cvswebLink+"' title='CVS log'>(dir)</a>");
+			} else {
+				out.println("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
+						  cvscommit+"<img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>"+
+						  cvscommand+"diff><img src='/images/cvs-diff.gif' alt='CVS diff' border='0'></a>");
+			}
+			
 			
 		}
 		break;
 		
 		case 2:{ // NEEDS_CHECKOUT
-			out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
+			if(f.getIsDir()) {
+				out.print("<a href='"+cvswebLink+"' title='CVS log'>(dir)</a>");
+			} else {
+				out.println("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
 						cvscommand+"update&reload=><img src='/images/cvs-update.gif' alt='CVS checkout' border='0'></a>"+
 						cvscommand+"delete&reload=><img src='/images/cvs-remove.gif' alt='CVS remove' border='0'></a>");
+			}
+			
 		}
 		break;
 		
 		case 3:{ // NEEDS_UPDATE
-			out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
+			if(f.getIsDir()) {
+				out.print("<a href='"+cvswebLink+"' title='CVS log'>(dir)</a>");
+			} else {
+				out.println("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
 						cvscommand+"update&reload=><img src='/images/cvs-update.gif' alt='CVS update' border='0'></a>");
+			}
+			
 		}
 		break;
 		
-		case 4:{ // ADDED %>
-			out.print(cvsdata.getRevision()+
-					cvscommitt+"><img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>");
+		case 4:{ // ADDED
+			out.println(cvsdata.getRevision()+
+					cvscommit+"><img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>");
 		}
 		break;
 		
 		case 5:{ // DELETED
-			out.print("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
-					cvscommitt+"><img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>");
+			out.println("<a href='"+cvswebLink+"' title='CVS log'>"+cvsdata.getRevision()+"</a>"+
+					cvscommit+"><img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>");
 		}
 		break;
 		
 		case 6:{ // CONFLICT
-		out.print("<a href='"+cvswebLink+"' title='CVS log'><b><font color='red'>Conflict</font></b> "+cvsdata.getRevision()+"</a>"+
-					cvscommitt+"<img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>"+
+		out.println("<a href='"+cvswebLink+"' title='CVS log'><b><font color='red'>Conflict</font></b> "+cvsdata.getRevision()+"</a>"+
+					cvscommit+"<img src='/images/cvs-committ.gif' alt='CVS committ' border='0'></a>"+
 					cvscommand+"diff><img src='/images/cvs-diff.gif' alt='CVS diff' border='0'></a>");
 		}
 		break;
 		}
 		
-		out.print("</td>");
+		out.println("</td>");
 		
 		return result.toString();
 	}

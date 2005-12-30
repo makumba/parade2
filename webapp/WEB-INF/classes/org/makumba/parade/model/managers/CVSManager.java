@@ -46,7 +46,6 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
 	
 	public static DateFormat cvsDateFormat;
 	
-	private FileFilter filter = new SimpleFileFilter();
 	
     static {
         cvsDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy",
@@ -55,23 +54,18 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
     }
 	
 	public void directoryRefresh(Row row, String path) {
+		
+		// for the root paths
 		java.io.File currDir = new java.io.File(path);
 		
 		// we will go through the CVS entries of the real directory
-		if(currDir.isDirectory() && filter.accept(currDir) && !(currDir.getName() == null)) {
-			//logger.warn("CVS: looking for path "+path);
-			
+		if(currDir.isDirectory() && !(currDir.getName() == null)) {
 			// getting the File object mapped to this dir
-			File currFile = (File) row.getFiles().get(path);
-			
+			File currFile = (File) row.getFiles().get(currDir.getAbsolutePath());
+
 			// you never know
-			if(!(currFile == null) && currFile.getIsDir()) {
-				//logger.warn("CVS: got file "+currFile.getName());
-				
-				readFiles(row,currFile);
-				
-				
-			}
+			if(!(currFile == null) && currFile.getIsDir())
+				readFiles(row, currFile);
 		}
 	}
 
@@ -271,8 +265,6 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
             logger.error("Error while trying to set CVS information for file "+file.getName(),t);
         }
     }
-
-	
     
     /* Reads .cvsignore */
     private void readCVSIgnore(Row r, File file) {
@@ -289,7 +281,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
             String line = null;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                File cvsfile = (File) r.getFiles().get(line);
+                File cvsfile = (File) r.getFiles().get(file.getPath()+java.io.File.separator+line);
                 if (cvsfile == null) continue;
                 cvsdata = new FileCVS();
             	cvsdata.setDataType("cvs");
@@ -297,7 +289,6 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
             	cvsdata.setStatus(IGNORED);
             	
             	cvsfile.getFiledata().put("cvs",cvsdata);
-                
             }
             br.close();
         } catch (Throwable t) {
