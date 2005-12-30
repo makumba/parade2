@@ -5,7 +5,7 @@ import org.makumba.parade.model.Row;
 
 public interface FileView {
 	
-	public String getFileViewHeader();
-	public String getFileView(Row r, File f);
+	public String getFileViewHeader(Row r, String path);
+	public String getFileView(Row r, String path, File f);
 
 }
