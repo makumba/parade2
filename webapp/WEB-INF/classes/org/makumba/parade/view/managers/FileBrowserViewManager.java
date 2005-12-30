@@ -23,7 +23,7 @@ public class FileBrowserViewManager implements FileBrowserView {
 		PrintWriter out = new PrintWriter(result);
 		
 		//if this is the root of the row
-		if(path==null) path = new java.io.File(r.getRowpath()).getAbsolutePath();
+		if(path==null) path = r.getRowpath();
 		
 		FileViewManager fileV = new FileViewManager();
 		CVSViewManager cvsV = new CVSViewManager();
@@ -62,8 +62,7 @@ public class FileBrowserViewManager implements FileBrowserView {
 		FileComparator fc = new FileComparator();
 		
 		Collections.sort(files, fc);
-		String absoluteRowPath = new java.io.File(r.getRowpath()).getAbsolutePath();
-		String relativePath = path.substring(absoluteRowPath.length(), path.length());
+		String relativePath = path.substring(r.getRowpath().length(), path.length());
 		
 		int counter = 0;
 		for(Iterator j = files.iterator(); j.hasNext();) {
@@ -86,10 +85,9 @@ public class FileBrowserViewManager implements FileBrowserView {
 	}
 
 	private String getParentDir(Row r, String path) {
-		String absoluteRowPath = new java.io.File(r.getRowpath()).getAbsolutePath();
-		String relativePath = path.substring(absoluteRowPath.length(), path.length());
+		String relativePath = path.substring(r.getRowpath().length(), path.length());
 		String parentDir = "";
-		String currentPath = path.substring(0,absoluteRowPath.length());
+		String currentPath = path.substring(0,r.getRowpath().length());
 		
 		StringTokenizer st = new StringTokenizer(relativePath, java.io.File.separator);
 		while(st.hasMoreTokens()) {

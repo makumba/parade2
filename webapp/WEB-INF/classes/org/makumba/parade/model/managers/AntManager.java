@@ -1,6 +1,7 @@
 package org.makumba.parade.model.managers;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,7 +61,12 @@ public class AntManager implements RowRefresher, ParadeManager {
 		if (!buildFile.exists()) {
 			data.setBuildfile("No build file");
 		} else {
-			data.setBuildfile(buildFile.getAbsolutePath());
+			try {
+				data.setBuildfile(buildFile.getCanonicalPath());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return buildFile;
 	}
@@ -83,7 +89,12 @@ public class AntManager implements RowRefresher, ParadeManager {
                 return null;
             }
 			
-            project.setUserProperty("ant.file", buildFile.getAbsolutePath());
+            try {
+				project.setUserProperty("ant.file", buildFile.getCanonicalPath());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             DefaultLogger lg = new DefaultLogger();
             lg.setEmacsMode(true);
             lg.setMessageOutputLevel(Project.MSG_INFO);

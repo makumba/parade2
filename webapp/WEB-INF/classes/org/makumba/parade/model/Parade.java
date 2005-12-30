@@ -1,6 +1,7 @@
 package org.makumba.parade.model;
 
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -44,9 +45,14 @@ public class Parade {
 	 */
 	public void refresh() {
 		
-		this.paradeBase = new java.io.File((String) ParadeProperties.getProperty("webapp.path") +
-											java.io.File.separator +
-											"..").getAbsolutePath();
+		try {
+			this.paradeBase = new java.io.File((String) ParadeProperties.getProperty("webapp.path") +
+												java.io.File.separator +
+												"..").getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		/* Reads the row definitions and perfoms update/creation */
 		Map rowstore = (new RowProperties()).getRowDefinitions();
@@ -90,17 +96,19 @@ public class Parade {
     		if(this.getRows().containsKey(rowname)) {
     			
     			Row storedRow = (Row) this.getRows().get(rowname);
-				
-				if(!((String) rowDefinition.get("path")).trim().equals(storedRow.getRowpath())) {
+    			
+    			String path = ((String) rowDefinition.get("path")).trim();
+	            String canonicalPath=path;
+				try {
+					canonicalPath = new java.io.File(path).getCanonicalPath();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(!canonicalPath.equals(storedRow.getRowpath())) {
 					storedRow.setRowpath((String)rowDefinition.get("path"));
 					logger.warn("The path of row "+rowname+" was updated to "+(String)rowDefinition.get("path"));
 				}
-				/*
-				if(!((String) rowDefinition.get("webapp")).trim().equals(storedRow.getWebappPath())) {
-					storedRow.setWebappPath((String)rowDefinition.get("webapp"));
-					logger.warn("The webapp path of row "+rowname+" was updated to "+(String)rowDefinition.get("webapp"));
-				}
-				*/
 				if(!((String)rowDefinition.get("desc")).trim().equals(storedRow.getDescription())) {
 					storedRow.setDescription((String)rowDefinition.get("desc"));
 					logger.warn("The description of row "+rowname+" was updated to "+(String)rowDefinition.get("desc"));
@@ -114,10 +122,16 @@ public class Parade {
     			Row r = new Row();
 	            String name = ((String) rowDefinition.get("name")).trim();
 	            r.setRowname(name);
-	            String relativePath = (((String) rowDefinition.get("path")).trim());
-	            r.setRowpath(relativePath);
+	            String path = ((String) rowDefinition.get("path")).trim();
+	            String canonicalPath=path;
+				try {
+					canonicalPath = new java.io.File(path).getCanonicalPath();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	            r.setRowpath(canonicalPath);
 	            r.setDescription((String)rowDefinition.get("desc"));
-	            //r.setWebappPath((String)rowDefinition.get("webapp"));
 
 	            newRow(r, rowDefinition);
 				

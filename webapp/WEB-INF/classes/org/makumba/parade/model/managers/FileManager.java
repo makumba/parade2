@@ -34,17 +34,16 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 		try {
 			java.io.File rootPath = new java.io.File(row.getRowpath());
 			root.setName("_root_");
-			root.setPath(rootPath.getAbsolutePath());
+			root.setPath(rootPath.getCanonicalPath());
 			root.setRow(row);
 			root.setDate(new Long(new java.util.Date().getTime()));
 			root.setAge(new Long(0));
 			root.setFiledata(new HashMap());
 			root.setSize(new Long(0));
 			root.setNotOnDisk(true);
-			
 			row.getFiles().clear();
-			row.getFiles().put("_root_",root);
-			//row.getParade().addRow(row);
+			root.setIsDir(true);
+			row.getFiles().put(root.getPath(), root);
 			
 		} catch(Throwable t) {
 			logger.error("Couldn't access row path of row "+row.getRowname(),t);
@@ -57,7 +56,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 	public void directoryRefresh(Row row, String path) {
 		java.io.File currDir = new java.io.File(path);
 		
-		if(currDir.isDirectory() && !path.contains("_root_")) {
+		if(currDir.isDirectory()) {
 			
 			java.io.File[] dir = currDir.listFiles();
 	        for (int i = 0; i < dir.length; i++) {
@@ -94,7 +93,12 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 		File fileData = new File();
 		fileData.setIsDir(isDir);
 		fileData.setRow(row);
-		fileData.setPath(file.getAbsolutePath());
+		try {
+			fileData.setPath(file.getCanonicalPath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		fileData.setName(file.getName());
 		fileData.setDate(new Long(file.lastModified()));
 		fileData.setAge(new Long((new Date()).getTime() - file.lastModified()));
@@ -162,9 +166,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 						children.add(r.getFiles().get(currentKey));
 					}
 				}
-				
 			}
-			
 		}
 		
 		return children;
@@ -177,33 +179,44 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 
 	public String newFile(Row r, String path, String entry) {
 		java.io.File f = new java.io.File((path+"/"+entry).replace('/',java.io.File.separatorChar));
-		if(f.exists()) return "This file already exists";
+		if(f.exists() && f.isFile()) return "This file already exists";
+		boolean success=false;
 		try {
-			if(f.getParent() == null) f.mkdirs();
-			f.createNewFile();
+			success = f.createNewFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return("Error while trying to create file "+entry);
 		}
-		
-		File newFile = setFileData(r, f, false);
-		r.getFiles().put(f.getAbsolutePath(), newFile);
-		
-		return "OK#"+f.getAbsolutePath();
-		
+		if(success) {
+			File newFile = setFileData(r, f, false);
+			try {
+				r.getFiles().put(f.getCanonicalPath(), newFile);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return "OK#"+f.getAbsolutePath();
+		}
+		return "Error while trying to create file "+entry;
 	}
 
 	public String newDir(Row r, String path, String entry) {
 		System.out.println("newDir: "+entry + "path: "+path);
-		java.io.File f = new java.io.File((path+"/"+entry+"/").replace('/',java.io.File.separatorChar));
-		if(f.exists()) return "This directory already exists";
+		java.io.File f = new java.io.File((path+"/"+entry+"/.").replace('/',java.io.File.separatorChar));
+		if(f.exists() && f.isDirectory()) return "This directory already exists";
 		
-		boolean success = f.mkdirs();
-		
-		File newFile = setFileData(r, f, true);
-		r.getFiles().put(f.getAbsolutePath(), newFile);
+		boolean success = f.mkdir();
 		
 		if(success) {
+			File newFile = setFileData(r, f, true);		
+			try {
+				r.getFiles().put(f.getCanonicalPath(), newFile);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			return "OK#"+f.getAbsolutePath();
 		}
 		

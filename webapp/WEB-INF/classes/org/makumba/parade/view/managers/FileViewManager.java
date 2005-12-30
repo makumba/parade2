@@ -20,7 +20,7 @@ public class FileViewManager implements FileView, TreeView {
 		String header = "<td align='left'></td>" + //type
 						"<td align='center'><b>Name</b></td>" +
 						"<td align='left'>" +
-						"<a href='command?view=newFile&context="+r.getRowname()+"&path="+path+"' target='command'><img src='/images/newfile.gif' border=0></a>" +
+						"<a href='command?view=newFile&context="+r.getRowname()+"&path="+path+"' target='command'><img src='/images/newfile.gif' border=0></a> " +
 						"<a href='command?view=newDir&context="+r.getRowname()+"&path="+path+"' target='command'><img src='/images/newfolder.gif' border=0></a>" +
 						"</td>"+
 						"<td align='left'><b>Age</b></td>" +
@@ -56,12 +56,11 @@ public class FileViewManager implements FileView, TreeView {
 		out.println("<HTML><HEAD><TITLE>"+r.getRowname()+" tree</TITLE>"+
 		"</HEAD><BODY>");
 		
-		String absoulteRowPath = (new java.io.File(r.getRowpath())).getAbsolutePath();
-		List dirs = FileManager.getSubdirs(r,absoulteRowPath);
+		List dirs = FileManager.getSubdirs(r,r.getRowpath());
 		
 		for(Iterator i = dirs.iterator(); i.hasNext();) {
 			String curDir = (String)i.next();
-			out.println("<b><a href='file?context="+r.getRowname()+"&path="+curDir+"' target='directory'>"+curDir.substring(absoulteRowPath.length(),curDir.length())+"</a><br>");
+			out.println("<b><a href='file?context="+r.getRowname()+"&path="+curDir+"' target='directory'>"+curDir.substring(r.getRowpath().length(),curDir.length())+"</a><br>");
 		}
 		
 		out.println("</BODY></HTML>");
@@ -74,13 +73,6 @@ public class FileViewManager implements FileView, TreeView {
 		if(r==null) return "Unknown context "+context;
 		
 		// get a list of all the dirs
-		
-		
-		
-		
-		
-		
-		
 		
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
