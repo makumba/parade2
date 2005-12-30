@@ -34,18 +34,6 @@ public class AccessServlet extends HttpServlet {
     public void init() {
         Object o = PerThreadPrintStream.class;
         context = getServletConfig().getServletContext();
-        
-        /// TODO make this work and map to Parade root object
-        String serverurl="";
-        int serverport=0;
-        try {
-        	serverurl = this.getServletContext().getResource("/").getRef();
-        	serverport = getServletContext().getResource("/").getPort();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-			logger.warn("******* "+serverurl + " port "+serverport);
 		
         String authClass = (String) ParadeProperties.getProperty("parade.authorizerClass");
         String authMessage = (String) ParadeProperties.getProperty("parade.authorizationMessage");
