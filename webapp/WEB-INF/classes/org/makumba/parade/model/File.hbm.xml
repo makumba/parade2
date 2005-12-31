@@ -11,11 +11,10 @@
 		
 		<property name="name" />
 		<property name="date" />
-		<property name="age" />
 		<property name="size" />
 		<property name="path" />
 		<property name="isDir" />
-		<property name="notOnDisk" />
+		<property name="onDisk" />
 		
 		
 		<many-to-one name="row" column="id_row" not-null="true"/>

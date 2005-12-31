@@ -22,7 +22,7 @@ public class Parade {
 	
 	private Long id;
 	
-	private String paradeBase = new String();
+	private String baseDir = new String();
 	
 	private Map rows = new HashMap();
 
@@ -46,7 +46,7 @@ public class Parade {
 	public void refresh() {
 		
 		try {
-			this.paradeBase = new java.io.File((String) ParadeProperties.getProperty("webapp.path") +
+			this.baseDir = new java.io.File((String) ParadeProperties.getProperty("webapp.path") +
 												java.io.File.separator +
 												"..").getCanonicalPath();
 		} catch (IOException e) {
@@ -175,13 +175,13 @@ public class Parade {
 	}
 
 
-	public String getParadeBase() {
-		return paradeBase;
+	public String getBaseDir() {
+		return baseDir;
 	}
 
 
-	public void setParadeBase(String paradeBase) {
-		this.paradeBase = paradeBase;
+	public void setBaseDir(String paradeBase) {
+		this.baseDir = paradeBase;
 	}
 
 }

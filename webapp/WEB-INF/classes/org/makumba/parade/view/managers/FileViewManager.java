@@ -42,8 +42,14 @@ public class FileViewManager implements FileView, TreeView {
 					"<td align='left'>"+f.getName()+"</td>"+
 					"<td align='left'><a href=edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a></td>");
 		}
+		
 		out.print("</td><td align='left'>"+ViewManager.readableTime(f.getAge().longValue()));
-		out.print("</td><td align='left'>"+ViewManager.readableBytes(f.getSize().longValue()));
+		if(!f.getIsDir()) {
+			out.print("</td><td align='left'>"+ViewManager.readableBytes(f.getSize().longValue()));
+		} else {
+			out.print("</td><td align='left'>");
+		}
+		
 
 		return result.toString();
 	}

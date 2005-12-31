@@ -1,5 +1,6 @@
 package org.makumba.parade.model;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,13 +14,11 @@ public class File {
 	
 	private boolean isDir;
 	
-	private boolean notOnDisk;
+	private boolean onDisk;
 	
 	private String name;
 	
 	private Long date;
-	
-	private Long age;
 	
 	private Long size;
 	
@@ -64,11 +63,7 @@ public class File {
 	}
 
 	public Long getAge() {
-		return age;
-	}
-
-	public void setAge(Long age) {
-		this.age = age;
+		return new Long(new Date().getTime() - this.date.longValue());
 	}
 
 	public Long getDate() {
@@ -115,12 +110,12 @@ public class File {
 		return path;
 	}
 
-	public boolean isNotOnDisk() {
-		return notOnDisk;
+	public boolean getOnDisk() {
+		return onDisk;
 	}
 
-	public void setNotOnDisk(boolean onDisk) {
-		this.notOnDisk = onDisk;
+	public void setOnDisk(boolean onDisk) {
+		this.onDisk = onDisk;
 	}
 
 }

@@ -37,10 +37,9 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 			root.setPath(rootPath.getCanonicalPath());
 			root.setRow(row);
 			root.setDate(new Long(new java.util.Date().getTime()));
-			root.setAge(new Long(0));
 			root.setFiledata(new HashMap());
 			root.setSize(new Long(0));
-			root.setNotOnDisk(true);
+			root.setOnDisk(false);
 			row.getFiles().clear();
 			root.setIsDir(true);
 			row.getFiles().put(root.getPath(), root);
@@ -101,9 +100,8 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 		}
 		fileData.setName(file.getName());
 		fileData.setDate(new Long(file.lastModified()));
-		fileData.setAge(new Long((new Date()).getTime() - file.lastModified()));
 		fileData.setSize(new Long(file.length()));
-		fileData.setNotOnDisk(false);
+		fileData.setOnDisk(true);
 		return fileData;
 	}
 	
@@ -112,11 +110,10 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 		File cvsfile = new File();
 		cvsfile.setName(name);
 		cvsfile.setPath(path.getPath() + java.io.File.separator + name);
-		cvsfile.setNotOnDisk(true);
+		cvsfile.setOnDisk(false);
 		cvsfile.setIsDir(dir);
 		cvsfile.setRow(r);
 		cvsfile.setDate(new Long((new Date()).getTime()));
-		cvsfile.setAge(new Long(0));
 		cvsfile.setSize(new Long(0));
 		return cvsfile;
 	}

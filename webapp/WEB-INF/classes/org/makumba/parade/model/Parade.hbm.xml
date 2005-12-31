@@ -9,7 +9,7 @@
 			<generator class="native" />
 		</id>
 		
-		<property name="paradeBase" />
+		<property name="baseDir" />
 		
 		<map name="rows" outer-join="true" cascade="all-delete-orphan" inverse="true" access="field" order-by="rowname">
 		    <cache usage="read-write" />

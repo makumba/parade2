@@ -51,7 +51,7 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
 		String cvswebLink=cvsweb+rowcvsdata.getModule()+webPath;
 		
 		// if there's no CVS data
-		if(cvsdata == null || f.isNotOnDisk()) {
+		if(cvsdata == null || !f.getOnDisk()) {
 			if( f.getName().startsWith(".#") ) {
 				out.print("<a title='Backup of your working file, can be deleted once you resolved its conflicts with CVS'>Conflict Backup</a>");
 			
