@@ -1,5 +1,10 @@
 package org.makumba.parade.view.managers;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
+
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowAnt;
 import org.makumba.parade.view.interfaces.ParadeView;
@@ -15,46 +20,33 @@ public class AntViewManager implements ParadeView, HeaderView {
 	public String getParadeView(Row r) {
 		RowAnt antdata = (RowAnt) r.getRowdata().get("ant");
 		
-		String view = antdata.getBuildfile();
+		String view = antdata.getBuildfile()+"<br>\n";
+		view+=getTargets(r);
 		return view;
 	}
 
 	public String getHeaderView(Row r) {
-		// TODO Auto-generated method stub
-		/*
-		 * ant: 
-
-		String sep="";
-for(Iterator i= ((Collection)pageContext.findAttribute("ant.topTargets")).iterator(); i.hasNext(); )
-{
-String s=((String[])i.next())[0];
-for(Iterator j=Config.getColumns("ant.allowedOps"); j.hasNext(); )
-{ 
-
-	if(!s.equals(j.next()))
-		continue;
-%><%=sep%> <a href=paradeCommand.jsp?op=executeAntCommand&entry=<%=pageContext.findAttribute("parade.row")%>&antCommand=<%=s%> ><%=s%></a><%
-sep=",";
-}
-}
-for(Iterator i= ((Collection)pageContext.findAttribute("ant.subTargets")).iterator(); i.hasNext(); )
-{
-	String s=((String)i.next());
-for(Iterator j=Config.getColumns("ant.allowedOps"); j.hasNext(); )
-{ 
-	if(!s.equals(j.next()))
-		continue;
-%><%=sep%> <a href=paradeCommand.jsp?op=executeAntCommand&entry=<%=pageContext.findAttribute("parade.row")%>&antCommand=<%=s%> ><%=s%></a><%
-sep=",";
-}
-}
-		 * 
-		 * 
-		 * 
-		 */
-		return null;
+		return "&nbsp; ant: "+getTargets(r);
 	}
-
 	
-
+	private String getTargets(Row r) {
+		StringWriter result = new StringWriter();
+		PrintWriter out = new PrintWriter(result);
+		
+		RowAnt data = (RowAnt) r.getRowdata().get("ant");
+		
+		for(Iterator i = ParadeProperties.getElements("ant.allowedOps").iterator(); i.hasNext();) {
+			String allowed = (String) i.next();
+			for(Iterator j = data.getTargets().iterator(); j.hasNext();) {
+				String target = (String) j.next();
+				if(!target.equals(allowed))
+					continue;
+				out.print("<a href=?handler=ant&op=doSomething>"+target+"</a>");
+				if(i.hasNext())
+					out.println(",");
+			}
+		}
+		
+		return result.toString();
+	}
 }

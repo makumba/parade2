@@ -12,8 +12,9 @@ import org.makumba.parade.view.interfaces.ParadeView;
 public class WebappViewManager implements HeaderView, ParadeView {
 
 	public String getHeaderView(Row r) {
-		// TODO Auto-generated method stub
-		return null;
+		RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
+		
+		return "webapp: "+getCommands(r, data);
 	}
 
 	public String getParadeViewHeader() {
@@ -32,6 +33,17 @@ public class WebappViewManager implements HeaderView, ParadeView {
 		out.println(data.getWebappPath()+", "+ServletContainer.status[status]+"<br>");
 		
 		//TODO - consider the case WEBINF isn't found, ie get server name, port from some request
+		
+		out.println(getCommands(r, data));
+				
+		return result.toString();
+	}
+	
+	private String getCommands(Row r, RowWebapp data) {
+		StringWriter result = new StringWriter();
+		PrintWriter out = new PrintWriter(result);
+		
+		int status = data.getStatus().intValue();
 		
 		if(data.getWebappPath().equals("NO WEBINF")) {
 			/*
@@ -62,7 +74,7 @@ public class WebappViewManager implements HeaderView, ParadeView {
 				out.println("<a href='index.jsp?entry="+r.getRowname()+"&handler=webapp&op=servletContextInstall'>install</a>");
 			}
 		}
-				
+		
 		return result.toString();
 	}
 

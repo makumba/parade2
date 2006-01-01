@@ -51,10 +51,13 @@ public class HeaderViewManager implements HeaderView {
 		AntViewManager antV = new AntViewManager();
 		WebappViewManager webappV = new WebappViewManager();
 		
-		out.println();
 		out.println("<td valign=top>"+logV.getHeaderView(r)+"&nbsp;</td>");
 		out.println("<td valign=top>"+icqV.getHeaderView(r)+"&nbsp;</td>");
 		out.println("<td valign=top>"+sshV.getHeaderView(r)+"&nbsp;</td>");
+		out.println("<td valign=top>"+antV.getHeaderView(r)+"&nbsp;</td>");
+		out.println("<td valign=top>"+webappV.getHeaderView(r)+"&nbsp;</td>");
+		
+		
 		
 		
 		out.println("</tr></table></body></html>");
