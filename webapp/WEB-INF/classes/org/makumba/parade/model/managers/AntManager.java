@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -88,6 +89,8 @@ public class AntManager implements RowRefresher, ParadeManager {
                                 "project config error", t);
                 return null;
             }
+            
+            
 			
             try {
 				project.setUserProperty("ant.file", buildFile.getCanonicalPath());
@@ -109,28 +112,12 @@ public class AntManager implements RowRefresher, ParadeManager {
 		Project project = p;
         Enumeration ptargets = project.getTargets().elements();
 
-        ArrayList topTargets = new ArrayList();
-        ArrayList subTargets = new ArrayList();
-
+        List targets = antdata.getTargets();
         while (ptargets.hasMoreElements()) {
-            Target currentTarget = (Target) ptargets.nextElement();
-
-            if (currentTarget.getDescription() == null)
-                subTargets.add(currentTarget.getName());
-            else {
-                String obj[] = { currentTarget.getName(),
-                        currentTarget.getDescription() };
-                topTargets.add(obj);
-            }
+        	Target currentTarget = (Target) ptargets.nextElement();
+        	targets.add(currentTarget.getName());
+        	Collections.sort(antdata.getTargets());
         }
-        Collections.sort(subTargets);
-        Collections.sort(topTargets, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                return ((String[]) o1)[0].compareTo(((String[]) o2)[0]);
-            }
-        });
-        
-        
     }
 
 	public void newRow(String name, Row r, Map m) {

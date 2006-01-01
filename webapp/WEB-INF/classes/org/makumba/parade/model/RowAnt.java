@@ -1,5 +1,8 @@
 package org.makumba.parade.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class RowAnt extends AbstractRowData implements RowData {
 
@@ -8,6 +11,8 @@ public class RowAnt extends AbstractRowData implements RowData {
 	private Long lastmodified;
 	
 	private String buildfile="";
+	
+	private List targets = new LinkedList();
 	
 	public String getBuildfile() {
 		return buildfile;
@@ -31,6 +36,14 @@ public class RowAnt extends AbstractRowData implements RowData {
 
 	public void setLastmodified(Long lastmodified) {
 		this.lastmodified = lastmodified;
+	}
+
+	public List getTargets() {
+		return targets;
+	}
+
+	public void setTargets(List targets) {
+		this.targets = targets;
 	}
 	
 	

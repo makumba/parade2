@@ -20,23 +20,12 @@
         <property name="lastmodified" />
         <property name="buildfile" />
         
-        <!--  
-        <list name="topTargets" table="ROW_ANT_TOPTARGETS">
-		    <cache usage="read-write" />
-			<key><column name="ROWDATA_ID" not-null="false"/></key>
-			<index column="POSITION" />
-			<element type="string" column="topTargets" />
-		</list>
-		
-		<list name="subTargets" table="ROW_ANT_SUBTARGETS">
-		    <cache usage="read-write" />
-			<key><column name="ROWDATA_ID" not-null="false"/></key>
-			<index column="POSITION"/>
-			<element type="string" column="subTargets" />
-		</list>
-		-->
-		
-       
+        <list name="targets" lazy="true" table="ROW_ANT_TARGETS">
+        	<key column="ROWDATA_ID" />
+        	<index column="POSITION" />
+        	<element type="string" column="TARGETNAME" not-null="true" />
+        </list>
+      
     </joined-subclass>
     
     <joined-subclass name="RowTracker" table="ROW_TRACKER">
