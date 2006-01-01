@@ -200,7 +200,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 
 	public String newDir(Row r, String path, String entry) {
 		System.out.println("newDir: "+entry + "path: "+path);
-		java.io.File f = new java.io.File((path+"/"+entry+"/.").replace('/',java.io.File.separatorChar));
+		java.io.File f = new java.io.File((path+"/"+entry).replace('/',java.io.File.separatorChar));
 		if(f.exists() && f.isDirectory()) return "This directory already exists";
 		
 		boolean success = f.mkdir();
