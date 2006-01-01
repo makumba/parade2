@@ -2,7 +2,10 @@ package org.makumba.parade.init;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
@@ -31,6 +34,19 @@ public class ParadeProperties {
 	public static String getProperty(String configProperty) {
         return config.getProperty(configProperty);
     }
+	
+	public static List getElements(String configProperty) {
+		List l = new LinkedList();
+		
+		String s = getProperty(configProperty);
+		if(s == null)
+			s = "noSuchProperty";
+		StringTokenizer st = new StringTokenizer(s,",");
+		while(st.hasMoreElements()) {
+			l.add(((String)st.nextToken()).trim());
+		}
+		return l;
+	}
 	
 	
 	
