@@ -1,6 +1,7 @@
 package org.makumba.parade.view;
 
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -37,6 +38,9 @@ public class FileBrowserServlet extends HttpServlet {
 		String context = req.getParameter("context");
 		String path = req.getParameter("path");
 		String opResult = req.getParameter("opResult");
+		String op = req.getParameter("op");
+		String handler = req.getParameter("handler");
+		String params = req.getParameter("params");
 		
 		
 		Row r = (Row)p.getRows().get(context);
@@ -46,7 +50,7 @@ public class FileBrowserServlet extends HttpServlet {
 			resp.setContentType("text/html");
 			resp.setCharacterEncoding("UTF-8");
 			FileBrowserViewManager filebrowserV = new FileBrowserViewManager();
-			out.println(filebrowserV.getFileBrowserView(p, r, path, opResult));
+			out.println(filebrowserV.getFileBrowserView(p, r, path, opResult, op, handler, params));
 		}
 		
 		tx.commit();

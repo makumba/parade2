@@ -2,6 +2,7 @@ package org.makumba.parade.view.managers;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ public class FileViewManager implements FileView, TreeView {
 
 	
 	public String getFileViewHeader(Row r, String path) {
+		
 		String header = "<td align='left'></td>" + //type
 						"<td align='center'><b>Name</b></td>" +
 						"<td align='left'>" +
@@ -24,13 +26,38 @@ public class FileViewManager implements FileView, TreeView {
 						"<a href='command?view=newDir&context="+r.getRowname()+"&path="+path+"' target='command'><img src='/images/newfolder.gif' border=0></a>" +
 						"</td>"+
 						"<td align='left'><b>Age</b></td>" +
-						"<td align='left'><b>Size</b></td>";
+						"<td align='left'><b>Size</b></td>"+
+						
+						/* javascript for deleting files
+						"<script>\n"+
+						"function deleteFile(params){\n"+
+						"	result = window.confirm('Are you sure you want to delete this file?');\n"+
+						"	if(result){\n"+
+						"		url=\"?context="+r.getRowname()+"&handler=file&op=delete&params=\"+(params);\n"+
+						"		window.alert(url);"+
+						"		window.location.href=url;\n"+
+						"	}\n"+
+						"}\n"+
+						"</script>\n";
+						*/
+						"<script language=\"JavaScript\">\n"+
+						"<!-- \n"+
+						"function deleteFile(path) {\n"+
+						"  if(confirm('Are you sure you want to delete this file ?'))\n"+
+						"  {\n"+
+						"	url='?context="+r.getRowname()+"&handler=file&op=delete&params="+r.getRowname()+"%23'+path;\n"+
+						"	location.href=url;\n"+ 
+						"  }\n"+
+						"}\n"+
+						"</script>\n";
+		
 		return header;
 	}
 	
 	public String getFileView(Row r, String path, File f) {
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
+		
 		if(f.getIsDir()) {
 			out.print("<td align='left'><img src='/images/folder.gif'></td>"+
 					"<td align='left'><b><a href='/servlet/file?context="+r.getRowname()+
@@ -38,9 +65,35 @@ public class FileViewManager implements FileView, TreeView {
 					"<td></td>"+
 					"</a></b></td>");
 		} else {
-			out.print("<td align='left'><img src='/images/layout.gif'></td>"+
-					"<td align='left'>"+f.getName()+"</td>"+
-					"<td align='left'><a href=edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a></td>");
+			
+			String fl=f.getName().toLowerCase();
+			String image = "unknown";
+
+		    if(fl.endsWith(".java")) image="java"; 
+		    if(fl.endsWith(".mdd") || fl.endsWith(".idd")) image="text"; 
+		    if(fl.endsWith(".jsp")||fl.endsWith(".properties") || fl.endsWith(".xml") || fl.endsWith(".txt") || fl.endsWith(".conf")) image="text";
+		    if(fl.endsWith(".doc")||fl.endsWith(".jsp")||fl.endsWith(".html") || fl.endsWith(".htm") || fl.endsWith(".rtf")) image="layout";
+		    if(fl.endsWith(".gif")||fl.endsWith(".png") || fl.endsWith(".jpg") || fl.endsWith(".jpeg")) image="image";
+		    if(fl.endsWith(".zip")||fl.endsWith(".gz") || fl.endsWith(".tgz") || fl.endsWith(".jar")) image="zip";
+		    if(fl.endsWith(".avi")||fl.endsWith(".mpg") || fl.endsWith(".mpeg") || fl.endsWith(".mov")) image="movie";
+		    if(fl.endsWith(".au")||fl.endsWith(".mid") || fl.endsWith(".vaw") || fl.endsWith(".mp3")) image="sound";
+			
+		    
+		    String encodedParams="";
+		    try {
+		    	encodedParams=URLEncoder.encode(f.getPath(),"UTF-8");
+		    	System.out.println("encoded: "+encodedParams);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    
+		    out.print(
+					"<td align='left'><img src='/images/"+image+".gif' border='0'></td>\n"+
+					"<td align='left'>"+f.getName()+"</td>\n"+
+					"<td align='left'><a href=/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a>\n"+
+					"<a href=\"javascript:deleteFile('"+encodedParams+"')\"><img src='/images/delete.gif' border='0' alt='Delete "+f.getName()+"'></a></td>"
+					);
 		}
 		
 		out.print("</td><td align='left'>"+ViewManager.readableTime(f.getAge().longValue()));

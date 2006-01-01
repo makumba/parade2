@@ -2,6 +2,8 @@ package org.makumba.parade.model.managers;
 
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,9 +11,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.makumba.parade.model.File;
+import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.DirectoryRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
@@ -199,7 +203,6 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 	}
 
 	public String newDir(Row r, String path, String entry) {
-		System.out.println("newDir: "+entry + "path: "+path);
 		java.io.File f = new java.io.File((path+"/"+entry).replace('/',java.io.File.separatorChar));
 		if(f.exists() && f.isDirectory()) return "This directory already exists";
 		
@@ -219,6 +222,27 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 		
 		return "Error while trying to create directory "+entry;
 		
+	}
+	
+	public String deleteFile(Parade p, String params) {
+		System.out.println("undecParams: "+params);
+		String decodedParams = "";
+		try {
+			decodedParams = URLDecoder.decode(params,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+		}
+		System.out.println("Params: "+decodedParams);
+		StringTokenizer st = new StringTokenizer(decodedParams,"#");
+		Row r = (Row) p.getRows().get((String) st.nextToken());
+		String path = st.nextToken();
+		java.io.File f = new java.io.File((path).replace('/',java.io.File.separatorChar));
+		boolean success = f.delete();
+		if(success) {
+			r.getFiles().remove(path);
+			return "OK#"+f.getName();
+		}
+		return "Error while trying to delete file";
 	}
 
 }

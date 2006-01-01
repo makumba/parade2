@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -16,16 +17,36 @@ import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.FileComparator;
 import org.makumba.parade.view.interfaces.FileBrowserView;
 
-public class FileBrowserViewManager implements FileBrowserView {
+public class FileBrowserViewManager { // implements FileBrowserView {
 
-	public String getFileBrowserView(Parade p, Row r, String path,
-			String opResult) {
+	public String getFileBrowserView(Parade p, Row r, String path, String opResult,
+			String op, String handler, String params) {
+		
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 
 		// if this is the root of the row
 		if (path == null)
 			path = r.getRowpath();
+		
+		//check if there's an operation to be done
+		if(handler != null && op !=null) {
+			//TODO this should be moved to a controller...
+			if(handler.equals("file")) {
+				if(op.equals("delete")) {
+					FileManager fileMgr = new FileManager();
+					
+					//this is only because we are in a test phase
+					try {
+						opResult = URLEncoder.encode(fileMgr.deleteFile(p, params),"UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
 
 		FileViewManager fileV = new FileViewManager();
 		CVSViewManager cvsV = new CVSViewManager();
