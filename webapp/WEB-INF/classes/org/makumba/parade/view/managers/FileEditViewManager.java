@@ -182,16 +182,15 @@ public class FileEditViewManager implements FileEditorView {
 "}\n"+
 
 "//-->\n"+
+"</script>\n"+
 
-
-//"<script src='/scripts/editor.js' type='text/javascript'></script>\n"+
 "</head>\n"+
 
 "<body bgcolor=\"#dddddd\" TOPMARGIN=0 LEFTMARGIN=0 RIGHTMARGIN=0 BOTTOMMARGIN=0 marginwidth=0 marginheight=0 STYLE='margin: 0px' "+
-"onload=\"onLoad()\" onresize=\"onResize()\">\n"+
+"onload=\"javascript:onLoad()\" onresize=\"javascript:onResize()\">\n"+
 "<form name=\"sourceEdit\" method=\"post\" action=\"edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"\" style='margin:0px;'>\n"+
 
-"<input type=\"submit\" name=\"Submit\" value='(S)ave!' ACCESSKEY='S' onclick=\"setBunload(false)\">\n"+
+"<input type=\"submit\" name=\"Submit\" value='(S)ave!' ACCESSKEY='S' onclick=\"javascript:setBunload(false)\">\n"+
 "<a href='/?context="+r.getRowname()+"' target='_top' title='"+r.getParade().getBaseDir()+"'>\n"+
 (r.getRowname().equals("")?"(root)":r.getRowname())+
 "</a>:<a href=/servlet/file?context="+r.getRowname()+"&path="+r.getRowpath()+path+">"+path.replace(java.io.File.separatorChar,'/')+"</a>/<b>"+
@@ -199,7 +198,7 @@ file.getName()+"</b>\n"+
 "<br>\n"+
 
 "<textarea name=\"source\" style=\"width:100%;height:92%\" cols=\"90\" rows=\"23\" wrap=\"virtual\"\n"+
-"onKeyPress=\"setModified()\" STYLE=\"font-face:Lucida Console; font-size:8pt\">"+content+"</textarea>"+
+"onKeyPress=\"javascript:setModified()\" STYLE=\"font-face:Lucida Console; font-size:8pt\">"+content+"</textarea>"+
 
 "</form>\n"+
 "</body>\n"+

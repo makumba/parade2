@@ -10,7 +10,9 @@ import java.util.List;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.managers.FileManager;
+import org.makumba.parade.model.managers.ServletContainer;
 import org.makumba.parade.view.interfaces.FileView;
 import org.makumba.parade.view.interfaces.TreeView;
 
@@ -58,6 +60,8 @@ public class FileViewManager implements FileView, TreeView {
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		
+		RowWebapp webappdata = (RowWebapp) r.getRowdata().get("webapp");
+		
 		if(f.getIsDir()) {
 			out.print("<td align='left'><img src='/images/folder.gif'></td>"+
 					"<td align='left'><b><a href='/servlet/file?context="+r.getRowname()+
@@ -66,6 +70,7 @@ public class FileViewManager implements FileView, TreeView {
 					"</a></b></td>");
 		} else {
 			
+			// icons
 			String fl=f.getName().toLowerCase();
 			String image = "unknown";
 
@@ -78,10 +83,40 @@ public class FileViewManager implements FileView, TreeView {
 		    if(fl.endsWith(".avi")||fl.endsWith(".mpg") || fl.endsWith(".mpeg") || fl.endsWith(".mov")) image="movie";
 		    if(fl.endsWith(".au")||fl.endsWith(".mid") || fl.endsWith(".vaw") || fl.endsWith(".mp3")) image="sound";
 			
+		    out.print("<td align='left'><img src='/images/"+image+".gif' border='0'></td>\n");
+		    
+		    // name
+		    String addr="";
+		    String webappPath = webappdata.getWebappPath();
+		    
+		    if(webappdata.getStatus().intValue() == ServletContainer.RUNNING && path.startsWith(java.io.File.separator+webappPath)) {
+		    	String pathURI = path.substring(path.indexOf(webappPath)+webappPath.length()).replace(java.io.File.separator,"/")+"/";
+			    		    	
+		    	if(fl.endsWith(".java")) {
+					String dd=pathURI+f.getName();
+					dd=dd.substring(dd.indexOf("classes")+8, dd.lastIndexOf(".")).replace('/', '.');
+					addr="/"+r.getRowname()+"/classes/"+dd;
+			    }
+			    if(fl.endsWith(".mdd") || fl.endsWith(".idd")) {
+					String dd=pathURI+f.getName();
+					dd=dd.substring(dd.indexOf("dataDefinitions")+16, dd.lastIndexOf(".")).replace('/', '.');
+					addr="/"+r.getRowname()+"/dataDefinitions/"+dd;
+					}
+				if(fl.endsWith(".jsp")||fl.endsWith(".html") || fl.endsWith(".htm") || fl.endsWith(".txt") || fl.endsWith(".gif") || fl.endsWith(".png") || fl.endsWith(".jpeg") || fl.endsWith(".jpg") || fl.endsWith(".css") || fl.startsWith("readme") )
+					addr="/"+r.getRowname()+pathURI+f.getName();
+				if(fl.endsWith(".jsp"))
+					addr+="x";
+		    }
+		    
+			if(!addr.equals("")) {
+				out.print("<td align='left'><a href='"+addr+"'>"+f.getName()+"</a></td>\n");
+			} else {
+				out.print("<td align='left'>"+f.getName()+"</td>\n");
+			}
+
+			// actions
 		    try {
 				out.print(
-						"<td align='left'><img src='/images/"+image+".gif' border='0'></td>\n"+
-						"<td align='left'>"+f.getName()+"</td>\n"+
 						"<td align='left'><a href=/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a>\n"+
 						"<a href=\"javascript:deleteFile('"+URLEncoder.encode(URLEncoder.encode(f.getPath(),"UTF-8"),"UTF-8")+"')\"><img src='/images/delete.gif' border='0' alt='Delete "+f.getName()+"'></a></td>"
 						);
@@ -91,6 +126,7 @@ public class FileViewManager implements FileView, TreeView {
 			}
 		}
 		
+		// time && size
 		out.print("</td><td align='left'>"+ViewManager.readableTime(f.getAge().longValue()));
 		if(!f.getIsDir()) {
 			out.print("</td><td align='left'>"+ViewManager.readableBytes(f.getSize().longValue()));
