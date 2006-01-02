@@ -225,14 +225,12 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 	}
 	
 	public String deleteFile(Parade p, String params) {
-		System.out.println("undecParams: "+params);
 		String decodedParams = "";
 		try {
 			decodedParams = URLDecoder.decode(params,"UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 		}
-		System.out.println("Params: "+decodedParams);
 		StringTokenizer st = new StringTokenizer(decodedParams,"#");
 		Row r = (Row) p.getRows().get((String) st.nextToken());
 		String path = st.nextToken();
@@ -240,7 +238,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 		boolean success = f.delete();
 		if(success) {
 			r.getFiles().remove(path);
-			return "OK#"+f.getName();
+			return "File "+f.getName()+" deleted.";
 		}
 		return "Error while trying to delete file";
 	}

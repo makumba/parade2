@@ -56,6 +56,7 @@ public class FileBrowserViewManager { // implements FileBrowserView {
 				+ "</HEAD><BODY>");
 
 		if (!(opResult == null) && !opResult.equals(""))
+			
 			try {
 				out.println(URLDecoder.decode(opResult, "UTF-8") + "<br>");
 			} catch (UnsupportedEncodingException e) {

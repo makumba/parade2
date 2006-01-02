@@ -45,7 +45,7 @@ public class FileViewManager implements FileView, TreeView {
 						"function deleteFile(path) {\n"+
 						"  if(confirm('Are you sure you want to delete this file ?'))\n"+
 						"  {\n"+
-						"	url='?context="+r.getRowname()+"&handler=file&op=delete&params="+r.getRowname()+"%23'+path;\n"+
+						"	url='?context="+r.getRowname()+"&handler=file&op=delete&params="+r.getRowname()+"%23'+encodeURIComponent(path);\n"+
 						"	location.href=url;\n"+ 
 						"  }\n"+
 						"}\n"+
@@ -78,22 +78,17 @@ public class FileViewManager implements FileView, TreeView {
 		    if(fl.endsWith(".avi")||fl.endsWith(".mpg") || fl.endsWith(".mpeg") || fl.endsWith(".mov")) image="movie";
 		    if(fl.endsWith(".au")||fl.endsWith(".mid") || fl.endsWith(".vaw") || fl.endsWith(".mp3")) image="sound";
 			
-		    
-		    String encodedParams="";
 		    try {
-		    	encodedParams=URLEncoder.encode(f.getPath(),"UTF-8");
-		    	System.out.println("encoded: "+encodedParams);
+				out.print(
+						"<td align='left'><img src='/images/"+image+".gif' border='0'></td>\n"+
+						"<td align='left'>"+f.getName()+"</td>\n"+
+						"<td align='left'><a href=/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a>\n"+
+						"<a href=\"javascript:deleteFile('"+URLEncoder.encode(URLEncoder.encode(f.getPath(),"UTF-8"),"UTF-8")+"')\"><img src='/images/delete.gif' border='0' alt='Delete "+f.getName()+"'></a></td>"
+						);
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		    
-		    out.print(
-					"<td align='left'><img src='/images/"+image+".gif' border='0'></td>\n"+
-					"<td align='left'>"+f.getName()+"</td>\n"+
-					"<td align='left'><a href=/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a>\n"+
-					"<a href=\"javascript:deleteFile('"+encodedParams+"')\"><img src='/images/delete.gif' border='0' alt='Delete "+f.getName()+"'></a></td>"
-					);
 		}
 		
 		out.print("</td><td align='left'>"+ViewManager.readableTime(f.getAge().longValue()));
