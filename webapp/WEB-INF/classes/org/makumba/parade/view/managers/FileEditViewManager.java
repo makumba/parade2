@@ -195,6 +195,9 @@ public class FileEditViewManager implements FileEditorView {
 (r.getRowname().equals("")?"(root)":r.getRowname())+
 "</a>:<a href=/servlet/file?context="+r.getRowname()+"&path="+r.getRowpath()+path+">"+path.replace(java.io.File.separatorChar,'/')+"</a>/<b>"+
 file.getName()+"</b>\n"+
+"| <a href='/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"' title='get the file from disk again, undo all changes since last save'>Revert</a>\n"+
+"| <input type='text' value='Loading...' name='pagestatus' disabled size='10' style='border:0px; background-color:#dddddd; font-color:red;'>\n"+
+
 "<br>\n"+
 
 "<textarea name=\"source\" style=\"width:100%;height:92%\" cols=\"90\" rows=\"23\" wrap=\"virtual\"\n"+
