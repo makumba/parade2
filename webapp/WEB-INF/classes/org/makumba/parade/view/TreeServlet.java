@@ -27,14 +27,15 @@ public class TreeServlet extends HttpServlet {
 	}
 	
 	public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
-PrintWriter out = resp.getWriter();
+		PrintWriter out = resp.getWriter();
 		
 		Session s = InitServlet.getSessionFactory().openSession();
 		Transaction tx = s.beginTransaction();
 		
 		
 		Parade p = (Parade) s.get(Parade.class, new Long(1));
-		String context = (String)req.getParameter("context");
+		String context = req.getParameter("context");
+		String size = req.getParameter("size");
 		
 		Row r = (Row)p.getRows().get(context);
 		if(r == null) {
@@ -43,7 +44,8 @@ PrintWriter out = resp.getWriter();
 			resp.setContentType("text/html");
 			resp.setCharacterEncoding("UTF-8");
 			FileViewManager fileV = new FileViewManager();
-			out.println(fileV.getTreeView(p,r));
+			//out.println(fileV.getTreeView(p,r));
+			out.println(fileV.getJSTreeView(p, r, size));
 		}
 		
 		tx.commit();

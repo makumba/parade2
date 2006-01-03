@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
@@ -117,7 +118,7 @@ public class FileViewManager implements FileView, TreeView {
 			// actions
 		    try {
 				out.print(
-						"<td align='left'><a href=/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a>\n"+
+						"<td align='left'><a href='/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"'><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a>\n"+
 						"<a href=\"javascript:deleteFile('"+URLEncoder.encode(URLEncoder.encode(f.getPath(),"UTF-8"),"UTF-8")+"')\"><img src='/images/delete.gif' border='0' alt='Delete "+f.getName()+"'></a></td>"
 						);
 			} catch (UnsupportedEncodingException e) {
@@ -158,12 +159,7 @@ public class FileViewManager implements FileView, TreeView {
 		return result.toString();
 	}
 	
-	private String getJSTreeView(Parade p, String context, String s) {
-		Row r = (Row) p.getRows().get(context);
-		if(r==null) return "Unknown context "+context;
-		
-		// get a list of all the dirs
-		
+	public String getJSTreeView(Parade p, Row r, String s) {
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		
@@ -171,67 +167,95 @@ public class FileViewManager implements FileView, TreeView {
 		String size="normal"; 
 		String fontSize="0.7em";
 		String imagePath="imagesCompact";
-		if(s!=null) size=s; 
-		if(size.toLowerCase().equals("big"))
-		   { 
-		     fontSize="1em";
-		   }
+		if(s != null)
+			size = s; 
+		if(size.toLowerCase().equals("big")) { 
+			fontSize="1em";
+			imagePath="images";
+		}
 		
 		out.println("<html><head><title>"+r.getRowname()+ "tree</title> \n");
 		out.println("<style type=\"text/css\">");
-		out.println("A {"+
-		"     color:black;"+
-		"     text-decoration:none;"+
-		"     font-family:Tahoma,Arial;"+
-		"     font-size:<%=fontSize%>;"+
-		"}"+
-		"A:active {"+ 
-		"     color:white;"+
-		"     background:rgb(0,0,120);"+
-		"}"+
-		"</style>"+
-		"</head>"+
+		out.println(
+		"A {\n"+
+		"     color:black;\n"+
+		"     text-decoration:none;\n"+
+		"     font-family:Tahoma,Arial;\n"+
+		"     font-size:"+fontSize+";\n"+
+		"}\n"+
+		"A:active {\n"+
+		"     color:white;\n"+
+		"     background:rgb(0,0,120);\n"+
+		"}\n"+
+		"</style>\n"+
+		"</head>\n"+
 		
-		"<body>");
+		"<body>\n");
 		
-		/*
-		List tree= null;
-		try{	
-		tree=FileManager.setChildren(Config.readDomainData("tree", pageContext));
-		}catch(ParadeException e)
-			{ out.println("error during reading data "+e); return; }
-		*/
-		
-		out.println("<script src='treeMenu/sniffer.js'></script>"+
-				"<script src='treeMenu/TreeMenu.js'></script>"+
-				"<div id='menuLayer"+r.getRowname()+"'></div>");
+		out.println(
+				"<script src=\"/treeMenu/sniffer.js\"></script>\n"+
+				"<script src=\"/treeMenu/TreeMenu.js\"></script>\n"+
+				"<div id=\"menuLayer"+r.getRowname()+"\"></div>\n");
 	
 		if(size.equals("normal")) {
-			out.println("<a href='?context="+r.getRowname()+"&size=big' title='Show bigger'>"+
-						"<img src='/images/magnify.gif' align='right' border='0'></a>");
+			out.println("<a href='?context="+r.getRowname()+"&size=big' title='Show bigger'>\n"+
+						"<img src='/images/magnify.gif' align='right' border='0'></a>\n");
 		 } else {
-			 out.println("<a href='?context="+r.getRowname()+"&size=big' title='Show smaller'>" +
-			 			"<img src='/images/magnify.gif' align='right' border='0'></a>");
+			 out.println("<a href='?context="+r.getRowname()+"&size=normal' title='Show smaller'>\n" +
+			 			"<img src='/images/magnify.gif' align='right' border='0'></a>\n");
 		}
 		
-		out.println("<script language='javascript' type='text/javascript'>" +
-					"objTreeMenu = new TreeMenu('menuLayer"+r.getRowname()+"', '/treeMenu/images', 'objTreeMenu', 'directory');"+
-					"objTreeMenu.n[0] = new TreeNode('"+(r.getRowname()==""?"(root)":r.getRowname())+">'," +
-					"'folder.gif', 'files.jsp?context=<%=context%>', false);");
-	/*
-						<jsp:include page="treeBranch.jsp">
-			<jsp:param name="context" value="<%=context%>" />
-			<jsp:param name="path" value="" />
-			<jsp:param name="depth" value="0" />
-			<jsp:param name="level" value="1" />
-			<jsp:param name="treeMenu" value="bla" />
-		</jsp:include>
-		*/
-		out.println("objTreeMenu.drawMenu();"+
-					"objTreeMenu.resetBranches();"+
-		"</script>");
+		out.println("<script language=\"javascript\" type=\"text/javascript\">\n"+
+					"objTreeMenu = new TreeMenu('menuLayer"+r.getRowname()+"', '/treeMenu/"+imagePath+"', 'objTreeMenu', 'directory');\n"+
+					"objTreeMenu.n[0] = new TreeNode('"+(r.getRowname()==""?"(root)":r.getRowname())+"'," +
+					"'folder.gif', '/servlet/file?context="+r.getRowname()+"', false);\n");
 		
-		return null;
+		List base = FileManager.getSubdirs(r, r.getRowpath());
+		String depth = new String("0");
+		getTreeBranch(out, base, 0, r, r.getRowpath(), depth, 0);
+		
+		out.println(
+					"objTreeMenu.drawMenu();\n"+
+					"objTreeMenu.resetBranches();\n"+
+					"</script>\n" +
+					"</body></html>");
+		
+		return result.toString();
 	}
+	
+	private void getTreeBranch(PrintWriter out, List tree, int treeLine, Row r, String path, String depth, int level) {
+		
+		String treeRow="";
+		
+		for(int i = 0; i<tree.size(); i++) {
+			
+			File currentFile = (File) tree.get(i);
+			List currentTree = FileManager.getSubdirs(r, currentFile.getPath());
+		     
+			depth=depth+","+i; //make last one different 
+			level++;
+			treeLine = treeLine++;
+			
+			treeRow="objTreeMenu"; //start a javascript line to compose a tree
+
+			StringTokenizer st = new StringTokenizer(depth, ",");
+			while (st.hasMoreTokens()) {
+				treeRow=treeRow+".n["+st.nextToken()+"]";
+			}
+			try {
+				out.println(treeRow+" = new TreeNode('"+currentFile.getName()+"', 'folder.gif', '/servlet/file?context="+r.getRowname()+"&path="+URLEncoder.encode(currentFile.getPath(),"UTF-8")+"', false);");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(level<50 && currentTree.size() != 0)
+				getTreeBranch(out, currentTree, treeLine, r, currentFile.getPath(), depth, level);
+			
+			level--;
+			depth=depth.substring(0,depth.lastIndexOf(','));
+		}
+	}
+		
 
 }
