@@ -89,9 +89,7 @@ public class AntManager implements RowRefresher, ParadeManager {
                                 "project config error", t);
                 return null;
             }
-            
-            
-			
+
             try {
 				project.setUserProperty("ant.file", buildFile.getCanonicalPath());
 			} catch (IOException e) {
@@ -105,7 +103,6 @@ public class AntManager implements RowRefresher, ParadeManager {
 		    
 		}
 		return project;
-        
     }
 	
 	private void setTargets(RowAnt antdata, Project p) {
@@ -115,7 +112,12 @@ public class AntManager implements RowRefresher, ParadeManager {
         List targets = antdata.getTargets();
         while (ptargets.hasMoreElements()) {
         	Target currentTarget = (Target) ptargets.nextElement();
-        	targets.add(currentTarget.getName());
+        	if(currentTarget.getDescription() != null && currentTarget.getDescription() != "") {
+        		targets.add("#"+currentTarget.getName());
+        	} else {
+        		targets.add(currentTarget.getName());
+        	}
+        	
         	Collections.sort(antdata.getTargets());
         }
     }
