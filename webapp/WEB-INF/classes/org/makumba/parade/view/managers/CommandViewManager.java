@@ -9,6 +9,8 @@ import org.makumba.parade.view.interfaces.CommandView;
 public class CommandViewManager implements CommandView {
 
 	public String getCommandView(String view, Row r, String path, String file) {
+		if(view == null || view.equals(""))
+			return "include:/tipOfTheDay.jsp";
 		if(view!=null && view.equals("newFile")) {
 			return newFileView(r, path);
 		}
@@ -46,7 +48,21 @@ Create new file:<input type=text name=file>
 "<input type=hidden value='newFile#"+path+"' name=op>\n"+
 "Create new file: <input type=text name=entry>\n"+
 "<input type=submit value=Create>\n"+
-"</form>\n"
+"</form>\n"+
+"<br>\n"
+/*
+"<mak:form action='command?view=uploadResponse' method='post'\n"+
+"	message='file uploaded'>\n"+
+"	\n"+
+"	Upload a file: \n"+
+"	<mak:input name='theFile' dataType='text' type='file' />\n"+
+"	<input type=hidden name=context value='"+r.getRowname()+"'>\n"+
+"	<input type=hidden name=path value='"+r.getRowpath()+"'>\n"+
+"	<input type=checkbox name=binary checked id=bin disabled><label for=bin>Binary</label>\n"+
+"	<input type=checkbox name=overwrite checked id=ovr disabled><label for=ovr>Overwrite</label>\n"+
+"	<input type=submit value=Upload>\n"+
+"</mak:form>\n"
+*/
 		);
 		
 		return result.toString();
@@ -68,4 +84,5 @@ Create new file:<input type=text name=file>
 		
 		return result.toString();
 	}
+	
 }
