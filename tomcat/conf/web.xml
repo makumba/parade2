@@ -115,7 +115,6 @@ aded! -->
   <!--   debug               Debugging detail level for messages logged     -->
   <!--                       by this servlet.  [0]                          -->
 
-<!--
     <servlet>
         <servlet-name>invoker</servlet-name>
         <servlet-class>
@@ -127,7 +126,7 @@ aded! -->
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
--->
+
 
 
   <!-- The JSP page compiler and execution servlet, which is the mechanism  -->
@@ -346,12 +345,12 @@ aded! -->
     </servlet-mapping>
 
     <!-- The mapping for the invoker servlet -->
-<!--
+
     <servlet-mapping>
         <servlet-name>invoker</servlet-name>
         <url-pattern>/servlet/*</url-pattern>
     </servlet-mapping>
--->
+
 
     <!-- The mapping for the JSP servlet -->
     <servlet-mapping>
