@@ -42,7 +42,7 @@
         <servlet-name>mddLinker</servlet-name>
         <servlet-class>org.makumba.devel.SourceViewServlet</servlet-class>
     </servlet>
-
+<!--
 	<servlet>
 	   <servlet-name>invoker</servlet-name>
 	   <servlet-class>org.apache.catalina.servlets.InvokerServlet</servlet-class>
@@ -52,7 +52,7 @@
 	   </init-param>
 	   <load-on-startup>2</load-on-startup>
 	 </servlet>
-	 
+  -->	 
 	 <servlet>
 	   <servlet-name>index</servlet-name>
 	   <servlet-class>org.makumba.parade.view.IndexServlet</servlet-class>
@@ -77,12 +77,17 @@
 	   <servlet-name>command</servlet-name>
 	   <servlet-class>org.makumba.parade.view.CommandServlet</servlet-class>
 	 </servlet>
-  
+	 
+	 <servlet>
+	   <servlet-name>edit</servlet-name>
+	   <servlet-class>org.makumba.parade.view.FileEditorServlet</servlet-class>
+	 </servlet>
+<!-- 
 	 <servlet-mapping>
 	   <servlet-name>invoker</servlet-name>
 	   <url-pattern>/servlet/*</url-pattern>
 	 </servlet-mapping>
-	 
+-->   
 	 <servlet-mapping>
 	   <servlet-name>index</servlet-name>
 	   <url-pattern>/index.jsp</url-pattern>
