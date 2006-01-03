@@ -2,7 +2,9 @@ package org.makumba.parade.view;
 
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -18,17 +20,10 @@ import org.makumba.parade.view.managers.FileBrowserViewManager;
 
 public class CommandServlet extends HttpServlet {
 	
-	public void init(ServletConfig conf) {
-		try {
-			super.init();
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	public void init() {}
 	
 	public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
-
+		
 		Session s = InitServlet.getSessionFactory().openSession();
 		Transaction tx = s.beginTransaction();
 		
@@ -48,7 +43,16 @@ public class CommandServlet extends HttpServlet {
 		resp.setContentType("text/html");
 		resp.setCharacterEncoding("UTF-8");
 		CommandViewManager cmdV = new CommandViewManager();
-		out.println(cmdV.getCommandView(view, r, path, file));
+		String page = cmdV.getCommandView(view, r, path, file);
+		if(page.startsWith("include:")) {
+			String url = page.substring(page.indexOf(":")+1);
+			System.out.println("###"+url);
+			ServletContext ctx = getServletContext();
+			RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher(url);
+			dispatcher.forward(req, resp);
+		}
+			
+		out.println();
 	
 		tx.commit();
 		

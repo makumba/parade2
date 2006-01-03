@@ -18,14 +18,7 @@ import org.makumba.parade.view.managers.FileBrowserViewManager;
 
 public class FileBrowserServlet extends HttpServlet {
 
-	public void init(ServletConfig conf) {
-		try {
-			super.init();
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	public void init() {}
 	
 	public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
 		PrintWriter out = resp.getWriter();
