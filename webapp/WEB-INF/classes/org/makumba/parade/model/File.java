@@ -2,7 +2,11 @@ package org.makumba.parade.model;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
@@ -116,6 +120,72 @@ public class File {
 
 	public void setOnDisk(boolean onDisk) {
 		this.onDisk = onDisk;
+	}
+
+
+
+	/* returns a List of the keys of the subdirs of a given path */
+	public List getSubdirs() {
+		String keyPath = this.getPath();
+		
+		String absoulteRowPath = (new java.io.File(this.getRow().getRowpath()).getAbsolutePath());
+		if(keyPath == null || keyPath=="") keyPath=absoulteRowPath;
+		keyPath=keyPath.replace('/',java.io.File.separatorChar);
+		
+		Set keySet = this.getRow().getFiles().keySet();
+		
+		List children = new LinkedList();
+		
+		for(Iterator i = keySet.iterator(); i.hasNext();) {
+			String currentKey = (String) i.next();
+			boolean isChild = currentKey.startsWith(keyPath);
+			if(isChild)  {
+				boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
+				if (isNotRoot) {
+					String childKey = currentKey.substring(keyPath.length()+1,currentKey.length());
+					boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
+					if(isDirectChild) {
+						File f = (File) this.getRow().getFiles().get(currentKey);
+						if(f.getIsDir()) {
+							children.add(f);
+						}	
+					}
+				}
+			}
+		}
+		
+		return children;
+		
+	}
+
+	/* returns a List of the direct children (files, dirs) of a given Path */
+	public List getChildren() {
+		String keyPath = this.getPath();
+		
+		String absoulteRowPath = (new java.io.File(this.getRow().getRowpath()).getAbsolutePath());
+		if(keyPath == null || keyPath=="") keyPath=absoulteRowPath;
+		keyPath=keyPath.replace('/',java.io.File.separatorChar);
+		
+		Set keySet = this.getRow().getFiles().keySet();
+		
+		List children = new LinkedList();
+		
+		for(Iterator i = keySet.iterator(); i.hasNext();) {
+			String currentKey = (String) i.next();
+			boolean isChild = currentKey.startsWith(keyPath);
+			if(isChild)  {
+				boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
+				if (isNotRoot) {
+					String childKey = currentKey.substring(keyPath.length()+1,currentKey.length());
+					boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
+					if(isDirectChild) {
+						children.add(this.getRow().getFiles().get(currentKey));
+					}
+				}
+			}
+		}
+		
+		return children;
 	}
 
 }

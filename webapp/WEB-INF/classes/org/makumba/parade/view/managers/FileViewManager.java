@@ -12,7 +12,6 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowWebapp;
-import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.ServletContainer;
 import org.makumba.parade.view.interfaces.FileView;
 import org.makumba.parade.view.interfaces.TreeView;
@@ -147,7 +146,8 @@ public class FileViewManager implements FileView, TreeView {
 		out.println("<HTML><HEAD><TITLE>"+r.getRowname()+" tree</TITLE>"+
 		"</HEAD><BODY>");
 		
-		List dirs = FileManager.getSubdirs(r,r.getRowpath());
+		File baseFile = (File) r.getFiles().get(r.getRowpath());
+		List dirs = baseFile.getSubdirs();
 		
 		for(Iterator i = dirs.iterator(); i.hasNext();) {
 			String curDir = (String)i.next();
@@ -210,7 +210,8 @@ public class FileViewManager implements FileView, TreeView {
 					"objTreeMenu.n[0] = new TreeNode('"+(r.getRowname()==""?"(root)":r.getRowname())+"'," +
 					"'folder.gif', '/servlet/file?context="+r.getRowname()+"', false);\n");
 		
-		List base = FileManager.getSubdirs(r, r.getRowpath());
+		File baseFile = (File) r.getFiles().get(r.getRowpath());
+		List base = baseFile.getSubdirs();
 		String depth = new String("0");
 		getTreeBranch(out, base, 0, r, r.getRowpath(), depth, 0);
 		
@@ -230,7 +231,7 @@ public class FileViewManager implements FileView, TreeView {
 		for(int i = 0; i<tree.size(); i++) {
 			
 			File currentFile = (File) tree.get(i);
-			List currentTree = FileManager.getSubdirs(r, currentFile.getPath());
+			List currentTree = currentFile.getSubdirs();
 		     
 			depth=depth+","+i; //make last one different 
 			level++;

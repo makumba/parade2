@@ -6,11 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
@@ -122,70 +118,6 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 		return cvsfile;
 	}
 	
-	/* returns a List of the keys of the subdirs of a given path */
-	public static List getSubdirs(Row r, String path) {
-		String keyPath = path;
-		
-		String absoulteRowPath = (new java.io.File(r.getRowpath()).getAbsolutePath());
-		if(keyPath == null || keyPath=="") keyPath=absoulteRowPath;
-		keyPath=keyPath.replace('/',java.io.File.separatorChar);
-		
-		Set keySet = r.getFiles().keySet();
-		
-		List children = new LinkedList();
-		
-		for(Iterator i = keySet.iterator(); i.hasNext();) {
-			String currentKey = (String) i.next();
-			boolean isChild = currentKey.startsWith(keyPath);
-			if(isChild)  {
-				boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
-				if (isNotRoot) {
-					String childKey = currentKey.substring(keyPath.length()+1,currentKey.length());
-					boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
-					if(isDirectChild) {
-						File f = (File) r.getFiles().get(currentKey);
-						if(f.getIsDir()) {
-							children.add(f);
-						}	
-					}
-				}
-			}
-		}
-		
-		return children;
-		
-	}
-	
-	/* returns a List of the direct children (files, dirs) of a given Path */
-	public static List getChildren(Row r, String path) {
-		String keyPath = path;
-		
-		String absoulteRowPath = (new java.io.File(r.getRowpath()).getAbsolutePath());
-		if(keyPath == null || keyPath=="") keyPath=absoulteRowPath;
-		keyPath=keyPath.replace('/',java.io.File.separatorChar);
-		
-		Set keySet = r.getFiles().keySet();
-		
-		List children = new LinkedList();
-		
-		for(Iterator i = keySet.iterator(); i.hasNext();) {
-			String currentKey = (String) i.next();
-			boolean isChild = currentKey.startsWith(keyPath);
-			if(isChild)  {
-				boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
-				if (isNotRoot) {
-					String childKey = currentKey.substring(keyPath.length()+1,currentKey.length());
-					boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
-					if(isDirectChild) {
-						children.add(r.getFiles().get(currentKey));
-					}
-				}
-			}
-		}
-		
-		return children;
-	}
-
 	public void newRow(String name, Row r, Map m) {
 		// TODO Auto-generated method stub
 		

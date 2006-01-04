@@ -81,7 +81,8 @@ public class FileBrowserViewManager { // implements FileBrowserView {
 				+ trackerV.getFileViewHeader(r, path) + "</tr>");
 
 		// files
-		List files = FileManager.getChildren(r, path);
+		File file = (File) r.getFiles().get(path);
+		List files = file.getChildren();
 		FileComparator fc = new FileComparator();
 
 		Collections.sort(files, fc);
