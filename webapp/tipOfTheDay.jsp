@@ -1,6 +1,6 @@
 <html>
 <head>
-<meta http-equiv="refresh" content="30;URL=tipOfTheDay.jsp">
+<meta http-equiv="refresh" content="30;URL=/tipOfTheDay.jsp">
 <title>Parade tip of the day</title>
 </head>
 <body>
@@ -16,25 +16,25 @@
 java.util.Random rnd=new java.util.Random(); 
 switch(rnd.nextInt(18)) {
 case 0: { 
-    %>You can edit any non-binary file in the built-in online editor by clicking <img src="images/edit.gif"> icon next to it.<% break; }
+    %>You can edit any non-binary file in the built-in online editor by clicking <img src="/images/edit.gif"> icon next to it.<% break; }
 case 1: { 
-    %>You can delete any file by clicking <img src="images/delete.gif"> icon next to it. Of course you are asked whether you're sure before anything happens.<% break; }
+    %>You can delete any file by clicking <img src="/images/delete.gif"> icon next to it. Of course you are asked whether you're sure before anything happens.<% break; }
 case 2: { 
     %>Clicking on the version number takes you to the complete history log of that particular file, showing you all previous versions.<% break; }
 case 3: { 
     %>You can easily start the tracker on any file or folder by clicking the "track" part of the "not tracked" message.<% break; }
 case 4: { 
-    %>You can start your ICQ Lite by clicking on the <img src="images/icq-online.gif" alt="ICQ"> icon on top of your screen.<% break; }
+    %>You can start your ICQ Lite by clicking on the <img src="/images/icq-online.gif" alt="ICQ"> icon on top of your screen.<% break; }
 case 5: { 
     %>You can log in to the <%=request.getServerName()%> by clicking on the "ssh login" link on top of your screen.<% break; }
 case 6: { 
     %>You can see server logs by clicking "server output" on top of your screen.<% break; }
 case 7: { 
-    %>You can chat with and share a whiteboard with other developers by clicking <img src="images/chat.gif"> icon on top of your screen.<% break; }
+    %>You can chat with and share a whiteboard with other developers by clicking <img src="/images/chat.gif"> icon on top of your screen.<% break; }
 case 8: { 
     %>You can easily switch to other contexts by choosing it in the drop-down and pressing "Go!" button on top-left of your screen.<% break; }
 case 9: { 
-    %>You are using <%=System.getProperty("java.runtime.name")%> from <%=System.getProperty("java.vm.vendor")%>, version <%=System.getProperty("java.vm.version")%>. Find out more by clicking <a href="systemInfo.jsp" target="directory">System Info</a> on top of your screen.<% break; }
+    %>You are using <%=System.getProperty("java.runtime.name")%> from <%=System.getProperty("java.vm.vendor")%>, version <%=System.getProperty("java.vm.version")%>. Find out more by clicking <a href="/systemInfo.jsp" target="directory">System Info</a> on top of your screen.<% break; }
 case 10: { 
     %>You can resize frames by dragging their borders.<% break; }
 case 11: { 
