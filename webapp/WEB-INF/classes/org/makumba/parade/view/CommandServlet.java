@@ -50,6 +50,8 @@ public class CommandServlet extends HttpServlet {
 			ServletContext ctx = getServletContext();
 			RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher(url);
 			dispatcher.forward(req, resp);
+		} else {
+			out.println(page);
 		}
 			
 		out.println();

@@ -187,5 +187,16 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 		}
 		return "Error while trying to delete file";
 	}
+	
+	public String uploadFile(Parade p, String path, String context) {
+		Row r = (Row) p.getRows().get(context);
+		File f = new File();
+		java.io.File file = new java.io.File(path);
+		f = setFileData(r, file, false);
+		addFile(r, f);
+		
+		return path;
+		
+	}
 
 }

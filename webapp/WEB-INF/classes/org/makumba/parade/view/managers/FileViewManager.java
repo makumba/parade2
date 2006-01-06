@@ -24,8 +24,9 @@ public class FileViewManager implements FileView, TreeView {
 		String header = "<td align='left'></td>" + //type
 						"<td align='center'><b>Name</b></td>" +
 						"<td align='left'>" +
-						"<a href='command?view=newFile&context="+r.getRowname()+"&path="+path+"' target='command'><img src='/images/newfile.gif' border=0></a> " +
-						"<a href='command?view=newDir&context="+r.getRowname()+"&path="+path+"' target='command'><img src='/images/newfolder.gif' border=0></a>" +
+						"<a href='/servlet/command?view=newFile&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new file'><img src='/images/newfile.gif' border=0></a> " +
+						"<a href='/uploadFile.jsp?context="+r.getRowname()+"&path="+path+"' target='command' title='Upload a file'><img src='/images/uploadfile.gif' border=0></a> " +
+						"<a href='/servlet/command?view=newDir&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new directory'><img src='/images/newfolder.gif' border=0></a>" +
 						"</td>"+
 						"<td align='left'><b>Age</b></td>" +
 						"<td align='left'><b>Size</b></td>"+

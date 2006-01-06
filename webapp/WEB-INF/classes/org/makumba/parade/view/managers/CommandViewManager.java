@@ -1,9 +1,18 @@
 package org.makumba.parade.view.managers;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.view.interfaces.CommandView;
 
 public class CommandViewManager implements CommandView {
@@ -42,27 +51,14 @@ Create new file:<input type=text name=file>
 		PrintWriter out = new PrintWriter(result);
 		
 		out.println(
-"<html><head><title>Command view for "+r.getRowname()+"</title></head>\n"+
+"<html><head><title>Command view for "+r.getRowname()+"</title></head><body>\n"+
 "<form action='/?handler=file' target='_top' method='POST'>\n"+
 "<input type=hidden value='"+r.getRowname()+"' name=context>\n"+
 "<input type=hidden value='newFile#"+path+"' name=op>\n"+
 "Create new file: <input type=text name=entry>\n"+
 "<input type=submit value=Create>\n"+
 "</form>\n"+
-"<br>\n"
-/*
-"<mak:form action='command?view=uploadResponse' method='post'\n"+
-"	message='file uploaded'>\n"+
-"	\n"+
-"	Upload a file: \n"+
-"	<mak:input name='theFile' dataType='text' type='file' />\n"+
-"	<input type=hidden name=context value='"+r.getRowname()+"'>\n"+
-"	<input type=hidden name=path value='"+r.getRowpath()+"'>\n"+
-"	<input type=checkbox name=binary checked id=bin disabled><label for=bin>Binary</label>\n"+
-"	<input type=checkbox name=overwrite checked id=ovr disabled><label for=ovr>Overwrite</label>\n"+
-"	<input type=submit value=Upload>\n"+
-"</mak:form>\n"
-*/
+"</body</html>\n"
 		);
 		
 		return result.toString();
@@ -73,16 +69,44 @@ Create new file:<input type=text name=file>
 		PrintWriter out = new PrintWriter(result);
 		
 		out.println(
-"<html><head><title>Command view for "+r.getRowname()+"</title></head>\n"+
+"<html><head><title>Command view for "+r.getRowname()+"</title></head><body>\n"+
 "<form action='/?handler=file' target='_top' method='POST'>\n"+
 "<input type=hidden value='"+r.getRowname()+"' name=context>\n"+
 "<input type=hidden value='newDir#"+path+"' name=op>\n"+
 "Create new directory: <input type=text name=entry>\n"+
 "<input type=submit value=Create>\n"+
-"</form>\n"
+"</form>\n"+
+"</body</html>\n"
 		);
 		
 		return result.toString();
+	}
+	
+	public String uploadFile(String path, String file, Object content, Object context) {
+		
+		boolean success = true;
+		
+		try {
+			  OutputStream dest= new BufferedOutputStream(new FileOutputStream(path+File.separator+file));
+			  ((org.makumba.Text)content).writeTo(dest);
+			  dest.close();
+		} catch(Exception ew) {
+			success = false;
+			return("Error writing file: "+ew);
+		}
+				
+		if(success) {
+			Session s = InitServlet.getSessionFactory().openSession();
+			Transaction tx = s.beginTransaction();
+			
+			Parade p = (Parade) s.get(Parade.class, new Long(1));
+			FileManager fileMgr = new FileManager();
+			fileMgr.uploadFile(p, path+File.separator+file, (String) context);
+			
+			tx.commit();
+			s.close();
+		}
+		return("");
 	}
 	
 }
