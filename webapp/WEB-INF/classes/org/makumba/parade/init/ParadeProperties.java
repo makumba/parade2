@@ -40,7 +40,7 @@ public class ParadeProperties {
 		
 		String s = getProperty(configProperty);
 		if(s == null)
-			s = "noSuchProperty";
+			return null;
 		StringTokenizer st = new StringTokenizer(s,",");
 		while(st.hasMoreElements()) {
 			l.add(((String)st.nextToken()).trim());
