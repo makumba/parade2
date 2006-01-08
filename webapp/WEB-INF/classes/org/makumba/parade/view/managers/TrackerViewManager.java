@@ -19,7 +19,7 @@ public class TrackerViewManager implements FileView {
 	}
 
 	public String getFileViewHeader(Row r, String path) {
-		String header = "<td align='left'><b>Tracker</b></td>";
+		String header = "<th>Tracker</th>";
 		return header;
 	}
 

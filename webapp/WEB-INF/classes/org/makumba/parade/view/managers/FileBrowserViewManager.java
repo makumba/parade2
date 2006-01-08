@@ -52,8 +52,10 @@ public class FileBrowserViewManager { // implements FileBrowserView {
 		CVSViewManager cvsV = new CVSViewManager();
 		TrackerViewManager trackerV = new TrackerViewManager();
 
-		out.println("<HTML><HEAD><TITLE>" + r.getRowname() + " files</TITLE>"
-				+ "</HEAD><BODY>");
+		out.println("<HTML><HEAD><TITLE>" + r.getRowname() + " files</TITLE>");
+		out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
+		out.println("<link rel='StyleSheet' href='/style/files.css' type='text/css'>");
+		out.println("</HEAD><BODY class='files'>");
 
 		if (!(opResult == null) && !opResult.equals(""))
 			
@@ -71,12 +73,12 @@ public class FileBrowserViewManager { // implements FileBrowserView {
 		out.println("<img src='/images/folder-open.gif'>"
 				+ "<br><font size=-2>" + r.getRowpath() + "</font>");
 		out
-				.println("<table border='0' width='100%' cellspacing='0' cellpadding='2'>");
+				.println("<table class='files'>");
 
 		out.println("</p>");
 
 		// headers
-		out.println("<tr bgcolor=#ddddff>" + fileV.getFileViewHeader(r, path)
+		out.println("<tr>" + fileV.getFileViewHeader(r, path)
 				+ cvsV.getFileViewHeader(r, path)
 				+ trackerV.getFileViewHeader(r, path) + "</tr>");
 
@@ -92,13 +94,13 @@ public class FileBrowserViewManager { // implements FileBrowserView {
 		int counter = 0;
 		for (Iterator j = files.iterator(); j.hasNext();) {
 			File currentFile = (File) j.next();
-			out.println("<tr bgcolor="
-					+ (((counter % 2) == 0) ? "#ffffff" : "#f5f5ff")
-					+ " valign=top>"
+			out.println("<tr class='"
+					+ (((counter % 2) == 0) ? "odd" : "even")
+					+ "'>" 
 					+ fileV.getFileView(r, relativePath, currentFile)
 					+ cvsV.getFileView(r, relativePath, currentFile)
 					+ trackerV.getFileView(r, relativePath, currentFile)
-					+ "</td></tr>");
+					+ "</tr>");
 
 			counter++;
 		}

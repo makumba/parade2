@@ -1,0 +1,19 @@
+/* TREE */
+
+body
+{
+     aaafont-size:0.7em;
+     aaafont-family:Tahoma,Arial;
+     margin:2px;
+}
+
+A {
+     color:black;
+     text-decoration:none;
+  }
+
+A:active {
+     color:white;
+     background:rgb(0,0,120);
+     }
+

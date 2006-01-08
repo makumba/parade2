@@ -1,0 +1,43 @@
+/* FILE LIST */
+
+body
+{
+     font-size:0.7em;
+}
+
+H1 {
+ margin: 2px;
+}
+
+table.files
+{
+    border:0;
+    width:100%;
+    cellspacing:0;
+    padding:0px:
+    border-spacing:0px;
+    border-width:0px;
+    border-collapse:	collapse;
+}
+TD {
+    font:menu;
+    vertical-align:middle;
+    padding:0px;
+    border-spacing:0px;
+    border-width:0px;
+}
+TH {
+    font:caption;
+    background-color:#ddddff;
+    text-align:left;
+    font-weight:bold;
+}
+TR.odd {
+    background-color:#ffffff;
+}
+TR.even {
+    background-color:#f5f5ff;
+}
+TR:hover {
+    background-color:#ddddff;
+}

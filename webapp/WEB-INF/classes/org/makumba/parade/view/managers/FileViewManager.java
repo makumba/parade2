@@ -21,15 +21,16 @@ public class FileViewManager implements FileView, TreeView {
 	
 	public String getFileViewHeader(Row r, String path) {
 		
-		String header = "<td align='left'></td>" + //type
-						"<td align='center'><b>Name</b></td>" +
-						"<td align='left'>" +
-						"<a href='/servlet/command?view=newFile&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new file'><img src='/images/newfile.gif' border=0></a> " +
-						"<a href='/uploadFile.jsp?context="+r.getRowname()+"&path="+path+"' target='command' title='Upload a file'><img src='/images/uploadfile.gif' border=0></a> " +
-						"<a href='/servlet/command?view=newDir&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new directory'><img src='/images/newfolder.gif' border=0></a>" +
-						"</td>"+
-						"<td align='left'><b>Age</b></td>" +
-						"<td align='left'><b>Size</b></td>"+
+
+		String header = "<th></th>" + //type
+						//"<th>Name</th>" +
+						"<th colspan='2'>" +
+						"<a href='/servlet/command?view=newDir&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new directory'><img src='/images/newfolder.gif' border='0' align='right'></a>" +
+						"<a href='/uploadFile.jsp?context="+r.getRowname()+"&path="+path+"' target='command' title='Upload a file'><img src='/images/uploadfile.gif' border='0' align='right'></a> " +
+						"<a href='/servlet/command?view=newFile&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new file'><img src='/images/newfile.gif' border='0' align='right'></a> " +
+						"Name</th>"+
+						"<th>Age</th>" +
+						"<th>Size</th>"+
 						
 						/* javascript for deleting files
 						"<script>\n"+
@@ -62,13 +63,12 @@ public class FileViewManager implements FileView, TreeView {
 		PrintWriter out = new PrintWriter(result);
 		
 		RowWebapp webappdata = (RowWebapp) r.getRowdata().get("webapp");
-		
+		//out.print("<td>");
 		if(f.getIsDir()) {
-			out.print("<td align='left'><img src='/images/folder.gif'></td>"+
-					"<td align='left'><b><a href='/servlet/file?context="+r.getRowname()+
+			out.print("<td><img src='/images/folder.gif'></td>"+
+					"<td colspan='2'><a href='/servlet/file?context="+r.getRowname()+
 					"&path="+f.getPath()+"'>"+f.getName()+
-					"<td></td>"+
-					"</a></b></td>");
+					"</a></td>");
 		} else {
 			
 			// icons
@@ -109,30 +109,33 @@ public class FileViewManager implements FileView, TreeView {
 					addr+="x";
 		    }
 		    
-			if(!addr.equals("")) {
-				out.print("<td align='left'><a href='"+addr+"'>"+f.getName()+"</a></td>\n");
+		    out.print("<td>");
+		    if(!addr.equals("")) {
+				out.print("<a href='"+addr+"'>"+f.getName()+"</a>");
 			} else {
-				out.print("<td align='left'>"+f.getName()+"</td>\n");
+				out.print(f.getName());
 			}
-
+		    out.print("</td><td align='right'>");
 			// actions
 		    try {
 				out.print(
-						"<td align='left'><a href='/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"'><img src='/images/edit.gif' border=0 alt='Edit "+f.getName()+"'></a>\n"+
-						"<a href=\"javascript:deleteFile('"+URLEncoder.encode(URLEncoder.encode(f.getPath(),"UTF-8"),"UTF-8")+"')\"><img src='/images/delete.gif' border='0' alt='Delete "+f.getName()+"'></a></td>"
+						"<a href='/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"'><img src='/images/edit.gif' border='0' alt='Edit "+f.getName()+"'></a>"+
+						"<a href=\"javascript:deleteFile('"+URLEncoder.encode(URLEncoder.encode(f.getPath(),"UTF-8"),"UTF-8")+"')\"><img src='/images/delete.gif' border='0' alt='Delete "+f.getName()+"'></a>"
 						);
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		    out.print("</td>");
+
 		}
 		
 		// time && size
-		out.print("</td><td align='left'>"+ViewManager.readableTime(f.getAge().longValue()));
+		out.print("<td>"+ViewManager.readableTime(f.getAge().longValue())+"</td>");
 		if(!f.getIsDir()) {
-			out.print("</td><td align='left'>"+ViewManager.readableBytes(f.getSize().longValue()));
+			out.print("<td>"+ViewManager.readableBytes(f.getSize().longValue())+"</td>");
 		} else {
-			out.print("</td><td align='left'>");
+			out.print("</td><td>");
 		}
 		
 
@@ -175,23 +178,17 @@ public class FileViewManager implements FileView, TreeView {
 			imagePath="images";
 		}
 		
-		out.println("<html><head><title>"+r.getRowname()+ "tree</title> \n");
+		out.println("<html><head><title>"+r.getRowname()+ " tree</title> \n");
+		out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
+		out.println("<link rel='StyleSheet' href='/style/tree.css' type='text/css'>");
 		out.println("<style type=\"text/css\">");
 		out.println(
 		"A {\n"+
-		"     color:black;\n"+
-		"     text-decoration:none;\n"+
-		"     font-family:Tahoma,Arial;\n"+
-		"     font-size:"+fontSize+";\n"+
-		"}\n"+
-		"A:active {\n"+
-		"     color:white;\n"+
-		"     background:rgb(0,0,120);\n"+
+		//"     font-size:"+fontSize+";\n"+
 		"}\n"+
 		"</style>\n"+
 		"</head>\n"+
-		
-		"<body>\n");
+		"<body class='tree'>\n");
 		
 		out.println(
 				"<script src=\"/treeMenu/sniffer.js\"></script>\n"+
