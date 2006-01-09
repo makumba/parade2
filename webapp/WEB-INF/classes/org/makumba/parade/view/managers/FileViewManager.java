@@ -25,9 +25,9 @@ public class FileViewManager implements FileView, TreeView {
 		String header = "<th></th>" + //type
 						//"<th>Name</th>" +
 						"<th colspan='2'>" +
-						"<a href='/servlet/command?view=newDir&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new directory'><img src='/images/newfolder.gif' border='0' align='right'></a>" +
-						"<a href='/uploadFile.jsp?context="+r.getRowname()+"&path="+path+"' target='command' title='Upload a file'><img src='/images/uploadfile.gif' border='0' align='right'></a> " +
-						"<a href='/servlet/command?view=newFile&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new file'><img src='/images/newfile.gif' border='0' align='right'></a> " +
+						"<a href='/servlet/command?view=newDir&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new directory'><img src='/images/newfolder.gif' align='right'></a>" +
+						"<a href='/uploadFile.jsp?context="+r.getRowname()+"&path="+path+"' target='command' title='Upload a file'><img src='/images/uploadfile.gif' align='right'></a> " +
+						"<a href='/servlet/command?view=newFile&context="+r.getRowname()+"&path="+path+"' target='command' title='Create a new file'><img src='/images/newfile.gif' align='right'></a> " +
 						"Name</th>"+
 						"<th>Age</th>" +
 						"<th>Size</th>"+
@@ -63,7 +63,7 @@ public class FileViewManager implements FileView, TreeView {
 		PrintWriter out = new PrintWriter(result);
 		
 		RowWebapp webappdata = (RowWebapp) r.getRowdata().get("webapp");
-		//out.print("<td>");
+		//out.print("<td>");  
 		if(f.getIsDir()) {
 			out.print("<td><img src='/images/folder.gif'></td>"+
 					"<td colspan='2'><a href='/servlet/file?context="+r.getRowname()+
@@ -84,7 +84,7 @@ public class FileViewManager implements FileView, TreeView {
 		    if(fl.endsWith(".avi")||fl.endsWith(".mpg") || fl.endsWith(".mpeg") || fl.endsWith(".mov")) image="movie";
 		    if(fl.endsWith(".au")||fl.endsWith(".mid") || fl.endsWith(".vaw") || fl.endsWith(".mp3")) image="sound";
 			
-		    out.print("<td align='left'><img src='/images/"+image+".gif' border='0'></td>\n");
+		    out.print("<td><img src='/images/"+image+".gif'></td>");
 		    
 		    // name
 		    String addr="";
@@ -119,8 +119,8 @@ public class FileViewManager implements FileView, TreeView {
 			// actions
 		    try {
 				out.print(
-						"<a href='/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"'><img src='/images/edit.gif' border='0' alt='Edit "+f.getName()+"'></a>"+
-						"<a href=\"javascript:deleteFile('"+URLEncoder.encode(URLEncoder.encode(f.getPath(),"UTF-8"),"UTF-8")+"')\"><img src='/images/delete.gif' border='0' alt='Delete "+f.getName()+"'></a>"
+						"<a href='/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"'><img src='/images/edit.gif' alt='Edit "+f.getName()+"'></a>"+
+						"<a href=\"javascript:deleteFile('"+URLEncoder.encode(URLEncoder.encode(f.getPath(),"UTF-8"),"UTF-8")+"')\"><img src='/images/delete.gif' alt='Delete "+f.getName()+"'></a>"
 						);
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
@@ -168,26 +168,31 @@ public class FileViewManager implements FileView, TreeView {
 		PrintWriter out = new PrintWriter(result);
 		
 		// defaults:
+		/*
 		String size="normal"; 
 		String fontSize="0.7em";
+		*/
 		String imagePath="imagesCompact";
+		/*
 		if(s != null)
 			size = s; 
 		if(size.toLowerCase().equals("big")) { 
 			fontSize="1em";
 			imagePath="images";
 		}
-		
+		*/
 		out.println("<html><head><title>"+r.getRowname()+ " tree</title> \n");
 		out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
 		out.println("<link rel='StyleSheet' href='/style/tree.css' type='text/css'>");
+		/*
 		out.println("<style type=\"text/css\">");
 		out.println(
 		"A {\n"+
-		//"     font-size:"+fontSize+";\n"+
+		"     font-size:"+fontSize+";\n"+
 		"}\n"+
 		"</style>\n"+
-		"</head>\n"+
+		*/
+		out.println("</head>\n"+
 		"<body class='tree'>\n");
 		
 		out.println(
@@ -195,13 +200,15 @@ public class FileViewManager implements FileView, TreeView {
 				"<script src=\"/treeMenu/TreeMenu.js\"></script>\n"+
 				"<div id=\"menuLayer"+r.getRowname()+"\"></div>\n");
 	
+		/*
 		if(size.equals("normal")) {
 			out.println("<a href='?context="+r.getRowname()+"&size=big' title='Show bigger'>\n"+
-						"<img src='/images/magnify.gif' align='right' border='0'></a>\n");
+						"<img src='/images/magnify.gif' align='right'></a>\n");
 		 } else {
 			 out.println("<a href='?context="+r.getRowname()+"&size=normal' title='Show smaller'>\n" +
-			 			"<img src='/images/magnify.gif' align='right' border='0'></a>\n");
+			 			"<img src='/images/magnify.gif' align='right'></a>\n");
 		}
+		*/
 		
 		out.println("<script language=\"javascript\" type=\"text/javascript\">\n"+
 					"objTreeMenu = new TreeMenu('menuLayer"+r.getRowname()+"', '/treeMenu/"+imagePath+"', 'objTreeMenu', 'directory');\n"+

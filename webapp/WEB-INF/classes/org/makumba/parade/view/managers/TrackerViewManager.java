@@ -13,7 +13,7 @@ public class TrackerViewManager implements FileView {
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		
-		out.println("<td>Not tracked</td>");
+		out.print("<td>Not tracked</td>");
 		
 		return result.toString();
 	}

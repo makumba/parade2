@@ -1,28 +1,33 @@
 /* FILE LIST */
 
-body
-{
-     font-size:0.7em;
+body {
+    font-size:0.7em;
 }
 
-H1 {
- margin: 2px;
+H2 {
+    margin: 2px;
+    font-weight:normal:
 }
-
-table.files
-{
+div.pathOnDisk {
+    font-size:smaller;
+}
+table.files {
     border:0;
     width:100%;
-    cellspacing:0;
     padding:0px:
     border-spacing:0px;
     border-width:0px;
-    border-collapse:	collapse;
+    border-collapse:collapse;
+}
+img {
+    padding-right:2px;
 }
 TD {
     font:menu;
     vertical-align:middle;
     padding:0px;
+    padding-left:3px;
+    padding-right:3px;
     border-spacing:0px;
     border-width:0px;
 }
@@ -40,4 +45,11 @@ TR.even {
 }
 TR:hover {
     background-color:#ddddff;
+}
+
+/* cvs-specific should go to plugin-specific css */
+div.cvs-ignored {
+    font-size:smaller;
+    color:#999999;
+    font-style:italic;
 }

@@ -66,12 +66,12 @@ public class FileBrowserViewManager { // implements FileBrowserView {
 				e.printStackTrace();
 			}
 
-		out.println("<p align='left'>"
-				+ "<font size=+1>[<a href='/servlet/file?context="
+		out.println("<h2>"
+				+ "[<a href='/servlet/file?context="
 				+ r.getRowname() + "'>" + r.getRowname() + "</a>]/"
-				+ getParentDir(r, path) + "</font>");
+				+ getParentDir(r, path) + "");
 		out.println("<img src='/images/folder-open.gif'>"
-				+ "<br><font size=-2>" + r.getRowpath() + "</font>");
+				+ "</h2><div class='pathOnDisk'>" + r.getRowpath() + "</div>");
 		out
 				.println("<table class='files'>");
 

@@ -3,3 +3,9 @@ body
      aafont-family:Tahoma,Arial;
      font:menu;
 }
+
+a img
+{
+  border:none;
+  border-width:0px;
+}
