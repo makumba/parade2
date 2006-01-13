@@ -13,13 +13,22 @@ import org.makumba.parade.model.managers.WebappManager;
 
 public class ViewManager {
 	
-	public String getView(Parade p, String context, String handler, String op, String entry) {
+	public String getView(Parade p, String context, String handler, String op, String entry, String pathURI) {
 		
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		
 		Row r = null;
 		if(context != null) r = (Row) p.getRows().get(context);
+		
+		if(pathURI != null) {
+			try {
+				pathURI = URLEncoder.encode(pathURI,"UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		//operation to handle
 		//TODO - move this somewhere else
@@ -101,7 +110,7 @@ public class ViewManager {
 "	<FRAMESET cols=\"190,*\">"+
 "		<FRAME name=\"tree\" src=\"/servlet/tree?context="+r.getRowname()+"\" marginwidth=\"0\" marginheight=\"5\">"+
 "		<FRAMESET rows=\"*,20%\">"+      
-"			<FRAME name=\"directory\" src=\"/servlet/file?context="+r.getRowname()+"&opResult="+opResult+"\">"+
+"			<FRAME name=\"directory\" src=\"/servlet/file?context="+r.getRowname()+"&opResult="+opResult+"&path="+pathURI+"\">"+
 "			<FRAME name=\"command\" src=\"/servlet/command\" marginwidth=\"1\" marginheight=\"1\">"+
 "		</FRAMESET>"+
 "	</FRAMESET>"+

@@ -29,12 +29,13 @@ public class IndexServlet extends HttpServlet {
 		String op = req.getParameter("op");
 		String handler = req.getParameter("handler");
 		String entry = req.getParameter("entry");
+		String path = req.getParameter("path");
 		
 		resp.setContentType("text/html");
 		resp.setCharacterEncoding("UTF-8");
 		
 		ViewManager viewMgr = new ViewManager();
-		out.print(viewMgr.getView(p, context, handler, op, entry));
+		out.print(viewMgr.getView(p, context, handler, op, entry, path));
 		
 		tx.commit();
 		

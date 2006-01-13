@@ -71,7 +71,7 @@ public class FileBrowserViewManager { // implements FileBrowserView {
 				+ r.getRowname() + "'>" + r.getRowname() + "</a>]/"
 				+ getParentDir(r, path) + "");
 		out.println("<img src='/images/folder-open.gif'>"
-				+ "</h2><div class='pathOnDisk'>" + r.getRowpath() + "</div>");
+				+ "</h2><div class='pathOnDisk'>" + path + "</div>");
 		out
 				.println("<table class='files'>");
 

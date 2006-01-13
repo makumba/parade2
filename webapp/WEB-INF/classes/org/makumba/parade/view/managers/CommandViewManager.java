@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -50,9 +52,18 @@ Create new file:<input type=text name=file>
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		
+		String pathURI="";
+		
+		try {
+			pathURI=URLEncoder.encode(path,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		out.println(
 "<html><head><title>Command view for "+r.getRowname()+"</title></head><body>\n"+
-"<form action='/?handler=file' target='_top' method='POST'>\n"+
+"<form action='/?handler=file&path="+pathURI+"' target='_top' method='POST'>\n"+
 "<input type=hidden value='"+r.getRowname()+"' name=context>\n"+
 "<input type=hidden value='newFile#"+path+"' name=op>\n"+
 "Create new file: <input type=text name=entry>\n"+
@@ -68,9 +79,18 @@ Create new file:<input type=text name=file>
 		StringWriter result = new StringWriter();
 		PrintWriter out = new PrintWriter(result);
 		
+		String pathURI="";
+		
+		try {
+			pathURI=URLEncoder.encode(path,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		out.println(
 "<html><head><title>Command view for "+r.getRowname()+"</title></head><body>\n"+
-"<form action='/?handler=file' target='_top' method='POST'>\n"+
+"<form action='/?handler=file&path="+pathURI+"' target='_top' method='POST'>\n"+
 "<input type=hidden value='"+r.getRowname()+"' name=context>\n"+
 "<input type=hidden value='newDir#"+path+"' name=op>\n"+
 "Create new directory: <input type=text name=entry>\n"+

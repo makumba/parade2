@@ -20,7 +20,13 @@ public class FileViewManager implements FileView, TreeView {
 
 	
 	public String getFileViewHeader(Row r, String path) {
-		
+		String pathURI="";
+		try {
+			pathURI = URLEncoder.encode(path,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		String header = "<th></th>" + //type
 						//"<th>Name</th>" +
@@ -46,10 +52,10 @@ public class FileViewManager implements FileView, TreeView {
 						*/
 						"<script language=\"JavaScript\">\n"+
 						"<!-- \n"+
-						"function deleteFile(path) {\n"+
-						"  if(confirm('Are you sure you want to delete this file ?'))\n"+
+						"function deleteFile(path, name) {\n"+
+						"  if(confirm('Are you sure you want to delete the file '+name+' ?'))\n"+
 						"  {\n"+
-						"	url='?context="+r.getRowname()+"&handler=file&op=delete&params="+r.getRowname()+"%23'+encodeURIComponent(path);\n"+
+						"	url='?context="+r.getRowname()+"&path="+pathURI+"&handler=file&op=delete&params="+r.getRowname()+"%23'+encodeURIComponent(path);\n"+
 						"	location.href=url;\n"+ 
 						"  }\n"+
 						"}\n"+
@@ -120,7 +126,7 @@ public class FileViewManager implements FileView, TreeView {
 		    try {
 				out.print(
 						"<a href='/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"'><img src='/images/edit.gif' alt='Edit "+f.getName()+"'></a>"+
-						"<a href=\"javascript:deleteFile('"+URLEncoder.encode(URLEncoder.encode(f.getPath(),"UTF-8"),"UTF-8")+"')\"><img src='/images/delete.gif' alt='Delete "+f.getName()+"'></a>"
+						"<a href=\"javascript:deleteFile('"+URLEncoder.encode(URLEncoder.encode(f.getPath(),"UTF-8"),"UTF-8")+"','"+f.getName()+"')\"><img src='/images/delete.gif' alt='Delete "+f.getName()+"'></a>"
 						);
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
@@ -131,9 +137,12 @@ public class FileViewManager implements FileView, TreeView {
 		}
 		
 		// time && size
-		out.print("<td>"+ViewManager.readableTime(f.getAge().longValue())+"</td>");
+		out.print("<td><a title='"+new java.util.Date(f.getDate().longValue())+"'>"+ViewManager.readableTime(f.getAge().longValue())+"</a></td>");
 		if(!f.getIsDir()) {
-			out.print("<td>"+ViewManager.readableBytes(f.getSize().longValue())+"</td>");
+			if(f.getSize().longValue() > 0l)
+				out.print("<td><a title='"+f.getSize()+" bytes'>"+ViewManager.readableBytes(f.getSize().longValue())+"</a></td>");
+			else
+				out.print("<td><i>empty<i></td>");
 		} else {
 			out.print("</td><td>");
 		}
