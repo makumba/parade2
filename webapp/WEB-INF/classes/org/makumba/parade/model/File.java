@@ -13,179 +13,176 @@ import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.TrackerManager;
 
 public class File {
-	
-	private Long id;
-	
-	private boolean isDir;
-	
-	private boolean onDisk;
-	
-	private String name;
-	
-	private Long date;
-	
-	private Long size;
-	
-	private Map filedata = new HashMap();
-	
-	private Row row;
-	
-	private String path;
 
-	
-	/* Calls the refresh() directoryRefresh() on the directory managers */
-	public void refresh() {
-		FileManager fileMgr = new FileManager();
-		CVSManager CVSMgr = new CVSManager();
-		TrackerManager trackerMgr = new TrackerManager();
-		
-		fileMgr.directoryRefresh(row, this.getPath());
-		CVSMgr.directoryRefresh(row,this.getPath());
-		trackerMgr.directoryRefresh(row,this.getPath());
-	}
-	
-	
-	
-	public void setPath(String path) {
-		this.path = path;
-	}
+    private Long id;
 
-	public Row getRow() {
-		return row;
-	}
+    private boolean isDir;
 
-	public void setRow(Row row) {
-		this.row = row;
-	}
+    private boolean onDisk;
 
-	public Long getId() {
-		return id;
-	}
+    private String name;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private Long date;
 
-	public Long getAge() {
-		return new Long(new Date().getTime() - this.date.longValue());
-	}
+    private Long size;
 
-	public Long getDate() {
-		return date;
-	}
+    private Map filedata = new HashMap();
 
-	public void setDate(Long date) {
-		this.date = date;
-	}
+    private Row row;
 
-	public Map getFiledata() {
-		return filedata;
-	}
+    private String path;
 
-	public void setFiledata(Map filedata) {
-		this.filedata = filedata;
-	}
+    /* Calls the refresh() directoryRefresh() on the directory managers */
+    public void refresh() {
+        FileManager fileMgr = new FileManager();
+        CVSManager CVSMgr = new CVSManager();
+        TrackerManager trackerMgr = new TrackerManager();
 
-	public Long getSize() {
-		return size;
-	}
+        fileMgr.directoryRefresh(row, this.getPath());
+        CVSMgr.directoryRefresh(row, this.getPath());
+        trackerMgr.directoryRefresh(row, this.getPath());
+    }
 
-	public void setSize(Long size) {
-		this.size = size;
-	}
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Row getRow() {
+        return row;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setRow(Row row) {
+        this.row = row;
+    }
 
-	public boolean getIsDir() {
-		return isDir;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setIsDir(boolean isDir) {
-		this.isDir = isDir;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getPath() {
-		return path;
-	}
+    public Long getAge() {
+        return new Long(new Date().getTime() - this.date.longValue());
+    }
 
-	public boolean getOnDisk() {
-		return onDisk;
-	}
+    public Long getDate() {
+        return date;
+    }
 
-	public void setOnDisk(boolean onDisk) {
-		this.onDisk = onDisk;
-	}
+    public void setDate(Long date) {
+        this.date = date;
+    }
 
+    public Map getFiledata() {
+        return filedata;
+    }
 
+    public void setFiledata(Map filedata) {
+        this.filedata = filedata;
+    }
 
-	/* returns a List of the keys of the subdirs of a given path */
-	public List getSubdirs() {
-		String keyPath = this.getPath();
-		
-		String absoulteRowPath = (new java.io.File(this.getRow().getRowpath()).getAbsolutePath());
-		if(keyPath == null || keyPath=="") keyPath=absoulteRowPath;
-		keyPath=keyPath.replace('/',java.io.File.separatorChar);
-		
-		Set keySet = this.getRow().getFiles().keySet();
-		
-		List children = new LinkedList();
-		
-		for(Iterator i = keySet.iterator(); i.hasNext();) {
-			String currentKey = (String) i.next();
-			boolean isChild = currentKey.startsWith(keyPath);
-			if(isChild)  {
-				boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
-				if (isNotRoot) {
-					String childKey = currentKey.substring(keyPath.length()+1,currentKey.length());
-					boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
-					if(isDirectChild) {
-						File f = (File) this.getRow().getFiles().get(currentKey);
-						if(f.getIsDir()) {
-							children.add(f);
-						}	
-					}
-				}
-			}
-		}
-		
-		return children;
-		
-	}
+    public Long getSize() {
+        return size;
+    }
 
-	/* returns a List of the direct children (files, dirs) of a given Path */
-	public List getChildren() {
-		String keyPath = this.getPath();
-		
-		String absoulteRowPath = (new java.io.File(this.getRow().getRowpath()).getAbsolutePath());
-		if(keyPath == null || keyPath=="") keyPath=absoulteRowPath;
-		keyPath=keyPath.replace('/',java.io.File.separatorChar);
-		
-		Set keySet = this.getRow().getFiles().keySet();
-		
-		List children = new LinkedList();
-		
-		for(Iterator i = keySet.iterator(); i.hasNext();) {
-			String currentKey = (String) i.next();
-			boolean isChild = currentKey.startsWith(keyPath);
-			if(isChild)  {
-				boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
-				if (isNotRoot) {
-					String childKey = currentKey.substring(keyPath.length()+1,currentKey.length());
-					boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
-					if(isDirectChild) {
-						children.add(this.getRow().getFiles().get(currentKey));
-					}
-				}
-			}
-		}
-		
-		return children;
-	}
+    public void setSize(Long size) {
+        this.size = size;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean getIsDir() {
+        return isDir;
+    }
+
+    public void setIsDir(boolean isDir) {
+        this.isDir = isDir;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public boolean getOnDisk() {
+        return onDisk;
+    }
+
+    public void setOnDisk(boolean onDisk) {
+        this.onDisk = onDisk;
+    }
+
+    /* returns a List of the keys of the subdirs of a given path */
+    public List getSubdirs() {
+        String keyPath = this.getPath();
+
+        String absoulteRowPath = (new java.io.File(this.getRow().getRowpath()).getAbsolutePath());
+        if (keyPath == null || keyPath == "")
+            keyPath = absoulteRowPath;
+        keyPath = keyPath.replace('/', java.io.File.separatorChar);
+
+        Set keySet = this.getRow().getFiles().keySet();
+
+        List children = new LinkedList();
+
+        for (Iterator i = keySet.iterator(); i.hasNext();) {
+            String currentKey = (String) i.next();
+            boolean isChild = currentKey.startsWith(keyPath);
+            if (isChild) {
+                boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
+                if (isNotRoot) {
+                    String childKey = currentKey.substring(keyPath.length() + 1, currentKey.length());
+                    boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
+                    if (isDirectChild) {
+                        File f = (File) this.getRow().getFiles().get(currentKey);
+                        if (f.getIsDir()) {
+                            children.add(f);
+                        }
+                    }
+                }
+            }
+        }
+
+        return children;
+
+    }
+
+    /* returns a List of the direct children (files, dirs) of a given Path */
+    public List getChildren() {
+        String keyPath = this.getPath();
+
+        String absoulteRowPath = (new java.io.File(this.getRow().getRowpath()).getAbsolutePath());
+        if (keyPath == null || keyPath == "")
+            keyPath = absoulteRowPath;
+        keyPath = keyPath.replace('/', java.io.File.separatorChar);
+
+        Set keySet = this.getRow().getFiles().keySet();
+
+        List children = new LinkedList();
+
+        for (Iterator i = keySet.iterator(); i.hasNext();) {
+            String currentKey = (String) i.next();
+            boolean isChild = currentKey.startsWith(keyPath);
+            if (isChild) {
+                boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
+                if (isNotRoot) {
+                    String childKey = currentKey.substring(keyPath.length() + 1, currentKey.length());
+                    boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
+                    if (isDirectChild) {
+                        children.add(this.getRow().getFiles().get(currentKey));
+                    }
+                }
+            }
+        }
+
+        return children;
+    }
 
 }

@@ -1,46 +1,45 @@
 package org.makumba.parade.model;
 
-
 public class RowWebapp extends AbstractRowData implements RowData {
-	
-	private Long id;
-	
-	private String contextname;
-	
-	private String webappPath;
-	
-	private Integer status;
-	
-	public String getContextname() {
-		return contextname;
-	}
 
-	public void setContextname(String name) {
-		this.contextname = name;
-	}
+    private Long id;
 
-	public Integer getStatus() {
-		return status;
-	}
+    private String contextname;
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
+    private String webappPath;
 
-	public Long getId() {
-		return id;
-	}
+    private Integer status;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public String getContextname() {
+        return contextname;
+    }
 
-	public String getWebappPath() {
-		return webappPath;
-	}
+    public void setContextname(String name) {
+        this.contextname = name;
+    }
 
-	public void setWebappPath(String webappPath) {
-		this.webappPath = webappPath;
-	}
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getWebappPath() {
+        return webappPath;
+    }
+
+    public void setWebappPath(String webappPath) {
+        this.webappPath = webappPath;
+    }
 
 }

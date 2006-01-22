@@ -3,48 +3,46 @@ package org.makumba.parade.model;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class RowAnt extends AbstractRowData implements RowData {
 
-	private Long id;
-	
-	private Long lastmodified;
-	
-	private String buildfile="";
-	
-	private List targets = new LinkedList();
-	
-	public String getBuildfile() {
-		return buildfile;
-	}
+    private Long id;
 
-	public void setBuildfile(String buildfile) {
-		this.buildfile = buildfile;
-	}
+    private Long lastmodified;
 
-	public Long getId() {
-		return id;
-	}
+    private String buildfile = "";
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private List targets = new LinkedList();
 
-	public Long getLastmodified() {
-		return lastmodified;
-	}
+    public String getBuildfile() {
+        return buildfile;
+    }
 
-	public void setLastmodified(Long lastmodified) {
-		this.lastmodified = lastmodified;
-	}
+    public void setBuildfile(String buildfile) {
+        this.buildfile = buildfile;
+    }
 
-	public List getTargets() {
-		return targets;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setTargets(List targets) {
-		this.targets = targets;
-	}
-	
-	
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getLastmodified() {
+        return lastmodified;
+    }
+
+    public void setLastmodified(Long lastmodified) {
+        this.lastmodified = lastmodified;
+    }
+
+    public List getTargets() {
+        return targets;
+    }
+
+    public void setTargets(List targets) {
+        this.targets = targets;
+    }
+
 }

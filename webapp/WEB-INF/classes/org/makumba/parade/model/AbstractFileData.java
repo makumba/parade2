@@ -2,34 +2,34 @@ package org.makumba.parade.model;
 
 public class AbstractFileData {
 
-	private Long id;
-	
-	private File file;
-	
-	private String dataType;
+    private Long id;
 
-	public String getDataType() {
-		return dataType;
-	}
+    private File file;
 
-	public void setDataType(String managername) {
-		this.dataType = managername;
-	}
+    private String dataType;
 
-	public Long getId() {
-		return id;
-	}
+    public String getDataType() {
+        return dataType;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setDataType(String managername) {
+        this.dataType = managername;
+    }
 
-	public File getFile() {
-		return file;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setFile(File file) {
-		this.file = file;
-	}
-	
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
 }

@@ -3,48 +3,45 @@ package org.makumba.parade.model;
 import java.util.Date;
 
 public class FileCVS extends AbstractFileData {
-	
-	private Long id;
-	
-	private Integer status = new Integer(0);
-	
-	private String revision="";
-	
-	private Date date;
 
-	
-	public Date getDate() {
-		return date;
-	}
+    private Long id;
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
+    private Integer status = new Integer(0);
 
-	public String getRevision() {
-		return revision;
-	}
+    private String revision = "";
 
-	public void setRevision(String revision) {
-		this.revision = revision;
-	}
+    private Date date;
 
-	public Integer getStatus() {
-		return status;
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public String getRevision() {
+        return revision;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	
+    public void setRevision(String revision) {
+        this.revision = revision;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 }

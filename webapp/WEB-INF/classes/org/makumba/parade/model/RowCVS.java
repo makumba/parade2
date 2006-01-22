@@ -1,47 +1,45 @@
 package org.makumba.parade.model;
 
-
 public class RowCVS extends AbstractRowData implements RowData {
-	
-	private Long id;
-	
-	private String user;
-	
-	private String module;
-	
-	private String branch;
 
-	public String getBranch() {
-		return branch;
-	}
+    private Long id;
 
-	public void setBranch(String branch) {
-		this.branch = branch;
-	}
+    private String user;
 
-	public String getModule() {
-		return module;
-	}
+    private String module;
 
-	public void setModule(String module) {
-		this.module = module;
-	}
+    private String branch;
 
-	public String getUser() {
-		return user;
-	}
+    public String getBranch() {
+        return branch;
+    }
 
-	public void setUser(String user) {
-		this.user = user;
-	}
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public String getModule() {
+        return module;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 }

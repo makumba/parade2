@@ -4,98 +4,89 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Row {
-	
-	private Long id;
-	
-	private String rowname;
-	
-	private String rowpath;
-	
-	private String description;
-	
-	private Map files = new HashMap();
-	
-	//private File root;
-	
-	private Map rowdata = new HashMap();
-	
-	private Parade parade;
-	
-	
-	
-	public void addManagerData(RowData data) {
-		
-		data.setRow(this);
-		getRowdata().put(data.getDataType(),data);
-	}
-	
 
-	public String getDescription() {
-		return description;
-	}
+    private Long id;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    private String rowname;
 
-	public Long getId() {
-		return id;
-	}
+    private String rowpath;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public Map getFiles() {
-		return files;
-	}
+    private String description;
 
-	public void setFiles(Map files) {
-		this.files = files;
-	}
+    private Map files = new HashMap();
 
-	public String getRowname() {
-		return rowname;
-	}
+    // private File root;
 
-	public void setRowname(String rowname) {
-		this.rowname = rowname;
-	}
+    private Map rowdata = new HashMap();
 
-	public String getRowpath() {
-		return rowpath;
-	}
+    private Parade parade;
 
-	public void setRowpath(String rowpath) {
-		this.rowpath = rowpath;
-	}
+    public void addManagerData(RowData data) {
 
-	
-	public Parade getParade() {
-		return parade;
-	}
+        data.setRow(this);
+        getRowdata().put(data.getDataType(), data);
+    }
 
-	public void setParade(Parade parade) {
-		this.parade = parade;
-	}
-	
+    public String getDescription() {
+        return description;
+    }
 
-	public Map getRowdata() {
-		return rowdata;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setRowdata(Map rowdata) {
-		this.rowdata = rowdata;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	/*
-	public File getRoot() {
-		return root;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setRoot(File root) {
-		this.root = root;
-	}
-	*/
-	
+    public Map getFiles() {
+        return files;
+    }
+
+    public void setFiles(Map files) {
+        this.files = files;
+    }
+
+    public String getRowname() {
+        return rowname;
+    }
+
+    public void setRowname(String rowname) {
+        this.rowname = rowname;
+    }
+
+    public String getRowpath() {
+        return rowpath;
+    }
+
+    public void setRowpath(String rowpath) {
+        this.rowpath = rowpath;
+    }
+
+    public Parade getParade() {
+        return parade;
+    }
+
+    public void setParade(Parade parade) {
+        this.parade = parade;
+    }
+
+    public Map getRowdata() {
+        return rowdata;
+    }
+
+    public void setRowdata(Map rowdata) {
+        this.rowdata = rowdata;
+    }
+
+    /*
+     * public File getRoot() { return root; }
+     * 
+     * public void setRoot(File root) { this.root = root; }
+     */
+
 }

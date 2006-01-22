@@ -112,8 +112,7 @@ public class HttpServletRequestDummy implements HttpServletRequest {
         return false;
     }
 
-    public javax.servlet.RequestDispatcher getRequestDispatcher(
-            java.lang.String s) {
+    public javax.servlet.RequestDispatcher getRequestDispatcher(java.lang.String s) {
         return null;
     }
 

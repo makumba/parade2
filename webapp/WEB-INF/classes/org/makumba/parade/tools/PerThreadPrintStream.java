@@ -52,7 +52,7 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         if (b != null) {
             for (int i = start; i < start + len; i++) {
                 if (buffer[i] == '\n') // FIXME, use general line separator
-                                        // here.
+                // here.
                 {
                     if (lastEnter.get() != null)
                         super.write(b, 0, b.length);
