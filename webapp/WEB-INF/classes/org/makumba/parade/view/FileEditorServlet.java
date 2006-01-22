@@ -31,7 +31,7 @@ public class FileEditorServlet extends HttpServlet {
 		String context = (String)req.getParameter("context");
 		String filePath = (String)req.getParameter("file");
 		String path = (String)req.getParameter("path");
-		String[] source =  req.getParameterValues("source");
+        String[] source =  req.getParameterValues("source");
 		
 		
 		Row r = (Row)p.getRows().get(context);
@@ -42,7 +42,7 @@ public class FileEditorServlet extends HttpServlet {
 			if(file == null) {
 				out.println("Unknown file "+filePath);
 			} else {
-				resp.setContentType("text/html");
+                resp.setContentType("text/html");
 				resp.setCharacterEncoding("UTF-8");
 				FileEditViewManager fileEditV = new FileEditViewManager();
 				out.println(fileEditV.getFileEditorView(r, path, file, source));
