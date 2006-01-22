@@ -35,7 +35,7 @@
     <servlet>
         <servlet-name>log</servlet-name>
         <servlet-class>org.makumba.parade.access.LogServlet</servlet-class>
-	<load-on-startup>1</load-on-startup>
+	<load-on-startup>2</load-on-startup>
     </servlet>
     
     <servlet>
@@ -59,23 +59,8 @@
 	 </servlet>
 	 
 	 <servlet>
-	   <servlet-name>tree</servlet-name>
-	   <servlet-class>org.makumba.parade.view.TreeServlet</servlet-class>
-	 </servlet>
-	 
-	 <servlet>
-	   <servlet-name>header</servlet-name>
-	   <servlet-class>org.makumba.parade.view.HeaderServlet</servlet-class>
-	 </servlet>
-	 
-	 <servlet>
-	   <servlet-name>file</servlet-name>
-	   <servlet-class>org.makumba.parade.view.FileBrowserServlet</servlet-class>
-	 </servlet>
-	 
-	 <servlet>
-	   <servlet-name>command</servlet-name>
-	   <servlet-class>org.makumba.parade.view.CommandServlet</servlet-class>
+	   <servlet-name>browse</servlet-name>
+	   <servlet-class>org.makumba.parade.view.BrowserServlet</servlet-class>
 	 </servlet>
 	 
 	 <servlet>
@@ -87,21 +72,29 @@
 	   <servlet-name>invoker</servlet-name>
 	   <url-pattern>/servlet/*</url-pattern>
 	 </servlet-mapping>
--->   
+ -->  
 	 <servlet-mapping>
 	   <servlet-name>index</servlet-name>
 	   <url-pattern>/index.jsp</url-pattern>
 	 </servlet-mapping>
-  
-  
 
-<!-- other examples -->
-<!--
-<servlet>
-    <servlet-name>Reference</servlet-name>
-    <jsp-file>/litreview/referenceHandler.jsp</jsp-file>
-</servlet>
--->
+
+	 <!-- Struts Action Servlet Configuration -->
+  <servlet>
+    <servlet-name>action</servlet-name>
+    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+    <init-param>
+      <param-name>config</param-name>
+      <param-value>/WEB-INF/struts-config.xml</param-value>
+    </init-param>
+    <load-on-startup>3</load-on-startup>
+  </servlet>
+	 
+
+
+
+  
+  
 
 <!-- =========== MAP servlets with URL ================= -->
     <servlet-mapping>
@@ -124,6 +117,12 @@
 	<servlet-name>mddLinker</servlet-name>
 	<url-pattern>/logic/*</url-pattern>
     </servlet-mapping>
+    
+      <!-- Action Servlet Mapping -->
+	  <servlet-mapping>
+	    <servlet-name>action</servlet-name>
+	    <url-pattern>*.do</url-pattern>
+	  </servlet-mapping>
 
 <!-- other examples -->
 <!--
@@ -137,6 +136,10 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
+	<taglib>
+  		<taglib-uri>/WEB-INF/lib/tiles.tld</taglib-uri>
+  		<taglib-location>/WEB-INF/lib/tiles.tld</taglib-location>
+	</taglib>
 
 <!--
     <taglib>
