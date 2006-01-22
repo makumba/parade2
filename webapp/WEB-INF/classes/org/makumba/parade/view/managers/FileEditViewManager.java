@@ -188,12 +188,12 @@ public class FileEditViewManager implements FileEditorView {
 
 "<body bgcolor=\"#dddddd\" TOPMARGIN=0 LEFTMARGIN=0 RIGHTMARGIN=0 BOTTOMMARGIN=0 marginwidth=0 marginheight=0 STYLE='margin: 0px' "+
 "onload=\"javascript:onLoad()\" onresize=\"javascript:onResize()\">\n"+
-"<form name=\"sourceEdit\" method=\"post\" action=\"edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"\" style='margin:0px;'>\n"+
+"<form name=\"sourceEdit\" method=\"post\" action=\"/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"\" style='margin:0px;'>\n"+
 
 "<input type=\"submit\" name=\"Submit\" value='(S)ave!' ACCESSKEY='S' onclick=\"javascript:setBunload(false)\">\n"+
-"<a href='/?context="+r.getRowname()+"' target='_top' title='"+r.getParade().getBaseDir()+"'>\n"+
+"<a href='/servlet/browse?display=file&context="+r.getRowname()+"' target='directory' title='"+r.getParade().getBaseDir()+"'>\n"+
 (r.getRowname().equals("")?"(root)":r.getRowname())+
-"</a>:<a href=/servlet/file?context="+r.getRowname()+"&path="+r.getRowpath()+path+">"+path.replace(java.io.File.separatorChar,'/')+"</a>/<b>"+
+"</a>:<a href=/servlet/browse?display=file&context="+r.getRowname()+"&path="+r.getRowpath()+path+">"+path.replace(java.io.File.separatorChar,'/')+"</a>/<b>"+
 file.getName()+"</b>\n"+
 "| <a href='/servlet/edit?context="+r.getRowname()+"&path="+path+"&file="+f.getPath()+"' title='get the file from disk again, undo all changes since last save'>Revert</a>\n"+
 "| <input type='text' value='Loading...' name='pagestatus' disabled size='10' style='border:0px; background-color:#dddddd; font-color:red;'>\n"+
