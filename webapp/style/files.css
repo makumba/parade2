@@ -6,7 +6,15 @@ body {
 
 H2 {
     margin: 2px;
-    font-weight:normal:
+    font-weight:normal;
+}
+div.success {
+	color:#228B22;
+	font-weight:bold;
+}
+div.failure {
+	color:#FF0000;
+	font-weight:bold;
 }
 div.pathOnDisk {
     font-size:smaller;
@@ -14,7 +22,7 @@ div.pathOnDisk {
 table.files {
     border:0;
     width:100%;
-    padding:0px:
+    padding:0px;
     border-spacing:0px;
     border-width:0px;
     border-collapse:collapse;
