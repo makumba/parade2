@@ -7,8 +7,7 @@ public interface ServletContainer {
 
     public static final int RUNNING = 2;
 
-    public static final String[] status = { "not installed", "stopped",
-            "running" };
+    public static final String[] status = { "not installed", "stopped", "running" };
 
     public void init(java.util.Properties config);
 

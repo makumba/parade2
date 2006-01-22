@@ -17,48 +17,49 @@ import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.tools.ForeignHttpAuthorizer;
 
 public class TomcatManager implements ServletContainer {
-	
+
     String managerURL;
 
     String user, pass;
-    
-    Map servletContextCache = new HashMap();
-    
-    static Logger logger = Logger.getLogger(TomcatManager.class.getName());
-	
 
-    //TODO get the server name and port (to build URL)
+    Map servletContextCache = new HashMap();
+
+    static Logger logger = Logger.getLogger(TomcatManager.class.getName());
+
+    // TODO get the server name and port (to build URL)
     public void makeConfig(java.util.Properties config) {
-    	
-        //config.put("parade.servletContext.tomcatServerName", pc.getRequest().getServerName());
-        //config.put("parade.servletContext.tomcatServerPort", "" + pc.getRequest().getServerPort());
-    	
-    	//dummy
-    	config.put("parade.servletContext.tomcatServerName", "localhost");
+
+        // config.put("parade.servletContext.tomcatServerName", pc.getRequest().getServerName());
+        // config.put("parade.servletContext.tomcatServerPort", "" + pc.getRequest().getServerPort());
+
+        // dummy
+        config.put("parade.servletContext.tomcatServerName", "localhost");
         config.put("parade.servletContext.tomcatServerPort", ParadeProperties.getProperty("http.port"));
     }
 
     public void init(java.util.Properties config) {
-        managerURL = "http://"
-                + config.get("parade.servletContext.tomcatServerName") + ":"
+        managerURL = "http://" + config.get("parade.servletContext.tomcatServerName") + ":"
                 + ParadeProperties.getProperty("http.port") + "/manager/";
         user = ParadeProperties.getProperty("tomcat.manager.user");
         pass = ParadeProperties.getProperty("tomcat.manager.pass");
     }
 
     protected String makeAccess(String s) {
-    	String result="";
+        String result = "";
         try {
-        	HttpURLConnection uc = ForeignHttpAuthorizer.sendAuth(new URL(managerURL + s), user, pass);
-            
-            if (uc.getResponseCode() != 200) logger.error(uc.getResponseMessage());
-            if (uc.getContentLength() == 0) logger.error("content zero");
-            
+            HttpURLConnection uc = ForeignHttpAuthorizer.sendAuth(new URL(managerURL + s), user, pass);
+
+            if (uc.getResponseCode() != 200)
+                logger.error(uc.getResponseMessage());
+            if (uc.getContentLength() == 0)
+                logger.error("content zero");
+
             StringWriter sw = new StringWriter();
             InputStreamReader ir = new InputStreamReader(uc.getInputStream());
             char[] buf = new char[1024];
             int n;
-            while ((n = ir.read(buf)) != -1) sw.write(buf, 0, n);
+            while ((n = ir.read(buf)) != -1)
+                sw.write(buf, 0, n);
             result = sw.toString();
         } catch (IOException e) {
             logger.error(new org.makumba.util.RuntimeWrappedException(e));
@@ -97,8 +98,7 @@ public class TomcatManager implements ServletContainer {
                     continue;
                 }
             }
-            throw new RuntimeException(
-                    "Cannot understand context status list:\n" + s);
+            throw new RuntimeException("Cannot understand context status list:\n" + s);
         }
     }
 
@@ -106,19 +106,18 @@ public class TomcatManager implements ServletContainer {
         if (getContextStatus(contextName) != NOT_INSTALLED)
             return "context " + contextName + " already installed";
         try {
-        	
-        	String dir = ".";
+
+            String dir = ".";
             String context = new File(contextPath).getCanonicalPath();
             String canDir = null;
             File f;
-            while ((f = new File(dir)).exists()
-                    && !context.startsWith(canDir = f.getCanonicalPath()))
+            while ((f = new File(dir)).exists() && !context.startsWith(canDir = f.getCanonicalPath()))
                 dir += File.separator + "..";
 
             if (!f.exists())
                 throw new RuntimeException("cannot find common root to context");
-            
-            File deployer= File.createTempFile("parade-deploy", ".xml");
+
+            File deployer = File.createTempFile("parade-deploy", ".xml");
             BufferedWriter out = new BufferedWriter(new FileWriter(deployer));
             out.write("<Context path=\"");
             out.write(contextName);
@@ -130,23 +129,22 @@ public class TomcatManager implements ServletContainer {
             out.write("\" reload=\"true\" debug=\"0\" crossContext=\"true\"></Context>");
             out.flush();
             out.close();
-            
+
             // needed for tomcat > 5.5.7
             // FIXME: should make sure that the engine and hostname are the same as in tomcat config
             new File("tomcat/conf/Catalina/localhost".replace('/', File.separatorChar)).mkdirs();
-                        
-        	String s = makeAccess("deploy?config=file:/"+deployer.getAbsolutePath()+"&path="+contextName);
+
+            String s = makeAccess("deploy?config=file:/" + deployer.getAbsolutePath() + "&path=" + contextName);
             deployer.delete();
-            
-        	if (s.startsWith("OK")) {
+
+            if (s.startsWith("OK")) {
                 servletContextCache.put(contextName, new Integer(RUNNING));
                 String s1 = stopContext(contextName);
                 if (s1.startsWith("OK"))
                     s += "<br>" + startContext(contextName);
                 else {
                     s += "<br>Attempting to stop and start " + contextName
-                            + " for checking correct installation failed "
-                            + pleaseCheck(s1);
+                            + " for checking correct installation failed " + pleaseCheck(s1);
                     servletContextCache.put(contextName, new Integer(STOPPED));
                 }
             }
@@ -154,7 +152,7 @@ public class TomcatManager implements ServletContainer {
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
-        
+
     }
 
     public synchronized String unInstallContext(String contextName) {

@@ -23,70 +23,67 @@ import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.SimpleFileFilter;
 
 public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManager {
-	
-	public static Logger logger = Logger.getLogger(CVSManager.class.getName());
 
-	public static Integer IGNORED = new Integer(101);
+    public static Logger logger = Logger.getLogger(CVSManager.class.getName());
 
-	public static Integer UNKNOWN = new Integer(-1);
+    public static Integer IGNORED = new Integer(101);
 
-	public static Integer UP_TO_DATE = new Integer(100);
+    public static Integer UNKNOWN = new Integer(-1);
 
-	public static Integer LOCALLY_MODIFIED = new Integer(1);
+    public static Integer UP_TO_DATE = new Integer(100);
 
-	public static Integer NEEDS_CHECKOUT = new Integer(2);
+    public static Integer LOCALLY_MODIFIED = new Integer(1);
 
-	public static Integer NEEDS_UPDATE = new Integer(3);
+    public static Integer NEEDS_CHECKOUT = new Integer(2);
 
-	public static Integer ADDED = new Integer(4);
+    public static Integer NEEDS_UPDATE = new Integer(3);
 
-	public static Integer DELETED = new Integer(5);
+    public static Integer ADDED = new Integer(4);
 
-	public static Integer CONFLICT = new Integer(6);
-	
-	public static DateFormat cvsDateFormat;
-	
-	
+    public static Integer DELETED = new Integer(5);
+
+    public static Integer CONFLICT = new Integer(6);
+
+    public static DateFormat cvsDateFormat;
+
     static {
-        cvsDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy",
-                Locale.UK);
+        cvsDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy", Locale.UK);
         cvsDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
-	
-	public void directoryRefresh(Row row, String path) {
-		
-		// for the root paths
-		java.io.File currDir = new java.io.File(path);
-		
-		// we will go through the CVS entries of the real directory
-		if(currDir.isDirectory() && !(currDir.getName() == null)) {
-			// getting the File object mapped to this dir
-			File currFile = (File) row.getFiles().get(currDir.getAbsolutePath());
 
-			// you never know
-			if(!(currFile == null) && currFile.getIsDir())
-				readFiles(row, currFile);
-		}
-	}
+    public void directoryRefresh(Row row, String path) {
 
-	public void rowRefresh(Row row) {
-		
-		RowCVS cvsdata = new RowCVS();
-		cvsdata.setDataType("cvs");
-		
-		readUserAndModule(row, cvsdata);
-		
-		row.addManagerData(cvsdata);
-	}
+        // for the root paths
+        java.io.File currDir = new java.io.File(path);
 
-	
-	private void readUserAndModule(Row row, RowCVS data) {
-		
-		String path = (String) row.getRowpath();
+        // we will go through the CVS entries of the real directory
+        if (currDir.isDirectory() && !(currDir.getName() == null)) {
+            // getting the File object mapped to this dir
+            File currFile = (File) row.getFiles().get(currDir.getAbsolutePath());
+
+            // you never know
+            if (!(currFile == null) && currFile.getIsDir())
+                readFiles(row, currFile);
+        }
+    }
+
+    public void rowRefresh(Row row) {
+
+        RowCVS cvsdata = new RowCVS();
+        cvsdata.setDataType("cvs");
+
+        readUserAndModule(row, cvsdata);
+
+        row.addManagerData(cvsdata);
+    }
+
+    private void readUserAndModule(Row row, RowCVS data) {
+
+        String path = (String) row.getRowpath();
         String s = null;
         try {
-            s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS"
-                    + java.io.File.separator + "Root")).readLine();
+            s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS" + java.io.File.separator
+                    + "Root")).readLine();
         } catch (FileNotFoundException e) {
             return;
         } catch (IOException ioe) {
@@ -94,19 +91,17 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
         }
 
         if (s.startsWith(":pserver")) {
-        	s = s.substring(":pserver:".length());
+            s = s.substring(":pserver:".length());
             data.setUser(s.substring(0, s.indexOf("@")));
-        }
-        else if (s.startsWith(":extssh:")) {
-        	s = s.substring(":extssh:".length());
+        } else if (s.startsWith(":extssh:")) {
+            s = s.substring(":extssh:".length());
             data.setUser(s.substring(0, s.indexOf("@")));
-        }
-        else
-        	data.setUser("non :pserver");
+        } else
+            data.setUser("non :pserver");
 
         try {
-            s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS"
-                    + java.io.File.separator + "Repository")).readLine();
+            s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS" + java.io.File.separator
+                    + "Repository")).readLine();
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -114,8 +109,8 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
 
         try {
             s = "TMAIN";
-            s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS"
-                    + java.io.File.separator + "Tag")).readLine();
+            s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS" + java.io.File.separator
+                    + "Tag")).readLine();
         } catch (FileNotFoundException e) {
         } catch (IOException ioe) {
             throw new RuntimeException(ioe.getMessage());
@@ -123,60 +118,63 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
         data.setBranch(s.substring(1));
 
     }
-	
-	private void readFiles(Row r, File f) {
-		
-		readCVSEntries(r, f);
-		readCVSIgnore(r, f);
-		// readCVSCheckUpdate(paradeRow, data, pc);
-	}
-	
-	/* Reads Entries file and extracts information */
+
+    private void readFiles(Row r, File f) {
+
+        readCVSEntries(r, f);
+        readCVSIgnore(r, f);
+        // readCVSCheckUpdate(paradeRow, data, pc);
+    }
+
+    /* Reads Entries file and extracts information */
     private void readCVSEntries(Row r, File file) {
-    	java.io.File f = new java.io.File((file.getPath() + "/" +"CVS/Entries").replace('/',java.io.File.separatorChar));
-        if (!f.exists()) return;
-        
+        java.io.File f = new java.io.File((file.getPath() + "/" + "CVS/Entries").replace('/',
+                java.io.File.separatorChar));
+        if (!f.exists())
+            return;
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line = null;
             while ((line = br.readLine()) != null) {
-            	
-            	// if the Entry is a file
+
+                // if the Entry is a file
                 if (line.startsWith("/")) {
                     int n = line.indexOf('/', 1);
-                    if (n == -1) continue;
+                    if (n == -1)
+                        continue;
                     String name = line.substring(1, n);
-                    //logger.warn("Looking for CVS file: "+name);
-                    
+                    // logger.warn("Looking for CVS file: "+name);
+
                     // checking if the file we are looking for is mapped
                     File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + name);
-                    
+
                     if (cvsfile == null) {
-                    	cvsfile = FileManager.setVirtualFileData(r, file, name,false);
-                    	r.getFiles().put(file.getPath() + java.io.File.separator + name,cvsfile);
+                        cvsfile = FileManager.setVirtualFileData(r, file, name, false);
+                        r.getFiles().put(file.getPath() + java.io.File.separator + name, cvsfile);
                     }
                     FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
-                    if(cvsdata == null) {
-                    	cvsdata = new FileCVS();
-                    	cvsdata.setDataType("cvs");
-                    	cvsdata.setFile(cvsfile);
-                    	cvsdata.setStatus(NEEDS_CHECKOUT);
-                    	
-                    	cvsfile.getFiledata().put("cvs",cvsdata);
+                    if (cvsdata == null) {
+                        cvsdata = new FileCVS();
+                        cvsdata.setDataType("cvs");
+                        cvsdata.setFile(cvsfile);
+                        cvsdata.setStatus(NEEDS_CHECKOUT);
+
+                        cvsfile.getFiledata().put("cvs", cvsdata);
                     }
-                    	
-                        
-                    
+
                     // setting CVS status
                     cvsdata.setStatus(UNKNOWN);
                     line = line.substring(n + 1);
                     n = line.indexOf('/');
-                    if (n == -1) continue;
+                    if (n == -1)
+                        continue;
                     String revision = line.substring(0, n);
                     cvsdata.setRevision(revision);
                     line = line.substring(n + 1);
                     n = line.indexOf('/');
-                    if (n == -1) continue;
+                    if (n == -1)
+                        continue;
 
                     // we check if the file exists on the disk
                     java.io.File fl = new java.io.File(cvsfile.getPath());
@@ -207,7 +205,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
                     try {
                         cvsdata.setDate(fd = cvsDateFormat.parse(date));
                     } catch (Throwable t) {
-                        logger.error("Couldn't parse date of CVS File "+file.getName(),t);
+                        logger.error("Couldn't parse date of CVS File " + file.getName(), t);
                         continue;
                     }
 
@@ -219,7 +217,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
                     ;
                     if (Math.abs(l) < 1500
                     // for some stupid reason, lastModified() is different in
-                    // Windows than Unix
+                            // Windows than Unix
                             // the difference seems to have to do with daylight
                             // saving
                             || Math.abs(Math.abs(l) - 3600000) < 1000) {
@@ -233,96 +231,88 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
                     // System.out.println(l);
                     continue;
 
-                // if the entry is a dir
+                    // if the entry is a dir
                 } else if (line.startsWith("D/")) {
-                	int n = line.indexOf('/', 2);
-					if (n == -1) continue;
-					String name = line.substring(2, n);
-					
-					// checking if the file we are looking for is mapped
-					File cvsfile = (File) r.getFiles().get(file.getPath()+java.io.File.separator+name);
-					if (cvsfile == null) {
-						cvsfile = FileManager.setVirtualFileData(r, file, name,true);
-						r.getFiles().put(file.getPath() + java.io.File.separator + name,cvsfile);
-					}
-					
-					FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
-                    if(cvsdata == null) {
-                    	cvsdata = new FileCVS();
-                    	cvsdata.setDataType("cvs");
-                    	cvsdata.setFile(cvsfile);
-                    	cvsdata.setStatus(NEEDS_CHECKOUT);
-                    	cvsfile.getFiledata().put("cvs",cvsdata);
-                    
+                    int n = line.indexOf('/', 2);
+                    if (n == -1)
+                        continue;
+                    String name = line.substring(2, n);
+
+                    // checking if the file we are looking for is mapped
+                    File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + name);
+                    if (cvsfile == null) {
+                        cvsfile = FileManager.setVirtualFileData(r, file, name, true);
+                        r.getFiles().put(file.getPath() + java.io.File.separator + name, cvsfile);
+                    }
+
+                    FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
+                    if (cvsdata == null) {
+                        cvsdata = new FileCVS();
+                        cvsdata.setDataType("cvs");
+                        cvsdata.setFile(cvsfile);
+                        cvsdata.setStatus(NEEDS_CHECKOUT);
+                        cvsfile.getFiledata().put("cvs", cvsdata);
+
                     } else {
-					    cvsdata.setStatus(UP_TO_DATE);
-					    cvsdata.setRevision("(dir)");
+                        cvsdata.setStatus(UP_TO_DATE);
+                        cvsdata.setRevision("(dir)");
                     }
                 }
             }
             br.close();
         } catch (Throwable t) {
-            logger.error("Error while trying to set CVS information for file "+file.getName(),t);
+            logger.error("Error while trying to set CVS information for file " + file.getName(), t);
         }
     }
-    
+
     /* Reads .cvsignore */
     private void readCVSIgnore(Row r, File file) {
-    	if (!file.getIsDir()) return;
-    	
-    	java.io.File f = new java.io.File((file.getPath() + "/" + ".cvsignore").replace('/',java.io.File.separatorChar));
-        
-    	if (!f.exists()) return;
+        if (!file.getIsDir())
+            return;
 
-    	FileCVS cvsdata = (FileCVS) file.getFiledata().get("cvs");
-    	
+        java.io.File f = new java.io.File((file.getPath() + "/" + ".cvsignore")
+                .replace('/', java.io.File.separatorChar));
+
+        if (!f.exists())
+            return;
+
+        FileCVS cvsdata = (FileCVS) file.getFiledata().get("cvs");
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line = null;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                File cvsfile = (File) r.getFiles().get(file.getPath()+java.io.File.separator+line);
-                if (cvsfile == null) continue;
+                File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + line);
+                if (cvsfile == null)
+                    continue;
                 cvsdata = new FileCVS();
-            	cvsdata.setDataType("cvs");
-            	cvsdata.setFile(cvsfile);
-            	cvsdata.setStatus(IGNORED);
-            	
-            	cvsfile.getFiledata().put("cvs",cvsdata);
+                cvsdata.setDataType("cvs");
+                cvsdata.setFile(cvsfile);
+                cvsdata.setStatus(IGNORED);
+
+                cvsfile.getFiledata().put("cvs", cvsdata);
             }
             br.close();
         } catch (Throwable t) {
-            logger.error("Error while trying to read .cvsignore of directory "+file.getName(),t);
+            logger.error("Error while trying to read .cvsignore of directory " + file.getName(), t);
         }
     }
 
-	public void newRow(String name, Row r, Map m) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void newRow(String name, Row r, Map m) {
+        // TODO Auto-generated method stub
+
+    }
 
     /*
-    public void cvs(java.util.Map data, javax.servlet.jsp.PageContext pc) {
-        Vector command = new Vector();
-        command.addElement("cvs");
-        Config.addCommandOptions(command, "cvs", pc);
-        command.addElement(pc.getRequest().getParameterValues("cvs.op")[0]);
-        Config.addCommandOptions(command, "cvs.op", pc);
-        String mes[];
-        if ((mes = pc.getRequest().getParameterValues("cvs.committMessage")) != null) {
-            command.addElement("-m");
-            command.addElement(mes[0]);
-        }
-        if (pc.getRequest().getParameterValues("cvs.perDir") == null)
-            for (Iterator i = data.values().iterator(); i.hasNext();) {
-                Map m = (Map) i.next();
-                command.addElement(m.get("file.name"));
-            }
-        Config.exec(command, (File) pc.findAttribute("file.baseFile"), Config
-                .getPrintStreamCVS(pc.getOut()));
-    }
-    */
-
-	
+     * public void cvs(java.util.Map data, javax.servlet.jsp.PageContext pc) { Vector command = new Vector();
+     * command.addElement("cvs"); Config.addCommandOptions(command, "cvs", pc);
+     * command.addElement(pc.getRequest().getParameterValues("cvs.op")[0]); Config.addCommandOptions(command, "cvs.op",
+     * pc); String mes[]; if ((mes = pc.getRequest().getParameterValues("cvs.committMessage")) != null) {
+     * command.addElement("-m"); command.addElement(mes[0]); } if (pc.getRequest().getParameterValues("cvs.perDir") ==
+     * null) for (Iterator i = data.values().iterator(); i.hasNext();) { Map m = (Map) i.next();
+     * command.addElement(m.get("file.name")); } Config.exec(command, (File) pc.findAttribute("file.baseFile"), Config
+     * .getPrintStreamCVS(pc.getOut())); }
+     */
 
 }

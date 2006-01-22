@@ -17,28 +17,29 @@ import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 
 public class MakumbaManager implements RowRefresher, ParadeManager {
-	
-	static {
+
+    static {
         // force a class load
         Class c = org.makumba.MakumbaSystem.class;
     }
 
-	public void rowRefresh(Row row) {
-		RowMakumba makumbadata = new RowMakumba();
-		makumbadata.setDataType("makumba");
-		
+    public void rowRefresh(Row row) {
+        RowMakumba makumbadata = new RowMakumba();
+        makumbadata.setDataType("makumba");
+
         String root = row.getRowpath() + File.separator + "public_html";
         makumbadata.setVersion(getMakumbaVersion(root));
-        		
-		row.addManagerData(makumbadata);
-	}
-	
-	public String getMakumbaVersion(String p) {
+
+        row.addManagerData(makumbadata);
+    }
+
+    public String getMakumbaVersion(String p) {
         final String path = p;
         String version = "unknown";
 
         try {
-        	java.io.File fl = new java.io.File((path + "/WEB-INF/lib/makumba.jar").replace('/', java.io.File.separatorChar));
+            java.io.File fl = new java.io.File((path + "/WEB-INF/lib/makumba.jar").replace('/',
+                    java.io.File.separatorChar));
             JarFile jar = new JarFile(fl);
             Manifest mf = jar.getManifest();
             Attributes att = mf.getAttributes("Makumba");
@@ -57,11 +58,11 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
 
         try {
             c = new ClassLoader() {
-                public Class findClass(String name)
-                        throws ClassNotFoundException {
+                public Class findClass(String name) throws ClassNotFoundException {
                     try {
                         File fl = new File((path + "/WEB-INF/lib/makumba.jar").replace('/', File.separatorChar));
-                        if (!fl.exists()) throw new ClassNotFoundException("Jar file " + fl + " not found");
+                        if (!fl.exists())
+                            throw new ClassNotFoundException("Jar file " + fl + " not found");
                         JarFile f = new JarFile(fl);
                         String nm = name.replace('.', '/') + ".class";
                         JarEntry j = f.getJarEntry(nm);
@@ -69,7 +70,8 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                         ByteArrayOutputStream bo = new ByteArrayOutputStream();
                         byte[] buffer = new byte[1024];
                         int n;
-                        while ((n = i.read(buffer)) != -1) bo.write(buffer, 0, n);
+                        while ((n = i.read(buffer)) != -1)
+                            bo.write(buffer, 0, n);
                         i.close();
                         f.close();
                         byte b[] = bo.toByteArray();
@@ -105,9 +107,9 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         return ret;
     }
 
-	public void newRow(String name, Row r, Map m) {
-		// TODO Auto-generated method stub
-		
-	}
-    
+    public void newRow(String name, Row r, Map m) {
+        // TODO Auto-generated method stub
+
+    }
+
 }
