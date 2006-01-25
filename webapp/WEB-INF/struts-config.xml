@@ -74,6 +74,16 @@
           <forward name="files" path="/servlet/browse" />
           
       </action>
+      
+      <!-- CVS view -->
+      <action    path="/Cvs"
+                 type="org.makumba.parade.controller.CvsAction"
+                 parameter="op"
+                 >
+                 
+          <forward name="command" path="/servlet/browse" />
+          
+      </action>
 
       <!-- Change locale action
       <action
