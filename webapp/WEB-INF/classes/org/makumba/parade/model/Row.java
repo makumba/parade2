@@ -15,8 +15,6 @@ public class Row {
 
     private Map files = new HashMap();
 
-    // private File root;
-
     private Map rowdata = new HashMap();
 
     private Parade parade;
@@ -26,6 +24,16 @@ public class Row {
         data.setRow(this);
         getRowdata().put(data.getDataType(), data);
     }
+    
+    public static Row getRow(Parade p, String context) {
+        
+        Row r = (Row) p.getRows().get(context);
+        if (r == null)
+            return null;
+        else
+            return r;
+    }
+    
 
     public String getDescription() {
         return description;
