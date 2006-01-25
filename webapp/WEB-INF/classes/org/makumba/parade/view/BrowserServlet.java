@@ -91,7 +91,7 @@ public class BrowserServlet extends HttpServlet {
                 page = filebrowserV.getFileBrowserView(p, r, path, opResult, success);
             }
             if (display.equals("command")) {
-                page = cmdV.getCommandView(view, r, path, file);
+                page = cmdV.getCommandView(view, r, path, file, opResult);
             }
 
             // checking whether we include a JSP or not

@@ -1,7 +1,6 @@
 package org.makumba.parade.model.managers;
 
 import java.io.BufferedReader;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+
 import org.apache.log4j.Logger;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
@@ -20,7 +20,6 @@ import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.interfaces.DirectoryRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
-import org.makumba.parade.tools.SimpleFileFilter;
 
 public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManager {
 
@@ -304,15 +303,5 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
 
     }
 
-    /*
-     * public void cvs(java.util.Map data, javax.servlet.jsp.PageContext pc) { Vector command = new Vector();
-     * command.addElement("cvs"); Config.addCommandOptions(command, "cvs", pc);
-     * command.addElement(pc.getRequest().getParameterValues("cvs.op")[0]); Config.addCommandOptions(command, "cvs.op",
-     * pc); String mes[]; if ((mes = pc.getRequest().getParameterValues("cvs.committMessage")) != null) {
-     * command.addElement("-m"); command.addElement(mes[0]); } if (pc.getRequest().getParameterValues("cvs.perDir") ==
-     * null) for (Iterator i = data.values().iterator(); i.hasNext();) { Map m = (Map) i.next();
-     * command.addElement(m.get("file.name")); } Config.exec(command, (File) pc.findAttribute("file.baseFile"), Config
-     * .getPrintStreamCVS(pc.getOut())); }
-     */
-
+    
 }

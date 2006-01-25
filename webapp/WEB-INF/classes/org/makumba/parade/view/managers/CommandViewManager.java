@@ -19,15 +19,17 @@ import org.makumba.parade.view.interfaces.CommandView;
 
 public class CommandViewManager implements CommandView {
 
-    public String getCommandView(String view, Row r, String path, String file) {
+    public String getCommandView(String view, Row r, String path, String file, String opResult) {
         if (view == null || view.equals(""))
             return "jsp:/tipOfTheDay.jsp";
-        if (view != null && view.equals("newFile")) {
+        if (view != null && view.equals("newFile"))
             return newFileView(r, path);
-        }
-        if (view != null && view.equals("newDir")) {
+        if (view != null && view.equals("newDir"))
             return newDirView(r, path);
-        }
+        if(view != null && view.equals("commandOutput"))
+            return commandOutput(r, path, opResult);
+        if(view != null && view.equals("commit"))
+            return commitCvsFile(r, path, file);
 
         return "No such view defined for Command";
     }
@@ -41,6 +43,23 @@ public class CommandViewManager implements CommandView {
      * value=Edit> </form>
      */
 
+    private String commandOutput(Row r, String path, String opResult) {
+        StringWriter result = new StringWriter();
+        PrintWriter out = new PrintWriter(result);
+        
+        out.println("<HTML><HEAD><TITLE>Command view for " + r.getRowname() + "</TITLE>");
+        out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
+        out.println("<link rel='StyleSheet' href='/style/files.css' type='text/css'>");
+        out.println("</HEAD><BODY class='files'>");
+
+        if (opResult != null)
+            out.println(opResult);
+        
+        out.println("</BODY></HTML>");
+        
+        return result.toString();
+    }
+
     private String newFileView(Row r, String path) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
@@ -49,7 +68,7 @@ public class CommandViewManager implements CommandView {
                 + "<form target='directory' action='/Command.do' method='POST'>\n" + "<input type=hidden value='"
                 + r.getRowname() + "' name=context>\n" + "<input type=hidden value='newFile' name=op>\n"
                 + "Create new file: <input type=text name=params>\n" + "<input type=hidden value='" + path
-                + "' name=params>\n" + "<input type=submit value=Create>\n" + "</form>\n" + "</body</html>\n");
+                + "' name=params>\n" + "<input type=submit value=Create>\n" + "</form>\n" + "</body></html>\n");
 
         return result.toString();
     }
@@ -101,6 +120,30 @@ public class CommandViewManager implements CommandView {
             s.close();
         }
         return ("");
+    }
+    
+    private String commitCvsFile(Row r, String path, String file) {
+        
+        java.io.File f = new java.io.File(file);
+        
+        StringWriter result = new StringWriter();
+        PrintWriter out = new PrintWriter(result);
+
+        out.println(
+                "<HTML><HEAD><TITLE>Command view for " + r.getRowname() + "</TITLE>\n" +
+                "<link rel='StyleSheet' href='/style/parade.css' type='text/css'>\n" +
+                "<link rel='StyleSheet' href='/style/files.css' type='text/css'>\n" +
+                "</HEAD><BODY class='files'>\n"
+                + "<form target='command' action='/Cvs.do' method='POST'>\n" + "<input type=hidden value='"
+                + r.getRowname() + "' name=context>\n"
+                + "<input type=hidden value='commit' name=op>\n"
+                + "<input type=hidden value='" + path + "' name=params>\n"
+                + "<input type=hidden value='" + f.getAbsolutePath() + "' name=params>\n"
+                + "Committing <strong>" + f.getName() + "</strong> with message:<br>\n"
+                + "<input type='text' rows='3' cols='40' name=params><br>\n"
+                + "<input type=submit value=Commit>\n" + "</form>\n" + "</body></html>\n");
+
+        return result.toString();
     }
 
 }

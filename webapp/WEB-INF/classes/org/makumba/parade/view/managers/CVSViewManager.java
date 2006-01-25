@@ -29,7 +29,9 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
     public String getFileView(Row r, String path, File f) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
-
+        
+        path = r.getRowpath() + path;
+        
         FileCVS cvsdata = (FileCVS) f.getFiledata().get("cvs");
         RowCVS rowcvsdata = (RowCVS) r.getRowdata().get("cvs");
 
@@ -38,10 +40,13 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
         String cvscommand = "";
         String cvscommit = "";
         try {
-            cvscommand = "<a target='command' href='command.jsp?&entry="
-                    + java.net.URLEncoder.encode(f.getPath(), "UTF-8") + "&op=cvs&cvs.op=";
-            cvscommit = "<a target='command' href='cvsCommit.jsp?reload=&entry="
-                    + java.net.URLEncoder.encode(f.getPath(), "UTF-8");
+            String encodedPath = java.net.URLEncoder.encode(path,"UTF-8");
+            String encodedFile = java.net.URLEncoder.encode(f.getPath(), "UTF-8");
+            cvscommand = "<a target='command' href='/Cvs.do?context="+r.getRowname()+"&path="+encodedPath+"&file="
+                    + encodedFile + "&op=";
+            
+            cvscommit = "<a target='command' href='/servlet/browse?context="+r.getRowname()+"&path="+encodedPath+"&file="
+                    + encodedFile + "&display=command&view=commit'>";
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -60,8 +65,8 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
                         .print("<a title='Backup of your working file, can be deleted once you resolved its conflicts with CVS'>Conflict Backup</a>");
 
             } else { // show options to add to cvs
-                out.print(cvscommand + "add&reload='><img src='/images/cvs-add.gif' alt='add'></a>" + cvscommand
-                        + "add&cvs.op.-kb=&reload='><img src='/images/cvs-add-binary.gif' alt='add binary'></a>");
+                out.print(cvscommand + "add'><img src='/images/cvs-add.gif' alt='add'></a>" + cvscommand
+                        + "addbin'><img src='/images/cvs-add-binary.gif' alt='add binary'></a>");
             }
             return result.toString();
         }
@@ -104,8 +109,8 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
                 out.print("<a href='" + cvswebLink + "' title='CVS log'>(dir)</a>");
             } else {
                 out.println("<a href='" + cvswebLink + "' title='CVS log'>" + cvsdata.getRevision() + "</a>"
-                        + cvscommand + "update&reload='><img src='/images/cvs-update.gif' alt='CVS checkout'></a>"
-                        + cvscommand + "delete&reload='><img src='/images/cvs-remove.gif' alt='CVS remove'></a>");
+                        + cvscommand + "updatefile'><img src='/images/cvs-update.gif' alt='CVS checkout'></a>"
+                        + cvscommand + "deletefile'><img src='/images/cvs-remove.gif' alt='CVS remove'></a>");
             }
 
         }
@@ -116,7 +121,7 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
                 out.print("<a href='" + cvswebLink + "' title='CVS log'>(dir)</a>");
             } else {
                 out.println("<a href='" + cvswebLink + "' title='CVS log'>" + cvsdata.getRevision() + "</a>"
-                        + cvscommand + "update&reload='><img src='/images/cvs-update.gif' alt='CVS update'></a>");
+                        + cvscommand + "updatefile'><img src='/images/cvs-update.gif' alt='CVS update'></a>");
             }
 
         }
@@ -124,7 +129,7 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
 
         case 4: { // ADDED
             out.println(cvsdata.getRevision() + cvscommit
-                    + "><img src='/images/cvs-committ.gif' alt='CVS committ'></a>");
+                    + "<img src='/images/cvs-committ.gif' alt='CVS committ'></a>");
         }
             break;
 
@@ -149,11 +154,28 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
     }
 
     public String getFileViewHeader(Row r, String path) {
-        String header = "<th>CVS</th>";
+        StringWriter result = new StringWriter();
+        PrintWriter out = new PrintWriter(result);
+
+        out.println("<a href='/Cvs.do?op=check&context=" + r.getRowname() +
+                "&params="+path+"' target='command'><img src='/images/cvs-query.gif'" +
+                " alt='CVS check status' border='0'></a>");
+        
+        out.println("<a href='/Cvs.do?op=update&context=" + r.getRowname() +
+                "&params="+path+"' target='command'><img src='/images/cvs-update.gif'" +
+                " alt='CVS local update' border='0'></a>");
+        
+        out.println("<a href='/Cvs.do?op=rupdate&context=" + r.getRowname() +
+                "&params="+path+"' target='command'><img src='/images/cvs-update.gif'" +
+                 " alt='CVS recursive update' border='0'></a>");
+        
+
+        String header = "<th>CVS "+result.toString()+"</th>";
         return header;
     }
 
     public String getHeaderView(Row r) {
+
         /*
          * <%-- $Header:
          * /cvsroot/parade/parade2/webapp/WEB-INF/classes/org/makumba/parade/view/managers/CVSViewManager.java,v 1.8
