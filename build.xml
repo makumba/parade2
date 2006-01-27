@@ -1,5 +1,13 @@
 <!-- $Header$ -->
-<project name="PARADE" basedir=".">
+<project name="PARADE" basedir="." default="compile">
+<property file="parade.properties" />
+	
+    <path id="project.class.path">	
+		<pathelement path="../utilities"/>
+    </path>
+	
+	<property name="project.class.path" refid="project.class.path" />
+	
 	<target name="appletCopy">
 	<copy toDir="webapp/" overwrite="true">
          <fileset dir="webapp/WEB-INF/classes">
@@ -7,8 +15,8 @@
           <include name="org/makumba/parade/sourceedit/*.class" />
          </fileset>
 	</copy>
-<echo>Press x in the Java Plugin console to make it forget old applets. If you have no java console, hold Shift while pressing Refresh in the browser.
-</echo>
+	<echo>Press x in the Java Plugin console to make it forget old applets. If you have no java console, hold Shift while pressing Refresh in the browser.
+	</echo>
 	</target>
 
 	<target name="triggerCopy">
@@ -19,5 +27,83 @@
          </fileset>
 	</copy>
 	</target>
+	
+	<target name="tomcat" description="start tomcat 5" >
+		<antcall target="compile" />
+		<!-- copy util-java/lib to tomcat's common, for use by webapps and LoginFilter
+		according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
+		but i couldn't get them to work frmom there.
+		-->
+		<copy toDir="${catalina.home}/common/lib" overwrite="true" >
+	         <fileset dir="../../util-java/lib">
+	          <include name="*.jar" />
+	          <include name="*.zip" />
+		<exclude name="makumba.jar" />
+		<exclude name="antlr.jar" />
+	         </fileset>	
+		</copy>
+		<!-- copy utilities to tomcat's common, for use by webapps and LoginFilter
+		according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
+		but i couldn't get them to work frmom there.
+		-->
+		<copy toDir="${catalina.home}/common/classes/org" overwrite="true">
+	         <fileset dir="../utilities/org/">
+	          <include name="eu/best/tools/*.class" />
+	         </fileset>
+		</copy>
+
+
+		<!-- copy dataDefinitions to parade's WEB-INF, for use by AccessServlet	-->
+		<copy toDir="webapp/WEB-INF/classes/dataDefinitions" overwrite="true">
+	         <fileset dir="../karamba/public_html/WEB-INF/classes/dataDefinitions">
+	          <include name="**/*.mdd" />
+	          <include name="**/*.idd" />
+	         </fileset>	
+		</copy>
+
+		<!-- copy BestMemberAuthorizer to parade's WEB-INF, for use by AccessServlet	-->
+		<copy toDir="webapp/WEB-INF/classes/org" overwrite="true">
+	         <fileset dir="../utilities/org/">
+	          <include name="eu/best/BestMemberAuthorizer*.class" />
+	         </fileset>
+		</copy>
+
+		<!-- copy applets to webapp/ -->
+		<copy toDir="webapp/" overwrite="true">
+	         <fileset dir="webapp/WEB-INF/classes">
+	          <include name="org/makumba/parade/applets/*.class" />
+	          <include name="org/makumba/parade/sourceedit/*.class" />
+	         </fileset>
+		</copy>
+		
+		<antcall target="applets" />
+		<ant antfile="${generics.path}" target="startTomcat" />
+	</target>
+	
+	<target name="stopTomcat" description="stop tomcat 5">
+			<ant antfile="${generics.path}" target="stopTomcat" />
+		</target>
+		
+	<target name="reload" >
+		<antcall target="compile" />
+		<ant antfile="${generics.path}" target="reload" />
+		<touch file="tomcat/logs/paradeReloadResult.txt"/>
+	</target>
+	
+	<target name="compile" description="compile the java files">
+		<ant antfile="${generics.path}" target="compile" inheritRefs="true"/>
+	</target>
+
+	<target name="clean" description="delete all generated and backup files">
+		<ant antfile="${generics.path}" target="clean"/>
+	</target>
+	
+	<target name="checkInitialFiles">
+		<!-- it just checks if one file exist, if so it is assumed that
+		     all the others were copied -->
+			<available file="parade.properties" type="file" property="files.copied"/>
+	</target>
+	
+	
 </project>
 
