@@ -13,15 +13,19 @@ import java.util.TimeZone;
 
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
+import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
-import org.makumba.parade.model.interfaces.DirectoryRefresher;
+import org.makumba.parade.model.interfaces.CacheRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 
-public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManager {
+public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
     public static Logger logger = Logger.getLogger(CVSManager.class.getName());
 
@@ -50,7 +54,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
         cvsDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    public void directoryRefresh(Row row, String path) {
+    public void directoryRefresh(Row row, String path, boolean local) {
 
         // for the root paths
         java.io.File currDir = new java.io.File(path);
@@ -64,6 +68,11 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
             if (!(currFile == null) && currFile.getIsDir())
                 readFiles(row, currFile);
         }
+    }
+    
+    public void fileRefresh(Row row, String path) {
+        // TODO Auto-generated method stub
+        
     }
 
     public void rowRefresh(Row row) {
@@ -147,8 +156,9 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
 
                     // checking if the file we are looking for is mapped
                     File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + name);
-
-                    if (cvsfile == null) {
+                    
+                    boolean missing = false;
+                    if (missing = (cvsfile == null)) {
                         cvsfile = FileManager.setVirtualFileData(r, file, name, false);
                         r.getFiles().put(file.getPath() + java.io.File.separator + name, cvsfile);
                     }
@@ -157,13 +167,18 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
                         cvsdata = new FileCVS();
                         cvsdata.setDataType("cvs");
                         cvsdata.setFile(cvsfile);
-                        cvsdata.setStatus(NEEDS_CHECKOUT);
-
+                        
                         cvsfile.getFiledata().put("cvs", cvsdata);
                     }
 
                     // setting CVS status
                     cvsdata.setStatus(UNKNOWN);
+                    if(missing) {
+                        cvsdata.setStatus(NEEDS_CHECKOUT);
+                        continue;
+                    }
+                        
+                    
                     line = line.substring(n + 1);
                     n = line.indexOf('/');
                     if (n == -1)
@@ -225,9 +240,6 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
                     }
 
                     cvsdata.setStatus(l > 0 ? LOCALLY_MODIFIED : NEEDS_UPDATE);
-                    // stupid windows bug
-                    // if(l<0)
-                    // System.out.println(l);
                     continue;
 
                     // if the entry is a dir
@@ -237,7 +249,7 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
                         continue;
                     String name = line.substring(2, n);
 
-                    // checking if the file we are looking for is mapped
+                    // checking if the directory we are looking for is mapped
                     File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + name);
                     if (cvsfile == null) {
                         cvsfile = FileManager.setVirtualFileData(r, file, name, true);
@@ -302,6 +314,19 @@ public class CVSManager implements DirectoryRefresher, RowRefresher, ParadeManag
         // TODO Auto-generated method stub
 
     }
+    
+    public static void updateCvsCache(String context, String path) {
+        CVSManager cvsMgr = new CVSManager();
+        Session s = InitServlet.getSessionFactory().openSession();
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        Row r = Row.getRow(p, context);
+        Transaction tx = s.beginTransaction();
+        cvsMgr.directoryRefresh(r, path, false);
+        tx.commit();
+        s.close();
+    }
+
+
 
     
 }

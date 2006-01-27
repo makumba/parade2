@@ -10,15 +10,19 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
+import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.interfaces.DirectoryRefresher;
+import org.makumba.parade.model.interfaces.CacheRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.SimpleFileFilter;
 
-public class FileManager implements RowRefresher, DirectoryRefresher, ParadeManager {
+public class FileManager implements RowRefresher, CacheRefresher, ParadeManager {
 
     static Logger logger = Logger.getLogger(FileManager.class.getName());
 
@@ -52,7 +56,7 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 
     }
 
-    public void directoryRefresh(Row row, String path) {
+    public void directoryRefresh(Row row, String path, boolean local) {
         java.io.File currDir = new java.io.File(path);
 
         if (currDir.isDirectory()) {
@@ -63,18 +67,23 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 
                     java.io.File file = dir[i];
 
-                    if (file.isDirectory()) {
-                        File dirData = setFileData(row, file, true);
-                        addFile(row, dirData);
-
-                        dirData.refresh();
-
-                    } else if (file.isFile()) {
-                        File fileData = setFileData(row, file, false);
-                        addFile(row, fileData);
-                    }
+                    cacheFile(row, file, local);
                 }
             }
+        }
+    }
+
+    private void cacheFile(Row row, java.io.File file, boolean local) {
+        if (file.isDirectory()) {
+            File dirData = setFileData(row, file, true);
+            addFile(row, dirData);
+
+            if(!local)
+                dirData.refresh();
+
+        } else if (file.isFile()) {
+            File fileData = setFileData(row, file, false);
+            addFile(row, fileData);
         }
     }
 
@@ -180,7 +189,18 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
         java.io.File f = new java.io.File((decodedParams).replace('/', java.io.File.separatorChar));
         boolean success = f.delete();
         if (success) {
-            r.getFiles().remove(decodedParams);
+            File cacheFile = (File) r.getFiles().get(decodedParams);
+            FileCVS cvsCache = (FileCVS) cacheFile.getFiledata().get("cvs");
+            
+            // if there is CVS data for this file
+            // TODO do this check for Tracker as well once it will be done
+            if(cvsCache.getDate() != null) {
+                cacheFile.setOnDisk(false);
+                cvsCache.setStatus(CVSManager.NEEDS_CHECKOUT);
+            }
+            else
+                r.getFiles().remove(decodedParams);
+            
             return "OK#" + f.getName();
         }
         return "Error while trying to delete file " + f.getName();
@@ -195,6 +215,59 @@ public class FileManager implements RowRefresher, DirectoryRefresher, ParadeMana
 
         return path;
 
+    }
+    /* removes a file from the cache */
+    public static void deleteSimpleFileCache(String context, String path) {
+        Session s = InitServlet.getSessionFactory().openSession();
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        Row r = Row.getRow(p, context);
+        Transaction tx = s.beginTransaction();
+        
+        r.getFiles().remove(path);
+        
+        tx.commit();
+        s.close();
+    }
+    
+    
+    /* updates file cache of a single file */
+    public static void updateSimpleFileCache(String context, String path) {
+        FileManager fileMgr = new FileManager();
+        Session s = InitServlet.getSessionFactory().openSession();
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        Row r = Row.getRow(p, context);
+        Transaction tx = s.beginTransaction();
+        
+        java.io.File f = new java.io.File(path);
+        if(!f.exists())
+            return;
+        
+        fileMgr.cacheFile(r, f, false);
+        
+        tx.commit();
+        s.close();
+    }
+    
+    /* updates the File cache of a directory */
+    public static void updateFileCache(String context, String path, boolean local) {
+        FileManager fileMgr = new FileManager();
+        Session s = InitServlet.getSessionFactory().openSession();
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        Row r = Row.getRow(p, context);
+        Transaction tx = s.beginTransaction();
+        
+        fileMgr.directoryRefresh(r, path, local);
+        
+        tx.commit();
+        s.close();
+    }
+
+    public void fileRefresh(Row row, String path) {
+        java.io.File f = new java.io.File(path);
+        if(!f.exists())
+            return;
+        cacheFile(row, f, false);
+        
     }
 
 }

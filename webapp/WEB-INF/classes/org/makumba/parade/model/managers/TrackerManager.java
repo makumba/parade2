@@ -5,10 +5,10 @@ import java.util.Map;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileTracker;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.interfaces.DirectoryRefresher;
+import org.makumba.parade.model.interfaces.CacheRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 
-public class TrackerManager implements DirectoryRefresher, ParadeManager {
+public class TrackerManager implements CacheRefresher, ParadeManager {
 
     // "Specification"=0,"DesignApproved"=1,"Started"=2,"Developing"=3,"Stable"=4,"Frozen"=5,"Dropped"=6
 
@@ -26,7 +26,7 @@ public class TrackerManager implements DirectoryRefresher, ParadeManager {
 
     static Integer DROPPED = new Integer(6);
 
-    public void directoryRefresh(Row row, String path) {
+    public void directoryRefresh(Row row, String path, boolean local) {
 
         File currFile = (File) row.getFiles().get(path);
 
@@ -45,9 +45,16 @@ public class TrackerManager implements DirectoryRefresher, ParadeManager {
             currFile.setFiledata(filedata);
         }
     }
+    
+    public void fileRefresh(Row row, String path) {
+        // TODO Auto-generated method stub
+        
+    }
 
     public void newRow(String name, Row r, Map m) {
         // TODO Auto-generated method stub
 
     }
+
+
 }
