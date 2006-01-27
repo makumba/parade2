@@ -1,19 +1,27 @@
 package org.makumba.parade.model.managers;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
+import org.makumba.HtmlUtils;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowAnt;
 import org.makumba.parade.model.interfaces.ParadeManager;
@@ -31,7 +39,7 @@ public class AntManager implements RowRefresher, ParadeManager {
         if (buildFile == null || !buildFile.exists()) {
             logger.error("AntManager: no build file found for row " + row.getRowname());
         } else {
-            Project p = getProject(buildFile, row, antdata);
+            Project p = getInitProject(buildFile, row, antdata);
             if (p == null) {
                 logger.error("AntManager: couldn't initialise the project");
             }
@@ -60,7 +68,7 @@ public class AntManager implements RowRefresher, ParadeManager {
         File buildFile;
         buildFile = new java.io.File(dir + File.separator + "build.xml");
         if (!buildFile.exists()) {
-            data.setBuildfile("No build file");
+            data.setBuildfile("No build file found");
         } else {
             try {
                 data.setBuildfile(buildFile.getCanonicalPath());
@@ -72,34 +80,36 @@ public class AntManager implements RowRefresher, ParadeManager {
         return buildFile;
     }
 
-    private synchronized Project getProject(File buildFile, Row row, RowAnt data) {
+    private synchronized Project getInitProject(File buildFile, Row row, RowAnt data) {
         Project project = null;
 
         if (data.getLastmodified() == null || buildFile.lastModified() > data.getLastmodified().longValue()) {
             data.setLastmodified(new Long(buildFile.lastModified()));
-            project = new Project();
-
-            try {
-                project.init();
-                ProjectHelper.getProjectHelper().parse(project, buildFile);
-            } catch (Throwable t) {
-                java.util.logging.Logger.getLogger("org.makumba.parade.ant").log(java.util.logging.Level.WARNING,
-                        "project config error", t);
-                return null;
-            }
-
-            try {
-                project.setUserProperty("ant.file", buildFile.getCanonicalPath());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            DefaultLogger lg = new DefaultLogger();
-            lg.setEmacsMode(true);
-            lg.setMessageOutputLevel(Project.MSG_INFO);
-            project.addBuildListener(lg);
+            project = getProject(buildFile, row);
 
         }
+        return project;
+    }
+    
+    private synchronized Project getProject(File buildFile, Row row) {
+        Project project = new Project();
+
+        try {
+            project.init();
+            ProjectHelper.getProjectHelper().parse(project, buildFile);
+        } catch (Throwable t) {
+            java.util.logging.Logger.getLogger("org.makumba.parade.ant").log(java.util.logging.Level.WARNING,
+                    "project config error", t);
+            return null;
+        }
+
+        try {
+            project.setUserProperty("ant.file", buildFile.getCanonicalPath());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         return project;
     }
 
@@ -125,23 +135,54 @@ public class AntManager implements RowRefresher, ParadeManager {
 
     }
 
-    /*
-     * executes an Ant command public void executeAntCommandSimple(RowAnt data, Row row) throws IOException {
-     * java.lang.Runtime rt = java.lang.Runtime.getRuntime(); rt.gc(); long memSize = rt.totalMemory() -
-     * rt.freeMemory(); setBuildFile(row, data); Project project = data.getProject(); DefaultLogger lg = (DefaultLogger)
-     * data.getLogger();
-     * 
-     * PrintStream ps = Config.getPrintStream(pc.getOut()); ps.println("heap size: " + memSize);
-     * ps.println(Main.getAntVersion()); ps.println("Buildfile: " + row.get("ant.file")); String s[] =
-     * pc.getRequest().getParameterValues("antCommand"); Vector v = new Vector(); for (int i = 0; i < s.length; i++)
-     * v.addElement(s[i]);
-     * 
-     * synchronized (project) { lg.setOutputPrintStream(ps); lg.setErrorPrintStream(ps);
-     * 
-     * lg.buildStarted(null); Throwable error = null; try { project.executeTargets(v); } catch (Throwable t) { error =
-     * t; } BuildEvent be = new BuildEvent(project); be.setException(error); lg.buildFinished(be); } ps.flush();
-     * rt.gc(); long memSize1 = rt.totalMemory() - rt.freeMemory(); ps.println("heap size: " + memSize1);
-     * ps.println("heap grew with: " + (memSize1 - memSize)); }
-     */
+    public String executeAntCommand(Row r, String command) throws IOException {
+        java.lang.Runtime rt = java.lang.Runtime.getRuntime();
+        rt.gc();
+        long memSize = rt.totalMemory() - rt.freeMemory();
+        
+        RowAnt antData = (RowAnt) r.getRowdata().get("ant");
+        String buildFilePath = antData.getBuildfile();
+        if(buildFilePath.equals("No build file found"))
+            return("No build file found");
+        java.io.File buildFile = new java.io.File(buildFilePath);
+        
+        Project project = getProject(buildFile, r);
+        DefaultLogger lg = new DefaultLogger();
+        lg.setEmacsMode(true);
+        lg.setMessageOutputLevel(Project.MSG_INFO);
+        project.addBuildListener(lg);
+        
+        OutputStream result = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(result);
+        
+        out.println("heap size: " + memSize);
+        out.println(Main.getAntVersion());
+        out.println("Buildfile: " + buildFile.getName());
+        Vector v = new Vector();
+        v.addElement(command);
+        
+        synchronized (project) {
+            lg.setOutputPrintStream(out);
+            lg.setErrorPrintStream(out);
 
+            lg.buildStarted(null);
+            Throwable error = null;
+            try {
+                
+                project.executeTargets(v);
+            } catch (Throwable t) {
+                error = t;
+            }
+            BuildEvent be = new BuildEvent(project);
+            be.setException(error);
+            lg.buildFinished(be);
+        }
+        out.flush();
+        rt.gc();
+        long memSize1 = rt.totalMemory() - rt.freeMemory();
+        out.println("heap size: " + memSize1);
+        out.println("heap grew with: " + (memSize1 - memSize));
+        
+        return HtmlUtils.text2html(result.toString(), "", "<br>");
+    }
 }

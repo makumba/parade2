@@ -13,7 +13,7 @@ import org.makumba.parade.view.interfaces.HeaderView;
 public class AntViewManager implements ParadeView, HeaderView {
 
     public String getParadeViewHeader() {
-        String header = "<b>Ant buildfile</b>";
+        String header = "<th>Ant buildfile</th>";
         return header;
     }
 
@@ -21,15 +21,15 @@ public class AntViewManager implements ParadeView, HeaderView {
         RowAnt antdata = (RowAnt) r.getRowdata().get("ant");
 
         String view = antdata.getBuildfile() + "<br>\n";
-        view += getTargets(r);
+        view += getTargets(r, "");
         return view;
     }
 
-    public String getHeaderView(Row r) {
-        return "&nbsp; ant: " + getTargets(r);
+    public String getHeaderView(Row r, String path) {
+        return "&nbsp; ant: " + getTargets(r, path);
     }
 
-    private String getTargets(Row r) {
+    private String getTargets(Row r, String path) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
@@ -43,7 +43,7 @@ public class AntViewManager implements ParadeView, HeaderView {
                     target = target.substring(1);
                 if (!target.equals(allowed))
                     continue;
-                out.print("<a href=?handler=ant&op=doSomething>" + target + "</a>");
+                out.print("<a href=/Ant.do?context="+r.getRowname()+"&path="+path+"&op="+target+">" + target + "</a>");
                 if (i.hasNext())
                     out.println(",");
             }
