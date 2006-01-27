@@ -11,14 +11,14 @@ import org.makumba.parade.view.interfaces.ParadeView;
 
 public class WebappViewManager implements HeaderView, ParadeView {
 
-    public String getHeaderView(Row r) {
+    public String getHeaderView(Row r, String path) {
         RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
 
-        return "webapp: " + getCommands(r, data);
+        return "webapp: " + getCommands(r, data, path);
     }
 
     public String getParadeViewHeader() {
-        String header = "<b>Webapp path, status</b>";
+        String header = "<th>Webapp path, status</th>";
         return header;
     }
 
@@ -34,12 +34,12 @@ public class WebappViewManager implements HeaderView, ParadeView {
 
         // TODO - consider the case WEBINF isn't found, ie get server name, port from some request
 
-        out.println(getCommands(r, data));
+        out.println(getCommands(r, data, ""));
 
         return result.toString();
     }
 
-    private String getCommands(Row r, RowWebapp data) {
+    private String getCommands(Row r, RowWebapp data, String path) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
@@ -54,21 +54,22 @@ public class WebappViewManager implements HeaderView, ParadeView {
              */
         } else {
             if (status == ServletContainer.RUNNING) {
-                out.println("<a href='index.jsp?entry=" + r.getRowname()
-                        + "&handler=webapp&op=servletContextReload'>reload</a> " + "<a href='index.jsp?entry="
-                        + r.getRowname() + "&handler=webapp&op=servletContextStop'>stop</a> ");
+                out.println("<a href='/Webapp.do?context=" + r.getRowname() 
+                        + "&path="+path+"&op=servletContextReload'>reload</a> "
+                        + "<a href='/Webapp.do?context=" + r.getRowname()
+                        + "&path="+path+"&op=servletContextStop'>stop</a> ");
             }
             if (status == ServletContainer.STOPPED) {
-                out.println("<a href='index.jsp?entry=" + r.getRowname()
-                        + "&handler=webapp&op=servletContextStart'>start</a> ");
+                out.println("<a href='/Webapp.do?context=" + r.getRowname()
+                        + "&path="+path+"&op=servletContextStart'>start</a> ");
             }
             if (status != ServletContainer.NOT_INSTALLED) {
-                out.println("<a href='index.jsp?entry=" + r.getRowname()
-                        + "&handler=webapp&op=servletContextRemove'>uninstall</a>");
+                out.println("<a href='/Webapp.do?context=" + r.getRowname()
+                        + "&path="+path+"&op=servletContextRemove'>uninstall</a>");
             }
             if (status == ServletContainer.NOT_INSTALLED) {
-                out.println("<a href='index.jsp?entry=" + r.getRowname()
-                        + "&handler=webapp&op=servletContextInstall'>install</a>");
+                out.println("<a href='/Webapp.do?context=" + r.getRowname()
+                        + "&path="+path+"&op=servletContextInstall'>install</a>");
             }
         }
 

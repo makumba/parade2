@@ -21,14 +21,14 @@ import org.makumba.parade.model.interfaces.RowRefresher;
 
 public class WebappManager implements RowRefresher, ParadeManager {
 
-    static String reloadLog = (String) ParadeProperties.getProperty("paradeBase") + "tomcat" + java.io.File.separator
+    static String reloadLog = ParadeProperties.getParadeBase() + java.io.File.separator + "tomcat" + java.io.File.separator
             + "logs" + java.io.File.separator + "paradeReloadResult.txt";
 
     ServletContainer container;
 
     Properties config;
 
-    String fileName = (String) ParadeProperties.paradeBase + "servletContext.properties";
+    String fileName = ParadeProperties.getParadeBase() + java.io.File.separator + "servletContext.properties";
 
     static Logger logger = Logger.getLogger(WebappManager.class.getName());
 
@@ -66,7 +66,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
                 container = (ServletContainer) ParadeProperties.class.getClassLoader().loadClass(
                         config.getProperty("parade.servletContext.servletContainer")).newInstance();
 
-                config.put("parade.servletContext.paradeContext", new File(ParadeProperties.paradeBase)
+                config.put("parade.servletContext.paradeContext", new File(ParadeProperties.getParadeBase())
                         .getCanonicalPath());
                 container.makeConfig(config);
                 config.store(new FileOutputStream(fileName), "Parade servlet context config");
@@ -131,13 +131,10 @@ public class WebappManager implements RowRefresher, ParadeManager {
             try {
                 String antCommand = "ant";
 
-                if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1)
-                    antCommand = "ant.bat";
-
                 File f = new File(reloadLog);
                 f.delete();
                 Runtime.getRuntime().exec(
-                        antCommand + " -buildfile " + ParadeProperties.paradeBase + "build.xml reload");
+                        antCommand + " -buildfile " + ParadeProperties.getParadeBase() + java.io.File.separator + "build.xml reload");
 
                 while (!f.exists()) {
                     try {
@@ -193,7 +190,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
     private boolean isParade(Row row) {
         try {
-            return row.getRowpath().equals(new File(ParadeProperties.paradeBase).getCanonicalPath());
+            return row.getRowpath().equals(new File(ParadeProperties.getParadeBase()).getCanonicalPath());
         } catch (Throwable t) {
             logger.error("Internal error: couldn't get row path", t);
         }
