@@ -38,9 +38,9 @@ public class File {
         CVSManager CVSMgr = new CVSManager();
         TrackerManager trackerMgr = new TrackerManager();
 
-        fileMgr.directoryRefresh(row, this.getPath());
-        CVSMgr.directoryRefresh(row, this.getPath());
-        trackerMgr.directoryRefresh(row, this.getPath());
+        fileMgr.directoryRefresh(row, this.getPath(), false);
+        CVSMgr.directoryRefresh(row, this.getPath(), false);
+        trackerMgr.directoryRefresh(row, this.getPath(), false);
     }
 
     public void setPath(String path) {
