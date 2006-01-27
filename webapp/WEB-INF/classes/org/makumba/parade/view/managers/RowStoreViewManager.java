@@ -6,7 +6,7 @@ import org.makumba.parade.view.interfaces.ParadeView;
 public class RowStoreViewManager implements ParadeView {
 
     public String getParadeViewHeader() {
-        String header = "<b>Name, Path</b></td><td align='center'><b>Description</b>";
+        String header = "<th>Name, Path</th><th>Description</th>";
         return header;
     }
 

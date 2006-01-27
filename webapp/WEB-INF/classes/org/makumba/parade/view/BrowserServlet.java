@@ -82,7 +82,7 @@ public class BrowserServlet extends HttpServlet {
             // switiching to the right display
             String page = "";
             if (display.equals("header")) {
-                page = hdrV.getHeaderView(r);
+                page = hdrV.getHeaderView(r, path);
             }
             if (display.equals("tree")) {
                 page = fileV.getJSTreeView(p, r, size);

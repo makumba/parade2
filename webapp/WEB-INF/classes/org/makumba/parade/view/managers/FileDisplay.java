@@ -100,8 +100,8 @@ public class FileDisplay {
     private String getParentDir(Row r, String path) {
 
         if (path == null)
-            path = r.getRowpath();
-
+            path = r.getRowpath()+java.io.File.separator;
+        
         String relativePath = path.substring(r.getRowpath().length(), path.length());
 
         String parentDir = "";

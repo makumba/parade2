@@ -25,11 +25,19 @@ public class IndexServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         String context = req.getParameter("context");
-
-        String op = req.getParameter("op");
-        String handler = req.getParameter("handler");
-        String params = req.getParameter("params");
-        String path = req.getParameter("path");
+        if (context == null)
+            context = (String) req.getAttribute("context");
+        
+        String opResult = req.getParameter("opResult");
+        if (opResult == null)
+            opResult = (String) req.getAttribute("opResult");
+        
+        Boolean successAttr = (Boolean) req.getAttribute("success");
+        boolean success = true;
+        if (successAttr == null)
+            success = false;
+        else
+            success = successAttr.booleanValue();
 
         PrintWriter out = resp.getWriter();
 
@@ -44,7 +52,7 @@ public class IndexServlet extends HttpServlet {
         }
 
         RowDisplay rowDisp = new RowDisplay();
-        out.print(rowDisp.getView(p, context, handler, op, params, path));
+        out.print(rowDisp.getView(p, context, opResult, success));
 
         tx.commit();
 

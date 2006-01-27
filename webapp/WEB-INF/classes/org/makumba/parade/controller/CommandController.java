@@ -2,10 +2,10 @@ package org.makumba.parade.controller;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.transform.ResultTransformer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.view.managers.FileDisplay;
 
@@ -62,7 +62,11 @@ public class CommandController {
             result = fileMgr.newDir(row, path, filename);
         else if (action.equals("deleteFile"))
             result = fileMgr.deleteFile(row, filename);
-
+        
+        //updates the caches
+        //TODO the same for the other caches
+        CVSManager.updateCvsCache(context, filepath);
+ 
         tx.commit();
         s.close();
 

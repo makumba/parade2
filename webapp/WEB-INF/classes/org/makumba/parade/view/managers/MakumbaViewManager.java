@@ -7,7 +7,7 @@ import org.makumba.parade.view.interfaces.ParadeView;
 public class MakumbaViewManager implements ParadeView {
 
     public String getParadeViewHeader() {
-        String header = "<b>Makumba version</b>";
+        String header = "<th>Makumba version</th>";
         return header;
     }
 

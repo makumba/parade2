@@ -47,11 +47,26 @@ public class CommandViewManager implements CommandView {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
+        String pathURI = "";
+
+        try {
+            pathURI = URLEncoder.encode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         out.println("<HTML><HEAD><TITLE>Command view for " + r.getRowname() + "</TITLE>");
         out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
-        out.println("<link rel='StyleSheet' href='/style/files.css' type='text/css'>");
-        out.println("</HEAD><BODY class='files'>");
+        out.println("<link rel='StyleSheet' href='/style/command.css' type='text/css'>");
+        out.println("</HEAD><BODY class='command'>");
 
+        out.println("<script language='JavaScript'>\n" +
+                "<!--\n" +
+                "top.frames[\"directory\"].document.location.href='/servlet/browse?display=file&context="+r.getRowname()+"&path="+pathURI+ "'\n" +
+                "// -->" +
+                "</script>");
+        
         if (opResult != null)
             out.println(opResult);
         
@@ -64,11 +79,15 @@ public class CommandViewManager implements CommandView {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
-        out.println("<html><head><title>Command view for " + r.getRowname() + "</title></head><body>\n"
+        out.println("<HTML><HEAD><TITLE>Command view for " + r.getRowname() + "</TITLE>");
+        out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
+        out.println("<link rel='StyleSheet' href='/style/command.css' type='text/css'>");
+        out.println("</HEAD><BODY class='command'>"
                 + "<form target='directory' action='/Command.do' method='POST'>\n" + "<input type=hidden value='"
                 + r.getRowname() + "' name=context>\n" + "<input type=hidden value='newFile' name=op>\n"
                 + "Create new file: <input type=text name=params>\n" + "<input type=hidden value='" + path
-                + "' name=params>\n" + "<input type=submit value=Create>\n" + "</form>\n" + "</body></html>\n");
+                + "' name=params>\n" + "<input type=submit value=Create>\n" + "</form>\n" 
+                + "</body></html>\n");
 
         return result.toString();
     }
@@ -77,20 +96,15 @@ public class CommandViewManager implements CommandView {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
-        String pathURI = "";
-
-        try {
-            pathURI = URLEncoder.encode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        out.println("<html><head><title>Command view for " + r.getRowname() + "</title></head><body>\n"
+        out.println("<HTML><HEAD><TITLE>Command view for " + r.getRowname() + "</TITLE>");
+        out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
+        out.println("<link rel='StyleSheet' href='/style/command.css' type='text/css'>");
+        out.println("</HEAD><BODY class='command'>"
                 + "<form action='/Command.do' target='directory' method='POST'>\n" + "<input type=hidden value='"
                 + r.getRowname() + "' name=context>\n" + "<input type=hidden value='newDir' name=op>\n"
                 + "Create new directory: <input type=text name=params>\n" + "<input type=hidden value='" + path
-                + "' name=params>\n" + "<input type=submit value=Create>\n" + "</form>\n" + "</body></html>\n");
+                + "' name=params>\n" + "<input type=submit value=Create>\n" + "</form>\n"
+                + "</body></html>\n");
 
         return result.toString();
     }
@@ -129,11 +143,10 @@ public class CommandViewManager implements CommandView {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
-        out.println(
-                "<HTML><HEAD><TITLE>Command view for " + r.getRowname() + "</TITLE>\n" +
-                "<link rel='StyleSheet' href='/style/parade.css' type='text/css'>\n" +
-                "<link rel='StyleSheet' href='/style/files.css' type='text/css'>\n" +
-                "</HEAD><BODY class='files'>\n"
+        out.println("<HTML><HEAD><TITLE>Command view for " + r.getRowname() + "</TITLE>");
+        out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
+        out.println("<link rel='StyleSheet' href='/style/command.css' type='text/css'>");
+        out.println("</HEAD><BODY class='command'>"
                 + "<form target='command' action='/Cvs.do' method='POST'>\n" + "<input type=hidden value='"
                 + r.getRowname() + "' name=context>\n"
                 + "<input type=hidden value='commit' name=op>\n"

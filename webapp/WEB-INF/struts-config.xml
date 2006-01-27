@@ -84,6 +84,25 @@
           <forward name="command" path="/servlet/browse" />
           
       </action>
+      
+      <!-- Webapp view -->
+      <action    path="/Webapp"
+                 type="org.makumba.parade.controller.WebappAction"
+                 >
+                 
+                 <forward name="command" path="/servlet/browse" />
+          
+      </action>
+      
+      <!-- Ant view -->
+      <action    path="/Ant"
+                 type="org.makumba.parade.controller.AntAction"
+                 >
+                 
+                 <forward name="command" path="/servlet/browse" />
+          
+      </action>
+      
 
       <!-- Change locale action
       <action
