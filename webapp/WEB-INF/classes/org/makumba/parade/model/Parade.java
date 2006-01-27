@@ -45,13 +45,7 @@ public class Parade {
      */
     public void refresh() {
 
-        try {
-            this.baseDir = new java.io.File((String) ParadeProperties.getProperty("webapp.path")
-                    + java.io.File.separator + "..").getCanonicalPath();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        this.baseDir = ParadeProperties.getParadeBase();
 
         /* Reads the row definitions and perfoms update/creation */
         Map rowstore = (new RowProperties()).getRowDefinitions();
@@ -148,6 +142,8 @@ public class Parade {
         makMgr.newRow(r.getRowname(), r, rowDefinition);
 
     }
+
+    /* Model related fields and methods */
 
     public Long getId() {
         return id;
