@@ -2,6 +2,7 @@ package org.makumba.parade.init;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -11,9 +12,8 @@ import org.apache.log4j.Logger;
 
 public class ParadeProperties {
 
-    static public String paradeBase = "." + java.io.File.separator;
-
-    static String fileName = paradeBase + "parade.properties";
+    
+    static String fileName = getParadeBase() + java.io.File.separator + "parade.properties";
 
     private static Properties config;
 
@@ -46,6 +46,18 @@ public class ParadeProperties {
             l.add(((String) st.nextToken()).trim());
         }
         return l;
+    }
+    
+    public static String getParadeBase() {
+        String paradeBase=".\\";
+        try {
+            paradeBase = new java.io.File("." + java.io.File.separator).getCanonicalPath();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return paradeBase;
+
     }
 
 }

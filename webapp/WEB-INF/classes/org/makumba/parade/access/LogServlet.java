@@ -16,7 +16,7 @@ import org.makumba.parade.init.ParadeProperties;
 
 public class LogServlet extends HttpServlet {
 
-    static File log = new File((String) ParadeProperties.getProperty("parade.paradeBase")
+    static File log = new File(ParadeProperties.getParadeBase() + "/"
             + ((String) ParadeProperties.getProperty("tomcat.output")).replace('/', File.separatorChar));
 
     /**
