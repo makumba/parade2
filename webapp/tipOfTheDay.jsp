@@ -2,6 +2,7 @@
 <head>
 <meta http-equiv="refresh" content="30;URL=/tipOfTheDay.jsp">
 <title>Parade tip of the day</title>
+<link rel='StyleSheet' href='/style/parade.css' type='text/css'>
 </head>
 <body>
 <table width="100%">
