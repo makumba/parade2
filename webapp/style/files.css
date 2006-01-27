@@ -4,6 +4,11 @@ body {
     font-size:0.7em;
 }
 
+a img {
+  border:none;
+  border-width:0px;
+}
+
 H2 {
     margin: 2px;
     font-weight:normal;

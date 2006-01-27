@@ -1,11 +1,15 @@
+/* General StyleSheet for ParaDe */
+
 body
 {
      aafont-family:Tahoma,Arial;
      font:menu;
 }
 
-a img
-{
+a img {
   border:none;
   border-width:0px;
 }
+
+
+
