@@ -15,7 +15,7 @@ import org.makumba.parade.view.interfaces.ParadeView;
 public class CVSViewManager implements ParadeView, FileView, HeaderView {
 
     public String getParadeViewHeader() {
-        String header = "<b>CVS module, user, branch</b>";
+        String header = "<th>CVS module, user, branch</th>";
         return header;
     }
 
@@ -59,7 +59,7 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
         String cvswebLink = cvsweb + rowcvsdata.getModule() + webPath;
 
         // if there's no CVS data
-        if (cvsdata == null || !f.getOnDisk()) {
+        if (cvsdata == null) {
             if (f.getName().startsWith(".#")) {
                 out
                         .print("<a title='Backup of your working file, can be deleted once you resolved its conflicts with CVS'>Conflict Backup</a>");
@@ -97,7 +97,7 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
                 out.print("<a href='" + cvswebLink + "' title='CVS log'>(dir)</a>");
             } else {
                 out.println("<a href='" + cvswebLink + "' title='CVS log'>" + cvsdata.getRevision() + "</a>"
-                        + cvscommit + "<img src='/images/cvs-committ.gif' alt='CVS committ'></a>" + cvscommand
+                        + cvscommit + "<img src='/images/cvs-committ.gif' alt='CVS commit'></a>" + cvscommand
                         + "diff'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>");
             }
 
@@ -128,21 +128,21 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
             break;
 
         case 4: { // ADDED
-            out.println(cvsdata.getRevision() + cvscommit
-                    + "<img src='/images/cvs-committ.gif' alt='CVS committ'></a>");
+            out.println("<a href='" + cvswebLink + "' title='CVS log'>"+cvsdata.getRevision() + "</a>" +
+                    cvscommit + "<img src='/images/cvs-committ.gif' alt='CVS commit'></a>");
         }
             break;
 
         case 5: { // DELETED
             out.println("<a href='" + cvswebLink + "' title='CVS log'>" + cvsdata.getRevision() + "</a>" + cvscommit
-                    + "><img src='/images/cvs-committ.gif' alt='CVS committ'></a>");
+                    + "<img src='/images/cvs-committ.gif' alt='CVS commit'></a>");
         }
             break;
 
         case 6: { // CONFLICT
             out.println("<a href='" + cvswebLink + "' title='CVS log'><b><font color='red'>Conflict</font></b> "
                     + cvsdata.getRevision() + "</a>" + cvscommit
-                    + "<img src='/images/cvs-committ.gif' alt='CVS committ'></a>" + cvscommand
+                    + "<img src='/images/cvs-committ.gif' alt='CVS commit'></a>" + cvscommand
                     + "diff'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>");
         }
             break;
@@ -174,7 +174,7 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
         return header;
     }
 
-    public String getHeaderView(Row r) {
+    public String getHeaderView(Row r, String path) {
 
         /*
          * <%-- $Header:
