@@ -117,7 +117,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
             return result;
         }
 
-        return "Internal error";
+        return "Error: you cannot stop ParaDe like this !";
     }
 
     public String servletContextReloadRow(Row row) {
@@ -133,8 +133,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
                 File f = new File(reloadLog);
                 f.delete();
-                Runtime.getRuntime().exec(
-                        antCommand + " -buildfile " + ParadeProperties.getParadeBase() + java.io.File.separator + "build.xml reload");
+                Runtime.getRuntime().exec(antCommand + " -buildfile " + ParadeProperties.getParadeBase() + java.io.File.separator + "build.xml reload");
 
                 while (!f.exists()) {
                     try {
@@ -166,7 +165,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
             setWebappInfo(row, data);
             return result;
         }
-        return "Internal error";
+        return "Internal error: ParaDe should not be installed in this way !";
     }
 
     public String servletContextRemoveRow(Row row) {
@@ -177,7 +176,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
             setWebappInfo(row, data);
             return result;
         }
-        return "Internal error";
+        return "Error: you cannot uninstall ParaDe !";
     }
 
     private boolean isParadeCheck(Row row) {

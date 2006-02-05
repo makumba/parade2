@@ -32,8 +32,6 @@ public class WebappViewManager implements HeaderView, ParadeView {
 
         out.println(data.getWebappPath() + ", " + ServletContainer.status[status] + "<br>");
 
-        // TODO - consider the case WEBINF isn't found, ie get server name, port from some request
-
         out.println(getCommands(r, data, ""));
 
         return result.toString();
@@ -45,6 +43,10 @@ public class WebappViewManager implements HeaderView, ParadeView {
 
         int status = data.getStatus().intValue();
 
+        if( r.getRowpath().equals(r.getParade().getBaseDir()))
+            data.setStatus(new Integer(ServletContainer.RUNNING));
+
+        // TODO - consider the case WEBINF isn't found, ie get server name, port from some request
         if (data.getWebappPath().equals("NO WEBINF")) {
             /*
              * if(pageContext.findAttribute('servletContext.noPrintStatus')==null){ if(stt==ServletContainer.RUNNING) { %>
