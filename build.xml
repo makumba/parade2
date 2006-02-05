@@ -1,109 +1,176 @@
 <!-- $Header$ -->
 <project name="PARADE" basedir="." default="compile">
-<property file="parade.properties" />
-	
-    <path id="project.class.path">	
-		<pathelement path="../utilities"/>
-    </path>
-	
-	<property name="project.class.path" refid="project.class.path" />
-	
-	<target name="appletCopy">
-	<copy toDir="webapp/" overwrite="true">
-         <fileset dir="webapp/WEB-INF/classes">
-          <include name="org/makumba/parade/applets/*.class" />
-          <include name="org/makumba/parade/sourceedit/*.class" />
-         </fileset>
-	</copy>
-	<echo>Press x in the Java Plugin console to make it forget old applets. If you have no java console, hold Shift while pressing Refresh in the browser.
+
+	<property file="parade.properties" />
+
+	<target name="tomcat" description="start tomcat 5">
+
+		<!-- ParaDe - -->
+		<antcall target="compile" />
+		<antcall target="copyLibsToTomcat" />
+		<antcall target="copyUtilities" />
+		<antcall target="copyDataDefinitions" />
+		<antcall target="copyAuthorizer" />
+
+		<antcall target="startTomcat" />
+
+	</target>
+
+
+	<!-- copy util-java/lib to tomcat's common, for use by webapps and LoginFilter
+									according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
+									but i couldn't get them to work frmom there.
+									-->
+	<target name="copyLibsToTomcat">
+		<copy toDir="${catalina.home}/common/lib" overwrite="true">
+			<fileset dir="../../util-java/lib">
+				<include name="*.jar" />
+				<include name="*.zip" />
+				<exclude name="makumba.jar" />
+				<exclude name="antlr.jar" />
+				<!-- JSTL JARs -->
+				<exclude name="jstl.jar" />
+				<exclude name="jstl-standard.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- copy utilities to tomcat's common, for use by webapps and LoginFilter
+					according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
+					but i couldn't get them to work frmom there.
+					-->
+	<target name="copyUtilities">
+		<copy toDir="${catalina.home}/common/classes/org" overwrite="true">
+			<fileset dir="../utilities/org/">
+				<include name="eu/best/tools/*.class" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- copy dataDefinitions to parade's WEB-INF, for use by AccessServlet	-->
+	<target name="copyDataDefinitions">
+		<copy toDir="webapp/WEB-INF/classes/dataDefinitions" overwrite="true">
+			<fileset dir="../karamba/public_html/WEB-INF/classes/dataDefinitions">
+				<include name="**/*.mdd" />
+				<include name="**/*.idd" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- copy BestMemberAuthorizer to parade's WEB-INF, for use by AccessServlet	-->
+	<target name="copyAuthorizer">
+		<copy toDir="webapp/WEB-INF/classes/org" overwrite="true">
+			<fileset dir="../utilities/org/">
+				<include name="eu/best/BestMemberAuthorizer*.class" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- start tomcat -->
+	<target name="startTomcat">
+		<!--for jikes to find its breath (at least on windows) -->
+		<mkdir dir="${temp.dir}/org/apache/jsp" />
+		<mkdir dir="tomcat/logs" />
+
+		<echo>
+	Starting tomcat from ${catalina.home}... To stop, press Ctrl-C and use "ant stopTomcat". The server output is in ${tomcat.output} 
+		</echo>
+		<tstamp>
+			<format property="tomcat.time" pattern="MMM dd yyyy HH:mm" />
+		</tstamp>
+		<echo file="${tomcat.output}" append="true">
+	ant script "build.xml": Tomcat starts at ${tomcat.time}	
+	</echo>
+
+		<java classname="org.apache.catalina.startup.Bootstrap" dir="." fork="true" output="${tomcat.output}" append="true" taskname="tomcat">
+			<sysproperty key="http.port" value="${http.port}" />
+			<sysproperty key="http.restart.port" value="${http.restart.port}" />
+			<sysproperty key="tomcat.manager.user" value="${tomcat.manager.user}" />
+			<sysproperty key="tomcat.manager.pass" value="${tomcat.manager.pass}" />
+
+			<sysproperty key="build.compiler.emacs" value="true" />
+			<sysproperty key="catalina.base" value="tomcat" />
+			<sysproperty key="java.io.tmpdir" value="${temp.dir}" />
+			<sysproperty key="catalina.home" value="${catalina.home}" />
+			<sysproperty key="makumba.long-content" value="${tomcat.makumba.long.content}" />
+			<sysproperty key="file.encoding" value="${tomcat.jvm.file.encoding}" />
+			<sysproperty key="java.util.logging.config.file" value="logging.properties" />
+
+			<jvmarg value="-${tomcat.jvm.hotspot}" />
+			<jvmarg value="-Xss4M" />
+			<jvmarg value="-Xmx${tomcat.jvm.memory}" />
+			<jvmarg value="-Xms${tomcat.jvm.initial_memory}" />
+			<arg value="start" />
+			<classpath>
+				<fileset dir="${catalina.home}/bin">
+					<include name="bootstrap.jar" />
+				</fileset>
+				<fileset dir="${java.home}/lib/">
+					<include name="rt.jar" />
+				</fileset>
+				<pathelement path="${java.class.path}" />
+			</classpath>
+		</java>
+		<tstamp>
+			<format property="tomcat.finishing.time" pattern="MMMM dd yyyy HH:mm" />
+		</tstamp>
+
+		<echo file="${tomcat.output}" append="true">ant script "build.xml": Tomcat terminated at ${tomcat.finishing.time}	
 	</echo>
 	</target>
 
-	<target name="triggerCopy">
-	<copy toDir="triggerClasses/" overwrite="true">
-         <fileset dir="webapp/WEB-INF/classes">
-          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
-          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
-         </fileset>
-	</copy>
+
+	<target name="stopTomcat" description="stop tomcat">
+		<!-- tomcat stop code is not used, a simple http access is made to stop tomcat -->
+		<tstamp>
+			<format property="tomcat.stopping.time" pattern="MMMM dd yyyy HH:mm" />
+		</tstamp>
+
+		<echo file="${tomcat.output}" append="true">ant script "build.xml": Trying to stop tomcat at ${tomcat.stopping.time}
+	</echo>
+		<get src="http://localhost:${http.restart.port}/IgnoreTheError" dest="${temp.dir}/dummy.txt" ignoreerrors="true" verbose="on" />
 	</target>
-	
-	<target name="tomcat" description="start tomcat 5" >
-		<antcall target="compile" />
-		<!-- copy util-java/lib to tomcat's common, for use by webapps and LoginFilter
-		according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
-		but i couldn't get them to work frmom there.
-		-->
-		<copy toDir="${catalina.home}/common/lib" overwrite="true" >
-	         <fileset dir="../../util-java/lib">
-	          <include name="*.jar" />
-	          <include name="*.zip" />
-		<exclude name="makumba.jar" />
-		<exclude name="antlr.jar" />
-	         </fileset>	
-		</copy>
-		<!-- copy utilities to tomcat's common, for use by webapps and LoginFilter
-		according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
-		but i couldn't get them to work frmom there.
-		-->
-		<copy toDir="${catalina.home}/common/classes/org" overwrite="true">
-	         <fileset dir="../utilities/org/">
-	          <include name="eu/best/tools/*.class" />
-	         </fileset>
-		</copy>
 
 
-		<!-- copy dataDefinitions to parade's WEB-INF, for use by AccessServlet	-->
-		<copy toDir="webapp/WEB-INF/classes/dataDefinitions" overwrite="true">
-	         <fileset dir="../karamba/public_html/WEB-INF/classes/dataDefinitions">
-	          <include name="**/*.mdd" />
-	          <include name="**/*.idd" />
-	         </fileset>	
-		</copy>
-
-		<!-- copy BestMemberAuthorizer to parade's WEB-INF, for use by AccessServlet	-->
-		<copy toDir="webapp/WEB-INF/classes/org" overwrite="true">
-	         <fileset dir="../utilities/org/">
-	          <include name="eu/best/BestMemberAuthorizer*.class" />
-	         </fileset>
-		</copy>
-
-		<!-- copy applets to webapp/ -->
-		<copy toDir="webapp/" overwrite="true">
-	         <fileset dir="webapp/WEB-INF/classes">
-	          <include name="org/makumba/parade/applets/*.class" />
-	          <include name="org/makumba/parade/sourceedit/*.class" />
-	         </fileset>
-		</copy>
-		
-		<antcall target="applets" />
-		<ant antfile="${generics.path}" target="startTomcat" />
+	<target name="reload">
+		<tstamp>
+			<format property="tomcat.reload.time" pattern="MMMM dd yyyy HH:mm" />
+		</tstamp>
+		<echo file="${tomcat.output}" append="true">ant script "build.xml": Trying to reload the servlet context at ${tomcat.reload.time}	
+	</echo>
+		<get src="http://localhost:${http.port}/manager/reload?path=/" dest="reload-log.txt" username="${tomcat.manager.user}" password="${tomcat.manager.pass}" />
+		<loadfile srcFile="reload-log.txt" property="reload.result" />
+		<echo>${reload.result}</echo>
+		<echo file="${tomcat.output}" append="true">ant script "build.xml": reload response was: ${reload.result}
+	</echo>
 	</target>
-	
-	<target name="stopTomcat" description="stop tomcat 5">
-			<ant antfile="${generics.path}" target="stopTomcat" />
-		</target>
-		
-	<target name="reload" >
-		<antcall target="compile" />
-		<ant antfile="${generics.path}" target="reload" />
-		<touch file="tomcat/logs/paradeReloadResult.txt"/>
-	</target>
-	
+
 	<target name="compile" description="compile the java files">
-		<ant antfile="${generics.path}" target="compile" inheritRefs="true"/>
+		<javac srcdir="${webapp.path}/WEB-INF/classes">
+			<classpath refid="generic.class.path" />
+		</javac>
 	</target>
 
 	<target name="clean" description="delete all generated and backup files">
-		<ant antfile="${generics.path}" target="clean"/>
+		<mkdir dir="${webapp.path}/javadoc" />
+		<mkdir dir="${basedir}/jspc" />
+		<!-- this is a bug in the karamba build.xml... the jspc directory is not always created at install or paradeInstall -->
+		<delete>
+			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/*.class" />
+			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/*.java~" />
+			<fileset dir="${webapp.path}" includes="**/*.jsp~" />
+			<fileset dir="${webapp.path}/javadoc" />
+
+			<fileset dir="${basedir}/jspc" />
+		</delete>
 	</target>
-	
+
 	<target name="checkInitialFiles">
 		<!-- it just checks if one file exist, if so it is assumed that
 		     all the others were copied -->
-			<available file="parade.properties" type="file" property="files.copied"/>
+		<available file="parade.properties" type="file" property="files.copied" />
 	</target>
-	
-	
+
+
 </project>
 
