@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -129,6 +130,20 @@ public class Parade {
 
             }
         }
+        
+        //removing deleted rows from cache
+        Vector v = new Vector();
+        Iterator j = this.getRows().keySet().iterator();
+        while(j.hasNext()) {
+            String key = (String) j.next();
+            if (!rowstore.containsKey(key)) {
+                v.add(key);
+            }
+        }
+        for (int k = 0; k < v.size(); k++) {
+            this.getRows().remove(v.get(k));
+        }
+        
     }
 
     public void newRow(Row r, Map rowDefinition) {
