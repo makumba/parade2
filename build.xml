@@ -33,7 +33,7 @@
 		<!-- ParaDe - -->
 		<antcall target="compile" />
 		<antcall target="copyLibsToTomcat" />
-		<antcall target="triggerCopy" />
+		<antcall target="triggerCopyToTomcat" />
 		
 		<antcall target="startTomcat" />
 		
@@ -45,7 +45,7 @@
 		<antcall target="compile" />
 		<antcall target="copyBestLibsToTomcat" />
 		<antcall target="copyUtilities" />
-		<antcall target="triggerCopy" />
+		<antcall target="triggerCopyToTomcat" />
 		<antcall target="copyDataDefinitions" />
 		<antcall target="copyAuthorizer" />
 
@@ -233,15 +233,14 @@
 		<available file="parade.properties" type="file" property="files.copied" />
 	</target>
 	
-	<target name="triggerCopy">
-			<copy toDir="triggerClasses/" overwrite="true">
-		         <fileset dir="webapp/WEB-INF/classes">
+	<target name="triggerCopyToTomcat">
+		<copy toDir="${catalina.home}/common/classes/org" overwrite="true">
+			<fileset dir="webapp/WEB-INF/classes">
 		          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
 		          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
-		         </fileset>
-			</copy>
-		</target>
-
+	        </fileset>
+		</copy>
+	</target>
 
 </project>
 
