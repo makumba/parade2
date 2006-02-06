@@ -22,6 +22,8 @@
 		</fileset>
 		<path refid="project.class.path" />
 	</path>
+	
+	<property name="project.class.path" refid="project.class.path" />
 
 	<target name="tomcat" description="start tomcat 5">
 
