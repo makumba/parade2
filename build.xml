@@ -19,19 +19,31 @@
 		<fileset dir="${catalina.home}/common/lib">
 			<include name="*.jar" />
 		</fileset>
-
+		<pathelement path="triggerClasses/" />
 		<pathelement path="${temp.dir}" />
 		<fileset dir="${java.home}/lib/">
 			<include name="rt.jar" />
 		</fileset>
+		
 		<path refid="project.class.path" />
 	</path>
-
+	
 	<target name="tomcat" description="start tomcat 5">
 
 		<!-- ParaDe - -->
 		<antcall target="compile" />
 		<antcall target="copyLibsToTomcat" />
+		<antcall target="triggerCopy" />
+		
+		<antcall target="startTomcat" />
+		
+	</target>
+
+	<target name="tomcatBest" description="start tomcat 5">
+
+		<!-- ParaDe - -->
+		<antcall target="compile" />
+		<antcall target="copyBestLibsToTomcat" />
 		<antcall target="copyUtilities" />
 		<antcall target="triggerCopy" />
 		<antcall target="copyDataDefinitions" />
@@ -42,11 +54,11 @@
 	</target>
 
 
-	<!-- copy util-java/lib to tomcat's common, for use by webapps and LoginFilter
+	<!-- copy BEST-specific util-java/lib to tomcat's common, for use by webapps and LoginFilter
 									according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
 									but i couldn't get them to work frmom there.
 									-->
-	<target name="copyLibsToTomcat">
+	<target name="copyBestLibsToTomcat">
 		<copy toDir="${catalina.home}/common/lib" overwrite="true">
 			<fileset dir="../../util-java/lib">
 				<include name="*.jar" />
@@ -59,6 +71,31 @@
 			</fileset>
 		</copy>
 	</target>
+	
+	<!-- copy libs to tomcat common's lib for use by webapps -->
+		<target name="copyLibsToTomcat">
+			<copy toDir="${catalina.home}/common/lib" overwrite="true">
+				<fileset dir="lib">
+					<include name="*.jar" />
+					<include name="*.zip" />
+					<exclude name="makumba.jar" />
+					<exclude name="antlr.jar" />
+					<!-- JSTL JARs -->
+					<exclude name="jstl.jar" />
+					<exclude name="jstl-standard.jar" />
+				</fileset>
+				<fileset dir="webapp/WEB-INF/lib">
+					<include name="*.jar" />
+					<include name="*.zip" />
+					<exclude name="makumba.jar" />
+					<exclude name="antlr.jar" />
+					<!-- JSTL JARs -->
+					<exclude name="jstl.jar" />
+					<exclude name="jstl-standard.jar" />
+				</fileset>
+			</copy>
+		</target>
+
 
 	<!-- copy utilities to tomcat's common, for use by webapps and LoginFilter
 					according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
