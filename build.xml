@@ -16,6 +16,14 @@
 			<include name="*.jar" />
 			<include name="*.zip" />
 		</fileset>
+		<fileset dir="${webapp.path}/WEB-INF/lib">
+			<include name="*.jar" />
+			<include name="*.zip" />
+		</fileset>
+		<fileset dir="lib">
+			<include name="*.jar" />
+			<include name="*.zip" />
+		</fileset>
 		<fileset dir="${catalina.home}/common/lib">
 			<include name="*.jar" />
 		</fileset>
