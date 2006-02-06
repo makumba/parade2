@@ -3,28 +3,10 @@
 
 	<property file="parade.properties" />
 
-	<!-- the following properties should be defined
-	  catalina.home: tomcat home
-	  temp.dir: temporary dir
-	-->
-	<path id="generic.class.path">
-		<fileset dir="${common.libs}">
-			<include name="*.jar" />
-			<include name="*.zip" />
-		</fileset>
-		<fileset dir="${catalina.home}/common/lib">
-			<include name="*.jar" />
-		</fileset>
-
-		<pathelement path="${temp.dir}" />
-		<fileset dir="${java.home}/lib/">
-			<include name="rt.jar" />
-		</fileset>
-		<path refid="project.class.path" />
+	<path id="project.class.path">	
+		 <pathelement path="../utilities"/>
 	</path>
 	
-	<property name="project.class.path" refid="project.class.path" />
-
 	<target name="tomcat" description="start tomcat 5">
 
 		<!-- ParaDe - -->
