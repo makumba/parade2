@@ -98,7 +98,7 @@ public class FileViewManager implements FileView, TreeView {
 
             if (webappdata.getStatus().intValue() == ServletContainer.RUNNING
                     && path.startsWith(java.io.File.separator + webappPath)) {
-                String pathURI = path.substring(path.indexOf(webappPath) + webappPath.length()).replace(
+                String pathURI = path.substring(path.indexOf(webappPath) + webappPath.length()).replaceAll(
                         java.io.File.separator, "/")
                         + "/";
 
