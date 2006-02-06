@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
@@ -52,8 +53,7 @@ public class CVSViewManager implements ParadeView, FileView, HeaderView {
             e.printStackTrace();
         }
 
-        // TODO make this personaliseable. should go with the application definition, once admin interface done
-        String cvsweb = "http://cvs.makumba.org/cgi-bin/cvsweb.cgi/";
+        String cvsweb = ParadeProperties.getProperty("cvs.site");
         String webPath = (f.getPath().substring(f.getRow().getRowpath().length())).replace(java.io.File.separatorChar,
                 '/');
         String cvswebLink = cvsweb + rowcvsdata.getModule() + webPath;
