@@ -1,75 +1,13 @@
 <!-- $Header$ -->
 <project name="PARADE-ECLIPSE" basedir="." default="triggerCopy">
 
-	<property file="parade.properties" />
-
-	<target name="prepareEnv" description="prepare environment for Eclipse">
-
-		<!-- ParaDe - -->
-		<antcall target="copyLibsToTomcat" />
-		<antcall target="copyUtilities" />
-		
-	</target>
-
-
-	<!-- copy util-java/lib to tomcat's common, for use by webapps and LoginFilter
-									according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
-									but i couldn't get them to work frmom there.
-									-->
-	<target name="copyLibsToTomcat">
-		<copy toDir="${catalina.home}/common/lib" overwrite="true">
-			<fileset dir="../../util-java/lib">
-				<include name="*.jar" />
-				<include name="*.zip" />
-				<exclude name="makumba.jar" />
-				<exclude name="antlr.jar" />
-				<!-- JSTL JARs -->
-				<exclude name="jstl.jar" />
-				<exclude name="jstl-standard.jar" />
-			</fileset>
+	<target name="triggerCopy">
+		<copy toDir="triggerClasses/" overwrite="true">
+	         <fileset dir="webapp/WEB-INF/classes">
+	          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
+	          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
+	         </fileset>
 		</copy>
 	</target>
-
-	<!-- copy utilities to tomcat's common, for use by webapps and LoginFilter
-					according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
-					but i couldn't get them to work frmom there.
-					-->
-	<target name="copyUtilities">
-		<mkdir dir="${catalina.home}/common/classes/org" />
-		<copy toDir="${catalina.home}/common/classes/org" overwrite="true">
-			<fileset dir="../utilities/org/">
-				<include name="eu/best/tools/*.class" />
-			</fileset>
-		</copy>
-	</target>
-
-	<!-- copy dataDefinitions to parade's WEB-INF, for use by AccessServlet	-->
-	<target name="copyDataDefinitions">
-		<copy toDir="webapp/WEB-INF/classes/dataDefinitions" overwrite="true">
-			<fileset dir="../karamba/public_html/WEB-INF/classes/dataDefinitions">
-				<include name="**/*.mdd" />
-				<include name="**/*.idd" />
-			</fileset>
-		</copy>
-	</target>
-
-	<!-- copy BestMemberAuthorizer to parade's WEB-INF, for use by AccessServlet	-->
-	<target name="copyAuthorizer">
-		<copy toDir="webapp/WEB-INF/classes/org" overwrite="true">
-			<fileset dir="../utilities/org/">
-				<include name="eu/best/BestMemberAuthorizer*.class" />
-			</fileset>
-		</copy>
-	</target>
-
-	
-<target name="triggerCopy">
-	<copy toDir="triggerClasses/" overwrite="true">
-         <fileset dir="webapp/WEB-INF/classes">
-          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
-          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
-         </fileset>
-	</copy>
-</target>
 
 </project>
