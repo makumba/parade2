@@ -40,7 +40,6 @@
 
 		<!-- ParaDe - -->
 		<antcall target="compile" />
-		<antcall target="copyLibsToTomcat" />
 		<antcall target="triggerCopyToTomcat" />
 		
 		<antcall target="startTomcat" />
@@ -92,6 +91,16 @@
 					<exclude name="jstl.jar" />
 					<exclude name="jstl-standard.jar" />
 				</fileset>
+				<fileset dir="${webapp.path}/WEB-INF/lib">
+					<include name="*.jar" />
+					<include name="*.zip" />
+					<exclude name="makumba.jar" />
+					<exclude name="antlr.jar" />
+					<!-- JSTL JARs -->
+					<exclude name="jstl.jar" />
+					<exclude name="jstl-standard.jar" />
+				</fileset>
+
 				<fileset dir="webapp/WEB-INF/lib">
 					<include name="*.jar" />
 					<include name="*.zip" />
@@ -138,9 +147,6 @@
 
 	<!-- start tomcat -->
 	<target name="startTomcat">
-		<!--for jikes to find its breath (at least on windows) -->
-		<mkdir dir="${temp.dir}/org/apache/jsp" />
-		<mkdir dir="tomcat/logs" />
 
 		<echo>
 	Starting tomcat from ${catalina.home}... To stop, press Ctrl-C and use "ant stopTomcat". The server output is in ${tomcat.output} 
@@ -158,7 +164,6 @@
 			<sysproperty key="tomcat.manager.user" value="${tomcat.manager.user}" />
 			<sysproperty key="tomcat.manager.pass" value="${tomcat.manager.pass}" />
 
-			<sysproperty key="build.compiler.emacs" value="true" />
 			<sysproperty key="catalina.base" value="tomcat" />
 			<sysproperty key="java.io.tmpdir" value="${temp.dir}" />
 			<sysproperty key="catalina.home" value="${catalina.home}" />
@@ -166,19 +171,25 @@
 			<sysproperty key="file.encoding" value="${tomcat.jvm.file.encoding}" />
 			<sysproperty key="java.util.logging.config.file" value="logging.properties" />
 
-			<jvmarg value="-${tomcat.jvm.hotspot}" />
 			<jvmarg value="-Xss4M" />
 			<jvmarg value="-Xmx${tomcat.jvm.memory}" />
 			<jvmarg value="-Xms${tomcat.jvm.initial_memory}" />
 			<arg value="start" />
 			<classpath>
-				<fileset dir="${catalina.home}/bin">
-					<include name="bootstrap.jar" />
+				<fileset dir="lib">
+					<include name="tomcat-bootstrap.jar" />
+					<include name="servlet-api.jar" />
+					<include name="ant-1.6.5.jar" />
+					<include name="ant-launcher.jar" />
+					<include name="mysql.jar" />
+					<include name="commons-logging-api.jar" />
 				</fileset>
 				<fileset dir="${java.home}/lib/">
 					<include name="rt.jar" />
 				</fileset>
-				<pathelement path="${java.class.path}" />
+				<fileset dir="triggerClasses/">
+					<include name="*.class" />
+				</fileset>
 			</classpath>
 		</java>
 		<tstamp>
