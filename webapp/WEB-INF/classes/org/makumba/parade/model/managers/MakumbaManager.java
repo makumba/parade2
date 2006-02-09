@@ -152,7 +152,10 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         for (int i = 0; i < allFields.size(); i++) {
             FieldDefinition fd = dd.getFieldDefinition(i);
 
-            if (fd.getType().equals("set") || fd.getType().equals("setComplex"))
+            //System.out.println("DEBUG INFO: Field name "+fd.getName()+" type "+fd.getType());
+            
+            if (fd.getType().equals("set") || fd.getType().equals("setComplex") || fd.getType().equals("setintEnum")
+                    || fd.getType().equals("setcharEnum"))
                 sets.add(fd);
             else
                 fields.add(fd);
@@ -181,52 +184,70 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
             out.append(beforeForm + "\n");
 
             if (type == NEWFORM) {
+                out.append("\n<!-- Makumba Generator - START OF NEW PAGE FOR OBJECT "+object+" -->\n");
                 out.append("<mak:newForm type=\"" + object + "\" action=\"" + action + "\">\n");
             }
             if (type == ADDFORM) {
+                out.append("\n<!-- Makumba Generator - START OF ADD PAGE FOR OBJECT " + object + " -->\n");
                 out.append("<mak:object from=\"" + object + " o\" where=\"o=$pointer\">\n");
             }
             if (type == LIST) {
+                out.append("\n<!-- Makumba Generator - START OF LIST PAGE FOR OBJECT " + object +" -->\n");
                 out.append("<mak:list from=\"" + object + " o\">\n");
             }
             if (type == EDITFORM) {
+                out.append("\n<!-- Makumba Generator - START OF EDIT PAGE FOR OBJECT " +" -->\n");
                 out.append("<mak:object from=\"" + object + " o\" where=\"o=$pointer\">\n");
                 out.append("<mak:editForm object=\"o\" action=\"" + action + "\" method=\"post\">\n");
             }
 
-            // iterating over the normal fields
-            for (int i = 0; i < fields.size(); i++) {
-                FieldDefinition fd = (FieldDefinition) fields.get(i);
-                out.append(beforeField + "\n");
+            if (type != ADDFORM) {
+                out.append("\n<!-- Makumba Generator - START OF NORMAL FIELDS -->\n");
+                // iterating over the normal fields
+                // we start at 3 because before there is the field itself, TS_CREATE and TS_MODIFY
+                for (int i = 3; i < fields.size(); i++) {
+                    FieldDefinition fd = (FieldDefinition) fields.get(i);
+                    out.append(beforeField + "\n");
 
-                // name
-                out.append(beforeFieldElement);
-                out.append(fd.getName());
-                out.append(afterFieldElement + "\n");
-
-                // tag
-                out.append(beforeFieldElement);
-
-                if (type == NEWFORM) {
-                    out.append("<mak:input field=\"");
+                    // name
+                    out.append(beforeFieldElement);
                     out.append(fd.getName());
-                    out.append("\"/>");
-                }
-                if (type == LIST) {
-                    out.append("<mak:value expr=\"");
-                    out.append("o." + fd.getName());
-                    out.append("\"/>");
+                    out.append(afterFieldElement + "\n");
+
+                    // tag
+                    out.append(beforeFieldElement);
+
+                    if (type == NEWFORM) {
+                        out.append("<mak:input field=\"");
+                        out.append(fd.getName());
+                        out.append("\"/>");
+                    }
+                    if (type == LIST) {
+                        out.append("<mak:value expr=\"");
+                        out.append("o." + fd.getName());
+                        out.append("\"/>");
+                    }
+                    if (type == EDITFORM) {
+                        out.append("<mak:input field=\"");
+                        out.append("o." + fd.getName());
+                        out.append("\"/>");
+                    }
+                    
+                    out.append(afterFieldElement + "\n");
+                    out.append(afterField + "\n");
                 }
                 if (type == EDITFORM) {
-                    out.append("<mak:input field=\"");
-                    out.append("o." + fd.getName());
-                    out.append("\"/>");
+                    out.append("\n" + beforeField + "\n");
+                    out.append(beforeFieldElement);
+                    out.append("<input type=\"submit\" name=\"Submit\">");
+                    out.append(afterFieldElement + "\n");
+                    out.append(afterField + "\n");
+                    out.append("</mak:editForm>\n");
                 }
-                out.append(afterFieldElement + "\n");
-                out.append(afterField + "\n");
+                out.append("<!-- Makumba Generator - END OF NORMAL FIELDS -->\n\n");
             }
 
-            // if newForm, we have to generate an addForm page
+            // if newForm, we also generate an addForm page with all the possible sets which will have to be added
             if (type == NEWFORM) {
                 File f = new File(getFileNameFromObject(object, ADDFORM));
 
@@ -234,31 +255,64 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                         beforeField, afterField, beforeFieldElement, afterFieldElement);
             } else {
                 // iterating over the sets
-                // TODO editForm
+                out.append("\n<!-- Makumba Generator - START OF SETS -->\n");
+                System.out.println("DEBUG INFO: Number of sets of MDD " + object + " is " + sets.size());
                 for (int i = 0; i < sets.size(); i++) {
                     FieldDefinition fd = (FieldDefinition) sets.get(i);
-                    DataDefinition dd = fd.getDataDefinition();
+                    System.out.println("DEBUG INFO: Currently processing set with fieldname " + fd.getName()
+                            + " and type " + fd.getType());
 
-                    // sorting out only the normal fields, we don't generate internal set generation.
+                    DataDefinition dd = null;
+                    if (fd.getType().equals("setComplex") || fd.getType().equals("setintEnum")
+                            || fd.getType().equals("setcharEnum"))
+                        dd = fd.getSubtable();
+                    if (fd.getType().equals("set"))
+                        dd = fd.getDataDefinition();
+
+                    // sorting out only the normal fields, we don't generate internal sets.
                     Vector[] extractInnerFields = null;
                     try {
-                        extractInnerFields = extractFields(dd.getName());
+                        // inner sets
+                        if (fd.getType().equals("setComplex") || fd.getType().equals("intEnum")
+                                || fd.getType().equals("charEnum")) {
+                            // we build a fake extractInnerFields structure
+                            extractInnerFields = new Vector[2];
+                            Vector innerSet = new Vector();
+                            for (int j = 0; j < dd.getFieldNames().size(); j++) {
+                                innerSet.add(dd.getFieldDefinition(j));
+                            }
+                            extractInnerFields[0] = innerSet;
+                        }
+                        // normal sets
+                        if (fd.getType().equals("set"))
+                            extractInnerFields = extractFields(dd.getName());
+
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                     Vector innerFields = extractInnerFields[0];
+                    System.out.println("DEBUG INFO: Number of inner fields of MDD " + object + ", subset "
+                            + dd.getName() + " is " + innerFields.size());
 
                     if (type == ADDFORM) {
+                        out.append("\n<!-- Makumba Generator - START ADDFORM FOR FIELD " + fd.getName() + " -->\n");
+                        out.append("<c:set var=\"pointer\" value=\"o\"/>\n");
                         out.append("<mak:addForm object=\"o\" field=\"" + fd.getName() + "\" action=\""
-                                + file.getName() + "?pointer=<mak:value expr=\"o\"/>+" + "\" method=\"post\">\n");
+                                + file.getName() + "?pointer=${pointer}\" method=\"post\">\n");
+                    }
+                    if (type == EDITFORM) {
+                        out.append("\n<!-- Makumba Generator - START EDITFORM FOR FIELD " + fd.getName() + " -->\n");
+                        out.append("<mak:editForm object=\"o."+fd.getName()+"\" action=\""
+                                + file.getName() + "?pointer=${pointer}\" method=\"post\">\n");
                     }
                     if (type == LIST) {
                         out.append("<mak:list from=\"o." + fd.getName() + " o1\">\n");
                     }
 
                     // generating the inner fields
-                    for (int j = 0; j < innerFields.size(); j++) {
+                    // we start at 3 because before there is the field itself, TS_CREATE and TS_MODIFY
+                    for (int j = 3; j < innerFields.size(); j++) {
                         FieldDefinition innerFd = dd.getFieldDefinition(j);
 
                         out.append(beforeField + "\n");
@@ -276,6 +330,13 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                             out.append("\"/>");
                             out.append(afterFieldElement + "\n");
                         }
+                        if (type == EDITFORM) {
+                            out.append(beforeFieldElement);
+                            out.append("<mak:input field=\"");
+                            out.append("o."+fd.getName()+"."+innerFd.getName());
+                            out.append("\"/>");
+                            out.append(afterFieldElement + "\n");
+                        }
                         if (type == LIST) {
                             out.append(beforeFieldElement);
                             out.append("<mak:value expr=\"");
@@ -283,33 +344,56 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                             out.append("\"/>");
                             out.append(afterFieldElement + "\n");
                         }
+
+                        out.append(afterField + "\n");
                     }
                     if (type == ADDFORM) {
-                        out.append("<input type=\"submit\" name=\"Add\">\n");
+                        out.append("\n" + beforeField + "\n");
+                        out.append(beforeFieldElement);
+                        out.append("<input type=\"submit\" name=\"Add\">");
+                        out.append(afterFieldElement + "\n");
+                        out.append(afterField + "\n");
                         out.append("</mak:addForm>\n");
+                        out.append("\n<!-- Makumba Generator - END ADDFORM FOR FIELD " + fd.getName() + " -->\n");
+                    }
+                    if (type == EDITFORM) {
+                        out.append("\n" + beforeField + "\n");
+                        out.append(beforeFieldElement);
+                        out.append("<input type=\"submit\" name=\"Submit\">");
+                        out.append(afterFieldElement + "\n");
+                        out.append(afterField + "\n");
+                        out.append("</mak:editForm>\n");
+                        out.append("\n<!-- Makumba Generator - END EDITFORM FOR FIELD " + fd.getName() + " -->\n");
                     }
                     if (type == LIST) {
                         out.append("</mak:list>\n");
                     }
 
-                    out.append(afterField + "\n");
-
                 } // end iterating over the sets
+                out.append("<!-- Makumba Generator - END OF SETS -->\n\n");
             }
 
             // closing forms
             if (type == NEWFORM) {
+                out.append("\n" + beforeFieldElement);
+                out.append("<input type=\"submit\" name=\"Submit\">");
+                out.append(afterFieldElement + "\n");
                 out.append("</mak:newForm>\n");
+                out.append("<!-- Makumba Generator - END OF NEW PAGE -->\n");
             }
             if (type == ADDFORM) {
                 out.append("</mak:object>\n");
+                out.append("<!-- Makumba Generator - END OF ADD PAGE -->\n");
             }
             if (type == LIST) {
                 out.append("</mak:list>\n");
+                out.append("<!-- Makumba Generator - END OF LIST PAGE -->\n");
             }
             if (type == EDITFORM) {
+                out.append("<input type=\"submit\" name=\"Submit\">\n");
                 out.append("</mak:editForm>\n");
                 out.append("</mak:object>\n");
+                out.append("<!-- Makumba Generator - END OF EDIT PAGE -->\n");
             }
 
             out.append(afterForm + "\n");
@@ -355,8 +439,18 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         }
 
         // newForm
-        File f = new File(getFileNameFromObject(object, NEWFORM));
-        generateFile(f, NEWFORM, object, getFileNameFromObject(object, NEWFORM), extractedFields, header, footer,
+        File fn = new File(getFileNameFromObject(object, NEWFORM));
+        generateFile(fn, NEWFORM, object, getFileNameFromObject(object, NEWFORM), extractedFields, header, footer,
+                beforeForm, afterForm, beforeField, afterField, beforeFieldElement, afterFieldElement);
+
+        // editForm
+        File fe = new File(getFileNameFromObject(object, EDITFORM));
+        generateFile(fe, EDITFORM, object, getFileNameFromObject(object, EDITFORM), extractedFields, header, footer,
+                beforeForm, afterForm, beforeField, afterField, beforeFieldElement, afterFieldElement);
+        
+        // list
+        File fl = new File(getFileNameFromObject(object, LIST));
+        generateFile(fl, LIST, object, getFileNameFromObject(object, LIST), extractedFields, header, footer,
                 beforeForm, afterForm, beforeField, afterField, beforeFieldElement, afterFieldElement);
 
     }
