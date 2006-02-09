@@ -248,7 +248,7 @@
 	</target>
 	
 	<target name="triggerCopyToTomcat">
-		<copy toDir="${catalina.home}/common/classes/org" overwrite="true">
+		<copy toDir="triggerClasses/" overwrite="true">
 			<fileset dir="webapp/WEB-INF/classes">
 		          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
 		          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
