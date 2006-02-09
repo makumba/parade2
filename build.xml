@@ -184,12 +184,7 @@
 					<include name="mysql.jar" />
 					<include name="commons-logging-api.jar" />
 				</fileset>
-				<fileset dir="${java.home}/lib/">
-					<include name="rt.jar" />
-				</fileset>
-				<fileset dir="triggerClasses/">
-					<include name="*.class" />
-				</fileset>
+				<pathelement path="triggerClasses"/>
 			</classpath>
 		</java>
 		<tstamp>
