@@ -16,7 +16,7 @@ import org.makumba.parade.view.interfaces.ParadeView;
 public class CVSViewManager implements ParadeView, FileView, HeaderView {
 
     public String getParadeViewHeader() {
-        String header = "<th>CVS module, user, branch</th>";
+        String header = "<th>CVS user, module, branch</th>";
         return header;
     }
 
