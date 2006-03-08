@@ -20,7 +20,7 @@
 	<property name="c3p0.max_size">100</property> 
 	<property name="c3p0.max_statements">0</property> 
 	<property name="c3p0.min_size">10</property> 
-	<property name="c3p0.timeout">100</property> <!-- seconds -->
+	<property name="c3p0.timeout">1000</property> <!-- seconds -->
 	 
 </session-factory>
 </hibernate-configuration>
