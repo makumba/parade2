@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 import java.util.jar.Attributes;
@@ -135,7 +136,6 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         Vector sets = new Vector();
 
         // getting the data definition
-
         DataDefinition dd;
 
         try {
@@ -152,10 +152,9 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         for (int i = 0; i < allFields.size(); i++) {
             FieldDefinition fd = dd.getFieldDefinition(i);
 
-            //System.out.println("DEBUG INFO: Field name "+fd.getName()+" type "+fd.getType());
-            
-            if (fd.getType().equals("set") || fd.getType().equals("setComplex") || fd.getType().equals("setintEnum")
-                    || fd.getType().equals("setcharEnum"))
+            System.out.println("DEBUG INFO: Extracting fields: field name " + fd.getName() + " of type " + fd.getType());
+
+            if (isSet(fd) || isInternalSet(fd) || isPtr(fd))  
                 sets.add(fd);
             else
                 fields.add(fd);
@@ -184,7 +183,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
             out.append(beforeForm + "\n");
 
             if (type == NEWFORM) {
-                out.append("\n<!-- Makumba Generator - START OF NEW PAGE FOR OBJECT "+object+" -->\n");
+                out.append("\n<!-- Makumba Generator - START OF NEW PAGE FOR OBJECT " + object + " -->\n");
                 out.append("<mak:newForm type=\"" + object + "\" action=\"" + action + "\">\n");
             }
             if (type == ADDFORM) {
@@ -192,11 +191,11 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                 out.append("<mak:object from=\"" + object + " o\" where=\"o=$pointer\">\n");
             }
             if (type == LIST) {
-                out.append("\n<!-- Makumba Generator - START OF LIST PAGE FOR OBJECT " + object +" -->\n");
+                out.append("\n<!-- Makumba Generator - START OF LIST PAGE FOR OBJECT " + object + " -->\n");
                 out.append("<mak:list from=\"" + object + " o\">\n");
             }
             if (type == EDITFORM) {
-                out.append("\n<!-- Makumba Generator - START OF EDIT PAGE FOR OBJECT " +" -->\n");
+                out.append("\n<!-- Makumba Generator - START OF EDIT PAGE FOR OBJECT " + " -->\n");
                 out.append("<mak:object from=\"" + object + " o\" where=\"o=$pointer\">\n");
                 out.append("<mak:editForm object=\"o\" action=\"" + action + "\" method=\"post\">\n");
             }
@@ -232,7 +231,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                         out.append("o." + fd.getName());
                         out.append("\"/>");
                     }
-                    
+
                     out.append(afterFieldElement + "\n");
                     out.append(afterField + "\n");
                 }
@@ -263,34 +262,12 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                             + " and type " + fd.getType());
 
                     DataDefinition dd = null;
-                    if (fd.getType().equals("setComplex") || fd.getType().equals("setintEnum")
-                            || fd.getType().equals("setcharEnum"))
-                        dd = fd.getSubtable();
-                    if (fd.getType().equals("set"))
-                        dd = fd.getDataDefinition();
+                    Vector[] extractInnerFields = null;
+
+                    dd = getDataDefinitionFromType(fd, dd);
 
                     // sorting out only the normal fields, we don't generate internal sets.
-                    Vector[] extractInnerFields = null;
-                    try {
-                        // inner sets
-                        if (fd.getType().equals("setComplex") || fd.getType().equals("intEnum")
-                                || fd.getType().equals("charEnum")) {
-                            // we build a fake extractInnerFields structure
-                            extractInnerFields = new Vector[2];
-                            Vector innerSet = new Vector();
-                            for (int j = 0; j < dd.getFieldNames().size(); j++) {
-                                innerSet.add(dd.getFieldDefinition(j));
-                            }
-                            extractInnerFields[0] = innerSet;
-                        }
-                        // normal sets
-                        if (fd.getType().equals("set"))
-                            extractInnerFields = extractFields(dd.getName());
-
-                    } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    extractInnerFields = extractInnerFields(dd);
                     Vector innerFields = extractInnerFields[0];
                     System.out.println("DEBUG INFO: Number of inner fields of MDD " + object + ", subset "
                             + dd.getName() + " is " + innerFields.size());
@@ -303,50 +280,25 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                     }
                     if (type == EDITFORM) {
                         out.append("\n<!-- Makumba Generator - START EDITFORM FOR FIELD " + fd.getName() + " -->\n");
-                        out.append("<mak:editForm object=\"o."+fd.getName()+"\" action=\""
-                                + file.getName() + "?pointer=${pointer}\" method=\"post\">\n");
+                        out.append("<mak:editForm object=\"o." + fd.getName() + "\" action=\"" + file.getName()
+                                + "?pointer=${pointer}\" method=\"post\">\n");
                     }
                     if (type == LIST) {
                         out.append("<mak:list from=\"o." + fd.getName() + " o1\">\n");
                     }
 
-                    // generating the inner fields
-                    // we start at 3 because before there is the field itself, TS_CREATE and TS_MODIFY
-                    for (int j = 3; j < innerFields.size(); j++) {
-                        FieldDefinition innerFd = dd.getFieldDefinition(j);
+                    // launching recursive generation of inner fields
+                    // requires to have a Vector of fields and sets which will be processed
+                    Vector fieldsAndSets = new Vector();
+                    fieldsAndSets.addAll(extractInnerFields[0]);
+                    fieldsAndSets.addAll(extractInnerFields[1]);
+                    
+                    String fieldPath = "o.";
+                    HashSet processedDds = new HashSet();
+                    generateInnerFields(type, beforeField, afterField, beforeFieldElement, afterFieldElement, out, fd,
+                            dd, fieldsAndSets, fieldPath, processedDds);
 
-                        out.append(beforeField + "\n");
-
-                        // name
-                        out.append(beforeFieldElement);
-                        out.append(innerFd.getName());
-                        out.append(afterFieldElement + "\n");
-
-                        // tag
-                        if (type == ADDFORM) {
-                            out.append(beforeFieldElement);
-                            out.append("<mak:input field=\"");
-                            out.append(innerFd.getName());
-                            out.append("\"/>");
-                            out.append(afterFieldElement + "\n");
-                        }
-                        if (type == EDITFORM) {
-                            out.append(beforeFieldElement);
-                            out.append("<mak:input field=\"");
-                            out.append("o."+fd.getName()+"."+innerFd.getName());
-                            out.append("\"/>");
-                            out.append(afterFieldElement + "\n");
-                        }
-                        if (type == LIST) {
-                            out.append(beforeFieldElement);
-                            out.append("<mak:value expr=\"");
-                            out.append("o1." + innerFd.getName());
-                            out.append("\"/>");
-                            out.append(afterFieldElement + "\n");
-                        }
-
-                        out.append(afterField + "\n");
-                    }
+                    // closing forms
                     if (type == ADDFORM) {
                         out.append("\n" + beforeField + "\n");
                         out.append(beforeFieldElement);
@@ -415,9 +367,165 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
 
     }
 
-    public static void main(String[] args) {
-        String object = "general.Person";
+    // generating the inner fields
+    private static void generateInnerFields(int type, String beforeField, String afterField, String beforeFieldElement,
+            String afterFieldElement, BufferedWriter out, FieldDefinition fd, DataDefinition dd, Vector innerFields, 
+            String fieldPath, HashSet processedDds) throws IOException {
 
+        // we must make sure that the field was not already processed before to avoid cyclic redundency
+        // for this we store the combination (dataDefinition, fieldDefinition)
+        
+        //Object[] processedElement = { dd.getName() };
+
+        if (processedDds.contains(fd))
+            return;
+        else
+            processedDds.add(fd);
+
+        if(type == EDITFORM) {
+            fieldPath += fd.getName() + ".";
+        }
+        
+        // fields
+        // we start at 3 because before there is the field itself, TS_CREATE and TS_MODIFY
+        for (int j = 3; j < innerFields.size(); j++) {
+            FieldDefinition innerFd = dd.getFieldDefinition(j);
+            String innerFieldPath = fieldPath + "." + innerFd.getName() + ".";
+
+            System.out.println("DEBUG INFO: Inner set: generating field " + innerFd.getName() + " of type "
+                    + innerFd.getType());
+
+            if (type == ADDFORM) {
+                out.append(beforeField + "\n");
+
+                // name
+                out.append(beforeFieldElement);
+                out.append(innerFd.getName());
+                out.append(afterFieldElement + "\n");
+
+                //tag
+                out.append(beforeFieldElement);
+                out.append("<mak:input field=\"");
+                //out.append(innerFd.getName()+" ");
+                out.append(innerFieldPath);
+                out.append("\"/>");
+                out.append(afterFieldElement + "\n");
+            }
+
+            if (type == EDITFORM) {
+                
+                // generating inner sets if needed
+                if ((isSet(innerFd) || isInternalSet(innerFd) || isPtr(innerFd))) {
+                    System.out.println("DEBUG INFO: Inner set: launching recursive generation for field "+innerFd.getName() + " of type "+innerFd.getType());
+                    DataDefinition innerDd = null;
+                    Vector[] extractInnerFields = null;
+
+                    innerDd = getDataDefinitionFromType(innerFd, dd);
+
+                    extractInnerFields = extractInnerFields(innerDd);
+                    Vector internalInnerFields = extractInnerFields[0];
+                    
+                    //fieldPath += innerFd.getName() + ".";
+
+                    out.append("<!-- Makumba generator - GENERATED FIELDS OUT OF FIELD "+innerFd.getName()+" -->\n");
+                    generateInnerFields(type, beforeField, afterField, beforeFieldElement, afterFieldElement, out,
+                            innerFd, innerDd, internalInnerFields, fieldPath, processedDds);
+                    out.append("<!-- Makumba generator - END OF GENERATED FIELDS OUT OF FIELD "+innerFd.getName()+" -->\n");
+                    
+
+                } else {
+                    out.append(beforeField + "\n");
+
+                    // name
+                    out.append(beforeFieldElement);
+                    out.append(innerFd.getName());
+                    out.append(afterFieldElement + "\n");
+
+                    // tag
+                    out.append(beforeFieldElement);
+                    out.append("<mak:input field=\"");
+                    out.append(fieldPath + innerFd.getName());
+                    out.append("\"/>");
+                    out.append(afterFieldElement + "\n");
+                }
+
+            }
+            // TODO add innerField lookup as for EDITFIELD
+            if (type == LIST) {
+                out.append(beforeField + "\n");
+
+                // name
+                out.append(beforeFieldElement);
+                out.append(innerFd.getName());
+                out.append(afterFieldElement + "\n");
+
+                // tag
+                out.append(beforeFieldElement);
+                out.append("<mak:value expr=\"");
+                out.append("o1." + innerFd.getName());
+                out.append("\"/>");
+                out.append(afterFieldElement + "\n");
+            }
+
+            out.append(afterField + "\n");
+        }
+        
+        // sets
+    }
+
+    private static Vector[] extractInnerFields(DataDefinition dd) {
+//      we build a fake extractInnerFields structure
+        Vector[] extractInnerFields = new Vector[2];
+        
+        try {
+            
+            // we need to gather all kind of fields, may the be normal sets or fields, in the same vector
+            // therefore we build a fake Vector[] structure
+            
+            Vector innerFields = new Vector();
+        
+            for (int i = 0; i < dd.getFieldNames().size(); i++) {
+                innerFields.add(dd.getFieldDefinition(i));
+            }
+            
+            extractInnerFields[0] = innerFields;
+            extractInnerFields[1] = new Vector();
+            
+    
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return extractInnerFields;
+    }
+
+    private static boolean isSet(FieldDefinition fd) {
+        return fd.getType().equals("set");
+    }
+
+    private static boolean isInternalSet(FieldDefinition fd) {
+        return fd.getType().equals("setComplex") || fd.getType().equals("setintEnum")
+                || fd.getType().equals("setcharEnum");
+    }
+
+    private static boolean isPtr(FieldDefinition fd) {
+        return fd.getType().equals("ptr");
+    }
+
+    private static DataDefinition getDataDefinitionFromType(FieldDefinition fd, DataDefinition dd) {
+        if (isInternalSet(fd))
+            dd = fd.getSubtable();
+        if (isSet(fd))
+            dd = fd.getDataDefinition();
+        if (isPtr(fd))
+            dd = fd.getForeignTable();
+        return dd;
+    }
+
+    public static void main(String[] args) {
+        //String object = "general.Person";
+        //String object = "best.internal.prteam.CityGuide";
+        String object = "best.bcc.Offer";
         String path = "";
 
         String header = "<%@ taglib uri=\"http://www.makumba.org/presentation\" prefix=\"mak\" %>\n"
@@ -447,7 +555,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         File fe = new File(getFileNameFromObject(object, EDITFORM));
         generateFile(fe, EDITFORM, object, getFileNameFromObject(object, EDITFORM), extractedFields, header, footer,
                 beforeForm, afterForm, beforeField, afterField, beforeFieldElement, afterFieldElement);
-        
+
         // list
         File fl = new File(getFileNameFromObject(object, LIST));
         generateFile(fl, LIST, object, getFileNameFromObject(object, LIST), extractedFields, header, footer,
