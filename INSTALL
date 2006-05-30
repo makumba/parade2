@@ -1,0 +1,7 @@
+Installation instructions for ParaDe 2 (30/05/2006):
+
+1) Get a Tomcat version and extract it into the folder tomcat-fresh
+2) Make sure you have a MySQL server running on port 3306 with an empty database called "parade".
+   The settings can be changed in webapp/WEB-INF/classes/hibernate.cfg.xml if needed
+3) Run the install script: sh install.sh
+4) That's it! You should be able to run ParaDe by launching the tomcat.sh script in the directory tomcat-parade
