@@ -1,7 +1,7 @@
 <!-- $Header$ -->
 <project name="PARADE" basedir="." default="compile">
 
-	<property file="parade.properties" />
+	<property file="build.properties" />
 
 	<path id="project.class.path">
 		<pathelement path="../utilities" />
