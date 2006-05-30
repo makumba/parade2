@@ -179,71 +179,71 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
             FileWriter fw = new FileWriter(file);
             BufferedWriter out = new BufferedWriter(fw);
 
-            out.append(header + "\n");
-            out.append(beforeForm + "\n");
+            out.write(header + "\n");
+            out.write(beforeForm + "\n");
 
             if (type == NEWFORM) {
-                out.append("\n<!-- Makumba Generator - START OF NEW PAGE FOR OBJECT " + object + " -->\n");
-                out.append("<mak:newForm type=\"" + object + "\" action=\"" + action + "\">\n");
+                out.write("\n<!-- Makumba Generator - START OF NEW PAGE FOR OBJECT " + object + " -->\n");
+                out.write("<mak:newForm type=\"" + object + "\" action=\"" + action + "\">\n");
             }
             if (type == ADDFORM) {
-                out.append("\n<!-- Makumba Generator - START OF ADD PAGE FOR OBJECT " + object + " -->\n");
-                out.append("<mak:object from=\"" + object + " o\" where=\"o=$pointer\">\n");
+                out.write("\n<!-- Makumba Generator - START OF ADD PAGE FOR OBJECT " + object + " -->\n");
+                out.write("<mak:object from=\"" + object + " o\" where=\"o=$pointer\">\n");
             }
             if (type == LIST) {
-                out.append("\n<!-- Makumba Generator - START OF LIST PAGE FOR OBJECT " + object + " -->\n");
-                out.append("<mak:list from=\"" + object + " o\">\n");
+                out.write("\n<!-- Makumba Generator - START OF LIST PAGE FOR OBJECT " + object + " -->\n");
+                out.write("<mak:list from=\"" + object + " o\">\n");
             }
             if (type == EDITFORM) {
-                out.append("\n<!-- Makumba Generator - START OF EDIT PAGE FOR OBJECT " + " -->\n");
-                out.append("<mak:object from=\"" + object + " o\" where=\"o=$pointer\">\n");
-                out.append("<mak:editForm object=\"o\" action=\"" + action + "\" method=\"post\">\n");
+                out.write("\n<!-- Makumba Generator - START OF EDIT PAGE FOR OBJECT " + " -->\n");
+                out.write("<mak:object from=\"" + object + " o\" where=\"o=$pointer\">\n");
+                out.write("<mak:editForm object=\"o\" action=\"" + action + "\" method=\"post\">\n");
             }
 
             if (type != ADDFORM) {
-                out.append("\n<!-- Makumba Generator - START OF NORMAL FIELDS -->\n");
+                out.write("\n<!-- Makumba Generator - START OF NORMAL FIELDS -->\n");
                 // iterating over the normal fields
                 // we start at 3 because before there is the field itself, TS_CREATE and TS_MODIFY
                 for (int i = 3; i < fields.size(); i++) {
                     FieldDefinition fd = (FieldDefinition) fields.get(i);
-                    out.append(beforeField + "\n");
+                    out.write(beforeField + "\n");
 
                     // name
-                    out.append(beforeFieldElement);
-                    out.append(fd.getName());
-                    out.append(afterFieldElement + "\n");
+                    out.write(beforeFieldElement);
+                    out.write(fd.getName());
+                    out.write(afterFieldElement + "\n");
 
                     // tag
-                    out.append(beforeFieldElement);
+                    out.write(beforeFieldElement);
 
                     if (type == NEWFORM) {
-                        out.append("<mak:input field=\"");
-                        out.append(fd.getName());
-                        out.append("\"/>");
+                        out.write("<mak:input field=\"");
+                        out.write(fd.getName());
+                        out.write("\"/>");
                     }
                     if (type == LIST) {
-                        out.append("<mak:value expr=\"");
-                        out.append("o." + fd.getName());
-                        out.append("\"/>");
+                        out.write("<mak:value expr=\"");
+                        out.write("o." + fd.getName());
+                        out.write("\"/>");
                     }
                     if (type == EDITFORM) {
-                        out.append("<mak:input field=\"");
-                        out.append("o." + fd.getName());
-                        out.append("\"/>");
+                        out.write("<mak:input field=\"");
+                        out.write("o." + fd.getName());
+                        out.write("\"/>");
                     }
 
-                    out.append(afterFieldElement + "\n");
-                    out.append(afterField + "\n");
+                    out.write(afterFieldElement + "\n");
+                    out.write(afterField + "\n");
                 }
                 if (type == EDITFORM) {
-                    out.append("\n" + beforeField + "\n");
-                    out.append(beforeFieldElement);
-                    out.append("<input type=\"submit\" name=\"Submit\">");
-                    out.append(afterFieldElement + "\n");
-                    out.append(afterField + "\n");
-                    out.append("</mak:editForm>\n");
+                    out.write("\n" + beforeField + "\n");
+                    out.write(beforeFieldElement);
+                    out.write("<input type=\"submit\" name=\"Submit\">");
+                    out.write(afterFieldElement + "\n");
+                    out.write(afterField + "\n");
+                    out.write("</mak:editForm>\n");
                 }
-                out.append("<!-- Makumba Generator - END OF NORMAL FIELDS -->\n\n");
+                out.write("<!-- Makumba Generator - END OF NORMAL FIELDS -->\n\n");
             }
 
             // if newForm, we also generate an addForm page with all the possible sets which will have to be added
@@ -254,7 +254,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                         beforeField, afterField, beforeFieldElement, afterFieldElement);
             } else {
                 // iterating over the sets
-                out.append("\n<!-- Makumba Generator - START OF SETS -->\n");
+                out.write("\n<!-- Makumba Generator - START OF SETS -->\n");
                 System.out.println("DEBUG INFO: Number of sets of MDD " + object + " is " + sets.size());
                 for (int i = 0; i < sets.size(); i++) {
                     FieldDefinition fd = (FieldDefinition) sets.get(i);
@@ -273,18 +273,18 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                             + dd.getName() + " is " + innerFields.size());
 
                     if (type == ADDFORM) {
-                        out.append("\n<!-- Makumba Generator - START ADDFORM FOR FIELD " + fd.getName() + " -->\n");
-                        out.append("<c:set var=\"pointer\" value=\"o\"/>\n");
-                        out.append("<mak:addForm object=\"o\" field=\"" + fd.getName() + "\" action=\""
+                        out.write("\n<!-- Makumba Generator - START ADDFORM FOR FIELD " + fd.getName() + " -->\n");
+                        out.write("<c:set var=\"pointer\" value=\"o\"/>\n");
+                        out.write("<mak:addForm object=\"o\" field=\"" + fd.getName() + "\" action=\""
                                 + file.getName() + "?pointer=${pointer}\" method=\"post\">\n");
                     }
                     if (type == EDITFORM) {
-                        out.append("\n<!-- Makumba Generator - START EDITFORM FOR FIELD " + fd.getName() + " -->\n");
-                        out.append("<mak:editForm object=\"o." + fd.getName() + "\" action=\"" + file.getName()
+                        out.write("\n<!-- Makumba Generator - START EDITFORM FOR FIELD " + fd.getName() + " -->\n");
+                        out.write("<mak:editForm object=\"o." + fd.getName() + "\" action=\"" + file.getName()
                                 + "?pointer=${pointer}\" method=\"post\">\n");
                     }
                     if (type == LIST) {
-                        out.append("<mak:list from=\"o." + fd.getName() + " o1\">\n");
+                        out.write("<mak:list from=\"o." + fd.getName() + " o1\">\n");
                     }
 
                     // launching recursive generation of inner fields
@@ -300,56 +300,56 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
 
                     // closing forms
                     if (type == ADDFORM) {
-                        out.append("\n" + beforeField + "\n");
-                        out.append(beforeFieldElement);
-                        out.append("<input type=\"submit\" name=\"Add\">");
-                        out.append(afterFieldElement + "\n");
-                        out.append(afterField + "\n");
-                        out.append("</mak:addForm>\n");
-                        out.append("\n<!-- Makumba Generator - END ADDFORM FOR FIELD " + fd.getName() + " -->\n");
+                        out.write("\n" + beforeField + "\n");
+                        out.write(beforeFieldElement);
+                        out.write("<input type=\"submit\" name=\"Add\">");
+                        out.write(afterFieldElement + "\n");
+                        out.write(afterField + "\n");
+                        out.write("</mak:addForm>\n");
+                        out.write("\n<!-- Makumba Generator - END ADDFORM FOR FIELD " + fd.getName() + " -->\n");
                     }
                     if (type == EDITFORM) {
-                        out.append("\n" + beforeField + "\n");
-                        out.append(beforeFieldElement);
-                        out.append("<input type=\"submit\" name=\"Submit\">");
-                        out.append(afterFieldElement + "\n");
-                        out.append(afterField + "\n");
-                        out.append("</mak:editForm>\n");
-                        out.append("\n<!-- Makumba Generator - END EDITFORM FOR FIELD " + fd.getName() + " -->\n");
+                        out.write("\n" + beforeField + "\n");
+                        out.write(beforeFieldElement);
+                        out.write("<input type=\"submit\" name=\"Submit\">");
+                        out.write(afterFieldElement + "\n");
+                        out.write(afterField + "\n");
+                        out.write("</mak:editForm>\n");
+                        out.write("\n<!-- Makumba Generator - END EDITFORM FOR FIELD " + fd.getName() + " -->\n");
                     }
                     if (type == LIST) {
-                        out.append("</mak:list>\n");
+                        out.write("</mak:list>\n");
                     }
 
                 } // end iterating over the sets
-                out.append("<!-- Makumba Generator - END OF SETS -->\n\n");
+                out.write("<!-- Makumba Generator - END OF SETS -->\n\n");
             }
 
             // closing forms
             if (type == NEWFORM) {
-                out.append("\n" + beforeFieldElement);
-                out.append("<input type=\"submit\" name=\"Submit\">");
-                out.append(afterFieldElement + "\n");
-                out.append("</mak:newForm>\n");
-                out.append("<!-- Makumba Generator - END OF NEW PAGE -->\n");
+                out.write("\n" + beforeFieldElement);
+                out.write("<input type=\"submit\" name=\"Submit\">");
+                out.write(afterFieldElement + "\n");
+                out.write("</mak:newForm>\n");
+                out.write("<!-- Makumba Generator - END OF NEW PAGE -->\n");
             }
             if (type == ADDFORM) {
-                out.append("</mak:object>\n");
-                out.append("<!-- Makumba Generator - END OF ADD PAGE -->\n");
+                out.write("</mak:object>\n");
+                out.write("<!-- Makumba Generator - END OF ADD PAGE -->\n");
             }
             if (type == LIST) {
-                out.append("</mak:list>\n");
-                out.append("<!-- Makumba Generator - END OF LIST PAGE -->\n");
+                out.write("</mak:list>\n");
+                out.write("<!-- Makumba Generator - END OF LIST PAGE -->\n");
             }
             if (type == EDITFORM) {
-                out.append("<input type=\"submit\" name=\"Submit\">\n");
-                out.append("</mak:editForm>\n");
-                out.append("</mak:object>\n");
-                out.append("<!-- Makumba Generator - END OF EDIT PAGE -->\n");
+                out.write("<input type=\"submit\" name=\"Submit\">\n");
+                out.write("</mak:editForm>\n");
+                out.write("</mak:object>\n");
+                out.write("<!-- Makumba Generator - END OF EDIT PAGE -->\n");
             }
 
-            out.append(afterForm + "\n");
-            out.append(footer + "\n");
+            out.write(afterForm + "\n");
+            out.write(footer + "\n");
 
             out.flush();
             out.close();
@@ -396,20 +396,20 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                     + innerFd.getType());
 
             if (type == ADDFORM) {
-                out.append(beforeField + "\n");
+                out.write(beforeField + "\n");
 
                 // name
-                out.append(beforeFieldElement);
-                out.append(innerFd.getName());
-                out.append(afterFieldElement + "\n");
+                out.write(beforeFieldElement);
+                out.write(innerFd.getName());
+                out.write(afterFieldElement + "\n");
 
                 //tag
-                out.append(beforeFieldElement);
-                out.append("<mak:input field=\"");
-                //out.append(innerFd.getName()+" ");
-                out.append(innerFieldPath);
-                out.append("\"/>");
-                out.append(afterFieldElement + "\n");
+                out.write(beforeFieldElement);
+                out.write("<mak:input field=\"");
+                //out.write(innerFd.getName()+" ");
+                out.write(innerFieldPath);
+                out.write("\"/>");
+                out.write(afterFieldElement + "\n");
             }
 
             if (type == EDITFORM) {
@@ -427,47 +427,47 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                     
                     //fieldPath += innerFd.getName() + ".";
 
-                    out.append("<!-- Makumba generator - GENERATED FIELDS OUT OF FIELD "+innerFd.getName()+" -->\n");
+                    out.write("<!-- Makumba generator - GENERATED FIELDS OUT OF FIELD "+innerFd.getName()+" -->\n");
                     generateInnerFields(type, beforeField, afterField, beforeFieldElement, afterFieldElement, out,
                             innerFd, innerDd, internalInnerFields, fieldPath, processedDds);
-                    out.append("<!-- Makumba generator - END OF GENERATED FIELDS OUT OF FIELD "+innerFd.getName()+" -->\n");
+                    out.write("<!-- Makumba generator - END OF GENERATED FIELDS OUT OF FIELD "+innerFd.getName()+" -->\n");
                     
 
                 } else {
-                    out.append(beforeField + "\n");
+                    out.write(beforeField + "\n");
 
                     // name
-                    out.append(beforeFieldElement);
-                    out.append(innerFd.getName());
-                    out.append(afterFieldElement + "\n");
+                    out.write(beforeFieldElement);
+                    out.write(innerFd.getName());
+                    out.write(afterFieldElement + "\n");
 
                     // tag
-                    out.append(beforeFieldElement);
-                    out.append("<mak:input field=\"");
-                    out.append(fieldPath + innerFd.getName());
-                    out.append("\"/>");
-                    out.append(afterFieldElement + "\n");
+                    out.write(beforeFieldElement);
+                    out.write("<mak:input field=\"");
+                    out.write(fieldPath + innerFd.getName());
+                    out.write("\"/>");
+                    out.write(afterFieldElement + "\n");
                 }
 
             }
             // TODO add innerField lookup as for EDITFIELD
             if (type == LIST) {
-                out.append(beforeField + "\n");
+                out.write(beforeField + "\n");
 
                 // name
-                out.append(beforeFieldElement);
-                out.append(innerFd.getName());
-                out.append(afterFieldElement + "\n");
+                out.write(beforeFieldElement);
+                out.write(innerFd.getName());
+                out.write(afterFieldElement + "\n");
 
                 // tag
-                out.append(beforeFieldElement);
-                out.append("<mak:value expr=\"");
-                out.append("o1." + innerFd.getName());
-                out.append("\"/>");
-                out.append(afterFieldElement + "\n");
+                out.write(beforeFieldElement);
+                out.write("<mak:value expr=\"");
+                out.write("o1." + innerFd.getName());
+                out.write("\"/>");
+                out.write(afterFieldElement + "\n");
             }
 
-            out.append(afterField + "\n");
+            out.write(afterField + "\n");
         }
         
         // sets
