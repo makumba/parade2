@@ -72,7 +72,7 @@ public class FileDisplay {
 
         // headers
         out.println("<tr>" + fileV.getFileViewHeader(r, path) + cvsV.getFileViewHeader(r, path)
-                + trackerV.getFileViewHeader(r, path) + "</tr>");
+                /* + trackerV.getFileViewHeader(r, path) */ + "</tr>");
 
         // files
         File file = (File) r.getFiles().get(path);
@@ -87,7 +87,7 @@ public class FileDisplay {
             File currentFile = (File) j.next();
             out.println("<tr class='" + (((counter % 2) == 0) ? "odd" : "even") + "'>"
                     + fileV.getFileView(r, relativePath, currentFile) + cvsV.getFileView(r, relativePath, currentFile)
-                    + trackerV.getFileView(r, relativePath, currentFile) + "</tr>");
+                    /* + trackerV.getFileView(r, relativePath, currentFile) */ + "</tr>");
 
             counter++;
         }
