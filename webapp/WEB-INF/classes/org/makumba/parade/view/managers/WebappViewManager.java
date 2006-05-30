@@ -29,6 +29,11 @@ public class WebappViewManager implements HeaderView, ParadeView {
         RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
 
         int status = data.getStatus().intValue();
+        
+        if( r.getRowpath().equals(r.getParade().getBaseDir())) {
+            data.setStatus(new Integer(ServletContainer.RUNNING));
+            status = ServletContainer.RUNNING;
+        }
 
         out.println(data.getWebappPath() + ", " + ServletContainer.status[status] + "<br>");
 
@@ -43,9 +48,11 @@ public class WebappViewManager implements HeaderView, ParadeView {
 
         int status = data.getStatus().intValue();
 
-        if( r.getRowpath().equals(r.getParade().getBaseDir()))
+        if( r.getRowpath().equals(r.getParade().getBaseDir())) {
             data.setStatus(new Integer(ServletContainer.RUNNING));
-
+            status = ServletContainer.RUNNING;
+        }
+            
         // TODO - consider the case WEBINF isn't found, ie get server name, port from some request
         if (data.getWebappPath().equals("NO WEBINF")) {
             /*
