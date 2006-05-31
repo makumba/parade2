@@ -222,6 +222,7 @@
 	</target>
 
 	<target name="compile" description="compile the java files">
+		<antcall target="clean" />
 		<javac srcdir="${webapp.path}/WEB-INF/classes">
 			<classpath refid="generic.class.path" />
 		</javac>
