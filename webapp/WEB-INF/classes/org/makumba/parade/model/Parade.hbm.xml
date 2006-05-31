@@ -5,6 +5,9 @@
       
 <hibernate-mapping package="org.makumba.parade.model">
 	<class name="Parade">
+	
+		<cache usage="read-write" />
+	
 		<id name="id" unsaved-value="undefined">
 			<generator class="native" />
 		</id>

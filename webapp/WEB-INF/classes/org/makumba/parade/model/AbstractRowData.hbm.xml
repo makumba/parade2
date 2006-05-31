@@ -6,6 +6,9 @@
 <hibernate-mapping package="org.makumba.parade.model">
 
 	<class name="AbstractRowData" table="RowData">
+	
+	<cache usage="read-write" />
+	
 		<id name="id" type="long" column="ROWDATA_ID">
         	<generator class="native"/>
     	</id>
