@@ -7,12 +7,18 @@ body {
 
 div.success {
 	color:#228B22;
+	font-size:small;
 	font-weight:bold;
 }
 div.failure {
 	color:#FF0000;
+	font-size:small;
 	font-weight:bold;
 }
+
+div.command {
+	font-size:small;
+	}
 
 table.rowstore {
     border:0;

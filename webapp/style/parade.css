@@ -6,6 +6,10 @@ body
      font:menu;
 }
 
+div.command {
+	font-size:smaller;
+	}
+
 a img {
   border:none;
   border-width:0px;
