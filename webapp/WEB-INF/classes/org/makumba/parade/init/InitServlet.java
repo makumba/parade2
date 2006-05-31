@@ -85,7 +85,7 @@ public class InitServlet extends HttpServlet implements Runnable {
             session.save(p);
         }
 
-        p.refresh();
+        //p.refresh();
 
         tx.commit();
 

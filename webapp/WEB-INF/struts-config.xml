@@ -103,6 +103,15 @@
           
       </action>
       
+       <!-- Rowstore view -->
+      <action    path="/Rows"
+                 type="org.makumba.parade.controller.RowsAction"
+                 >
+                 
+                 <forward name="index" path="/index.jsp" />
+          
+      </action>
+      
 
       <!-- Change locale action
       <action

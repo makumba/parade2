@@ -25,7 +25,6 @@ public class RowDisplay {
         MakumbaViewManager makV = new MakumbaViewManager();
 
         out.println("<HTML><HEAD><TITLE>Welcome to ParaDe</TITLE>" + "</HEAD><BODY><CENTER>");
-        out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
         out.println("<link rel='StyleSheet' href='/style/rowstore.css' type='text/css'>");
         out.println("<BORDER class='rowstore'>");
         
@@ -80,7 +79,10 @@ public class RowDisplay {
 
         }
 
-        out.println("</TABLE></CENTER></BODY></HTML>");
+        out.println("</TABLE>" +
+                "<BR><BR>" +
+                "<div class='command'><a href='/Rows.do?op=paraderefresh'>Refresh ParaDe</a></div>" +
+                "</CENTER></BODY></HTML>");
 
         return result.toString();
 
