@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+      "-//Hibernate/Hibernate Mapping DTD//EN"
+      "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+      
+<hibernate-mapping package="org.makumba.parade.model">
+	<class name="Log">
+	
+		<cache usage="read-write" />
+	
+		<id name="id">
+			<generator class="native" />
+		</id>
+		
+		<property name="identifier" />
+		<property name="date" />
+		<property name="priority" />
+		<property name="category" />
+		<property name="thread" />
+		<property name="message" />
+		<property name="throwable" />
+		<property name="ndc" />
+		<property name="mdc" />
+		<property name="mdc2" />
+
+	</class>
+</hibernate-mapping>
+
+      

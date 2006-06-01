@@ -9,5 +9,16 @@
 	         </fileset>
 		</copy>
 	</target>
+	
+	<target name="loggerCopy">
+		<copy toDir="${catalina.home}/common/classes" overwrite="true">
+	         <fileset dir="tomcat/common/classes">
+	          <include name="log4j.properties" />
+	         </fileset>
+			 <fileset dir="tomcat/common/lib">
+			  <include name="*.jar" />
+			 </fileset>
+		</copy>
+	</target>
 
 </project>

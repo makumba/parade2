@@ -1,11 +1,7 @@
 package org.makumba.parade.init;
 
-import java.io.PrintWriter;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
@@ -15,7 +11,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.makumba.parade.model.Parade;
-import org.makumba.parade.view.managers.RowDisplay;
+
 
 public class InitServlet extends HttpServlet implements Runnable {
 
@@ -43,6 +39,7 @@ public class InitServlet extends HttpServlet implements Runnable {
             cfg.addResource("org/makumba/parade/model/Row.hbm.xml");
             cfg.addResource("org/makumba/parade/model/AbstractRowData.hbm.xml");
             cfg.addResource("org/makumba/parade/model/File.hbm.xml");
+            cfg.addResource("org/makumba/parade/model/Log.hbm.xml");
 
             sessionFactory = cfg.buildSessionFactory();
 
