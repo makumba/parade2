@@ -22,6 +22,8 @@ public class CommandViewManager implements CommandView {
     public String getCommandView(String view, Row r, String path, String file, String opResult) {
         if (view == null || view.equals(""))
             return "jsp:/tipOfTheDay.jsp";
+        if (view.startsWith("uploadFile"))
+            return "jsp:/uploadFile.jsp?context="+r.getRowname()+"&path="+path;
         if (view != null && view.equals("newFile"))
             return newFileView(r, path);
         if (view != null && view.equals("newDir"))
