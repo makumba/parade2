@@ -32,6 +32,14 @@ public class FileAction extends Action {
         if (op != null && op.startsWith("editFile")) {
             return (mapping.findForward("edit"));
         }
+        
+        if (op != null && op.startsWith("upload")) {
+            
+            request.setAttribute("context", context);
+            request.setAttribute("path", path);
+            
+            return (mapping.findForward("upload"));
+        }
 
         request.setAttribute("context", context);
         request.setAttribute("path", path);

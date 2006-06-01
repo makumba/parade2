@@ -40,7 +40,7 @@ public class FileViewManager implements FileView, TreeView {
                 + "&path="
                 + path
                 + "' target='command' title='Create a new directory'><img src='/images/newfolder.gif' align='right'></a>"
-                + "<a href='/File.do?display=command&view=uploadFile&context=" + r.getRowname() + "&path=" + path
+                + "<a href='/File.do?op=uploadFile&context=" + r.getRowname() + "&path=" + path
                 + "' target='command' title='Upload a file'><img src='/images/uploadfile.gif' align='right'></a> "
                 + "<a href='/File.do?display=command&view=newFile&context=" + r.getRowname() + "&path=" + path
                 + "' target='command' title='Create a new file'><img src='/images/newfile.gif' align='right'></a> "
