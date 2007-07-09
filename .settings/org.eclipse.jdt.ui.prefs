@@ -1,3 +1,5 @@
-#Sun Jan 22 16:07:37 CET 2006
+#Fri Jul 06 16:28:40 CEST 2007
 eclipse.preferences.version=1
-formatter_settings_version=8
+formatter_profile=_RudiSuperFormatter
+formatter_settings_version=10
+internal.default.compliance=default
