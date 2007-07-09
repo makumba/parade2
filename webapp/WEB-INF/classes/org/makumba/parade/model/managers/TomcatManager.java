@@ -122,9 +122,10 @@ public class TomcatManager implements ServletContainer {
             out.write("<Context path=\"");
             out.write(contextName);
             out.write("\" docBase=\"");
-            out.write(ParadeProperties.paradeBaseRelativeToTomcatWebapps);
+            //out.write(ParadeProperties.paradeBaseRelativeToTomcatWebapps);
             out.write(File.separator);
-            out.write(dir);
+            out.write((new java.io.File(dir)).getCanonicalPath());
+            out.write(File.separator);
             out.write(context.substring(canDir.length()));
             out.write("\" reload=\"true\" debug=\"0\" crossContext=\"true\"></Context>");
             out.flush();

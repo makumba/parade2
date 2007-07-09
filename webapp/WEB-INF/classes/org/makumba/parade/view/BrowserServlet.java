@@ -16,7 +16,7 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.view.managers.CommandViewManager;
 import org.makumba.parade.view.managers.FileDisplay;
 import org.makumba.parade.view.managers.FileViewManager;
-import org.makumba.parade.view.managers.HeaderViewManager;
+import org.makumba.parade.view.managers.HeaderDisplay;
 
 public class BrowserServlet extends HttpServlet {
 
@@ -49,10 +49,6 @@ public class BrowserServlet extends HttpServlet {
         if (path == null)
             path = (String) req.getAttribute("path");
 
-        String size = req.getParameter("size");
-        if (size == null)
-            size = (String) req.getAttribute("size");
-
         String opResult = (String) req.getAttribute("result");
         Boolean successAttr = (Boolean) req.getAttribute("success");
         boolean success = true;
@@ -74,7 +70,7 @@ public class BrowserServlet extends HttpServlet {
         } else {
 
             // initialising the displays
-            HeaderViewManager hdrV = new HeaderViewManager();
+            HeaderDisplay hdrV = new HeaderDisplay();
             CommandViewManager cmdV = new CommandViewManager();
             FileViewManager fileV = new FileViewManager();
             FileDisplay filebrowserV = new FileDisplay();
@@ -85,7 +81,7 @@ public class BrowserServlet extends HttpServlet {
                 page = hdrV.getHeaderView(r, path);
             }
             if (display.equals("tree")) {
-                page = fileV.getJSTreeView(p, r, size);
+                page = fileV.getTreeView(p, r);
             }
             if (display.equals("file")) {
                 page = filebrowserV.getFileBrowserView(p, r, path, opResult, success);

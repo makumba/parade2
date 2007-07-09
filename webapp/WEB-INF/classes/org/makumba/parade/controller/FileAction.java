@@ -7,6 +7,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.makumba.parade.model.Parade;
 
 public class FileAction extends Action {
 
@@ -17,16 +18,16 @@ public class FileAction extends Action {
         String path = request.getParameter("path");
         String file = request.getParameter("file");
         String op = request.getParameter("op");
-        String[] params = { request.getParameter("params"), request.getParameter("path") };
+        
+        // we reconstruct the absolute path
+        String absolutePath = Parade.constructAbsolutePath(context, path);
+        
+        String[] params = { request.getParameter("params"), absolutePath};
 
         if (op != null && op.startsWith("deleteFile")) {
             Object result[] = CommandController.onDeleteFile(context, params);
             request.setAttribute("result", (String) result[0]);
             request.setAttribute("success", (Boolean) result[1]);
-            request.setAttribute("context", context);
-            request.setAttribute("path", params[1]);
-            request.setAttribute("display", "file");
-
         }
 
         if (op != null && op.startsWith("editFile")) {

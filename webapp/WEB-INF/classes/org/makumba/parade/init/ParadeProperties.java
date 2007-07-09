@@ -17,7 +17,7 @@ public class ParadeProperties {
 
     private static Properties config;
 
-    static public String paradeBaseRelativeToTomcatWebapps = ".." + File.separator;
+    static public String paradeBaseRelativeToTomcatWebapps = ".." + File.separator + ".." + File.separator;
 
     static Logger logger = Logger.getLogger(ParadeProperties.class.getName());
 

@@ -156,7 +156,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
     }
 
     public String newDir(Row r, String path, String entry) {
-        java.io.File f = new java.io.File((path + "/" + entry).replace('/', java.io.File.separatorChar));
+        java.io.File f = new java.io.File((path + "/" + entry + "/").replace('/', java.io.File.separatorChar));
         if (f.exists() && f.isDirectory())
             return "This directory already exists";
 
@@ -174,32 +174,26 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             return "OK#" + f.getName();
         }
 
-        return "Error while trying to create directory " + entry;
+        return "Error while trying to create directory " + entry + ". Make sure ParaDe has the security rights to write on the filesystem.";
 
     }
 
-    public String deleteFile(Row r, String path) {
+    public String deleteFile(Row r, String filePath) {
 
-        String decodedParams = "";
-        try {
-            decodedParams = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-        }
-        java.io.File f = new java.io.File((decodedParams).replace('/', java.io.File.separatorChar));
+        java.io.File f = new java.io.File(filePath);
         boolean success = f.delete();
         if (success) {
-            File cacheFile = (File) r.getFiles().get(decodedParams);
+            File cacheFile = (File) r.getFiles().get(filePath);
             FileCVS cvsCache = (FileCVS) cacheFile.getFiledata().get("cvs");
             
             // if there is CVS data for this file
             // TODO do this check for Tracker as well once it will be done
-            if(cvsCache.getDate() != null) {
+            if(cvsCache != null) {
                 cacheFile.setOnDisk(false);
                 cvsCache.setStatus(CVSManager.NEEDS_CHECKOUT);
             }
             else
-                r.getFiles().remove(decodedParams);
+                r.getFiles().remove(filePath);
             
             return "OK#" + f.getName();
         }

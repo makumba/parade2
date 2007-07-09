@@ -13,8 +13,8 @@ import org.makumba.parade.tools.Execute;
 public class CvsController {
     
     public static Object[] onCheck(String context, String[] params) {
-        String path = params[0];
-        java.io.File f = new java.io.File(path);
+        String absolutePath = params[0];
+        java.io.File f = new java.io.File(absolutePath);
         if(!f.exists() || !f.canRead()) {
             Object[] obj = {"Internal ParaDe error: path is not accessible", new Boolean(false)};
             return obj;
@@ -33,7 +33,7 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, path);
+        CVSManager.updateCvsCache(context, absolutePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -41,8 +41,8 @@ public class CvsController {
     }
     
     public static Object[] onUpdate(String context, String[] params) {
-        String path = params[0];
-        java.io.File f = new java.io.File(path);
+        String absolutePath = params[0];
+        java.io.File f = new java.io.File(absolutePath);
         if(!f.exists() || !f.canRead()) {
             Object[] obj = {"Internal ParaDe error: path is not accessible", new Boolean(false)};
             return obj;
@@ -59,8 +59,8 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, path);
-        FileManager.updateFileCache(context, path, true);
+        CVSManager.updateCvsCache(context, absolutePath);
+        FileManager.updateFileCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -68,8 +68,8 @@ public class CvsController {
     }
 
     public static Object[] onRUpdate(String context, String[] params) {
-        String path = params[0];
-        java.io.File f = new java.io.File(path);
+        String absolutePath = params[0];
+        java.io.File f = new java.io.File(absolutePath);
         if(!f.exists() || !f.canRead()) {
             Object[] obj = {"Internal ParaDe error: path is not accessible", new Boolean(false)};
             return obj;
@@ -84,8 +84,8 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, path);
-        FileManager.updateFileCache(context, path, false);
+        CVSManager.updateCvsCache(context, absolutePath);
+        FileManager.updateFileCache(context, absolutePath, false);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -93,11 +93,11 @@ public class CvsController {
     }
     
     public static Object[] onCommit(String context, String[] params) {
-        String path = params[0];
-        String file = params[1];
+        String absolutePath = params[0];
+        String absoluteFilePath = params[1];
         String message = params[2];
-        java.io.File f = new java.io.File(file);
-        java.io.File p = new java.io.File(path);
+        java.io.File f = new java.io.File(absoluteFilePath);
+        java.io.File p = new java.io.File(absolutePath);
         
         Vector cmd = new Vector();
         cmd.add("cvs");
@@ -110,17 +110,17 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        FileManager.updateFileCache(context, path, true);
-        CVSManager.updateCvsCache(context, path);
+        FileManager.updateFileCache(context, absolutePath, true);
+        CVSManager.updateCvsCache(context, absolutePath);
                 
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;
     }
     
-    public static Object[] onDiff(String context, String path, String file) {
+    public static Object[] onDiff(String context, String absolutePath, String file) {
         java.io.File f = new java.io.File(file);
-        java.io.File p = new java.io.File(path);
+        java.io.File p = new java.io.File(absolutePath);
         if(!f.exists() || !f.canRead() || !p.exists() || !p.canRead()) {
             Object[] obj = {"Internal ParaDe error: file is not accessible", new Boolean(false)};
             return obj;
@@ -134,16 +134,16 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, path);
+        CVSManager.updateCvsCache(context, absolutePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;
     }
     
-    public static Object[] onAdd(String context, String path, String file) {
+    public static Object[] onAdd(String context, String absolutePath, String file) {
         java.io.File f = new java.io.File(file);
-        java.io.File p = new java.io.File(path);
+        java.io.File p = new java.io.File(absolutePath);
         if(!f.exists() || !f.canRead() || !p.exists() || !p.canRead()) {
             Object[] obj = {"Internal ParaDe error: file is not accessible", new Boolean(false)};
             return obj;
@@ -157,16 +157,16 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, path);
+        CVSManager.updateCvsCache(context, absolutePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;
     }
     
-    public static Object[] onAddBinary(String context, String path, String file) {
+    public static Object[] onAddBinary(String context, String absolutePath, String file) {
         java.io.File f = new java.io.File(file);
-        java.io.File p = new java.io.File(path);
+        java.io.File p = new java.io.File(absolutePath);
         if(!f.exists() || !f.canRead() || !p.exists() || !p.canRead()) {
             Object[] obj = {"Internal ParaDe error: file is not accessible", new Boolean(false)};
             return obj;
@@ -181,16 +181,16 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, path);
+        CVSManager.updateCvsCache(context, absolutePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;
     }
     
-    public static Object[] onUpdateFile(String context, String path, String file) {
-        java.io.File f = new java.io.File(file);
-        java.io.File p = new java.io.File(path);
+    public static Object[] onUpdateFile(String context, String absolutePath, String absoluteFilePath) {
+        java.io.File f = new java.io.File(absoluteFilePath);
+        java.io.File p = new java.io.File(absolutePath);
         
         Vector cmd = new Vector();
         cmd.add("cvs");
@@ -201,17 +201,17 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, path);
-        FileManager.updateSimpleFileCache(context, path);
+        CVSManager.updateCvsCache(context, absolutePath);
+        FileManager.updateSimpleFileCache(context, absolutePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;
     }
     
-    public static Object[] onDeleteFile(String context, String path, String file) {
-        java.io.File f = new java.io.File(file);
-        java.io.File p = new java.io.File(path);
+    public static Object[] onDeleteFile(String context, String absolutePath, String absoluteFilePath) {
+        java.io.File f = new java.io.File(absoluteFilePath);
+        java.io.File p = new java.io.File(absolutePath);
         
         Vector cmd = new Vector();
         cmd.add("cvs");
@@ -222,7 +222,7 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, path);
+        CVSManager.updateCvsCache(context, absolutePath);
                 
         Object[] res = {result.toString(), new Boolean(true)};
         

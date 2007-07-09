@@ -2,8 +2,10 @@ package org.makumba.parade.view.interfaces;
 
 import org.makumba.parade.model.Row;
 
+import freemarker.template.SimpleHash;
+
 public interface HeaderView {
 
-    public String getHeaderView(Row r, String path);
+    public void setHeaderView(SimpleHash root, Row r);
 
 }

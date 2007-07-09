@@ -39,7 +39,7 @@ public class CommandController {
         Object[] obj = new Object[2];
         String result = new String();
         String filename = params[0];
-        String path = params[1];
+        String absolutePath = params[1];
         
         FileManager fileMgr = new FileManager();
 
@@ -54,18 +54,20 @@ public class CommandController {
             s.close();
             return res("Unknown context " + context, false);
         }
-        String filepath = path + java.io.File.separator + filename;
-        String relativepath = path.substring(row.getRowpath().length());
+        
+        String filepath = absolutePath + java.io.File.separator + filename;
+        String relativepath = absolutePath.substring(row.getRowpath().length());
+        
         if (action.equals("newFile"))
-            result = fileMgr.newFile(row, path, filename);
+            result = fileMgr.newFile(row, absolutePath, filename);
         else if (action.equals("newDir"))
-            result = fileMgr.newDir(row, path, filename);
+            result = fileMgr.newDir(row, absolutePath, filename);
         else if (action.equals("deleteFile"))
-            result = fileMgr.deleteFile(row, filename);
+            result = fileMgr.deleteFile(row, filepath);
         
         //updates the caches
         //TODO the same for the other caches
-        CVSManager.updateCvsCache(context, filepath);
+        CVSManager.updateCvsCache(context, absolutePath);
  
         tx.commit();
         s.close();

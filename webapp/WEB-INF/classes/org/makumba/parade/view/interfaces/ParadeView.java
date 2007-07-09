@@ -1,11 +1,15 @@
 package org.makumba.parade.view.interfaces;
 
+import java.util.List;
+
 import org.makumba.parade.model.Row;
+
+import freemarker.template.SimpleHash;
 
 public interface ParadeView {
 
-    public String getParadeViewHeader();
+    public void setParadeViewHeader(List headers);
 
-    public String getParadeView(Row r);
+    public void setParadeView(SimpleHash rowInformation, Row r);
 
 }

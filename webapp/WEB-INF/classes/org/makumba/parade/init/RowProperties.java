@@ -62,6 +62,7 @@ public class RowProperties {
             if (f.exists())
                 state.load(new FileInputStream(f));
             else {
+                // if there's no row definition file, we create one
                 state.setProperty("", ParadeProperties.getParadeBase());
                 state.store(new FileOutputStream(f), 
                         "rows\n"
@@ -83,6 +84,7 @@ public class RowProperties {
         }
     }
 
+    /* Extracts the definition of one row */
     private void extractRowDefinitions(String name) {
         
         String propName = "rowdata." + name + ".";
@@ -96,6 +98,7 @@ public class RowProperties {
                 webapp = state.getProperty(propName + "webapp");
         }
         
+        // if we don't find anything, add as default the ParaDe row
         if(name.equals("")) {
             this.addRowDefinition("(root)", state.getProperty(name), ParadeProperties.getProperty("webapp.path"), "ParaDe webapp");
         } else {

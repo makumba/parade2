@@ -8,6 +8,9 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.managers.AntManager;
@@ -109,6 +112,7 @@ public class Parade {
 
                 newRow(storedRow, rowDefinition);
 
+            // this is a new row
             } else {
 
                 // creating Row object and passing the information
@@ -132,18 +136,15 @@ public class Parade {
         }
         
         //removing deleted rows from cache
-        Vector v = new Vector();
         Iterator j = this.getRows().keySet().iterator();
         while(j.hasNext()) {
             String key = (String) j.next();
+            
+            // if the new rowstore definition doesn't contain the row, we trash it
             if (!rowstore.containsKey(key)) {
-                v.add(key);
+                this.getRows().remove(key);
             }
         }
-        for (int k = 0; k < v.size(); k++) {
-            this.getRows().remove(v.get(k));
-        }
-        
     }
 
     public void newRow(Row r, Map rowDefinition) {
@@ -188,4 +189,30 @@ public class Parade {
         this.baseDir = paradeBase;
     }
 
+    public static String constructAbsolutePath(String context, String relativePath) {
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        
+        Row entryRow = null;
+        
+        if (context != null)
+            entryRow = Row.getRow(p, context);
+        
+        String absolutePath = entryRow.getRowpath();
+        
+        tx.commit();
+        s.close();
+        
+        if(relativePath == null || relativePath == "") return absolutePath;
+        
+        if(relativePath.equals("/")) return absolutePath;
+        
+        if(relativePath.endsWith("/")) relativePath = relativePath.substring(0, relativePath.length() - 1);
+        absolutePath = entryRow.getRowpath() + java.io.File.separator + relativePath.replace("/", java.io.File.separator);
+        
+        return absolutePath;
+
+    }
 }

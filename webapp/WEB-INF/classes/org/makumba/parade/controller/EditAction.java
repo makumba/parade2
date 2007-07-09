@@ -20,14 +20,6 @@ public class EditAction extends DispatchAction {
         String op = request.getParameter("op");
         String[] params = request.getParameterValues("params");
 
-        /*
-         * if(op != null && op.startsWith("newFile")) { request.setAttribute("result",
-         * CommandController.onNewFile(context, params)); request.setAttribute("success", "true");
-         * request.setAttribute("context", context); request.setAttribute("path", params[1]);
-         * request.setAttribute("display", "file");
-         *  }
-         */
-
         return (mapping.findForward("files"));
 
     }

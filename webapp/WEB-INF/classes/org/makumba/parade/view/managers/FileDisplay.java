@@ -1,5 +1,6 @@
 package org.makumba.parade.view.managers;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -7,14 +8,20 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.FileComparator;
+
+import freemarker.template.SimpleHash;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 public class FileDisplay {
 
@@ -39,82 +46,103 @@ public class FileDisplay {
 
         // if this is the root of the row
         if (path == null || path.equals("null"))
-            path = r.getRowpath();
-
+            path = "/";
+        
+        if (opResult == null) opResult = "";
+        
+        String pathEncoded = "";
+        
+        try {
+            pathEncoded = URLEncoder.encode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         FileViewManager fileV = new FileViewManager();
         CVSViewManager cvsV = new CVSViewManager();
-        TrackerViewManager trackerV = new TrackerViewManager();
-
-        out.println("<HTML><HEAD><TITLE>" + r.getRowname() + " files</TITLE>");
-        out.println("<link rel='StyleSheet' href='/style/parade.css' type='text/css'>");
-        out.println("<link rel='StyleSheet' href='/style/files.css' type='text/css'>");
-        out.println("</HEAD><BODY class='files'>");
-
-        if (opResult != null) {
-
-            if (success)
-                out.println("<div class='success'>" + opResult + "</div>");
-            else
-                out.println("<div class='failure'>" + opResult + "</div>");
-
-            /*
-             * try { out.println(URLDecoder.decode(opResult, "UTF-8") + "<br>"); } catch (UnsupportedEncodingException
-             * e) { // TODO Auto-generated catch block e.printStackTrace(); }
-             */
+        
+        Template temp = null;
+        try {
+            temp = InitServlet.getFreemarkerCfg().getTemplate("fileBrowser.ftl");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-
-        out.println("<h2>" + "[<a href='/servlet/browse?display=file&context=" + r.getRowname() + "'>" + r.getRowname()
-                + "</a>]/" + getParentDir(r, path));
-        out.println("<img src='/images/folder-open.gif'>" + "</h2><div class='pathOnDisk'>" + path + "</div>");
-        out.println("<table class='files'>");
-
-        out.println("</p>");
-
-        // headers
-        out.println("<tr>" + fileV.getFileViewHeader(r, path) + cvsV.getFileViewHeader(r, path)
-                /* + trackerV.getFileViewHeader(r, path) */ + "</tr>");
-
-        // files
-        File file = (File) r.getFiles().get(path);
+        
+        /* Creating data model */
+        SimpleHash root = new SimpleHash();
+        root.put("rowName", r.getRowname());
+        root.put("success", success);
+        root.put("opResult", opResult);
+        root.put("path", path);
+        root.put("pathOnDisk", r.getRowpath() + (path.length()>1?java.io.File.separator + path.replace("/", java.io.File.separator):""));
+        root.put("pathEncoded", pathEncoded);
+        root.put("parentDirs", getParentDir(r, path));
+        
+        // computing file model data
+        String absolutePath = "";
+        if(path.equals("/")) absolutePath = r.getRowpath();
+        else absolutePath = r.getRowpath() + java.io.File.separator + path.replace("/", java.io.File.separator);
+        if(absolutePath.endsWith(java.io.File.separator)) absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
+        File file = (File) r.getFiles().get(absolutePath);
         List files = file.getChildren();
         FileComparator fc = new FileComparator();
 
         Collections.sort(files, fc);
-        String relativePath = path.substring(r.getRowpath().length(), path.length());
+        //String relativePath = path.substring(r.getRowpath().length(), path.length());
+        
+        List fileViews = new LinkedList();
 
-        int counter = 0;
         for (Iterator j = files.iterator(); j.hasNext();) {
             File currentFile = (File) j.next();
-            out.println("<tr class='" + (((counter % 2) == 0) ? "odd" : "even") + "'>"
-                    + fileV.getFileView(r, relativePath, currentFile) + cvsV.getFileView(r, relativePath, currentFile)
-                    /* + trackerV.getFileView(r, relativePath, currentFile) */ + "</tr>");
-
-            counter++;
+            SimpleHash fileView = new SimpleHash();
+            fileV.setFileView(fileView, r, path, currentFile);
+            cvsV.setFileView(fileView, r, path, currentFile);
+            
+            fileViews.add(fileView);
+        }
+        
+        root.put("fileViews", fileViews);
+        
+        /* Merge data model with template */
+        try {
+            temp.process(root, out);
+        } catch (TemplateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
-        out.println("</TABLE></BODY></HTML>");
-
+        
         return result.toString();
     }
 
-    private String getParentDir(Row r, String path) {
+    private List getParentDir(Row r, String path) {
 
         if (path == null)
-            path = r.getRowpath()+java.io.File.separator;
+            path = "/";
         
-        String relativePath = path.substring(r.getRowpath().length(), path.length());
+        //String relativePath = path.substring(r.getRowpath().length(), path.length());
+        
+        List parentDirs = new LinkedList();
+        //String currentPath = path.substring(0, r.getRowpath().length());
+        String currentPath = "";
 
-        String parentDir = "";
-        String currentPath = path.substring(0, r.getRowpath().length());
-
-        StringTokenizer st = new StringTokenizer(relativePath, java.io.File.separator);
+        StringTokenizer st = new StringTokenizer(path, "/");
         while (st.hasMoreTokens()) {
-            String thisToken = st.nextToken();
-            currentPath += java.io.File.separator + thisToken;
-            parentDir += "<a href='/servlet/browse?display=file&context=" + r.getRowname() + "&path=" + currentPath
-                    + "'>" + thisToken + "</a>" + "/";
+            SimpleHash parentDir = new SimpleHash();
+            
+            String thisDir = st.nextToken();
+            currentPath +=  thisDir;
+            if(st.hasMoreElements()) currentPath += "/";
+            parentDir.put("path", currentPath);
+            parentDir.put("directoryName", thisDir);
+            parentDirs.add(parentDir);
         }
-        return parentDir;
+        return parentDirs;
     }
 
 }

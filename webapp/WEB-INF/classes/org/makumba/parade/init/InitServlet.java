@@ -1,5 +1,8 @@
 package org.makumba.parade.init;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +14,8 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.makumba.parade.model.Parade;
+
+import freemarker.template.DefaultObjectWrapper;
 
 
 public class InitServlet extends HttpServlet implements Runnable {
@@ -28,6 +33,8 @@ public class InitServlet extends HttpServlet implements Runnable {
     private Session session = null;
 
     private Parade p = null;
+    
+    private static freemarker.template.Configuration freemarkerCfg;
 
     {
         /* Initializing Hibernate */
@@ -50,7 +57,21 @@ public class InitServlet extends HttpServlet implements Runnable {
             logger.error(t);
             t.printStackTrace();
         }
+        
+        /* Initalising Freemarker */
+        try {
+            
+            freemarkerCfg = new freemarker.template.Configuration();
+            
+            freemarkerCfg.setDirectoryForTemplateLoading(new File(".\\webapp\\WEB-INF\\classes\\org\\makumba\\parade\\view\\templates"));
 
+            freemarkerCfg.setObjectWrapper(new DefaultObjectWrapper());
+
+        } catch (Throwable t) {
+            logger.error(t);
+            t.printStackTrace();
+        }
+        
     }
 
     public void init(ServletConfig conf) throws ServletException {
@@ -82,7 +103,7 @@ public class InitServlet extends HttpServlet implements Runnable {
             session.save(p);
         }
 
-        //p.refresh();
+        p.refresh();
 
         tx.commit();
 
@@ -98,6 +119,10 @@ public class InitServlet extends HttpServlet implements Runnable {
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
+    }
+
+    public static freemarker.template.Configuration getFreemarkerCfg() {
+        return freemarkerCfg;
     }
 
 }

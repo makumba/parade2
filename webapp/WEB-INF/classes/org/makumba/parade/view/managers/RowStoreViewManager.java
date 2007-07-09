@@ -1,20 +1,30 @@
 package org.makumba.parade.view.managers;
 
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.makumba.parade.model.Row;
 import org.makumba.parade.view.interfaces.ParadeView;
 
+import freemarker.template.SimpleHash;
+
 public class RowStoreViewManager implements ParadeView {
 
-    public String getParadeViewHeader() {
-        String header = "<th>Name, Path</th><th>Description</th>";
-        return header;
+    public void setParadeViewHeader(List headers) {
+        headers.add("Name, Path");
+        headers.add("Description");
     }
-
-    public String getParadeView(Row r) {
-        String view = "<a href='/browse.jsp?context=" + r.getRowname() + "'>" + r.getRowname() + "</a> " + "<a href='"
-                + r.getRowname() + "'>(Surf)</a>" + "<br><font size='-1'>" + r.getRowpath() + "</font>" + "</td><td>"
-                + r.getDescription();
-        return view;
+    
+    public void setParadeView(SimpleHash rowInformation, Row r) {
+        SimpleHash rowModel = new SimpleHash();
+        
+        rowModel.put("rowname", r.getRowname());
+        rowModel.put("rowpath", r.getRowpath());
+        rowModel.put("rowdescription", r.getDescription());
+        
+        rowInformation.put("rowstore", rowModel);
+        
     }
 
 }

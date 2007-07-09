@@ -91,10 +91,4 @@ public class Row {
         this.rowdata = rowdata;
     }
 
-    /*
-     * public File getRoot() { return root; }
-     * 
-     * public void setRoot(File root) { this.root = root; }
-     */
-
 }

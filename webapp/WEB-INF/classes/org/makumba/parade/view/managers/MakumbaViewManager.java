@@ -1,21 +1,25 @@
 package org.makumba.parade.view.managers;
 
+import java.util.List;
+
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowMakumba;
 import org.makumba.parade.view.interfaces.ParadeView;
 
+import freemarker.template.SimpleHash;
+
 public class MakumbaViewManager implements ParadeView {
 
-    public String getParadeViewHeader() {
-        String header = "<th>Makumba version</th>";
-        return header;
+    public void setParadeViewHeader(List headers) {
+        headers.add("Makumba version");
     }
 
-    public String getParadeView(Row r) {
+    public void setParadeView(SimpleHash rowInformation, Row r) {
+        SimpleHash makModel = new SimpleHash();
         RowMakumba makdata = (RowMakumba) r.getRowdata().get("makumba");
-
-        String view = makdata.getVersion();
-        return view;
+        
+        makModel.put("version", makdata.getVersion());
+        rowInformation.put("mak", makModel);
     }
 
 }

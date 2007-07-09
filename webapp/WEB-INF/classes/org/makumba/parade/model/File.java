@@ -184,5 +184,9 @@ public class File {
 
         return children;
     }
+    
+    public String getRelativePath() {
+        return (path.substring(row.getRowpath().length() + 1).replace(java.io.File.separator, "/"));
+    }
 
 }
