@@ -30,6 +30,11 @@
      Dispatches actions to right places, and performs needed controller actions
   ]]>
   </description>
+  
+  <!-- ========== Form beans ============================== -->
+  <form-beans>
+    <form-bean name="FileUpload" type="org.makumba.parade.controller.UploadForm"/>
+  </form-beans>
 
   <!-- ========== Global Forward Definitions ============================== -->
   <global-forwards>
@@ -50,9 +55,20 @@
                  >
           
           <forward name="browse" path="/servlet/browse" />
-          <forward name="upload" path="/uploadFile.jsp" />
           <forward name="edit" path="/servlet/edit" />
           
+      </action>
+      
+      <!-- File upload -->
+      <action    path="/FileUpload"
+                 type="org.makumba.parade.controller.FileAction"
+                 name="FileUpload"
+                 scope="request"
+                 validate="true"
+                 parameter="op"
+                 input="/webapp/FileUpload.jsp">
+         
+          <forward name="browse" path="/servlet/browse"/>
       </action>
       
       <!-- Command view -->
@@ -64,7 +80,7 @@
           <forward name="files" path="/servlet/browse" />
           
       </action>
-      
+       
       <!-- Edit view -->
       <action    path="/Edit"
                  type="org.makumba.parade.controller.EditAction"
@@ -179,6 +195,7 @@
       </action>
 -->
   </action-mappings>
+  
 
   <!-- ========== Controller Configuration ================================ -->
 

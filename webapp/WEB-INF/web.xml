@@ -67,6 +67,12 @@
 	   <servlet-name>edit</servlet-name>
 	   <servlet-class>org.makumba.parade.view.FileEditorServlet</servlet-class>
 	 </servlet>
+	 
+	 <servlet>
+	   <servlet-name>upload</servlet-name>
+	   <servlet-class>org.makumba.parade.view.FileUploadServlet</servlet-class>
+	 </servlet>
+	 
 <!-- 
 	 <servlet-mapping>
 	   <servlet-name>invoker</servlet-name>

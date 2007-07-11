@@ -7,6 +7,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.FormFile;
 import org.makumba.parade.model.Parade;
 
 public class FileAction extends Action {
@@ -20,11 +21,11 @@ public class FileAction extends Action {
         String op = request.getParameter("op");
         
         // we reconstruct the absolute path
-        String absolutePath = Parade.constructAbsolutePath(context, path);
-        
-        String[] params = { request.getParameter("params"), absolutePath};
 
         if (op != null && op.startsWith("deleteFile")) {
+            String absolutePath = Parade.constructAbsolutePath(context, path);
+            String[] params = { request.getParameter("params"), absolutePath};
+
             Object result[] = CommandController.onDeleteFile(context, params);
             request.setAttribute("result", (String) result[0]);
             request.setAttribute("success", (Boolean) result[1]);
@@ -38,8 +39,26 @@ public class FileAction extends Action {
             
             request.setAttribute("context", context);
             request.setAttribute("path", path);
+            request.setAttribute("display", "command");
+            request.setAttribute("view", "commandOutput");
+            request.setAttribute("file", file);
+
+            UploadForm uploadForm = (UploadForm)form;
+
+            // Process the FormFile
+            FormFile theFile = uploadForm.getTheFile();
+            String contentType = theFile.getContentType();
+            String fileName    = theFile.getFileName();
+            int fileSize       = theFile.getFileSize();
+            byte[] fileData    = theFile.getFileData();
             
-            return (mapping.findForward("upload"));
+            // upload the file
+            Object result[] = CommandController.uploadFile(context, path, fileName, contentType, fileSize, fileData);
+            request.setAttribute("result", (String) result[0]);
+            request.setAttribute("success", (Boolean) result[1]);
+            
+            return mapping.findForward("browse");
+           
         }
 
         request.setAttribute("context", context);

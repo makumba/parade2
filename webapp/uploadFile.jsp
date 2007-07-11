@@ -1,24 +1,21 @@
-<%-- $Header$ --%>
-<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak" %>
-<%
-String context=request.getParameterValues("context")[0];
+<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 
-String path="";
-if(request.getParameterValues("path")!=null)
-	path=request.getParameterValues("path")[0];
+<html:html locale="true">
+<head>
+<title>ParaDe file upload</title>
+<html:base/>
+</head>
+<body bgcolor="white">
+<html:form action="/FileUpload" method="post" enctype="multipart/form-data">
+Choose file: <html:file property="theFile"/> 
 
-%>
-<mak:form action="/uploadFileResponse.jsp" method="post"  
-	message="file uploaded">
-	
-	<% // this is the upload, it can be called anything else than upload
-	  // it will automatically add the form ENCTYPE=multipart/form-data %>
-	Upload a file: 
-	<mak:input name="theFile" dataType="text" type="file" />
-	<% // test of normal http parameters %>
-	<input type=hidden name=context value="<%=context%>">
-	<input type=hidden name=path value="<%=path%>">
-	<input type=checkbox name=binary checked id=bin disabled><label for=bin>Binary</label>
-	<input type=checkbox name=overwrite checked id=ovr disabled><label for=ovr>Overwrite</label>
-	<input type=submit value=Upload>
-</mak:form>
+<input type="hidden" name="context" value="${param.context}"/>
+<input type="hidden" name="path" value="${param.path}"/>
+<input type="hidden" name="op" value="upload"/>
+
+<html:submit>Upload File</html:submit>
+
+</html:form>
+</body>
+</html:html>

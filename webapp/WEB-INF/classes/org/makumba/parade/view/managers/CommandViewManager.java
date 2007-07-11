@@ -1,9 +1,12 @@
 package org.makumba.parade.view.managers;
 
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -96,31 +99,41 @@ public class CommandViewManager implements CommandView {
 
     }
 
-    public String uploadFile(String path, String file, Object content, Object context) {
 
-        boolean success = true;
-
-        try {
-            OutputStream dest = new BufferedOutputStream(new FileOutputStream(path + File.separator + file));
-            ((org.makumba.Text) content).writeTo(dest);
-            dest.close();
-        } catch (Exception ew) {
-            success = false;
-            return ("Error writing file: " + ew);
-        }
-
-        if (success) {
-            Session s = InitServlet.getSessionFactory().openSession();
-            Transaction tx = s.beginTransaction();
-
-            Parade p = (Parade) s.get(Parade.class, new Long(1));
-            FileManager fileMgr = new FileManager();
-            fileMgr.uploadFile(p, path + File.separator + file, (String) context);
-
-            tx.commit();
-            s.close();
-        }
-        return ("");
-    }
+    public static String getUploadResponseView(String context, String path, String fileName, String contentType, int fileSize, String saveFilePath) {
+        StringWriter resultWriter = new StringWriter();
+        PrintWriter out = new PrintWriter(resultWriter);
     
+        Template temp = null;
+        try {
+            temp = InitServlet.getFreemarkerCfg().getTemplate("uploadFileResponse.ftl");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        /* Creating the data model */
+        SimpleHash root = new SimpleHash();
+        root.put("rowName", context);
+        root.put("relativeFilePath", path + java.io.File.separator + fileName);
+        root.put("saveFilePath", saveFilePath);
+        root.put("contentType", contentType);
+        root.put("contentLength", fileSize);
+        root.put("path", path);
+        
+        /* Merge data model with template */
+        try {
+            temp.process(root, out);
+        } catch (TemplateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        out.flush();
+        return resultWriter.toString();
+    }
+
 }
