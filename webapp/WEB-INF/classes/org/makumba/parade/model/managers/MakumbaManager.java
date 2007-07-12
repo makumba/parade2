@@ -25,9 +25,14 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
     public void rowRefresh(Row row) {
         RowMakumba makumbadata = new RowMakumba();
         makumbadata.setDataType("makumba");
-
-        String root = row.getRowpath() + File.separator + "public_html";
-        makumbadata.setVersion(getMakumbaVersion(root));
+        
+        // if this is the ParaDe row, there's no Makumba
+        if(row.getRowname().equals("(root)")) {
+            makumbadata.setVersion("No makumba.jar");
+        } else {
+            String root = row.getRowpath() + File.separator + "public_html";
+            makumbadata.setVersion(getMakumbaVersion(root));
+        }
 
         row.addManagerData(makumbadata);
     }
