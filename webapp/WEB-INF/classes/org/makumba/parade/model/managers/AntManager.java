@@ -21,7 +21,7 @@ import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
-import org.makumba.HtmlUtils;
+import org.makumba.parade.tools.HtmlUtils;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowAnt;
 import org.makumba.parade.model.interfaces.ParadeManager;

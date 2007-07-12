@@ -62,7 +62,7 @@ public class TomcatManager implements ServletContainer {
                 sw.write(buf, 0, n);
             result = sw.toString();
         } catch (IOException e) {
-            logger.error(new org.makumba.util.RuntimeWrappedException(e));
+            logger.error(e);
         }
         return result;
     }

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.makumba.HtmlUtils;
+import org.makumba.parade.tools.HtmlUtils;
 import org.makumba.parade.init.ParadeProperties;
 
 public class LogServlet extends HttpServlet {

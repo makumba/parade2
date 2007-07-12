@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.makumba.HtmlUtils;
+import org.makumba.parade.tools.HtmlUtils;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
