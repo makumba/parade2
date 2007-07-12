@@ -1,6 +1,6 @@
 package org.makumba.parade.init;
 
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -8,11 +8,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 public class RowProperties {
 
     private Properties state;
+    
+    private static String DEFAULT_ROWSFILE = "/rows.properties";
 
     public Map rowDefinitions = new HashMap();
+    
+    static Logger logger = Logger.getLogger(ParadeProperties.class.getName());
 
     public RowProperties() {
         
@@ -55,25 +61,29 @@ public class RowProperties {
 
     /* reads row definition from properties file */
     public void readRowDefinitions() {
-        java.io.File f = new java.io.File(ParadeProperties.getParadeBase() + java.io.File.separator + "rows.properties");
-
         state = new Properties();
         try {
-            if (f.exists())
-                state.load(new FileInputStream(f));
-            else {
-                // if there's no row definition file, we create one
-                state.setProperty("", ParadeProperties.getParadeBase());
-                state.store(new FileOutputStream(f), 
+            state.load(RowProperties.class.getResourceAsStream(DEFAULT_ROWSFILE));
+            
+        } catch (Exception e) {
+            // if there's no row definition file, we create one
+            logger.warn("No rows.properties file found, attempting to generate one");
+            state.setProperty("", ParadeProperties.getParadeBase());
+            try {
+                state.store(new FileOutputStream(new java.io.File(ParadeProperties.getParadeBase() + java.io.File.separator + "webapp" + java.io.File.separator + "WEB-INF" + java.io.File.separator + "classes" + java.io.File.separator + "rows.properties")), 
                         "rows\n"
                         + "# example:\n"
                         + "# <name_appl>=<path, e.g. ..\\iplabWeb>\n"
                         + "# rowdata.<name_appl>.obs=<space for notes>\n"
                         + "# rowdata.<name_appl>.webapp=<relative path to the context, e.g. 'public_html'>\n");
+            } catch (FileNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    }
         
         for(Enumeration e= state.keys(); e.hasMoreElements();) {
             String key = (String) e.nextElement();

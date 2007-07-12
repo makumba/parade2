@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 public class ParadeProperties {
 
     
-    static String fileName = getParadeBase() + java.io.File.separator + "parade.properties";
+    static String DEFAULT_PROPERTYFILE = "/parade.properties";
 
     private static Properties config;
 
@@ -25,7 +25,7 @@ public class ParadeProperties {
 
         try {
             config = new Properties();
-            config.load(new FileInputStream(fileName));
+            config.load(ParadeProperties.class.getResourceAsStream(DEFAULT_PROPERTYFILE));
         } catch (Throwable t) {
             logger.error("Error while loading parade.properties", t);
         }

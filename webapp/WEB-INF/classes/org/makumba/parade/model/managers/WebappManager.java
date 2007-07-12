@@ -28,7 +28,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
     Properties config;
 
-    String fileName = ParadeProperties.getParadeBase() + java.io.File.separator + "servletContext.properties";
+    private static String DEFAULT_SERVLETCONTEXTPROPERTIES = "/servletContext.properties";
 
     static Logger logger = Logger.getLogger(WebappManager.class.getName());
 
@@ -54,7 +54,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
     private void loadConfig() {
         try {
             config = new Properties();
-            config.load(new FileInputStream(fileName));
+            config.load(this.getClass().getResourceAsStream(DEFAULT_SERVLETCONTEXTPROPERTIES));
         } catch (Throwable t) {
             logger.error("Error loading servletcontext.properties", t);
         }
@@ -69,7 +69,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
                 config.put("parade.servletContext.paradeContext", new File(ParadeProperties.getParadeBase())
                         .getCanonicalPath());
                 container.makeConfig(config);
-                config.store(new FileOutputStream(fileName), "Parade servlet context config");
+                config.store(new FileOutputStream(ParadeProperties.getParadeBase() + java.io.File.separator + "webapp" + java.io.File.separator + "WEB-INF" + java.io.File.separator + "classes" + java.io.File.separator + "servletcontext.properties"), "Parade servlet context config");
                 container.init(config);
             } catch (Throwable t) {
                 logger.error("Error getting servlet container", t);
