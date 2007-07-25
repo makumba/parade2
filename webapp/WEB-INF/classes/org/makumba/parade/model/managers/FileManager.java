@@ -6,7 +6,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
@@ -32,6 +37,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
      * Creates a first File for the row which is its root dir and invokes its refresh() method
      */
     public void rowRefresh(Row row) {
+        logger.debug("Refreshing row information for row "+row.getRowname());
 
         File root = new File();
 
@@ -56,12 +62,34 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
     }
 
-    public void directoryRefresh(Row row, String path, boolean local) {
+    public synchronized void directoryRefresh(Row row, String path, boolean local) {
         java.io.File currDir = new java.io.File(path);
 
         if (currDir.isDirectory()) {
-
+            
             java.io.File[] dir = currDir.listFiles();
+            
+            Set dirContent = new HashSet();
+            for(int i = 0; i < dir.length; i++) {
+                dirContent.add(dir[i].getAbsolutePath());
+            }
+            
+            // clear the cache of the entries of this directory
+            File fileInCache = (File) row.getFiles().get(path);
+            if(fileInCache != null) {
+                List children = fileInCache.getChildren();
+                for(int i = 0; i<children.size(); i++) {
+                    File child = (File) children.get(i);
+
+                    // if we do a local update only, we keep the subdirectories
+                    if (local && child.getIsDir() && dirContent.contains(child.getPath()))
+                        continue;
+                    
+                    // otherwise, we trash
+                    child.delete();
+                }
+            }
+            
             for (int i = 0; i < dir.length; i++) {
                 if (filter.accept(dir[i]) && !(dir[i].getName() == null)) {
 
