@@ -45,6 +45,8 @@ public class WebappManager implements RowRefresher, ParadeManager {
     }
 
     public void rowRefresh(Row row) {
+        logger.debug("Refreshing row information for row "+row.getRowname());
+
         RowWebapp webappdata = (RowWebapp) row.getRowdata().get("webapp");
 
         setWebappInfo(row, webappdata);

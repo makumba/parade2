@@ -76,6 +76,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
     }
 
     public void rowRefresh(Row row) {
+        logger.debug("Refreshing row information for row "+row.getRowname());
 
         RowCVS cvsdata = new RowCVS();
         cvsdata.setDataType("cvs");

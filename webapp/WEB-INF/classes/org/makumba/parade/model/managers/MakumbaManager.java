@@ -6,6 +6,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import org.apache.log4j.Logger;
+import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowMakumba;
 import org.makumba.parade.model.interfaces.ParadeManager;
@@ -13,16 +15,12 @@ import org.makumba.parade.model.interfaces.RowRefresher;
 
 
 public class MakumbaManager implements RowRefresher, ParadeManager {
-
-    final static int NEWFORM = 0;
-
-    final static int ADDFORM = 10;
-
-    final static int LIST = 20;
-
-    final static int EDITFORM = 30;
+    
+    private static Logger logger = Logger.getLogger(MakumbaManager.class.getName());
 
     public void rowRefresh(Row row) {
+        logger.debug("Refreshing row information for row "+row.getRowname());
+
         RowMakumba makumbadata = new RowMakumba();
         makumbadata.setDataType("makumba");
         

@@ -32,6 +32,8 @@ public class AntManager implements RowRefresher, ParadeManager {
     static Logger logger = Logger.getLogger(AntManager.class.getName());
 
     public void rowRefresh(Row row) {
+        logger.debug("Refreshing row information for row "+row.getRowname());
+        
         RowAnt antdata = new RowAnt();
         antdata.setDataType("ant");
 
