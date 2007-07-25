@@ -82,7 +82,7 @@ public class CommandController {
         boolean success = result.startsWith("OK");
         if (success) {
             if (action.equals("newFile"))
-                return res(FileDisplay.creationFileOK(row.getRowname(), relativepath, filepath, filename), success);
+                return res(FileDisplay.creationFileOK(row.getRowname(), relativepath, filename), success);
             if (action.equals("newDir"))
                 return res(FileDisplay.creationDirOK(filename), success);
             if (action.equals("deleteFile"))

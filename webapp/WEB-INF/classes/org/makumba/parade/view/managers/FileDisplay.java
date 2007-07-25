@@ -26,9 +26,9 @@ import freemarker.template.TemplateException;
 public class FileDisplay {
 
     // TODO move this somewhere else
-    public static String creationFileOK(String rowname, String path, String filepath, String filename) {
+    public static String creationFileOK(String rowname, String path, String filename) {
         return "New file " + filename + " created. " + "<a href='/File.do?op=editFile&context=" + rowname + "&path="
-                + path + "&file=" + filepath+"'>Edit</a></b>";
+                + path + "&file=" + filename+"'>Edit</a></b>";
     }
 
     public static String creationDirOK(String filename) {
