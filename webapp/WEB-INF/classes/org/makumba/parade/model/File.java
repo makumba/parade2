@@ -42,6 +42,22 @@ public class File {
         CVSMgr.directoryRefresh(row, this.getPath(), false);
         trackerMgr.directoryRefresh(row, this.getPath(), false);
     }
+    
+    /* Calls the refresh() directoryRefresh() on the directory managers locally */
+    public void localRefresh() {
+        FileManager fileMgr = new FileManager();
+        CVSManager CVSMgr = new CVSManager();
+        TrackerManager trackerMgr = new TrackerManager();
+
+        fileMgr.directoryRefresh(row, this.getPath(), true);
+        CVSMgr.directoryRefresh(row, this.getPath(), true);
+        trackerMgr.directoryRefresh(row, this.getPath(), true);
+    }
+    
+    /* Deletes this File */
+    public void delete() {
+        row.getFiles().remove(path);
+    }
 
     public void setPath(String path) {
         this.path = path;
