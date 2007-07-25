@@ -53,7 +53,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 </td>
 <td align='right'>
 <a href='/File.do?op=editFile&context=${rowName}&path=${path}&file=${file.name}'><img src='/images/edit.gif' alt='Edit ${file.name}'></a>
-<a href="javascript:deleteFile('${file.pathEncoded}','${file.name}')"><img src='/images/delete.gif' alt='Delete ${file.name}'></a>
+<a href="javascript:deleteFile('${file.path}','${file.name}')"><img src='/images/delete.gif' alt='Delete ${file.name}'></a>
 </td>
 </#if>
 <td><a title='${file.dateLong}'>${file.dateNice}</a></td>
