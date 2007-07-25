@@ -67,7 +67,9 @@ public class InitServlet extends HttpServlet implements Runnable {
             
             freemarkerCfg = new freemarker.template.Configuration();
             
-            freemarkerCfg.setDirectoryForTemplateLoading(new File(".\\webapp\\WEB-INF\\classes\\org\\makumba\\parade\\view\\templates"));
+            String templatesPath = InitServlet.class.getResource("/org/makumba/parade/view/templates").getPath();
+            
+            freemarkerCfg.setDirectoryForTemplateLoading(new File(templatesPath));
 
             freemarkerCfg.setObjectWrapper(new DefaultObjectWrapper());
 
