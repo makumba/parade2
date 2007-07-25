@@ -56,6 +56,8 @@ port="8080"               maxThreads="150" minSpareThreads="5" maxSpareThreads="
       <Host name="localhost" debug="0" appBase="webapps_dummy"
        unpackWARs="true" autoDeploy="true"
        xmlValidation="false" xmlNamespaceAware="false">
+       
+       <DefaultContext crossContext="true"/>
 
 	<Context path="" docBase="../../webapp" debug="0" reload="true"/>
 

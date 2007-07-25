@@ -6,6 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
+import net.contentobjects.jnotify.JNotify;
+import net.contentobjects.jnotify.JNotifyException;
+import net.contentobjects.jnotify.JNotifyListener;
+
 import org.apache.log4j.Logger;
 
 import org.hibernate.Session;
@@ -45,9 +49,11 @@ public class Parade {
     public MakumbaManager makMgr = new MakumbaManager();
 
     /*
-     * 1. Calls create row for the new/to be updated rows 2. Calls for each row: - rowRefresh() - directoryRefresh()
+     * 1. Calls create row for the new/to be updated rows 2. Calls for each row: - rowRefresh() - directoryRefresh() 3.
+     * Add listener to trigger refresh if needed
      */
     public void refresh() {
+        logger.info("Starting ParaDe-wide refresh...");
 
         this.baseDir = ParadeProperties.getParadeBase();
 
@@ -56,6 +62,7 @@ public class Parade {
         if (rowstore.isEmpty()) {
             logger.warn("No row definitions found, check RowProperties");
         }
+
         createRows(rowstore);
 
         /*
@@ -74,10 +81,16 @@ public class Parade {
             webappMgr.rowRefresh(r);
             makMgr.rowRefresh(r);
         }
+
+        addJNotifyListeners();
+
+        logger.info("ParaDe-wide refresh finished");
+
     }
 
     /* Creates/updates rows */
     private void createRows(Map rowstore) {
+        logger.info("Updating rowstore cache...");
 
         Iterator i = rowstore.keySet().iterator();
         Map rowDefinition = new HashMap();
@@ -112,7 +125,7 @@ public class Parade {
 
                 newRow(storedRow, rowDefinition);
 
-            // this is a new row
+                // this is a new row
             } else {
 
                 // creating Row object and passing the information
@@ -134,20 +147,23 @@ public class Parade {
 
             }
         }
-        
-        //removing deleted rows from cache
+
+        // removing deleted rows from cache
         Iterator j = this.getRows().keySet().iterator();
-        while(j.hasNext()) {
+        while (j.hasNext()) {
             String key = (String) j.next();
-            
+
             // if the new rowstore definition doesn't contain the row, we trash it
             if (!rowstore.containsKey(key)) {
+                logger.info("Dropping row " + key + " from cache.");
                 this.getRows().remove(key);
             }
         }
     }
 
     public void newRow(Row r, Map rowDefinition) {
+        logger.info("Registering new row " + r.getRowname());
+
         r.setParade(this);
         rows.put(r.getRowname(), r);
 
@@ -157,6 +173,89 @@ public class Parade {
         webappMgr.newRow(r.getRowname(), r, rowDefinition);
         makMgr.newRow(r.getRowname(), r, rowDefinition);
 
+    }
+
+    private void addJNotifyListeners() {
+
+        // for each row we create listeners that will inform us whenever a change occurs in the filesystem
+        Iterator i = this.getRows().keySet().iterator();
+        while (i.hasNext()) {
+
+            // let's get the path to where the interesting data is
+            Row r = (Row) getRows().get(i.next());
+
+            // we're not interested in the ParaDe row
+            if (r.getRowpath().equals(getBaseDir()))
+                continue;
+
+            String webappPath = ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
+            String path = r.getRowpath() + java.io.File.separator + webappPath;
+
+            // what kind of changes do we want to watch
+            int mask = JNotify.FILE_CREATED | JNotify.FILE_DELETED | JNotify.FILE_MODIFIED | JNotify.FILE_RENAMED;
+
+            // we also want to know what happens in the subdirectories
+            boolean watchSubtree = true;
+
+            // now we start watching
+            // FIXME the updates here should be much more precise
+            try {
+                int watchID = JNotify.addWatch(path, mask, watchSubtree, new JNotifyListener() {
+                    public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
+                        //System.out.println("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
+                        //        + oldName + " -> " + newName);
+                        directoryRefresh(rootPath);
+                    }
+
+                    public void fileModified(int wd, String rootPath, String name) {
+                        //System.out.println("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", "
+                        //        + name);
+                        directoryRefresh(rootPath);
+                    }
+
+                    public void fileDeleted(int wd, String rootPath, String name) {
+                        //System.out.println("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
+                        //        + name);
+                        directoryRefresh(rootPath);
+                    }
+
+                    public void fileCreated(int wd, String rootPath, String name) {
+                        //System.out.println("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
+                        //        + name);
+                        directoryRefresh(rootPath);
+                    }
+
+                    private void directoryRefresh(String rootPath) {
+                        logger.info("Refreshing cache for directory " + rootPath);
+                        boolean row_found = false;
+                        Row r = null;
+
+                        Session s = InitServlet.getSessionFactory().openSession();
+                        Transaction tx = s.beginTransaction();
+
+                        Parade p = (Parade) s.get(Parade.class, new Long(1));
+                        Iterator i = p.getRows().keySet().iterator();
+
+                        while (i.hasNext() && !row_found) {
+                            r = (Row) p.getRows().get(i.next());
+                            row_found = rootPath.startsWith(r.getRowpath());
+                        }
+
+                        File modifiedDir = (File) r.getFiles().get(rootPath);
+                        modifiedDir.localRefresh();
+
+                        tx.commit();
+                        s.close();
+                        logger.info("Finished refreshing cache for directory " + rootPath);
+                    }
+                });
+                logger.debug("Adding filesystem watch to row " + r.getRowname());
+            } catch (JNotifyException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
     }
 
     /* Model related fields and methods */
@@ -194,24 +293,28 @@ public class Parade {
         Transaction tx = s.beginTransaction();
 
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        
+
         Row entryRow = null;
-        
+
         if (context != null)
             entryRow = Row.getRow(p, context);
-        
+
         String absolutePath = entryRow.getRowpath();
-        
+
         tx.commit();
         s.close();
-        
-        if(relativePath == null || relativePath == "") return absolutePath;
-        
-        if(relativePath.equals("/")) return absolutePath;
-        
-        if(relativePath.endsWith("/")) relativePath = relativePath.substring(0, relativePath.length() - 1);
-        absolutePath = entryRow.getRowpath() + java.io.File.separator + relativePath.replace("/", java.io.File.separator);
-        
+
+        if (relativePath == null || relativePath == "")
+            return absolutePath;
+
+        if (relativePath.equals("/"))
+            return absolutePath;
+
+        if (relativePath.endsWith("/"))
+            relativePath = relativePath.substring(0, relativePath.length() - 1);
+        absolutePath = entryRow.getRowpath() + java.io.File.separator
+                + relativePath.replace("/", java.io.File.separator);
+
         return absolutePath;
 
     }

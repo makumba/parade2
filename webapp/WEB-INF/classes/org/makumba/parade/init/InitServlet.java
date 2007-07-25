@@ -7,6 +7,10 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import net.contentobjects.jnotify.JNotify;
+import net.contentobjects.jnotify.JNotifyException;
+import net.contentobjects.jnotify.JNotifyListener;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -104,16 +108,22 @@ public class InitServlet extends HttpServlet implements Runnable {
         }
 
         p.refresh();
+        
+        String path = p.getBaseDir();
 
         tx.commit();
 
         session.close();
-
+        
         System.out.println("INFO: Launching ParaDe finished at " + new java.util.Date());
         long end = System.currentTimeMillis();
 
         long refresh = end - start;
         System.out.println("INFO: Initialisation took " + refresh + " ms");
+        
+        
+
+        
 
     }
 
