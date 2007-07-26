@@ -71,7 +71,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
                 config.put("parade.servletContext.paradeContext", new File(ParadeProperties.getParadeBase())
                         .getCanonicalPath());
                 container.makeConfig(config);
-                config.store(new FileOutputStream(ParadeProperties.getParadeBase() + java.io.File.separator + "webapp" + java.io.File.separator + "WEB-INF" + java.io.File.separator + "classes" + java.io.File.separator + "servletcontext.properties"), "Parade servlet context config");
+                config.store(new FileOutputStream(ParadeProperties.getClassesPath() + java.io.File.separator + "servletcontext.properties"), "Parade servlet context config");
                 container.init(config);
             } catch (Throwable t) {
                 logger.error("Error getting servlet container", t);
@@ -134,9 +134,9 @@ public class WebappManager implements RowRefresher, ParadeManager {
                 String antCommand = "ant";
 
                 File f = new File(reloadLog);
-                f.delete();
                 Runtime.getRuntime().exec(antCommand + " -buildfile " + ParadeProperties.getParadeBase() + java.io.File.separator + "build.xml reload");
-
+                f.delete();
+                
                 while (!f.exists()) {
                     try {
                         Thread.currentThread().sleep(100);
