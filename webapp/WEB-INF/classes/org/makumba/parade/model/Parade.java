@@ -113,16 +113,21 @@ public class Parade {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+                
+                // the path is modified
                 if (!canonicalPath.equals(storedRow.getRowpath())) {
                     storedRow.setRowpath((String) rowDefinition.get("path"));
                     logger.warn("The path of row " + rowname + " was updated to " + (String) rowDefinition.get("path"));
                 }
+                
+                // the description is modified
                 if (!((String) rowDefinition.get("desc")).trim().equals(storedRow.getDescription())) {
                     storedRow.setDescription((String) rowDefinition.get("desc"));
                     logger.warn("The description of row " + rowname + " was updated to "
                             + (String) rowDefinition.get("desc"));
                 }
 
+                // updating the specific row data
                 newRow(storedRow, rowDefinition);
 
                 // this is a new row
