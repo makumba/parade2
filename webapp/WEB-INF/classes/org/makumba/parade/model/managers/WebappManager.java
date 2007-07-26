@@ -87,13 +87,18 @@ public class WebappManager implements RowRefresher, ParadeManager {
         String webinfDir = row.getRowpath() + java.io.File.separator + webappdata.getWebappPath()
                 + java.io.File.separator + "WEB-INF";
 
-        if (!new File(webinfDir).isDirectory()) {
+        if (!new java.io.File(webinfDir).isDirectory()) {
+            logger.warn("No WEB-INF directory found for row "+row.getRowname()+": directory "+webinfDir+" does not exist");
             webinfDir = "NO WEBINF";
             webappdata.setWebappPath("NO WEBINF");
             webappdata.setStatus(new Integer(ServletContainer.NOT_INSTALLED));
         }
         if (!webinfDir.equals("NO WEBINF")) {
-            webappdata.setContextname("/" + row.getRowname());
+            if(row.getRowname().equals("(root)")) {
+                webappdata.setContextname("/");
+            } else {
+                webappdata.setContextname("/" + row.getRowname());
+            }
             webappdata.setStatus(new Integer(getServletContainer().getContextStatus(webappdata.getContextname())));
         }
     }
