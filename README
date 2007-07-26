@@ -1,0 +1,25 @@
+$Id$
+
+If you intend to develop ParaDe, you probably should know how to configure it.
+
+This checkout provides you with two things:
+- one way to run ParaDe from Eclipse
+- one way to run ParaDe on a server
+
+== Setting up ParaDe for Eclipse
+In the first case, you need to specify your 'catalina.home' variable so that Eclipse knows where is a tomcat
+it can use to run ParaDe. Go to "Run->Run->Arguments", then click on "variables" in the lower box, and create a new
+"catalina.home" var that points to a fresh tomcat checkout. Make sure that after creating the variable, you
+did not alter the launch parameters (by default Eclipse inserts selected vars in the parameters).
+
+Now need to go to webapp/WEB-INF/classes and rename parade-eclipse.properties to parade.properties.
+This property file contains the properties corresponding to the folder structure used in Eclipse
+
+== Setting up ParaDe on a server
+Please refer to the INSTALL file and follow the instructions
+
+
+Basically, the difference between the two configurations is that in the case of Eclipse, the contents of "tomcat-eclipse"
+are used with the binaries of the tomcat you indicate, while in the case of an installation on a server, the script
+alters a fresh tomcat installation. On a long run the idea would be to deploy ParaDe as a WAR, but this is not so easy to
+achieve.
