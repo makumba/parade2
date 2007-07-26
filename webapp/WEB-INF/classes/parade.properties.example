@@ -8,14 +8,14 @@
 http.port=8080
 
 #where is the web application?
-webapp.path=tomcat-parade/webapps/parade
+webapp.path=webapps/parade
 
 #manager access
 tomcat.manager.user=someuser
 tomcat.manager.pass=somepass
 
 #where are the logs being stored?
-tomcat.output=tomcat-parade/logs/server-output.txt
+tomcat.output=logs/server-output.txt
 
 #parade.authorizerClass=org.eu.best.BestMemberAuthorizer
 parade.authorizationMessage=Parade, use password of your BEST private area account
@@ -24,8 +24,6 @@ parade.authorizationDB=localhost_mysql_karamba
 ant.displayedOps=compile, clean, getTaglibs, getMakumba, getLocalMakumba, copyLocalMakumba, doc, applets
 
 access.managers=org.makumba.parade.LoggingManager
-
-common.libs=../../util-java/lib
 
 makumba.site=http://download.makumba.org/makumba/download/
 cvs.site=http://cvs.makumba.org/cgi-bin/cvsweb.cgi/
