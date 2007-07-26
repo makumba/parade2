@@ -8,6 +8,5 @@ cp webapp/WEB-INF/classes/org/makumba/parade/tools/HttpServletRequestDummy*.clas
 mkdir  tomcat-fresh/webapps/parade
 mkdir  tomcat-fresh/webapps_dummy
 cp -r webapp/* tomcat-fresh/webapps/parade
-cp *.properties tomcat-fresh/
 cp lib/mysql.jar lib/ant-1.6.5.jar lib/ant-launcher.jar tomcat-fresh/webapps/parade/WEB-INF/lib/
-mv tomcat-fresh/ tomcat-parade/
+mv tomcat-fresh/ tomcat-parade
