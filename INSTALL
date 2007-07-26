@@ -1,13 +1,28 @@
 $Id$
 
-Installation instructions for ParaDe 2 (26/07/2007):
+Installation instructions for ParaDe 2
+======================================
 
-1) Get a Tomcat version and extract it into the folder tomcat-fresh
+By following these instructions, you'll obtain a directory called "tomcat-parade" containing everything you need
+to run a production version of ParaDe.
+
+1) Get a Tomcat version and extract it into the folder tomcat-fresh, e.g. by typing
+   cp -r ../apache-tomcat-5.5.28 tomcat-fresh
+   
 2) Make sure you have a MySQL server running on port 3306 with an empty database called "parade".
    The settings can be changed in webapp/WEB-INF/classes/hibernate.cfg.xml if needed
-3) Check if the server.xml in tomcat/conf corresponds to your tomcat version
+
+3) Check if the server.xml in tomcat/conf corresponds to the tomcat you'll use. In order to do so,
+   go to tomcat/conf and if necessary copy the appropriate server-tomcatXX.xml file to server.xml
+   By default server.xml is working for a tomcat 5.5
+
 4) Run the install script: sh install.sh
-5) Go to parade-tomcat/webapps/parade/WEB-INF/classes and configure a parade.properties file.
-   You can copy the example file given, but make sure that all the parameters in there are allright.
+
+5) Go to tomcat-parade/webapps/parade/WEB-INF/classes and copy parade.properties.example to parade.properties
+   The example file is configured to work with this installation, but you can adjust it if necessary
+
 6) That's it! You should be able to run ParaDe by launching the tomcat.sh script in the directory tomcat-parade
-   The rows.properties file will be created in the webapps/parade/WEB-INF/classes directory, edit it to add new rows
+
+7) In order to register new rows into parade, you need to edit the rows.properties file which is located in the
+   webapps/parade/WEB-INF/classes directory. By default this configuration file only contains a reference to the
+   root ParaDe row
