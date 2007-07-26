@@ -9,4 +9,5 @@ mkdir  tomcat-fresh/webapps/parade
 mkdir  tomcat-fresh/webapps_dummy
 cp -r webapp/* tomcat-fresh/webapps/parade
 cp lib/mysql.jar lib/ant-1.6.5.jar lib/ant-launcher.jar tomcat-fresh/webapps/parade/WEB-INF/lib/
+cp build.xml tomcat-fresh/webapps/parade
 mv tomcat-fresh/ tomcat-parade
