@@ -57,7 +57,10 @@ public class ParadeProperties {
             e.printStackTrace();
         }
         return paradeBase;
-
+    }
+    
+    public static String getClassesPath() {
+        return new java.io.File(RowProperties.class.getResource("/parade.properties").getPath()).getParent();
     }
 
 }
