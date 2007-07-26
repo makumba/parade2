@@ -111,8 +111,6 @@ public class InitServlet extends HttpServlet implements Runnable {
 
         p.refresh();
         
-        String path = p.getBaseDir();
-
         tx.commit();
 
         session.close();

@@ -22,12 +22,6 @@ public class RowProperties {
 
     public RowProperties() {
         
-        /* for development purposes
-
-        this.addRowDefinition("(root)", ".", "webapp", "ParaDe webapp");
-        this.addRowDefinition("test2-k", "../parade", "", "the old parade row");
-        this.addRowDefinition("manu-k", "E:\\bundle\\sources\\karamba", "public_html", "manu messing it all up again");
-        */
         readRowDefinitions();
     }
 
