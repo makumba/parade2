@@ -61,6 +61,7 @@ public class RowProperties {
 
     /* reads row definition from properties file */
     public void readRowDefinitions() {
+        
         state = new Properties();
         try {
             state.load(RowProperties.class.getResourceAsStream(DEFAULT_ROWSFILE));
@@ -70,7 +71,7 @@ public class RowProperties {
             logger.warn("No rows.properties file found, attempting to generate one");
             state.setProperty("", ParadeProperties.getParadeBase());
             try {
-                state.store(new FileOutputStream(new java.io.File(ParadeProperties.getParadeBase() + java.io.File.separator + "webapp" + java.io.File.separator + "WEB-INF" + java.io.File.separator + "classes" + java.io.File.separator + "rows.properties")), 
+                state.store(new FileOutputStream(new java.io.File(ParadeProperties.getClassesPath() + java.io.File.separator + "rows.properties")), 
                         "rows\n"
                         + "# example:\n"
                         + "# <name_appl>=<path, e.g. ..\\iplabWeb>\n"
