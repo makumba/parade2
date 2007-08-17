@@ -14,6 +14,7 @@ import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.view.managers.CodePressFileEditViewManager;
 import org.makumba.parade.view.managers.FileEditViewManager;
 
 public class FileEditorServlet extends HttpServlet {
@@ -53,8 +54,16 @@ public class FileEditorServlet extends HttpServlet {
 			} else {
                 resp.setContentType("text/html");
 				resp.setCharacterEncoding("UTF-8");
-				FileEditViewManager fileEditV = new FileEditViewManager();
-				out.println(fileEditV.getFileEditorView(r, path, file, source));
+				
+                // TODO we should give the possibility to choose which editor to use
+                // but maybe it's not that relevant anymore since almost everyone has JS
+                
+                FileEditViewManager fileEditV = new FileEditViewManager();
+				
+                //uncomment here to toggle to codepress
+                //CodePressFileEditViewManager fileEditV = new CodePressFileEditViewManager();
+                
+                out.println(fileEditV.getFileEditorView(r, path, file, source));
 			}
 		}
 		
