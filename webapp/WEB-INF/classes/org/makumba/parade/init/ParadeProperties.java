@@ -27,7 +27,7 @@ public class ParadeProperties {
             config = new Properties();
             config.load(ParadeProperties.class.getResourceAsStream(DEFAULT_PROPERTYFILE));
         } catch (Throwable t) {
-            logger.error("Error while loading parade.properties", t);
+            logger.error("Error while loading parade.properties. Make sure you have configured a parade.properties in webapp/WEB-INF/classes (you can copy the example file)", t);
         }
     }
 
@@ -60,7 +60,7 @@ public class ParadeProperties {
     }
     
     public static String getClassesPath() {
-        return new java.io.File(RowProperties.class.getResource("/parade.properties").getPath()).getParent();
+        return new java.io.File(RowProperties.class.getResource(DEFAULT_PROPERTYFILE).getPath()).getParent();
     }
 
 }
