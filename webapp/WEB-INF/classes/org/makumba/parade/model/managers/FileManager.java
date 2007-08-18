@@ -1,7 +1,10 @@
 package org.makumba.parade.model.managers;
 
+import java.io.BufferedWriter;
 import java.io.FileFilter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
@@ -290,6 +293,11 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             return;
         cacheFile(row, f, false);
         
+    }
+    
+    public static void fileWrite(java.io.File file, String content) throws IOException{
+        PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+        pw.print(content);
     }
 
 }
