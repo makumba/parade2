@@ -1,5 +1,9 @@
 package org.makumba.parade.controller;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,6 +63,13 @@ public class FileAction extends Action {
             
             return mapping.findForward("browse");
            
+        }
+        if (op != null && op.startsWith("write")) {
+            String content = request.getParameter("source");
+            request.setAttribute("file", file);
+            request.setAttribute("content", content);
+            
+            return mapping.findForward("fileWrite");
         }
 
         request.setAttribute("context", context);
