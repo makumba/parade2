@@ -58,10 +58,10 @@ public class FileEditorServlet extends HttpServlet {
                 // TODO we should give the possibility to choose which editor to use
                 // but maybe it's not that relevant anymore since almost everyone has JS
                 
-                FileEditViewManager fileEditV = new FileEditViewManager();
+                //FileEditViewManager fileEditV = new FileEditViewManager();
 				
                 //uncomment here to toggle to codepress
-                //CodePressFileEditViewManager fileEditV = new CodePressFileEditViewManager();
+                CodePressFileEditViewManager fileEditV = new CodePressFileEditViewManager();
                 
                 out.println(fileEditV.getFileEditorView(r, path, file, source));
 			}
