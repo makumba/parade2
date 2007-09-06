@@ -84,28 +84,28 @@
         maxElementsInMemory="50000"
         eternal="false"
         overflowToDisk="false"
-        timeToLiveSeconds="120"
+        timeToLiveSeconds="180"
         />
 
     <cache name="org.makumba.parade.model.File.filedata"
         maxElementsInMemory="50000"
         eternal="false"
         overflowToDisk="false"
-        timeToLiveSeconds="120"
+        timeToLiveSeconds="180"
         />
 
     <cache name="org.makumba.parade.model.Row.files"
         maxElementsInMemory="50000"
         eternal="false"
         overflowToDisk="false"
-        timeToLiveSeconds="120"
+        timeToLiveSeconds="180"
         />
         
     <cache name="org.makumba.parade.model.AbstractFileData"
     	maxElementsInMemory="50000"
      	eternal="false"
      	overflowToDisk="false"
-     	timeToLiveSeconds="120"
+     	timeToLiveSeconds="180"
      	/>       
 
     <cache name="org.makumba.parade.model.Row.rowdata"
