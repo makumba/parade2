@@ -228,6 +228,8 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             
             return "OK#" + f.getName();
         }
+        logger.error("Error while trying to delete file " + f.getAbsolutePath() + " " + "\n"
+                + "Reason: exists: " + f.exists() + "canRead "+f.canRead() + ", canWrite "+f.canWrite());
         return "Error while trying to delete file " + f.getName();
     }
 
