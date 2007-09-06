@@ -105,12 +105,10 @@ public class InitServlet extends HttpServlet implements Runnable {
         if (p == null) {
             p = new Parade();
             p.setId(one);
-
+            p.refresh();
             session.save(p);
         }
 
-        p.refresh();
-        
         tx.commit();
 
         session.close();
