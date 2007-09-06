@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowMakumba;
+import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 
@@ -28,7 +29,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         if(row.getRowname().equals("(root)")) {
             makumbadata.setVersion("No makumba.jar");
         } else {
-            String root = row.getRowpath() + File.separator + "public_html";
+            String root = row.getRowpath() + File.separator + ((RowWebapp) row.getRowdata().get("webapp")).getWebappPath();
             makumbadata.setVersion(getMakumbaVersion(root));
         }
 
@@ -42,6 +43,9 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         try {
             java.io.File fl = new java.io.File((path + "/WEB-INF/lib/makumba.jar").replace('/',
                     java.io.File.separatorChar));
+            
+            if(!fl.exists()) return "No makumba.jar";
+            
             JarFile jar = new JarFile(fl);
             Manifest mf = jar.getManifest();
             Attributes att = mf.getAttributes("Makumba");
