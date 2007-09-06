@@ -7,7 +7,7 @@
 
 	<class name="AbstractRowData" table="RowData">
 	
-	<cache usage="read-write" />
+	<cache usage="nonstrict-read-write" />
 	
 		<id name="id" type="long" column="ROWDATA_ID">
         	<generator class="native"/>

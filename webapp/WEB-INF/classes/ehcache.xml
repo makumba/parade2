@@ -34,7 +34,7 @@
         -->
     <defaultCache
         maxElementsInMemory="10000"
-        eternal="true"
+        eternal="false"
         timeToIdleSeconds="120"
         timeToLiveSeconds="120"
         overflowToDisk="true"
@@ -82,26 +82,30 @@
 
     <cache name="org.makumba.parade.model.File"
         maxElementsInMemory="50000"
-        eternal="true"
+        eternal="false"
         overflowToDisk="false"
+        timeToLiveSeconds="120"
         />
 
     <cache name="org.makumba.parade.model.File.filedata"
         maxElementsInMemory="50000"
-        eternal="true"
+        eternal="false"
         overflowToDisk="false"
+        timeToLiveSeconds="120"
         />
 
     <cache name="org.makumba.parade.model.Row.files"
         maxElementsInMemory="50000"
-        eternal="true"
+        eternal="false"
         overflowToDisk="false"
+        timeToLiveSeconds="120"
         />
         
     <cache name="org.makumba.parade.model.AbstractFileData"
     	maxElementsInMemory="50000"
-     	eternal="true"
+     	eternal="false"
      	overflowToDisk="false"
+     	timeToLiveSeconds="120"
      	/>       
 
     <cache name="org.makumba.parade.model.Row.rowdata"
@@ -123,13 +127,9 @@
 	    />
 	    
 	 <cache name="org.makumba.parade.model.Log"
-	    maxElementsInMemory="10000"
-	    eternal="true"
+	    maxElementsInMemory="1000"
+	    eternal="false"
 	    overflowToDisk="false"
 	    />
-     
-
-
-
         
 </ehcache>

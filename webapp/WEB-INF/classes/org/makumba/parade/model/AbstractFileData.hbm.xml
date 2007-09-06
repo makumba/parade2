@@ -7,7 +7,7 @@
 
 <class name="AbstractFileData" table="FileData">
 
-	<cache usage="read-write" />
+	<cache usage="nonstrict-read-write" />
 
     <id name="id" type="long" column="FILEDATA_ID">
         <generator class="native"/>

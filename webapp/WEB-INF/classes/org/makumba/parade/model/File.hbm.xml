@@ -6,7 +6,7 @@
 <hibernate-mapping package="org.makumba.parade.model">
 	<class name="File">
 	
-		<cache usage="read-write" />
+		<cache usage="nonstrict-read-write" />
 	
 		<id name="id"> <!-- unsaved-value="undefined" -->
 			<generator class="native" />
