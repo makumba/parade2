@@ -25,7 +25,7 @@
 		<many-to-one name="row" column="id_row" not-null="true"/>
 		
          <map name="filedata" outer-join="true" cascade="all-delete-orphan" inverse="true" access="field" order-by="dataType">
-		    <cache usage="read-write" />
+		    <cache usage="nonstrict-read-write" />
 			<key><column name="id_file" not-null="false"/></key>
 			<index column="dataType" type="string"/>
 			<one-to-many class="AbstractFileData" />
