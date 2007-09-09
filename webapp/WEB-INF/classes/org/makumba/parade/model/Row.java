@@ -3,6 +3,8 @@ package org.makumba.parade.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.makumba.parade.tools.ParadeMap;
+
 public class Row {
 
     private Long id;
@@ -50,9 +52,9 @@ public class Row {
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     public Map getFiles() {
-        return files;
+        return this.files;
     }
 
     public void setFiles(Map files) {
@@ -68,11 +70,11 @@ public class Row {
     }
 
     public String getRowpath() {
-        return rowpath;
+        return rowpath.replace('/', java.io.File.separatorChar);
     }
 
     public void setRowpath(String rowpath) {
-        this.rowpath = rowpath;
+        this.rowpath = rowpath.replace(java.io.File.separatorChar, '/');
     }
 
     public Parade getParade() {

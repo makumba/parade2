@@ -12,6 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
@@ -40,13 +43,14 @@ public class FileDisplay {
     }
 
     public String getFileBrowserView(Parade p, Row r, String path, String opResult, boolean success) {
-
+        
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
         // if this is the root of the row
-        if (path == null || path.equals("null"))
-            path = "/";
+        if (path == null || path.equals("null")) path = "/";
+        
+        path = path.replace(java.io.File.separatorChar, '/');
         
         if (opResult == null) opResult = "";
         

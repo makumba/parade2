@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
@@ -29,6 +30,7 @@ import org.makumba.parade.model.interfaces.CacheRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.SimpleFileFilter;
+import org.makumba.parade.view.managers.FileViewManager;
 
 public class FileManager implements RowRefresher, CacheRefresher, ParadeManager {
 
@@ -48,6 +50,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             java.io.File rootPath = new java.io.File(row.getRowpath());
             root.setName("_root_");
             root.setPath(rootPath.getCanonicalPath());
+            root.setParentPath("");
             root.setRow(row);
             root.setDate(new Long(new java.util.Date().getTime()));
             root.setFiledata(new HashMap());
@@ -89,7 +92,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
                         continue;
                     
                     // otherwise, we trash
-                    child.delete();
+                    row.getFiles().remove(child.getPath());
                 }
             }
             
@@ -108,6 +111,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         if (file.isDirectory()) {
             File dirData = setFileData(row, file, true);
             addFile(row, dirData);
+            if(!row.getFiles().containsKey(dirData.getPath())) FileViewManager.setTreeExpried(row.getRowname());
 
             if(!local)
                 dirData.refresh();
@@ -137,6 +141,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        fileData.setParentPath(file.getParent().replace(java.io.File.separatorChar, '/'));
         fileData.setName(file.getName());
         fileData.setDate(new Long(file.lastModified()));
         fileData.setSize(new Long(file.length()));
@@ -148,6 +153,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         File cvsfile = new File();
         cvsfile.setName(name);
         cvsfile.setPath(path.getPath() + java.io.File.separator + name);
+        cvsfile.setParentPath(path.getPath().replace(java.io.File.separatorChar, '/'));
         cvsfile.setOnDisk(false);
         cvsfile.setIsDir(dir);
         cvsfile.setRow(r);
@@ -175,7 +181,15 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         if (success) {
             File newFile = setFileData(r, f, false);
             try {
+                Session s = InitServlet.getSessionFactory().openSession();
+                Transaction tx = s.beginTransaction();
+                
+                s.load(Row.class, new Long(r.getId()));
                 r.getFiles().put(f.getCanonicalPath(), newFile);
+                
+                tx.commit();
+                s.close();
+                
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -187,7 +201,8 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
     }
 
     public String newDir(Row r, String path, String entry) {
-        java.io.File f = new java.io.File((path + "/" + entry + "/").replace('/', java.io.File.separatorChar));
+        String absolutePath = (path + "/" + entry + "/").replace('/', java.io.File.separatorChar);
+        java.io.File f = new java.io.File(absolutePath);
         if (f.exists() && f.isDirectory())
             return "This directory already exists";
 
@@ -196,49 +211,73 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         if (success) {
             File newFile = setFileData(r, f, true);
             try {
+                Session s = InitServlet.getSessionFactory().openSession();
+                Transaction tx = s.beginTransaction();
+                
                 r.getFiles().put(f.getCanonicalPath(), newFile);
+                
+                tx.commit();
+                s.close();
+                
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            
+            // we create a new dir so we need to update the tree on next computation
+            FileViewManager.setTreeExpried(r.getRowname());
 
             return "OK#" + f.getName();
         }
 
-        return "Error while trying to create directory " + entry + ". Make sure ParaDe has the security rights to write on the filesystem.";
+        return "Error while trying to create directory " + absolutePath + ". Make sure ParaDe has the security rights to write on the filesystem.";
 
     }
 
-    public String deleteFile(Row r, String filePath) {
+    public String deleteFile(Row r, String path, String entry) {
 
-        java.io.File f = new java.io.File(filePath);
+        java.io.File f = new java.io.File(path + java.io.File.separator + entry);
         boolean success = f.delete();
         if (success) {
-            File cacheFile = (File) r.getFiles().get(filePath);
-            FileCVS cvsCache = (FileCVS) cacheFile.getFiledata().get("cvs");
+            
+            Session s = InitServlet.getSessionFactory().openSession();
+            Transaction tx = s.beginTransaction();
+            
+            File cacheFile = (File) r.getFiles().get(path + java.io.File.separator + entry);
+            
+            Object cvsData = cacheFile.getFiledata().get("cvs");
             
             // if there is CVS data for this file
             // TODO do this check for Tracker as well once it will be done
-            if(cvsCache != null) {
+            if(cvsData != null) {
+                FileCVS cvsCache = (FileCVS) cvsData;
                 cacheFile.setOnDisk(false);
                 cvsCache.setStatus(CVSManager.NEEDS_CHECKOUT);
-            }
-            else
-                r.getFiles().remove(filePath);
+            } else
+                r.getFiles().remove(path + java.io.File.separator + entry);
+            
+            tx.commit();
+            s.close();
             
             return "OK#" + f.getName();
         }
         logger.error("Error while trying to delete file " + f.getAbsolutePath() + " " + "\n"
-                + "Reason: exists: " + f.exists() + "canRead "+f.canRead() + ", canWrite "+f.canWrite());
+                + "Reason: exists: " + f.exists() + ", canRead: "+f.canRead() + ", canWrite: "+f.canWrite());
         return "Error while trying to delete file " + f.getName();
     }
 
     public String uploadFile(Parade p, String path, String context) {
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+        
         Row r = (Row) p.getRows().get(context);
         File f = new File();
         java.io.File file = new java.io.File(path);
         f = setFileData(r, file, false);
         addFile(r, f);
+        
+        tx.commit();
+        s.close();
 
         return path;
 

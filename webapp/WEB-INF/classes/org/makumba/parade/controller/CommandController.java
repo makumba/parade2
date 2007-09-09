@@ -46,7 +46,7 @@ public class CommandController {
         Object[] obj = new Object[2];
         String result = new String();
         String filename = params[0];
-        String absolutePath = params[1];
+        String relativePath = params[1];
         
         FileManager fileMgr = new FileManager();
 
@@ -62,19 +62,29 @@ public class CommandController {
             return res("Unknown context " + context, false);
         }
         
-        String filepath = absolutePath + java.io.File.separator + filename;
-        String relativepath = absolutePath.substring(row.getRowpath().length());
+        String path = new String();
+        String absolutePath = row.getRowpath();
         
+        if (relativePath == null || relativePath == "") path = absolutePath;
+        if (relativePath.equals("/")) path = absolutePath;
+        if (relativePath.endsWith("/")) relativePath = relativePath.substring(0, relativePath.length() - 1);
+        
+        if(relativePath.length() > 0) {
+            path = absolutePath + java.io.File.separator + relativePath.replace("/", java.io.File.separator);
+        } else {
+            path = absolutePath;
+        }
+
         if (action.equals("newFile"))
-            result = fileMgr.newFile(row, absolutePath, filename);
+            result = fileMgr.newFile(row, path, filename);
         else if (action.equals("newDir"))
-            result = fileMgr.newDir(row, absolutePath, filename);
+            result = fileMgr.newDir(row, path, filename);
         else if (action.equals("deleteFile"))
-            result = fileMgr.deleteFile(row, filepath);
+            result = fileMgr.deleteFile(row, path, filename);
         
         //updates the caches
         //TODO the same for the other caches
-        CVSManager.updateCvsCache(context, absolutePath);
+        CVSManager.updateCvsCache(context, path);
  
         tx.commit();
         s.close();
@@ -82,7 +92,7 @@ public class CommandController {
         boolean success = result.startsWith("OK");
         if (success) {
             if (action.equals("newFile"))
-                return res(FileDisplay.creationFileOK(row.getRowname(), relativepath, filename), success);
+                return res(FileDisplay.creationFileOK(row.getRowname(), relativePath, filename), success);
             if (action.equals("newDir"))
                 return res(FileDisplay.creationDirOK(filename), success);
             if (action.equals("deleteFile"))

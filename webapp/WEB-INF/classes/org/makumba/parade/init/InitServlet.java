@@ -12,6 +12,7 @@ import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -108,7 +109,9 @@ public class InitServlet extends HttpServlet implements Runnable {
             p.refresh();
             session.save(p);
         }
-
+        
+        Hibernate.initialize(p.getRows());
+        
         tx.commit();
 
         session.close();
@@ -119,10 +122,6 @@ public class InitServlet extends HttpServlet implements Runnable {
         long refresh = end - start;
         System.out.println("INFO: Initialisation took " + refresh + " ms");
         
-        
-
-        
-
     }
 
     public static SessionFactory getSessionFactory() {

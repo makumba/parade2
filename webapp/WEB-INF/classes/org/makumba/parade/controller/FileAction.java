@@ -1,9 +1,5 @@
 package org.makumba.parade.controller;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,7 +8,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
-import org.makumba.parade.model.Parade;
 
 public class FileAction extends Action {
 
@@ -27,8 +22,7 @@ public class FileAction extends Action {
         // we reconstruct the absolute path
 
         if (op != null && op.startsWith("deleteFile")) {
-            String absolutePath = Parade.constructAbsolutePath(context, path);
-            String[] params = { request.getParameter("params"), absolutePath};
+            String[] params = { request.getParameter("params"), path};
 
             Object result[] = CommandController.onDeleteFile(context, params);
             request.setAttribute("result", (String) result[0]);

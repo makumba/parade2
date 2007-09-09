@@ -5,11 +5,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
@@ -25,7 +29,17 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 public class FileViewManager implements FileView, TreeView {
+    
+    // for caching tree computation
+    // TODO refactor this using Events
+    private static String treeExpried = "";
+    
+    public static synchronized void setTreeExpried(String n) {
+       treeExpried = n;
+    }
 
+    private static HashMap branches = new HashMap();
+    
     public void setFileView(SimpleHash fileView, Row r, String path, File f) {
         
         String pathEncoded = "";
@@ -123,16 +137,32 @@ public class FileViewManager implements FileView, TreeView {
         }
         
         File baseFile = (File) r.getFiles().get(r.getRowpath());
-        List base = baseFile.getSubdirs();
-        String depth = new String("0");
-        List branches = new LinkedList();
         
-        getTreeBranch(branches, base, 0, r, depth, 0);
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+        
+        List base = baseFile.getSubdirs(s);
+        
+        tx.commit();
+        s.close();
+        
+        
+        String depth = new String("0");
+        List b = null;
+        
+        if(branches.get(r.getRowname()) == null || treeExpried.equals(r.getRowname()) ) {
+            b = new LinkedList();
+            getTreeBranch(b, base, 0, r, depth, 0);
+            branches.put(r.getRowname(), b);
+            treeExpried = "";
+        } else {
+            b = (List) branches.get(r.getRowname());
+        }
 
         /* Creating data model */
         SimpleHash root = new SimpleHash();
         root.put("rowName", r.getRowname());
-        root.put("branches", branches);
+        root.put("branches", b);
         
         /* Merge data model with template */
         try {
@@ -151,11 +181,14 @@ public class FileViewManager implements FileView, TreeView {
     private void getTreeBranch(List branches, List tree, int treeLine, Row r, String depth, int level) {
 
         String treeRow = "";
-
+        
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+        
         for (int i = 0; i < tree.size(); i++) {
 
             File currentFile = (File) tree.get(i);
-            List currentTree = currentFile.getSubdirs();
+            List currentTree = currentFile.getSubdirs(s);
 
             depth = depth + "," + i; // make last one different
             level++;
@@ -189,6 +222,10 @@ public class FileViewManager implements FileView, TreeView {
             level--;
             depth = depth.substring(0, depth.lastIndexOf(','));
         }
+        
+        tx.commit();
+        s.close();
+        
     }
 
 }

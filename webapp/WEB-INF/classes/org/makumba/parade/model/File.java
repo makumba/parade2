@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.TrackerManager;
@@ -31,6 +36,9 @@ public class File {
     private Row row;
 
     private String path;
+    
+    private String parentPath;
+
 
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
@@ -54,13 +62,8 @@ public class File {
         trackerMgr.directoryRefresh(row, this.getPath(), true);
     }
     
-    /* Deletes this File */
-    public void delete() {
-        row.getFiles().remove(path);
-    }
-
-    public void setPath(String path) {
-        this.path = path;
+    public void setPath(String p) {
+        this.path = p;
     }
 
     public Row getRow() {
@@ -124,9 +127,17 @@ public class File {
     }
 
     public String getPath() {
-        return path;
+        return this.path;
+    }
+    
+    public String getParentPath() {
+        return parentPath;
     }
 
+    public void setParentPath(String parentPath) {
+        this.parentPath = parentPath;
+    }
+    
     public boolean getOnDisk() {
         return onDisk;
     }
@@ -136,13 +147,24 @@ public class File {
     }
 
     /* returns a List of the keys of the subdirs of a given path */
-    public List getSubdirs() {
-        String keyPath = this.getPath();
-
-        String absoulteRowPath = (new java.io.File(this.getRow().getRowpath()).getAbsolutePath());
+    public List getSubdirs(Session s) {
+        
+        String keyPath = path.replace(java.io.File.separatorChar, '/');
+        
+        String absoulteRowPath = (new java.io.File(row.getRowpath()).getAbsolutePath());
         if (keyPath == null || keyPath == "")
-            keyPath = absoulteRowPath;
-        keyPath = keyPath.replace('/', java.io.File.separatorChar);
+            keyPath = absoulteRowPath.replace(java.io.File.separatorChar, '/');
+        
+        List children = null;
+        
+        Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.isDir = true and f.row.rowname = :rowname");
+        q.setCacheable(true);
+        q.setString("keyPath", keyPath);
+        q.setString("rowname", row.getRowname());
+        
+        children = q.list();
+        
+        /*
 
         Set keySet = this.getRow().getFiles().keySet();
 
@@ -165,6 +187,8 @@ public class File {
                 }
             }
         }
+        
+        */
 
         return children;
 
@@ -172,12 +196,29 @@ public class File {
 
     /* returns a List of the direct children (files, dirs) of a given Path */
     public List getChildren() {
-        String keyPath = this.getPath();
-
-        String absoulteRowPath = (new java.io.File(this.getRow().getRowpath()).getAbsolutePath());
+        String keyPath = this.getPath().replace(java.io.File.separatorChar, '/');
+        
+        String absoulteRowPath = (new java.io.File(row.getRowpath()).getAbsolutePath());
         if (keyPath == null || keyPath == "")
-            keyPath = absoulteRowPath;
-        keyPath = keyPath.replace('/', java.io.File.separatorChar);
+            keyPath = absoulteRowPath.replace(java.io.File.separatorChar, '/');
+        
+        List children = null;
+        
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+        
+        Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.row.rowname = :rowname");
+        q.setCacheable(true);
+        q.setString("keyPath", keyPath);
+        q.setString("rowname", row.getRowname());
+        
+        children = q.list();
+        
+        tx.commit();
+        s.close();
+        
+        /*
+        
 
         Set keySet = this.getRow().getFiles().keySet();
 
@@ -197,12 +238,14 @@ public class File {
                 }
             }
         }
+        */
 
-        return children;
+        //return children;
+       return children;
     }
     
     public String getRelativePath() {
-        return (path.substring(row.getRowpath().length() + 1).replace(java.io.File.separator, "/"));
+        return path.substring(getRow().getRowpath().length() + 1);
     }
 
 }

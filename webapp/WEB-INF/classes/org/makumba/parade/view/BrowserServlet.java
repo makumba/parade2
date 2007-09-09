@@ -8,6 +8,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
@@ -63,11 +64,16 @@ public class BrowserServlet extends HttpServlet {
         Transaction tx = s.beginTransaction();
 
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-
+        
         Row r = (Row) p.getRows().get(context);
         if (r == null) {
             out.println("Unknown context " + context);
         } else {
+            
+            //fetching data from the persistent store
+            //this is needed for lazy connections
+            r.getFiles().size();
+            //Hibernate.initialize(r.getFiles());
 
             // initialising the displays
             HeaderDisplay hdrV = new HeaderDisplay();
@@ -102,7 +108,6 @@ public class BrowserServlet extends HttpServlet {
         }
 
         tx.commit();
-
         s.close();
 
     }

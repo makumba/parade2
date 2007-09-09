@@ -14,8 +14,8 @@
 		
 		<property name="baseDir" />
 		
-		<map name="rows" outer-join="true" cascade="all-delete-orphan" inverse="true" access="field" order-by="rowname" lazy="true">
-		    <cache usage="nonstrict-read-write" />
+		<map name="rows" cascade="all-delete-orphan" inverse="true" access="field" order-by="rowname">
+		    <cache usage="read-write" />
 			<key><column name="id_parade" not-null="false"/></key>
 			<index column="rowname" type="string"/>
 			<one-to-many class="Row" />

@@ -12,6 +12,7 @@ import net.contentobjects.jnotify.JNotifyListener;
 
 import org.apache.log4j.Logger;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
@@ -113,13 +114,13 @@ public class Parade {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                
+
                 // the path is modified
                 if (!canonicalPath.equals(storedRow.getRowpath())) {
                     storedRow.setRowpath((String) rowDefinition.get("path"));
                     logger.warn("The path of row " + rowname + " was updated to " + (String) rowDefinition.get("path"));
                 }
-                
+
                 // the description is modified
                 if (!((String) rowDefinition.get("desc")).trim().equals(storedRow.getDescription())) {
                     storedRow.setDescription((String) rowDefinition.get("desc"));
@@ -180,6 +181,13 @@ public class Parade {
 
     }
 
+    /**
+     * Initalises the file system monitoring using JNotify ({@link http://jnotify.sourceforge.net/})
+     * 
+     * FIXME the watches should call much more fine-grained methods than they do now, or this may impact on the
+     * performance
+     * 
+     */
     private void addJNotifyListeners() {
 
         // for each row we create listeners that will inform us whenever a change occurs in the filesystem
@@ -193,8 +201,8 @@ public class Parade {
             if (r.getRowpath().equals(getBaseDir()))
                 continue;
 
-            String webappPath = ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
-            String path = r.getRowpath() + java.io.File.separator + webappPath;
+            //String webappPath = ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
+            String path = r.getRowpath(); //+ java.io.File.separator + webappPath;
 
             // what kind of changes do we want to watch
             int mask = JNotify.FILE_CREATED | JNotify.FILE_DELETED | JNotify.FILE_MODIFIED | JNotify.FILE_RENAMED;
@@ -207,26 +215,26 @@ public class Parade {
             try {
                 int watchID = JNotify.addWatch(path, mask, watchSubtree, new JNotifyListener() {
                     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
-                        //System.out.println("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
-                        //        + oldName + " -> " + newName);
+                        // System.out.println("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
+                        // + oldName + " -> " + newName);
                         directoryRefresh(rootPath);
                     }
 
                     public void fileModified(int wd, String rootPath, String name) {
-                        //System.out.println("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", "
-                        //        + name);
+                        // System.out.println("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", "
+                        // + name);
                         directoryRefresh(rootPath);
                     }
 
                     public void fileDeleted(int wd, String rootPath, String name) {
-                        //System.out.println("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
-                        //        + name);
+                        // System.out.println("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
+                        // + name);
                         directoryRefresh(rootPath);
                     }
 
                     public void fileCreated(int wd, String rootPath, String name) {
-                        //System.out.println("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
-                        //        + name);
+                        // System.out.println("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
+                        // + name);
                         directoryRefresh(rootPath);
                     }
 
@@ -246,7 +254,7 @@ public class Parade {
                             row_found = rootPath.startsWith(r.getRowpath());
                         }
 
-                        File modifiedDir = (File) r.getFiles().get(rootPath);
+                        File modifiedDir = (File) r.getFiles().get(rootPath.replace(java.io.File.separatorChar, '/'));
                         modifiedDir.localRefresh();
 
                         tx.commit();
@@ -259,7 +267,6 @@ public class Parade {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -296,13 +303,14 @@ public class Parade {
     public static String constructAbsolutePath(String context, String relativePath) {
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
-
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
-
+        
         Row entryRow = null;
 
-        if (context != null)
-            entryRow = Row.getRow(p, context);
+        if (context != null) {
+            Query q = s.createQuery("from Row r where r.rowname = :context");
+            q.setString("context", context);
+            entryRow = (Row) q.list().get(0);
+        }
 
         String absolutePath = entryRow.getRowpath();
 
