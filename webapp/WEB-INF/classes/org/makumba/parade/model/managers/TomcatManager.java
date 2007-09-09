@@ -33,6 +33,7 @@ public class TomcatManager implements ServletContainer {
         // config.put("parade.servletContext.tomcatServerPort", "" + pc.getRequest().getServerPort());
 
         // dummy
+        // TODO move to parade.properties
         config.put("parade.servletContext.tomcatServerName", "localhost");
         config.put("parade.servletContext.tomcatServerPort", ParadeProperties.getProperty("http.port"));
     }
