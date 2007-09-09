@@ -81,31 +81,34 @@
         />
 
     <cache name="org.makumba.parade.model.File"
-        maxElementsInMemory="50000"
+        maxElementsInMemory="10000"
         eternal="false"
         overflowToDisk="false"
-        timeToLiveSeconds="180"
+        timeToIdleSeconds="500"
+        timeToLiveSeconds="10000"
         />
 
     <cache name="org.makumba.parade.model.File.filedata"
-        maxElementsInMemory="50000"
+        maxElementsInMemory="10000"
         eternal="false"
         overflowToDisk="false"
-        timeToLiveSeconds="180"
+        timeToIdleSeconds="500"
+        timeToLiveSeconds="10000"
         />
 
     <cache name="org.makumba.parade.model.Row.files"
-        maxElementsInMemory="50000"
+        maxElementsInMemory="10000"
         eternal="false"
         overflowToDisk="false"
-        timeToLiveSeconds="180"
+        timeToLiveSeconds="10000"
         />
         
     <cache name="org.makumba.parade.model.AbstractFileData"
-    	maxElementsInMemory="50000"
+    	maxElementsInMemory="10000"
      	eternal="false"
      	overflowToDisk="false"
-     	timeToLiveSeconds="180"
+     	timeToIdleSeconds="500"
+     	timeToLiveSeconds="10000"
      	/>       
 
     <cache name="org.makumba.parade.model.Row.rowdata"
@@ -127,7 +130,7 @@
 	    />
 	    
 	 <cache name="org.makumba.parade.model.Log"
-	    maxElementsInMemory="1000"
+	    maxElementsInMemory="10000"
 	    eternal="false"
 	    overflowToDisk="false"
 	    />

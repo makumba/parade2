@@ -14,10 +14,12 @@
 	<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
 	<property name="hibernate.cglib.use_reflection_optimizer">true</property>
 	<property name="hibernate.show_sql">false</property>
-	
+
 	<!-- cache configuration -->
 	<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
 	<property name="net.sf.ehcache.configurationResourceName">/ehcache.xml</property>
+	<property name="hibernate.cache.use_query_cache">true</property>
+	
 	
 	<!-- configuration pool via c3p0--> 
 	<property name="c3p0.acquire_increment">1</property> 
