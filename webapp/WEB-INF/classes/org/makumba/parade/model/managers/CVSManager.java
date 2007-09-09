@@ -325,9 +325,5 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         cvsMgr.directoryRefresh(r, path, false);
         tx.commit();
         s.close();
-    }
-
-
-
-    
+    }   
 }
