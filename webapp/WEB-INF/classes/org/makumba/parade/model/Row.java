@@ -3,8 +3,6 @@ package org.makumba.parade.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.makumba.parade.tools.ParadeMap;
-
 public class Row {
 
     private Long id;
