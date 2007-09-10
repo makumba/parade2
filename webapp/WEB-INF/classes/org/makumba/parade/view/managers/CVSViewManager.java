@@ -5,7 +5,12 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
+import org.makumba.parade.model.AbstractFileData;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
@@ -37,13 +42,11 @@ public class CVSViewManager implements ParadeView {
 
     public void setFileView(SimpleHash fileView, Row r, String path, File f) {
         
-        //path = r.getRowpath() + path;
-        
         FileCVS cvsdata = (FileCVS) f.getFiledata().get("cvs");
         RowCVS rowcvsdata = (RowCVS) r.getRowdata().get("cvs");        
 
         String cvsweb = ParadeProperties.getProperty("cvs.site");
-        String webPath = f.getRelativePath().replace(java.io.File.separatorChar,'/');
+        String webPath = f.getPath().substring(r.getRowpath().length() + 1).replace(java.io.File.separatorChar,'/');
         String cvswebLink = cvsweb + rowcvsdata.getModule() + webPath;
         
         // populating model
@@ -57,6 +60,7 @@ public class CVSViewManager implements ParadeView {
             fileView.put("cvsRevision", "");
             fileView.put("cvsStatus", "");
         }
+        
     }
         
 

@@ -9,7 +9,7 @@
 		<cache usage="read-write" />
 	
 		<id name="id"> <!-- unsaved-value="undefined" -->
-			<generator class="native" />
+		    <generator class="native" />
 		</id>
 		
 		<property name="name" />
@@ -20,23 +20,14 @@
 		<property name="isDir" />
 		<property name="onDisk" />
 		
-		<many-to-one name="row" column="id_row" not-null="true" outer-join="true" lazy="false"/>
+		<many-to-one name="row" column="id_row" not-null="true" outer-join="true"/>
 		
-         <map name="filedata" cascade="all-delete-orphan" inverse="true" access="field" order-by="dataType" lazy="false" outer-join="true">
+        <map name="filedata" cascade="all-delete-orphan" inverse="true" access="field" order-by="dataType" lazy="true" batch-size="50">
 		    <cache usage="read-write" />
 			<key><column name="id_file" not-null="false"/></key>
 			<index column="dataType" type="string"/>
 			<one-to-many class="AbstractFileData" />
 		</map>
-		
-		<!-- 
-		<list name="children" outer-join="true" table="file_children" cascade="all" inverse="true" access="field">
-		    <cache usage="read-write" />
-			<key><column name="id" not-null="false"/></key>
-			<index column="name" type="string"/>
-			<one-to-many class="File" />
-		</list>
-		 -->
 		
 	</class>
 		

@@ -149,9 +149,12 @@ public class File {
     /* returns a List of the keys of the subdirs of a given path */
     public List getSubdirs(Session s) {
         
+        // populate the proxy
+        s.get(Row.class, this.getRow().getId());
+        
         String keyPath = path.replace(java.io.File.separatorChar, '/');
         
-        String absoulteRowPath = (new java.io.File(row.getRowpath()).getAbsolutePath());
+        String absoulteRowPath = (new java.io.File(getRow().getRowpath()).getAbsolutePath());
         if (keyPath == null || keyPath == "")
             keyPath = absoulteRowPath.replace(java.io.File.separatorChar, '/');
         
@@ -214,6 +217,12 @@ public class File {
         
         children = q.list();
         
+        // we need to initialise the file data of this file        
+        Iterator i = q.iterate();
+        while(i.hasNext()) {
+            Hibernate.initialize(((File) i.next()).getFiledata());
+        }
+        
         tx.commit();
         s.close();
         
@@ -243,9 +252,4 @@ public class File {
         //return children;
        return children;
     }
-    
-    public String getRelativePath() {
-        return path.substring(getRow().getRowpath().length() + 1);
-    }
-
 }

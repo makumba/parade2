@@ -5,7 +5,7 @@
       
 <hibernate-mapping package="org.makumba.parade.model">
 
-<class name="AbstractFileData" table="FileData">
+<class name="AbstractFileData" table="FileData" lazy="true">
 
 	<cache usage="read-write" />
 
@@ -14,7 +14,7 @@
     </id>
     
    <property name="dataType" />
-   <many-to-one name="file" column="id_file" not-null="true"/>
+   <many-to-one name="file" column="id_file" not-null="true" outer-join="true"/>
     
     <joined-subclass name="FileCVS" table="FILE_CVS" lazy="false">
         <key column="FILEDATA_ID"/>

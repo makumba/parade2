@@ -48,13 +48,13 @@ public class FileViewManager implements FileView, TreeView {
         
         String pathEncoded = "";
         try {
-            pathEncoded = URLEncoder.encode(URLEncoder.encode(f.getRelativePath(), "UTF-8"), "UTF-8");
+            pathEncoded = URLEncoder.encode(URLEncoder.encode(f.getPath().substring(r.getRowpath().length() + 1), "UTF-8"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
-        fileView.put("path", f.getRelativePath());
+        fileView.put("path", f.getPath().substring(r.getRowpath().length() + 1));
         fileView.put("pathEncoded", pathEncoded);
         fileView.put("name", f.getName());
         fileView.put("isDir", f.getIsDir());
@@ -165,6 +165,11 @@ public class FileViewManager implements FileView, TreeView {
      * Computes the tree for a row
      * @param r the Row for which the tree should be computed
      * @return a List containing the tree of folders
+     * 
+     * FIXME this is a performance killer because it issues one SELECT each time it looks up a subdir
+     * it should instead fetch the whole tree at once (meaning the parentdirs column) and then compute the tree
+     * by an algorithm.
+     * 
      */
     private List computeTree(Row r) {
         logger.info("Starting computation of tree for row "+r.getRowname()+" at " + new java.util.Date());

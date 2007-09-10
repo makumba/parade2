@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Iterator;
@@ -12,14 +11,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.FileComparator;
 
 import freemarker.template.SimpleHash;
@@ -43,7 +40,6 @@ public class FileDisplay {
     }
 
     public String getFileBrowserView(Parade p, Row r, String path, String opResult, boolean success) {
-        
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
@@ -94,18 +90,24 @@ public class FileDisplay {
         FileComparator fc = new FileComparator();
 
         Collections.sort(files, fc);
-        //String relativePath = path.substring(r.getRowpath().length(), path.length());
         
         List fileViews = new LinkedList();
 
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+                
         for (Iterator j = files.iterator(); j.hasNext();) {
             File currentFile = (File) j.next();
+            
             SimpleHash fileView = new SimpleHash();
             fileV.setFileView(fileView, r, path, currentFile);
             cvsV.setFileView(fileView, r, path, currentFile);
             
             fileViews.add(fileView);
         }
+        
+        tx.commit();
+        s.close();
         
         root.put("fileViews", fileViews);
         
@@ -119,7 +121,6 @@ public class FileDisplay {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         
         return result.toString();
     }

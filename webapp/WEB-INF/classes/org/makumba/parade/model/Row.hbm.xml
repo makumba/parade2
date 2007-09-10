@@ -21,7 +21,7 @@
         
         <!-- <one-to-one name="root" class="File" property-ref="row" />  -->
         
-        <map name="files" cascade="all-delete-orphan" inverse="true" access="field" order-by="name" lazy="true" fetch="join">
+        <map name="files" cascade="all-delete-orphan" inverse="true" access="field" order-by="name" lazy="true" batch-size="100">
 		    <cache usage="read-write" />
 			<key><column name="id_row" not-null="false"/></key>
 			<index column="path" type="string"/>
