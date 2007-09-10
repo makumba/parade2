@@ -211,30 +211,29 @@ public class Parade {
             boolean watchSubtree = true;
 
             // now we start watching
-            // FIXME the updates here should be much more precise
+            // FIXME the updates here should be much more fine-grained
             try {
                 int watchID = JNotify.addWatch(path, mask, watchSubtree, new JNotifyListener() {
                     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
-                        // System.out.println("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
-                        // + oldName + " -> " + newName);
+                        logger.info("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
+                        + oldName + " -> " + newName);
                         directoryRefresh(rootPath);
                     }
 
                     public void fileModified(int wd, String rootPath, String name) {
-                        // System.out.println("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", "
-                        // + name);
+                        logger.info("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
                         directoryRefresh(rootPath);
                     }
 
                     public void fileDeleted(int wd, String rootPath, String name) {
-                        // System.out.println("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
-                        // + name);
+                        logger.info("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
+                        + name);
                         directoryRefresh(rootPath);
                     }
 
                     public void fileCreated(int wd, String rootPath, String name) {
-                        // System.out.println("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
-                        // + name);
+                        logger.info("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
+                        + name);
                         directoryRefresh(rootPath);
                     }
 
