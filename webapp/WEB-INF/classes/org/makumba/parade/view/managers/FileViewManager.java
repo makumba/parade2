@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -30,15 +31,18 @@ import freemarker.template.TemplateException;
 
 public class FileViewManager implements FileView, TreeView {
     
+    static Logger logger = Logger.getLogger(FileViewManager.class.getName());
+    
     // for caching tree computation
     // TODO refactor this using Events
-    private static String treeExpried = "";
+    
+    private static HashMap treeExpried = new HashMap();
+    private static HashMap branches = new HashMap();
     
     public static synchronized void setTreeExpried(String n) {
-       treeExpried = n;
+        logger.info("Setting tree of row "+n+" as expired.");
+        treeExpried.put(n, new Boolean(true));
     }
-
-    private static HashMap branches = new HashMap();
     
     public void setFileView(SimpleHash fileView, Row r, String path, File f) {
         
@@ -136,28 +140,7 @@ public class FileViewManager implements FileView, TreeView {
             e.printStackTrace();
         }
         
-        File baseFile = (File) r.getFiles().get(r.getRowpath());
-        
-        Session s = InitServlet.getSessionFactory().openSession();
-        Transaction tx = s.beginTransaction();
-        
-        List base = baseFile.getSubdirs(s);
-        
-        tx.commit();
-        s.close();
-        
-        
-        String depth = new String("0");
-        List b = null;
-        
-        if(branches.get(r.getRowname()) == null || treeExpried.equals(r.getRowname()) ) {
-            b = new LinkedList();
-            getTreeBranch(b, base, 0, r, depth, 0);
-            branches.put(r.getRowname(), b);
-            treeExpried = "";
-        } else {
-            b = (List) branches.get(r.getRowname());
-        }
+        List b = computeTree(r);
 
         /* Creating data model */
         SimpleHash root = new SimpleHash();
@@ -176,6 +159,48 @@ public class FileViewManager implements FileView, TreeView {
         }
         
         return result.toString();
+    }
+
+    /**
+     * Computes the tree for a row
+     * @param r the Row for which the tree should be computed
+     * @return a List containing the tree of folders
+     */
+    private List computeTree(Row r) {
+        logger.info("Starting computation of tree for row "+r.getRowname()+" at " + new java.util.Date());
+        long start = System.currentTimeMillis();
+        
+        File baseFile = (File) r.getFiles().get(r.getRowpath());
+        
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+        
+        List base = baseFile.getSubdirs(s);
+        
+        tx.commit();
+        s.close();
+        
+        String depth = new String("0");
+        List b = null;
+        
+        if(branches.get(r.getRowname()) == null || (Boolean) treeExpried.get(r.getRowname()) ) {
+            b = new LinkedList();
+            getTreeBranch(b, base, 0, r, depth, 0);
+            branches.put(r.getRowname(), b);
+            treeExpried.put(r.getRowname(), new Boolean(false));
+            
+            long end = System.currentTimeMillis();
+            long refresh = end - start;
+            logger.info("Finishing tree computation for row "+r.getRowname()+" without cache at " + new java.util.Date() + ", computation took "+refresh+" ms.");
+        } else {
+            b = (List) branches.get(r.getRowname());
+            
+            long end = System.currentTimeMillis();
+            long refresh = end - start;
+            logger.info("Finishing tree computation for row "+r.getRowname()+" with cache at " + new java.util.Date() + ", computation took "+refresh+" ms.");
+        }
+        
+        return b;
     }
 
     private void getTreeBranch(List branches, List tree, int treeLine, Row r, String depth, int level) {
