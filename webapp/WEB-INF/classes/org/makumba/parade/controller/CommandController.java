@@ -70,7 +70,7 @@ public class CommandController {
         if (relativePath.endsWith("/")) relativePath = relativePath.substring(0, relativePath.length() - 1);
         
         if(relativePath.length() > 0) {
-            path = absolutePath + java.io.File.separator + relativePath.replace("/", java.io.File.separator);
+            path = absolutePath + java.io.File.separator + relativePath.replace('/', java.io.File.separatorChar);
         } else {
             path = absolutePath;
         }

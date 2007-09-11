@@ -325,7 +325,7 @@ public class Parade {
         if (relativePath.endsWith("/"))
             relativePath = relativePath.substring(0, relativePath.length() - 1);
         absolutePath = entryRow.getRowpath() + java.io.File.separator
-                + relativePath.replace("/", java.io.File.separator);
+                + relativePath.replace('/', java.io.File.separatorChar);
 
         return absolutePath;
 

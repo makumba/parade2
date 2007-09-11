@@ -184,7 +184,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
                 Session s = InitServlet.getSessionFactory().openSession();
                 Transaction tx = s.beginTransaction();
                 
-                s.load(Row.class, new Long(r.getId()));
+                s.load(Row.class, r.getId());
                 r.getFiles().put(f.getCanonicalPath(), newFile);
                 
                 tx.commit();

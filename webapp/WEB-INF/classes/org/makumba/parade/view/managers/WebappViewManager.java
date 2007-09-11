@@ -41,7 +41,7 @@ public class WebappViewManager implements HeaderView, ParadeView {
         }
         
         webappModel.put("webappPath", data.getWebappPath());
-        webappModel.put("status", status);
+        webappModel.put("status", new Integer(status));
         webappModel.put("path", "");
                     
         // TODO - consider the case WEBINF isn't found, ie get server name, port from some request

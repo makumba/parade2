@@ -55,7 +55,7 @@ public class CVSViewManager implements ParadeView {
         fileView.put("isConflictBackup", f.getName().startsWith(".#"));
         if(cvsdata != null) {
             fileView.put("cvsRevision", cvsdata.getRevision());
-            fileView.put("cvsStatus", cvsdata.getStatus().intValue());
+            fileView.put("cvsStatus", cvsdata.getStatus());
         } else {
             fileView.put("cvsRevision", "");
             fileView.put("cvsStatus", "");

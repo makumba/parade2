@@ -76,14 +76,14 @@ public class FileDisplay {
         root.put("success", success);
         root.put("opResult", opResult);
         root.put("path", path);
-        root.put("pathOnDisk", r.getRowpath() + (path.length()>1?java.io.File.separator + path.replace("/", java.io.File.separator):""));
+        root.put("pathOnDisk", r.getRowpath() + (path.length()>1?java.io.File.separator + path.replace('/', java.io.File.separatorChar):""));
         root.put("pathEncoded", pathEncoded);
         root.put("parentDirs", getParentDir(r, path));
         
         // computing file model data
         String absolutePath = "";
         if(path.equals("/")) absolutePath = r.getRowpath();
-        else absolutePath = r.getRowpath() + java.io.File.separator + path.replace("/", java.io.File.separator);
+        else absolutePath = r.getRowpath() + java.io.File.separator + path.replace('/', java.io.File.separatorChar);
         if(absolutePath.endsWith(java.io.File.separator)) absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
         File file = (File) r.getFiles().get(absolutePath);
         List files = file.getChildren();

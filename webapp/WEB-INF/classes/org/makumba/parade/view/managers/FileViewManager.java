@@ -188,7 +188,7 @@ public class FileViewManager implements FileView, TreeView {
         String depth = new String("0");
         List b = null;
         
-        if(branches.get(r.getRowname()) == null || (Boolean) treeExpried.get(r.getRowname()) ) {
+        if(branches.get(r.getRowname()) == null || ((Boolean) treeExpried.get(r.getRowname())).booleanValue() ) {
             b = new LinkedList();
             getTreeBranch(b, base, 0, r, depth, 0);
             branches.put(r.getRowname(), b);
@@ -234,7 +234,7 @@ public class FileViewManager implements FileView, TreeView {
             SimpleHash branch = new SimpleHash();
             
             // converting the path to something nice
-            String nicePath = (currentFile.getPath().substring(r.getRowpath().length()+1)).replace(java.io.File.separator, "/");
+            String nicePath = (currentFile.getPath().substring(r.getRowpath().length()+1)).replace(java.io.File.separatorChar, '/');
             
             try {
                 branch.put("treeRow", treeRow);

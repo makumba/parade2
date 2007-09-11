@@ -118,7 +118,7 @@ public class CommandViewManager implements CommandView {
         root.put("relativeFilePath", path + java.io.File.separator + fileName);
         root.put("saveFilePath", saveFilePath);
         root.put("contentType", contentType);
-        root.put("contentLength", fileSize);
+        root.put("contentLength", new Integer(fileSize));
         root.put("path", path);
         
         /* Merge data model with template */
