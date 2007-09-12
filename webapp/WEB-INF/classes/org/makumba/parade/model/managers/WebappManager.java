@@ -128,12 +128,13 @@ public class WebappManager implements RowRefresher, ParadeManager {
     }
 
     public String servletContextReloadRow(Row row) {
+        RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
 
         String result = "";
 
         // must check if it's not this one
         if (!isParade(row)) {
-            result = getServletContainer().reloadContext(row.getRowname());
+            result = getServletContainer().reloadContext(data.getContextname());
         } else {
             try {
                 String antCommand = "ant";
