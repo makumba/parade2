@@ -19,7 +19,7 @@
 
 <#list rows as row>
 <tr class="<#if (row_index % 2) = 0>odd<#else>even</#if>">
-<td align='center'><a href='/browse.jsp?context=${row.rowstore.rowname}'>${row.rowstore.rowname}</a> <a href='${row.rowstore.rowname}'>(Surf)</a><br>
+<td align='center'><a href='/browse.jsp?context=${row.rowstore.rowname}'>${row.rowstore.rowname}</a> <#if row.rowstore.rowname == '(root)'><a href=''>(Surf)</a></#if><#if row.rowstore.rowname != '(root)'><a href='${row.rowstore.rowname}'>(Surf)</a></#if><br>
 <font style="font-size:smaller;">${row.rowstore.rowpath}</font></td>
 <td>${row.rowstore.rowdescription}</td>
 <td>${row.cvs.user}, <b>${row.cvs.module}</b>, ${row.cvs.branch}</td>
