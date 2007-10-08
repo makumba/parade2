@@ -157,17 +157,9 @@ public class FileViewManager implements FileView, TreeView {
      * @param r the Row for which the tree should be computed
      * @return a List containing the tree of folders
      * 
-     * FIXME this is a performance killer because it issues one SELECT each time it looks up a subdir
-     * it should instead fetch the whole tree at once (meaning the parentdirs column) and then compute the tree
-     * by an algorithm.
-     * 
      */
     private List computeTree(Row r) {
-        logger.info("Starting computation of tree for row "+r.getRowname()+" at " + new java.util.Date());
-        long start = System.currentTimeMillis();
-        
-        //File baseFile = (File) r.getFiles().get(r.getRowpath());
-        List b = new LinkedList();
+        List<SimpleHash> b = new LinkedList<SimpleHash>();
         
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
@@ -241,7 +233,7 @@ public class FileViewManager implements FileView, TreeView {
             SimpleHash branch = new SimpleHash();
             try {
                 branch.put("treeRow", treeRow);
-                branch.put("fileName", name.equals("_root_")?"(root)":name);
+                branch.put("fileName", name.equals("_root_")?r.getRowname():name);
                 String nicePath = !simplePath.equals(r.getRowname())?simplePath.substring(r.getRowname().length() + 1):"";
                 branch.put("filePath", URLEncoder.encode(nicePath, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
@@ -252,6 +244,10 @@ public class FileViewManager implements FileView, TreeView {
             b.add(branch);
             
         }
+        
+        tx.commit();
+        s.close();
+        
         
         return b;
     }
