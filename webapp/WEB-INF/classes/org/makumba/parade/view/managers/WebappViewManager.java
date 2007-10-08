@@ -20,16 +20,16 @@ public class WebappViewManager implements HeaderView, ParadeView {
     }
 
     public void setParadeView(SimpleHash rowInformation, Row r) {
-        SimpleHash webappModel = setCommands(r);
+        SimpleHash webappModel = setCommands(r, "");
         rowInformation.put("webapp", webappModel);
     }
     
-    public void setHeaderView(SimpleHash root, Row r) {
-        SimpleHash webapp = setCommands(r);
+    public void setHeaderView(SimpleHash root, Row r, String path) {
+        SimpleHash webapp = setCommands(r, path);
         root.put("webapp", webapp);
     }
 
-    private SimpleHash setCommands(Row r) {
+    private SimpleHash setCommands(Row r, String path) {
         SimpleHash webappModel = new SimpleHash();
         RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
 
@@ -42,7 +42,7 @@ public class WebappViewManager implements HeaderView, ParadeView {
         
         webappModel.put("webappPath", data.getWebappPath());
         webappModel.put("status", new Integer(status));
-        webappModel.put("path", "");
+        webappModel.put("path", path);
                     
         // TODO - consider the case WEBINF isn't found, ie get server name, port from some request
         if (data.getWebappPath().equals("NO WEBINF")) {

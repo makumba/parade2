@@ -1,6 +1,8 @@
 package org.makumba.parade.view;
 
 import java.io.PrintWriter;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,9 +30,9 @@ public class FileEditorServlet extends HttpServlet {
 		Transaction tx = s.beginTransaction();
 		
         /* context - the context / rowname
-         * file - the path to the file to be edited
+         * fileName - the name of the file to be edited
          * path - the relative path (displayed to the user)
-         * 
+         * source - the source (content of the file)
          */
 		
 		Parade p = (Parade) s.get(Parade.class, new Long(1));

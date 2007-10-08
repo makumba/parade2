@@ -6,6 +6,6 @@ import freemarker.template.SimpleHash;
 
 public interface HeaderView {
 
-    public void setHeaderView(SimpleHash root, Row r);
+    public void setHeaderView(SimpleHash root, Row r, String path);
 
 }

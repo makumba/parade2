@@ -31,10 +31,9 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 }
 -->
 </script>
-<th>CVS <a href='/Cvs.do?op=check&context=${rowName}&params=${path}' target='command'><img src='/images/cvs-query.gif' alt='CVS check status' border='0'></a>
-<a href='/Cvs.do?op=update&context=${rowName}&params=${path}' target='command'><img src='/images/cvs-update.gif' alt='CVS local update' border='0'></a>
-<a href='/Cvs.do?op=rupdate&context=${rowName}&params=${path}' target='command'><img src='/images/cvs-update.gif' alt='CVS recursive update' border='0'></a>
-</th>
+<th>CVS <a href='/Cvs.do?op=check&context=${rowName}&params=${path}' target='command' title='CVS check status'><img src='/images/cvs-query.gif' alt='CVS check status' border='0'></a>
+<a href='/Cvs.do?op=update&context=${rowName}&params=${path}' target='command' title='CVS local update'><img src='/images/cvs-update.gif' alt='CVS local update' border='0'></a>
+<a href='/Cvs.do?op=rupdate&context=${rowName}&params=${path}' target='command' title='CVS recursive update'><img src='/images/cvs-update.gif' alt='CVS recursive update' border='0'></a></th>
 </tr>
 
 <#list fileViews as file>
@@ -52,7 +51,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <#else>${file.name}</#if>
 </td>
 <td align='right'>
-<a href='/File.do?op=editFile&context=${rowName}&path=${path}&file=${file.name}'><img src='/images/edit.gif' alt='Edit ${file.name}'></a>
+<a href='/File.do?op=editFile&context=${rowName}&path=${path}&file=${file.nameEncoded}'><img src='/images/edit.gif' alt='Edit ${file.name}'></a>
 <a href="javascript:deleteFile('${path}','${file.name}')"><img src='/images/delete.gif' alt='Delete ${file.name}'></a>
 </td>
 </#if>
@@ -69,8 +68,8 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <#if file.cvsIsNull>
 <#if file.isConflictBackup><a title='Backup of your working file, can be deleted once you resolved its conflicts with CVS'>Conflict Backup</a>
 <#else>
-<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=add'><img src='/images/cvs-add.gif' alt='add'></a>
-<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=addbin'><img src='/images/cvs-add-binary.gif' alt='add binary'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=add' title='CVS add text file'><img src='/images/cvs-add.gif' alt='add'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=addbin' title='CVS add binary/image file'><img src='/images/cvs-add-binary.gif' alt='add binary'></a>
 </#if>
 <#else>
 <#switch file.cvsStatus>
@@ -86,7 +85,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <#break>
 <!-- UP_TO_DATE -->
 
-<#case -1>
+<#case 100>
 <#if file.isDir>
 <a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
 <#else>
@@ -100,8 +99,8 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
 <#else>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
-<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
-<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
+<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit (place new file version on repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 </#if>
 <#break>
 
@@ -111,8 +110,8 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
 <#else>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
-<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile'><img src='/images/cvs-update.gif' alt='CVS checkout'></a>
-<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=deletefile'><img src='/images/cvs-remove.gif' alt='CVS remove'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile' title='CVS update file from repository'><img src='/images/cvs-update.gif' alt='CVS checkout'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=deletefile' title='CVS delete file from repository'><img src='/images/cvs-remove.gif' alt='CVS remove'></a>
 </#if>
 <#break>
 
@@ -122,27 +121,27 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
 <#else>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
-<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile'><img src='/images/cvs-update.gif' alt='CVS update'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile' title='CVS update file from repository'><img src='/images/cvs-update.gif' alt='CVS update'></a>
 </#if>
 <#break>
 
 <!-- ADDED -->
 <#case 4>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
-<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit to repository (will add file to repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 <#break>
 
 <!-- DELETED -->
 <#case 5>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
-<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit to repository (will delete file from repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 <#break>
 
 <!-- CONFLICT -->
 <#case 6>
 <a href='${file.cvsWebLink}' title='CVS log'><b><font color='red'>Conflict</font></b>${file.cvsWebLink}</a>
-<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
-<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
+<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit to repository'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 <#break>
 
 </#switch>

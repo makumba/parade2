@@ -50,8 +50,8 @@ public class HeaderDisplay {
         AntViewManager antV = new AntViewManager();
         WebappViewManager webappV = new WebappViewManager();
         
-        antV.setHeaderView(root, r);
-        webappV.setHeaderView(root, r);
+        antV.setHeaderView(root, r, path);
+        webappV.setHeaderView(root, r, path);
         
         /* Merge data model with template */
         try {

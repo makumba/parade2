@@ -59,8 +59,8 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, absolutePath);
         FileManager.updateFileCache(context, absolutePath, true);
+        CVSManager.updateCvsCache(context, absolutePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -84,8 +84,8 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, absolutePath);
         FileManager.updateFileCache(context, absolutePath, false);
+        CVSManager.updateCvsCache(context, absolutePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         

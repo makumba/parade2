@@ -84,6 +84,7 @@ public class BrowserServlet extends HttpServlet {
             // switiching to the right display
             String page = "";
             if (display.equals("header")) {
+                // FIXME - path in here is null always, but should actually be equal to the currently browsed path
                 page = hdrV.getHeaderView(r, path);
             }
             if (display.equals("tree")) {

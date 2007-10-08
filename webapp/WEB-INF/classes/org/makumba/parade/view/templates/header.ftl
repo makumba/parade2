@@ -42,7 +42,7 @@ function icqNewWin() {
 <td valign="top">
 <#if webapp.status = 2>
 &nbsp; webapp:
-<a href='/Webapp.do?context=${rowName}&path="+${webapp.path}&op=servletContextReload'>reload</a> 
+<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextReload'>reload</a> 
 <a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextStop'>stop</a>        
 </#if>
 <#if webapp.status = 1>

@@ -28,7 +28,7 @@ public class AntViewManager implements ParadeView, HeaderView {
         rowInformation.put("ant", antModel);
     }
 
-    public void setHeaderView(SimpleHash root, Row r) {
+    public void setHeaderView(SimpleHash root, Row r, String path) {
         List allowedOps = ((RowAnt) r.getRowdata().get("ant")).getAllowedOperations();
         root.put("antTargets", allowedOps);
     }

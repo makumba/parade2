@@ -20,6 +20,11 @@ public class WebappAction extends Action {
             path = (String) request.getAttribute("path");
         if(path == null)
             path ="";
+        String view = request.getParameter("view");
+        if(view == null)
+            view = (String) request.getAttribute("view");
+        if(view == null)
+            view = "commandOutput";
         
         WebappController webappCtrl = new WebappController();
         Object result[] = webappCtrl.onWebappAction(context, op);
@@ -28,7 +33,7 @@ public class WebappAction extends Action {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("view","commandOutput");
+        request.setAttribute("view", view);
         request.setAttribute("display","command");
         
         return mapping.findForward("command"); 
