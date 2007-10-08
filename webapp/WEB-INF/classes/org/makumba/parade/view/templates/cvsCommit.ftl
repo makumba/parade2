@@ -8,7 +8,7 @@
 <input type=hidden value="${path}" name="params">
 <input type=hidden value="${fileAbsolutePath}" name="params">
 Committing <strong>${fileName}</strong> with message:<br>
-<input type="text" rows="3" cols="40" name=params><br>
+<textarea rows="3" cols="40" name="params"></textarea><br>
 <input type=submit value=Commit>
 </form>
 </body></html>
