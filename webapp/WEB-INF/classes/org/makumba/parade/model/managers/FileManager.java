@@ -111,8 +111,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         if (file.isDirectory()) {
             File dirData = setFileData(row, file, true);
             addFile(row, dirData);
-            if(!row.getFiles().containsKey(dirData.getPath())) FileViewManager.setTreeExpried(row.getRowname());
-
+            
             if(!local)
                 dirData.refresh();
 
@@ -224,9 +223,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
                 e.printStackTrace();
             }
             
-            // we create a new dir so we need to update the tree on next computation
-            FileViewManager.setTreeExpried(r.getRowname());
-
             return "OK#" + f.getName();
         }
 

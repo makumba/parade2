@@ -10,9 +10,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
@@ -32,17 +34,6 @@ import freemarker.template.TemplateException;
 public class FileViewManager implements FileView, TreeView {
     
     static Logger logger = Logger.getLogger(FileViewManager.class.getName());
-    
-    // for caching tree computation
-    // TODO refactor this using Events
-    
-    private static HashMap treeExpried = new HashMap();
-    private static HashMap branches = new HashMap();
-    
-    public static synchronized void setTreeExpried(String n) {
-        logger.info("Setting tree of row "+n+" as expired.");
-        treeExpried.put(n, new Boolean(true));
-    }
     
     public void setFileView(SimpleHash fileView, Row r, String path, File f) {
         
@@ -175,87 +166,94 @@ public class FileViewManager implements FileView, TreeView {
         logger.info("Starting computation of tree for row "+r.getRowname()+" at " + new java.util.Date());
         long start = System.currentTimeMillis();
         
-        File baseFile = (File) r.getFiles().get(r.getRowpath());
+        //File baseFile = (File) r.getFiles().get(r.getRowpath());
+        List b = new LinkedList();
         
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
         
-        List base = baseFile.getSubdirs(s);
+        Query q = s.createSQLQuery("SELECT * FROM File f JOIN Row r WHERE f.ID_ROW = r.ID AND f.isDir = '1' AND r.rowname = ? ORDER BY f.path ASC").addScalar("PATH", Hibernate.STRING).addScalar("NAME", Hibernate.STRING);
+        q.setString(0, r.getRowname());
         
-        tx.commit();
-        s.close();
+        List l =q.list();
         
-        String depth = new String("0");
-        List b = null;
+        // this vector holds the order of a directory in a given level
+        // the position in the vector represents the level, the value represents the order
+        Vector<Integer> levels = new Vector<Integer>();
+        Vector<String> directories = new Vector<String>();
+        Integer order = 0;
+        Integer previousLevel = -1;
         
-        if(branches.get(r.getRowname()) == null || ((Boolean) treeExpried.get(r.getRowname())).booleanValue() ) {
-            b = new LinkedList();
-            getTreeBranch(b, base, 0, r, depth, 0);
-            branches.put(r.getRowname(), b);
-            treeExpried.put(r.getRowname(), new Boolean(false));
+        levels.add(0, 0);
+        
+        Iterator i = l.iterator();
+        while(i.hasNext()) {
+            Object[] line = (Object[]) i.next();
+            String path = (String)line[0];
+            String name = (String)line[1];
             
-            long end = System.currentTimeMillis();
-            long refresh = end - start;
-            logger.info("Finishing tree computation for row "+r.getRowname()+" without cache at " + new java.util.Date() + ", computation took "+refresh+" ms.");
-        } else {
-            b = (List) branches.get(r.getRowname());
+            String simplePath = !path.equals(r.getRowpath())?path.substring(path.indexOf(r.getRowpath()) + r.getRowpath().length() + 1):r.getRowname();
+            simplePath = simplePath.replace(java.io.File.separatorChar, '/');
+            if(!simplePath.equals(r.getRowname())) simplePath = r.getRowname() + "/" + simplePath;
             
-            long end = System.currentTimeMillis();
-            long refresh = end - start;
-            logger.info("Finishing tree computation for row "+r.getRowname()+" with cache at " + new java.util.Date() + ", computation took "+refresh+" ms.");
-        }
-        
-        return b;
-    }
-
-    private void getTreeBranch(List branches, List tree, int treeLine, Row r, String depth, int level) {
-
-        String treeRow = "";
-        
-        Session s = InitServlet.getSessionFactory().openSession();
-        Transaction tx = s.beginTransaction();
-        
-        for (int i = 0; i < tree.size(); i++) {
-
-            File currentFile = (File) tree.get(i);
-            List currentTree = currentFile.getSubdirs(s);
-
-            depth = depth + "," + i; // make last one different
-            level++;
-            treeLine = treeLine++;
-
-            treeRow = "objTreeMenu"; // start a javascript line to compose a tree
-
-            StringTokenizer st = new StringTokenizer(depth, ",");
-            while (st.hasMoreTokens()) {
-                treeRow = treeRow + ".n[" + st.nextToken() + "]";
+            //we split the path in directory names
+            StringTokenizer st = new StringTokenizer(simplePath, "/");
+            int level = -1;
+            
+            // for each directory, we store its name, level and order
+            while(st.hasMoreTokens()) {
+                
+                level++;
+                directories.add(level, st.nextToken());
+                
+                // we reach the end of the path
+                if(!st.hasMoreTokens()) {
+                    // we are in a situation where the previous path and the current one are on the same level
+                    // so we increment the order of the current path
+                    if(level == previousLevel) {
+                        order = levels.get(level) + 1;
+                        levels.add(level, order);
+                        
+                    // we are one level above the one of the previous path
+                    // so we reset the level beneath us
+                    // as well we increment the current order
+                    } else if(level < previousLevel) {
+                        levels.add(previousLevel, 0);
+                        order = levels.get(level) + 1;
+                        levels.add(level, order);
+                    // we are one level beneath the previous level
+                    // so we set the order to a new minimum
+                    } else if(level > previousLevel) {
+                        levels.add(level, 0);
+                        
+                    }
+                    previousLevel = level;
+                }
+            }
+            
+            String treeRow = "objTreeMenu"; // start a javascript line to compose a tree
+            
+            for(int j = 0; j < previousLevel+1; j++) {
+                if(levels.get(j) == -1) continue;
+                treeRow = treeRow + ".n[" + levels.get(j) + "]";
             }
             
             SimpleHash branch = new SimpleHash();
-            
-            // converting the path to something nice
-            String nicePath = (currentFile.getPath().substring(r.getRowpath().length()+1)).replace(java.io.File.separatorChar, '/');
-            
             try {
                 branch.put("treeRow", treeRow);
-                branch.put("fileName", currentFile.getName());
+                branch.put("fileName", name.equals("_root_")?"(root)":name);
+                String nicePath = !simplePath.equals(r.getRowname())?simplePath.substring(r.getRowname().length() + 1):"";
                 branch.put("filePath", URLEncoder.encode(nicePath, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            branches.add(branch);
-
-            if (level < 50 && currentTree.size() != 0)
-                getTreeBranch(branches, currentTree, treeLine, r, depth, level);
-
-            level--;
-            depth = depth.substring(0, depth.lastIndexOf(','));
+            
+            b.add(branch);
+            
         }
         
-        tx.commit();
-        s.close();
-        
+        return b;
     }
 
 }
