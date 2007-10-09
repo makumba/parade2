@@ -1,10 +1,18 @@
 #!/bin/sh
 
-export CATALINA_HOME='tomcat'
-export CATALINA_BASE='../tomcat'
-export JAVA_OPTS='-Xms70M -Xmx500M -Dcatalina.base=tomcat-eclipse -Djava.io.tmpdir="${CATALINA_HOME}/temp" -Dcatalina.home="${CATALINA_HOME}" -Dfile.encoding=8859_1 -Djava.library.path=.'
+cd tomcat
 
+export CATALINA_HOME=/home/projects/parade/util-java/apache-tomcat-5.5.20
+export CATALINA_BASE=.
+#export CATALINA_TMPDIR=temp
+export JAVA_OPTS=-Xmx500M
+#  -Dfile.encoding=8859_1
+
+# export PATH=$PATH:$CATALINA_HOME/bin
 # if it's not already defined in your environment, specify the JAVA_HOME directory
 # export JAVA_HOME=''
 
-${CATALINA_BASE}/bin/shutdown.sh
+echo $PATH
+${CATALINA_HOME}/bin/shutdown.sh
+
+#tail -f logs/catalina.out
