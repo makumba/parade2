@@ -3,10 +3,8 @@ package org.makumba.parade.model;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -36,9 +34,8 @@ public class File {
     private Row row;
 
     private String path;
-    
-    private String parentPath;
 
+    private String parentPath;
 
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
@@ -50,7 +47,7 @@ public class File {
         CVSMgr.directoryRefresh(row, this.getPath(), false);
         trackerMgr.directoryRefresh(row, this.getPath(), false);
     }
-    
+
     /* Calls the refresh() directoryRefresh() on the directory managers locally */
     public void localRefresh() {
         FileManager fileMgr = new FileManager();
@@ -61,7 +58,7 @@ public class File {
         CVSMgr.directoryRefresh(row, this.getPath(), true);
         trackerMgr.directoryRefresh(row, this.getPath(), true);
     }
-    
+
     public void setPath(String p) {
         this.path = p;
     }
@@ -129,7 +126,7 @@ public class File {
     public String getPath() {
         return this.path;
     }
-    
+
     public String getParentPath() {
         return parentPath;
     }
@@ -137,7 +134,7 @@ public class File {
     public void setParentPath(String parentPath) {
         this.parentPath = parentPath;
     }
-    
+
     public boolean getOnDisk() {
         return onDisk;
     }
@@ -146,110 +143,35 @@ public class File {
         this.onDisk = onDisk;
     }
 
-    /* returns a List of the keys of the subdirs of a given path */
-    public List getSubdirs(Session s) {
-        
-        // populate the proxy
-        s.get(Row.class, this.getRow().getId());
-        
-        String keyPath = path.replace(java.io.File.separatorChar, '/');
-        
-        String absoulteRowPath = (new java.io.File(getRow().getRowpath()).getAbsolutePath());
-        if (keyPath == null || keyPath == "")
-            keyPath = absoulteRowPath.replace(java.io.File.separatorChar, '/');
-        
-        List children = null;
-        
-        Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.isDir = true and f.row.rowname = :rowname");
-        q.setCacheable(true);
-        q.setString("keyPath", keyPath);
-        q.setString("rowname", row.getRowname());
-        
-        children = q.list();
-        
-        /*
-
-        Set keySet = this.getRow().getFiles().keySet();
-
-        List children = new LinkedList();
-
-        for (Iterator i = keySet.iterator(); i.hasNext();) {
-            String currentKey = (String) i.next();
-            boolean isChild = currentKey.startsWith(keyPath);
-            if (isChild) {
-                boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
-                if (isNotRoot) {
-                    String childKey = currentKey.substring(keyPath.length() + 1, currentKey.length());
-                    boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
-                    if (isDirectChild) {
-                        File f = (File) this.getRow().getFiles().get(currentKey);
-                        if (f.getIsDir()) {
-                            children.add(f);
-                        }
-                    }
-                }
-            }
-        }
-        
-        */
-
-        return children;
-
-    }
-
     /* returns a List of the direct children (files, dirs) of a given Path */
     public List getChildren() {
         String keyPath = this.getPath().replace(java.io.File.separatorChar, '/');
-        
+
         String absoulteRowPath = (new java.io.File(row.getRowpath()).getAbsolutePath());
         if (keyPath == null || keyPath == "")
             keyPath = absoulteRowPath.replace(java.io.File.separatorChar, '/');
-        
+
         List children = null;
-        
+
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
-        
+
         Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.row.rowname = :rowname");
         q.setCacheable(true);
         q.setString("keyPath", keyPath);
         q.setString("rowname", row.getRowname());
-        
+
         children = q.list();
-        
-        // we need to initialise the file data of this file        
+
+        // we need to initialise the file data of this file
         Iterator i = q.iterate();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             Hibernate.initialize(((File) i.next()).getFiledata());
         }
-        
+
         tx.commit();
         s.close();
-        
-        /*
-        
 
-        Set keySet = this.getRow().getFiles().keySet();
-
-        List children = new LinkedList();
-
-        for (Iterator i = keySet.iterator(); i.hasNext();) {
-            String currentKey = (String) i.next();
-            boolean isChild = currentKey.startsWith(keyPath);
-            if (isChild) {
-                boolean isNotRoot = currentKey.length() - keyPath.length() > 0;
-                if (isNotRoot) {
-                    String childKey = currentKey.substring(keyPath.length() + 1, currentKey.length());
-                    boolean isDirectChild = childKey.indexOf(java.io.File.separator) == -1;
-                    if (isDirectChild) {
-                        children.add(this.getRow().getFiles().get(currentKey));
-                    }
-                }
-            }
-        }
-        */
-
-        //return children;
-       return children;
+        return children;
     }
 }
