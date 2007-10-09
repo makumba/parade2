@@ -1,2 +1,0 @@
-This file is here in order to ensure that the folder "webapps" is in CVS.
-It is needed by some tomcat versions on linux systems.

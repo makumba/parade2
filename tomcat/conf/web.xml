@@ -4,8 +4,7 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     version="2.4">
 
-<!-- parade-wide triggers: they are called in all contexts. they cannot be relo\
-aded! -->
+<!-- parade-wide triggers: they are called in all contexts. they cannot be reloaded! -->
  <filter>
       <filter-name>trigger</filter-name>
       <filter-class>org.makumba.parade.tools.TriggerFilter</filter-class>

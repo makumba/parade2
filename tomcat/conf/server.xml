@@ -61,7 +61,9 @@
 				unpackWARs="true" autoDeploy="true" xmlValidation="false"
 				xmlNamespaceAware="false">
 
-				<Context path="" docBase="../webapps/parade" debug="0"
+				<DefaultContext crossContext="true" />
+
+				<Context path="" docBase="../../webapp" debug="0"
 					reload="true" />
 
 				<Context path="/manager"
@@ -71,8 +73,6 @@
 					<ResourceLink name="users" global="UserDatabase"
 						type="org.apache.catalina.UserDatabase" />
 				</Context>
-
-
 			</Host>
 
 		</Engine>
