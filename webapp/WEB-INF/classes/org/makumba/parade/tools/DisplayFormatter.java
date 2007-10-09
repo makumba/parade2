@@ -1,10 +1,9 @@
 package org.makumba.parade.tools;
 
-import java.text.DecimalFormat;
-
 /**
- * 
- * @author manu
+ * This class provides utility methods to display numeric values in a nicer way to the user.
+ * @author Cristian Bogdan
+ * @author Manuel Gay
  * @version $id
  */
 public class DisplayFormatter {
