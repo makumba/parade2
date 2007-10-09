@@ -86,6 +86,12 @@ public class FileDisplay {
         else absolutePath = r.getRowpath() + java.io.File.separator + path.replace('/', java.io.File.separatorChar);
         if(absolutePath.endsWith(java.io.File.separator)) absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
         File file = (File) r.getFiles().get(absolutePath);
+        
+        // if this file does not exist, e.g. we come from a row where this folder does not exist, take the root file
+        if(file == null) {
+            absolutePath = r.getRowpath();
+            file = (File) r.getFiles().get(absolutePath);
+        }
         List files = file.getChildren();
         FileComparator fc = new FileComparator();
 

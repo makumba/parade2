@@ -11,7 +11,7 @@
 <img src='/images/win-x.gif' align=right alt='remove frames' border=0 hspace=1 vspace=1 onMouseDown="src='/images/win-x2.gif' onMouseUp=\"src='/images/win-x.gif'; top.location=top.directory.location;">
 <table class='header'>
 
-<form ACTION='/browse.jsp?' TARGET='_top' style='margin:0px;'>
+<form ACTION='/browse.jsp?getPathFromSession=true' TARGET='_top' style='margin:0px;'>
 <tr>
 <td valign="top">
 <a HREF='/' TARGET='_top' title='back to front page'>&lt;</a>
@@ -19,7 +19,8 @@
 <#list rows as row>
 <option value="${row}"<#if row = rowName> selected</#if>>${row}</option>
 </#list>
-</select><input TYPE='submit' VALUE='Go!'>
+</select>
+<input TYPE='submit' VALUE='Go!'>
 </td>
 </form>
 <td valign=top>[<a href='log?context=${rowName}' title='${rowName} log' target='directory'>log</a>] 
@@ -42,17 +43,17 @@ function icqNewWin() {
 <td valign="top">
 <#if webapp.status = 2>
 &nbsp; webapp:
-<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextReload'>reload</a> 
-<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextStop'>stop</a>        
+<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextReload&getPathFromSession=true'>reload</a> 
+<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextStop&getPathFromSession=true'>stop</a>        
 </#if>
 <#if webapp.status = 1>
-<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextStart'>start</a>
+<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextStart&getPathFromSession=true'>start</a>
 </#if>
 <#if webapp.status != 0>
-<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextRemove'>uninstall</a>
+<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextRemove&getPathFromSession=true'>uninstall</a>
 </#if>
 <#if webapp.status = 0>
-<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextInstall'>install</a>
+<a href='/Webapp.do?context=${rowName}&path=${webapp.path}&op=servletContextInstall&getPathFromSession=true'>install</a>
 </#if>
 </td>
 

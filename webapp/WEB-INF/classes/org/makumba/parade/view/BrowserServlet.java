@@ -7,8 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
@@ -46,10 +46,19 @@ public class BrowserServlet extends HttpServlet {
         if (file == null)
             file = (String) req.getAttribute("file");
 
-        String path = req.getParameter("path");
+        String path = null;
+        
+        String getPathFromSession = req.getParameter("getPathFromSession");
+        if(getPathFromSession != null) {
+            path = (String) ((HttpServletRequest)req).getSession().getAttribute("path");
+        } else {
+            path = req.getParameter("path");
+        }
         if (path == null)
             path = (String) req.getAttribute("path");
-
+        
+        if(path != null && path != "") ((HttpServletRequest)req).getSession().setAttribute("path", path);
+        
         String opResult = (String) req.getAttribute("result");
         Boolean successAttr = (Boolean) req.getAttribute("success");
         boolean success = true;
