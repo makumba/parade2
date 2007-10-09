@@ -156,7 +156,7 @@ public class File {
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
-        Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.row.rowname = :rowname");
+        Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.row.rowname = :rowname order by f.isDir desc, f.name asc");
         q.setCacheable(true);
         q.setString("keyPath", keyPath);
         q.setString("rowname", row.getRowname());

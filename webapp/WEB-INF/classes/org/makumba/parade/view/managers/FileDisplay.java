@@ -93,10 +93,7 @@ public class FileDisplay {
             file = (File) r.getFiles().get(absolutePath);
         }
         List files = file.getChildren();
-        FileComparator fc = new FileComparator();
-
-        Collections.sort(files, fc);
-        
+                
         List fileViews = new LinkedList();
 
         Session s = InitServlet.getSessionFactory().openSession();
