@@ -52,7 +52,6 @@
 			<include name="rt.jar" />
 		</fileset>
 		
-		<path refid="project.class.path" />
 	</path>
 
 
@@ -100,14 +99,9 @@
 	</target>
 	
 	
-	<target name="installTomcat" description="Sets up tomcat with ParaDe-specific configuration" depends="compile">
+	<target name="prepareTomcat" description="Sets up tomcat with ParaDe-specific configuration" depends="compile">
 		
-		<!-- First, we copy the ant libraries needed to get the tomcat ant stuff running -->
-		<copy toDir="${ANT_HOME}" overwrite="false">
-			<fileset dir="${catalina.home}/server/lib/" includes="catalina-ant.jar" />
-		</copy>
-		
-		<!-- Next, we copy the trigger classes to paradeCommon -->
+		<!-- First, we copy the trigger classes to paradeCommon -->
 		<mkdir dir="tomcat/paradeCommon/classes/" />
 		<copy toDir="tomcat/paradeCommon/classes/" overwrite="true">
 			<fileset dir="webapp/WEB-INF/classes">
