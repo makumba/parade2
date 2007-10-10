@@ -2,10 +2,29 @@
 <project name="PARADE" basedir="." default="compile">
 
 	<property file="build.properties" />
+	<property file="tomcat.properties" />
+	
+	<!-- Configure the directory into which the web application is built -->
+	<property name="build" value="${basedir}/build" />
 
-	<path id="project.class.path">
-		<pathelement path="../utilities" />
-	</path>
+	<!-- Configure the context path for this application -->
+	<property name="path" value="/" />
+	<property name="war" value="/ROOT" />
+
+	<!-- Configure properties to access the Manager application -->
+	<property name="url" value="${tomcat.manager.url}" />
+	<property name="username" value="${tomcat.username}" />
+	<property name="password" value="${tomcat.password}" />
+
+	<!-- Configure the custom Ant tasks for the Manager application -->
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
+	<taskdef name="list" classname="org.apache.catalina.ant.ListTask" />
+	<taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask" />
+	<taskdef name="resources" classname="org.apache.catalina.ant.ResourcesTask" />
+	<taskdef name="roles" classname="org.apache.catalina.ant.RolesTask" />
+	<taskdef name="start" classname="org.apache.catalina.ant.StartTask" />
+	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask" />
+	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
 
 	<!-- the following properties should be defined
 	  catalina.home: tomcat home
@@ -35,50 +54,85 @@
 		
 		<path refid="project.class.path" />
 	</path>
+
+
+	<target name="compile" description="compile the java files">
+		<antcall target="clean" />
+		<javac srcdir="${webapp.path}/WEB-INF/classes">
+			<classpath refid="generic.class.path" />
+		</javac>
+	</target>
+
+	<target name="clean" description="delete all generated and backup files">
+		<mkdir dir="${webapp.path}/javadoc" />
+		<mkdir dir="${basedir}/jspc" />
+		<!-- this is a bug in the karamba build.xml... the jspc directory is not always created at install or paradeInstall -->
+		<delete>
+			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/*.class" />
+			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/*.java~" />
+			<fileset dir="${webapp.path}" includes="**/*.jsp~" />
+			<fileset dir="${webapp.path}/javadoc" />
+
+			<fileset dir="${basedir}/jspc" />
+		</delete>
+	</target>
+
+	<target name="compileWar" description="Compile web application">
+	<war destfile="${build}${war}.war" webxml="WebContent/WEB-INF/web.xml" update="true">
+			<fileset dir="WebContent">
+				<exclude name="WebContent/WEB-INF/web.xml" />
+			</fileset>
+			<lib dir="WebContent/WEB-INF/lib"/>
+		    <classes dir="${build}/classes"/>
+		</war>
+	</target>
+
+	<target name="deploy" description="Install web application" depends="compile">
+		<deploy url="${url}" username="${username}" password="${password}" path="${path}" war="${build}${war}.war" />
+	</target>
+
+	<target name="reload" description="Reload web application" depends="compile">
+		<reload url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+
+	<target name="undeploy" description="Remove web application">
+		<undeploy url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
 	
-	<target name="tomcat" description="start tomcat 5">
-
-		<!-- ParaDe - -->
-		<antcall target="compile" />
-		<antcall target="triggerCopyToTomcat" />
+	
+	<target name="installTomcat" description="Sets up tomcat with ParaDe-specific configuration" depends="compile">
 		
-		<antcall target="startTomcat" />
+		<!-- First, we copy the ant libraries needed to get the tomcat ant stuff running -->
+		<copy toDir="${ANT_HOME}" overwrite="false">
+			<fileset dir="${catalina.home}/server/lib/" includes="catalina-ant.jar" />
+		</copy>
 		
-	</target>
-
-	<target name="tomcatBest" description="start tomcat 5">
-
-		<!-- ParaDe - -->
-		<antcall target="compile" />
-		<antcall target="copyBestLibsToTomcat" />
-		<antcall target="copyUtilities" />
-		<antcall target="triggerCopyToTomcat" />
-		<antcall target="copyDataDefinitions" />
-		<antcall target="copyAuthorizer" />
-
-		<antcall target="startTomcat" />
-
-	</target>
-
-
-	<!-- copy BEST-specific util-java/lib to tomcat's common, for use by webapps and LoginFilter
-									according to the tomcat classloader howto, should be copied to tomcat's share/classes, 
-									but i couldn't get them to work frmom there.
-									-->
-	<target name="copyBestLibsToTomcat">
-		<copy toDir="${catalina.home}/common/lib" overwrite="true">
-			<fileset dir="../../util-java/lib">
-				<include name="*.jar" />
-				<include name="*.zip" />
-				<exclude name="makumba.jar" />
-				<exclude name="antlr.jar" />
-				<!-- JSTL JARs -->
-				<exclude name="jstl.jar" />
-				<exclude name="jstl-standard.jar" />
+		<!-- Next, we copy the trigger classes to paradeCommon -->
+		<mkdir dir="tomcat/paradeCommon/classes/" />
+		<copy toDir="tomcat/paradeCommon/classes/" overwrite="true">
+			<fileset dir="webapp/WEB-INF/classes">
+		          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
+		          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
 			</fileset>
 		</copy>
+		
+		<!-- Then, we copy useful jars to paradeCommon/lib -->
+		<mkdir dir="tomcat/paradeCommon/lib/" />
+			<copy toDir="tomcat/paradeCommon/lib/" overwrite="true">
+				<fileset dir="webapp/WEB-INF/lib">
+					<include name="mysql.jar" />
+				</fileset>
+			</copy>
+		
+		<!-- We also need to create a bunch of directories -->
+		<mkdir dir="tomcat/webapps_dummy"/>
+				
 	</target>
 	
+
+	<!-- OLD TARGETS - not necessarily in use anymore, should go away after a while -->
+
+
 	<!-- copy libs to tomcat common's lib for use by webapps -->
 		<target name="copyLibsToTomcat">
 			<copy toDir="${catalina.home}/common/lib" overwrite="true">
@@ -144,118 +198,5 @@
 			</fileset>
 		</copy>
 	</target>
-
-	<!-- start tomcat -->
-	<target name="startTomcat">
-
-		<echo>
-	Starting tomcat from ${catalina.home}... To stop, press Ctrl-C and use "ant stopTomcat". The server output is in ${tomcat.output} 
-		</echo>
-		<tstamp>
-			<format property="tomcat.time" pattern="MMM dd yyyy HH:mm" />
-		</tstamp>
-		<echo file="${tomcat.output}" append="true">
-	ant script "build.xml": Tomcat starts at ${tomcat.time}	
-	</echo>
-
-		<java classname="org.apache.catalina.startup.Bootstrap" dir="." fork="true" output="${tomcat.output}" append="true" taskname="tomcat">
-			<sysproperty key="http.port" value="${http.port}" />
-			<sysproperty key="http.restart.port" value="${http.restart.port}" />
-			<sysproperty key="tomcat.manager.user" value="${tomcat.manager.user}" />
-			<sysproperty key="tomcat.manager.pass" value="${tomcat.manager.pass}" />
-
-			<sysproperty key="catalina.base" value="tomcat" />
-			<sysproperty key="java.io.tmpdir" value="${temp.dir}" />
-			<sysproperty key="catalina.home" value="${catalina.home}" />
-			<sysproperty key="makumba.long-content" value="${tomcat.makumba.long.content}" />
-			<sysproperty key="file.encoding" value="${tomcat.jvm.file.encoding}" />
-			<sysproperty key="java.util.logging.config.file" value="logging.properties" />
-
-			<jvmarg value="-Xss4M" />
-			<jvmarg value="-Xmx${tomcat.jvm.memory}" />
-			<jvmarg value="-Xms${tomcat.jvm.initial_memory}" />
-			<arg value="start" />
-			<classpath>
-				<fileset dir="lib">
-					<include name="tomcat-bootstrap.jar" />
-					<include name="servlet-api.jar" />
-					<include name="ant-1.6.5.jar" />
-					<include name="ant-launcher.jar" />
-					<include name="mysql.jar" />
-					<include name="commons-logging-api.jar" />
-				</fileset>
-				<pathelement path="triggerClasses"/>
-			</classpath>
-		</java>
-		<tstamp>
-			<format property="tomcat.finishing.time" pattern="MMMM dd yyyy HH:mm" />
-		</tstamp>
-
-		<echo file="${tomcat.output}" append="true">ant script "build.xml": Tomcat terminated at ${tomcat.finishing.time}	
-	</echo>
-	</target>
-
-
-	<target name="stopTomcat" description="stop tomcat">
-		<!-- tomcat stop code is not used, a simple http access is made to stop tomcat -->
-		<tstamp>
-			<format property="tomcat.stopping.time" pattern="MMMM dd yyyy HH:mm" />
-		</tstamp>
-
-		<echo file="${tomcat.output}" append="true">ant script "build.xml": Trying to stop tomcat at ${tomcat.stopping.time}
-	</echo>
-		<get src="http://localhost:${http.restart.port}/IgnoreTheError" dest="${temp.dir}/dummy.txt" ignoreerrors="true" verbose="on" />
-	</target>
-
-
-	<target name="reload">
-		<tstamp>
-			<format property="tomcat.reload.time" pattern="MMMM dd yyyy HH:mm" />
-		</tstamp>
-		<echo file="${tomcat.output}" append="true">ant script "build.xml": Trying to reload the servlet context at ${tomcat.reload.time}	
-	</echo>
-		<get src="http://localhost:${http.port}/manager/reload?path=/" dest="reload-log.txt" username="${tomcat.manager.user}" password="${tomcat.manager.pass}" />
-		<loadfile srcFile="reload-log.txt" property="reload.result" />
-		<echo>${reload.result}</echo>
-		<echo file="${tomcat.output}" append="true">ant script "build.xml": reload response was: ${reload.result}
-	</echo>
-	</target>
-
-	<target name="compile" description="compile the java files">
-		<antcall target="clean" />
-		<javac srcdir="${webapp.path}/WEB-INF/classes">
-			<classpath refid="generic.class.path" />
-		</javac>
-	</target>
-
-	<target name="clean" description="delete all generated and backup files">
-		<mkdir dir="${webapp.path}/javadoc" />
-		<mkdir dir="${basedir}/jspc" />
-		<!-- this is a bug in the karamba build.xml... the jspc directory is not always created at install or paradeInstall -->
-		<delete>
-			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/*.class" />
-			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/*.java~" />
-			<fileset dir="${webapp.path}" includes="**/*.jsp~" />
-			<fileset dir="${webapp.path}/javadoc" />
-
-			<fileset dir="${basedir}/jspc" />
-		</delete>
-	</target>
-
-	<target name="checkInitialFiles">
-		<!-- it just checks if one file exist, if so it is assumed that
-		     all the others were copied -->
-		<available file="parade.properties" type="file" property="files.copied" />
-	</target>
 	
-	<target name="triggerCopyToTomcat">
-		<copy toDir="triggerClasses/" overwrite="true">
-			<fileset dir="webapp/WEB-INF/classes">
-		          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
-		          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
-	        </fileset>
-		</copy>
-	</target>
-
 </project>
-
