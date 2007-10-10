@@ -8,7 +8,7 @@
 http.port=8080
 
 #where is the web application?
-webapp.path=webapps/parade
+webapp.path=webapp
 
 #manager access
 tomcat.manager.user=someuser
