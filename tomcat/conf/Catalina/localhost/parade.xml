@@ -1,1 +1,1 @@
- <Context path="" docBase="../../webapp" debug="0" reload="true" />
+<Context path="" docBase="${catalina.base}/../webapp" debug="0" reload="true" />
