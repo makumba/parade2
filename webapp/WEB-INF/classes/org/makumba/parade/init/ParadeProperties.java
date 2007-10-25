@@ -49,18 +49,9 @@ public class ParadeProperties {
     
     public static String getParadeBase() {
         
-        boolean windows = false;
-        if(!java.io.File.separator.equals("/"))
-            windows = true;
-        
         String paradeBase=".\\";
         try {
-            if(windows) {
-                paradeBase = new java.io.File("." + java.io.File.separator).getCanonicalPath();
-            } else {
-                paradeBase = new java.io.File(".." + java.io.File.separator + ".").getCanonicalPath();
-            }
-             
+            paradeBase = new java.io.File("." + java.io.File.separator).getCanonicalPath();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
