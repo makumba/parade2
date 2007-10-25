@@ -92,7 +92,7 @@ public class InitServlet extends HttpServlet implements Runnable {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        System.out.println("init: Starting Parade initialization at " + new java.util.Date());
+        logger.info("INIT: Starting Parade initialization at " + new java.util.Date());
         long start = System.currentTimeMillis();
         System.out.flush();
 
@@ -116,11 +116,11 @@ public class InitServlet extends HttpServlet implements Runnable {
 
         session.close();
         
-        System.out.println("INFO: Launching ParaDe finished at " + new java.util.Date());
+        logger.info("INIT: Launching ParaDe finished at " + new java.util.Date());
         long end = System.currentTimeMillis();
 
         long refresh = end - start;
-        System.out.println("INFO: Initialisation took " + refresh + " ms");
+        logger.info("INIT: Initialisation took " + refresh + " ms");
         
     }
 
