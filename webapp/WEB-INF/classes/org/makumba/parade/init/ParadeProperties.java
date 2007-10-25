@@ -1,7 +1,6 @@
 package org.makumba.parade.init;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,9 +48,19 @@ public class ParadeProperties {
     }
     
     public static String getParadeBase() {
+        
+        boolean windows = false;
+        if(!java.io.File.separator.equals("/"))
+            windows = true;
+        
         String paradeBase=".\\";
         try {
-            paradeBase = new java.io.File("." + java.io.File.separator).getCanonicalPath();
+            if(windows) {
+                paradeBase = new java.io.File("." + java.io.File.separator).getCanonicalPath();
+            } else {
+                paradeBase = new java.io.File(".." + java.io.File.separator + ".").getCanonicalPath();
+            }
+             
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
