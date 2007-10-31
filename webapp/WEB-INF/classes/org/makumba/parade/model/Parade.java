@@ -238,6 +238,9 @@ public class Parade {
                     }
 
                     private void directoryRefresh(String rootPath) {
+                        if(rootPath == null)
+                            return;
+                        
                         logger.info("Refreshing cache for directory " + rootPath);
                         boolean row_found = false;
                         Row r = null;
