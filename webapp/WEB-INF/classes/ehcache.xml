@@ -33,7 +33,7 @@
 
         -->
     <defaultCache
-        maxElementsInMemory="10000"
+        maxElementsInMemory="100000"
         eternal="false"
         timeToIdleSeconds="120"
         timeToLiveSeconds="120"
@@ -63,11 +63,8 @@
 
         -->
 
-    <!-- Sample cache named sampleCache1
-        This cache contains a maximum in memory of 10000 elements, and will expire
-        an element if it is idle for more than 5 minutes and lives for more than
-        10 minutes.
-        -->
+    <!-- Fine-tuned ParaDe caches. Deactivated because they apparently slow down instead of speeding up
+    
     <cache name="org.makumba.parade.model.Parade"
         maxElementsInMemory="1"
         eternal="true"
@@ -134,5 +131,6 @@
 	    eternal="false"
 	    overflowToDisk="false"
 	    />
-        
+	    
+        -->
 </ehcache>
