@@ -62,6 +62,11 @@
 		<fileset dir="${webapp.path}/WEB-INF/lib">
 			<include name="jnotify-0.9.1.jar" />
 		</fileset>
+		<fileset dir="lib">
+			<include name="ant-1.6.5.jar" />
+			<include name="ant-launcher.jar" />
+			<include name="commons-logging-api.jar" />
+		</fileset>
 	</path>
 
 	<target name="compile" description="compile the java files">
@@ -136,6 +141,9 @@
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="yes" classpathref="tomcat.class.path">
 			<jvmarg value="-Dcatalina.home=${tomcat.home}" />
 			<jvmarg value="-Dcatalina.base=tomcat" />
+			<jvmarg value="-Xms70M" />
+			<jvmarg value="-Xmx500M" />
+			<jvmarg value="-Djava.library.path=." />
 			<arg value="start" />
 		</java>
 		<!-- give tomcat time to start up -->
