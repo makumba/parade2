@@ -2,7 +2,7 @@
 
 cd tomcat
 
-export CATALINA_HOME=/home/projects/parade/util-java/apache-tomcat-5.5.20
+export CATALINA_HOME=../tomcat
 export CATALINA_BASE=.
 #export CATALINA_TMPDIR=temp
 export JAVA_OPTS=-Xmx500M
