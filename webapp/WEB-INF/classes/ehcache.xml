@@ -33,11 +33,11 @@
 
         -->
     <defaultCache
-        maxElementsInMemory="100000"
+        maxElementsInMemory="200000"
         eternal="false"
-        timeToIdleSeconds="120"
-        timeToLiveSeconds="120"
-        overflowToDisk="true"
+        timeToIdleSeconds="12000"
+        timeToLiveSeconds="12000"
+        overflowToDisk="false"
         />
 
     <!--Predefined caches.  Add your cache configuration settings here.
