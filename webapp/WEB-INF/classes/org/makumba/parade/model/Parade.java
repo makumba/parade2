@@ -215,24 +215,24 @@ public class Parade {
             try {
                 int watchID = JNotify.addWatch(path, mask, watchSubtree, new JNotifyListener() {
                     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
-                        logger.info("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
+                        logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
                         + oldName + " -> " + newName);
                         directoryRefresh(rootPath);
                     }
 
                     public void fileModified(int wd, String rootPath, String name) {
-                        logger.info("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
+                        logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
                         directoryRefresh(rootPath);
                     }
 
                     public void fileDeleted(int wd, String rootPath, String name) {
-                        logger.info("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
+                        logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
                         + name);
                         directoryRefresh(rootPath);
                     }
 
                     public void fileCreated(int wd, String rootPath, String name) {
-                        logger.info("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
+                        logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
                         + name);
                         directoryRefresh(rootPath);
                     }
@@ -264,7 +264,7 @@ public class Parade {
                         logger.info("Finished refreshing cache for directory " + rootPath);
                     }
                 });
-                logger.debug("Adding filesystem watch to row " + r.getRowname());
+                logger.info("Adding filesystem watch to row " + r.getRowname());
             } catch (JNotifyException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
