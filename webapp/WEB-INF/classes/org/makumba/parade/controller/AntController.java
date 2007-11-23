@@ -1,12 +1,10 @@
 package org.makumba.parade.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.makumba.parade.tools.HtmlUtils;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
@@ -15,7 +13,10 @@ import org.makumba.parade.model.managers.FileManager;
 
 public class AntController {
     
+    static Logger logger = Logger.getLogger(InitServlet.class.getName());
+    
     public Object[] onAntAction(String context, String op) {
+        logger.debug("ANT Controller: running operation "+op+" on context "+context);
         
         AntManager antMgr = new AntManager();
         FileManager fileMgr = new FileManager();
