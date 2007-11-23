@@ -144,14 +144,14 @@ public class File {
     }
 
     /* returns a List of the direct children (files, dirs) of a given Path */
-    public List getChildren() {
+    public List<File> getChildren() {
         String keyPath = this.getPath().replace(java.io.File.separatorChar, '/');
 
         String absoulteRowPath = (new java.io.File(row.getRowpath()).getAbsolutePath());
         if (keyPath == null || keyPath == "")
             keyPath = absoulteRowPath.replace(java.io.File.separatorChar, '/');
 
-        List children = null;
+        List<File> children = null;
 
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
@@ -174,4 +174,31 @@ public class File {
 
         return children;
     }
+    
+    /* returns a List of the direct children (files, dirs) of a given Path */
+    public List<String> getChildrenPaths() {
+        String keyPath = this.getPath().replace(java.io.File.separatorChar, '/');
+
+        String absoulteRowPath = (new java.io.File(row.getRowpath()).getAbsolutePath());
+        if (keyPath == null || keyPath == "")
+            keyPath = absoulteRowPath.replace(java.io.File.separatorChar, '/');
+
+        List<String> children = null;
+
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+
+        Query q = s.createQuery("from File f.path where f.parentPath = :keyPath and f.row.rowname = :rowname order by f.isDir desc, f.name asc");
+        q.setCacheable(true);
+        q.setString("keyPath", keyPath);
+        q.setString("rowname", row.getRowname());
+
+        children = q.list();
+
+        tx.commit();
+        s.close();
+
+        return children;
+    }
+    
 }
