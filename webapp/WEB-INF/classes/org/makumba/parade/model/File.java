@@ -188,7 +188,7 @@ public class File {
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
-        Query q = s.createSQLQuery("SELECT * FROM File f JOIN Row r WHERE f.ID_ROW = r.ID AND f.parentPath = ? AND r.rowname = ? ORDER BY f.isDir DESC, f.path ASC").addScalar("PARENTPATH", Hibernate.STRING).addScalar("ROWNAME", Hibernate.STRING);
+        Query q = s.createSQLQuery("SELECT path FROM File f JOIN Row r WHERE f.ID_ROW = r.ID AND f.parentPath = ? AND r.rowname = ? ORDER BY f.isDir DESC, f.path ASC").addScalar("path", Hibernate.STRING);
         q.setCacheable(true);
         q.setString(0, keyPath);
         q.setString(1, row.getRowname());
