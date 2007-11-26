@@ -59,7 +59,8 @@
       <Host name="localhost" appBase="webapps_dummy"
        unpackWARs="true" autoDeploy="true"
        xmlValidation="false" xmlNamespaceAware="false"/>
-      <DefaultContext crosscontext="true"/>
+       
+      <DefaultContext crosscontext="true" override="true" />
 
     </Engine>
 
