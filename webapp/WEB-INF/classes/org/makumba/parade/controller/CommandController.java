@@ -81,15 +81,19 @@ public class CommandController {
             result = fileMgr.newDir(row, path, filename);
         else if (action.equals("deleteFile"))
             result = fileMgr.deleteFile(row, path, filename);
-        
-        //updates the caches
-        //TODO the same for the other caches
-        CVSManager.updateCvsCache(context, path);
- 
-        tx.commit();
-        s.close();
 
         boolean success = result.startsWith("OK");
+        if(success) {
+            //updates the caches
+            //TODO the same for the other caches
+            
+            //FileManager.updateSimpleFileCache(context, path);
+            CVSManager.updateCvsCache(context, path, true);
+        }
+        
+        tx.commit();
+        s.close();
+        
         if (success) {
             if (action.equals("newFile"))
                 return res(FileDisplay.creationFileOK(row.getRowname(), relativePath, filename), success);

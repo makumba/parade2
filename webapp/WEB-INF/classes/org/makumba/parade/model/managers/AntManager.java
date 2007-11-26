@@ -161,23 +161,24 @@ public class AntManager implements RowRefresher, ParadeManager {
         v.addElement(command);
         
         logger.debug("Attempting to execute ANT command "+command+" with a java heap of "+memSize);
-        synchronized (project) {
-            lg.setOutputPrintStream(out);
-            lg.setErrorPrintStream(out);
+        
+        lg.setOutputPrintStream(out);
+        lg.setErrorPrintStream(out);
 
-            lg.buildStarted(null);
-            Throwable error = null;
-            try {
-                
-                project.executeTargets(v);
-            } catch (Throwable t) {
-                error = t;
-            }
-            BuildEvent be = new BuildEvent(project);
-            be.setException(error);
-            lg.buildFinished(be);
+        lg.buildStarted(null);
+        Throwable error = null;
+        try {
+            
+            project.executeTargets(v);
+        } catch (Throwable t) {
+            error = t;
         }
+        BuildEvent be = new BuildEvent(project);
+        be.setException(error);
+        lg.buildFinished(be);
+    
         out.flush();
+        
         rt.gc();
         long memSize1 = rt.totalMemory() - rt.freeMemory();
         logger.debug("Finished to execute ANT command "+command+" with a java heap of "+memSize1);

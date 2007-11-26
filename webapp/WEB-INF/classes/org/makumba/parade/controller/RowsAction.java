@@ -1,7 +1,5 @@
 package org.makumba.parade.controller;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,7 +11,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
-import org.makumba.parade.model.Row;
 
 public class RowsAction extends Action {
 
@@ -28,6 +25,7 @@ public class RowsAction extends Action {
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         
         p.refresh();
+        p.addJNotifyListeners();
         
         tx.commit();
         s.close();        

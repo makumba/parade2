@@ -33,7 +33,7 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, absolutePath);
+        CVSManager.updateCvsCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -59,8 +59,10 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, f, getPrintWriterCVS(out));
+        
+        // cvs update modifies state of file and of cvs data, locally
         FileManager.updateFileCache(context, absolutePath, true);
-        CVSManager.updateCvsCache(context, absolutePath);
+        CVSManager.updateCvsCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -84,8 +86,10 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        FileManager.updateFileCache(context, absolutePath, false);
-        CVSManager.updateCvsCache(context, absolutePath);
+        
+        // cvs recursive update modifies state of file and of cvs data, recursively
+        //FileManager.updateSimpleFileCache(context, absolutePath);
+        CVSManager.updateCvsCache(context, absolutePath, false);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -110,8 +114,10 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        FileManager.updateFileCache(context, absolutePath, true);
-        CVSManager.updateCvsCache(context, absolutePath);
+        
+        // cvs commit can lead to conflicts, hence modifies the state of the file and of the cvs data
+        //FileManager.updateSimpleFileCache(context, absoluteFilePath);
+        CVSManager.updateCvsCache(context, absolutePath, true);
                 
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -134,7 +140,6 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, absolutePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -157,7 +162,9 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, absolutePath);
+        
+        // cvs add doesn't modify the state of the file, only of the cvs data
+        CVSManager.updateCvsCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -181,7 +188,9 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, absolutePath);
+        
+        // cvs add doesn't modify the state of the file, only of the cvs data
+        CVSManager.updateCvsCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -201,8 +210,8 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, absolutePath);
-        FileManager.updateSimpleFileCache(context, absolutePath);
+        //FileManager.updateSimpleFileCache(context, absoluteFilePath);
+        CVSManager.updateCvsCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -222,7 +231,9 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, absolutePath);
+        
+        // cvs delete modifies only the state of the cvs data, the file was deleted before
+        CVSManager.updateCvsCache(context, absolutePath, true);
                 
         Object[] res = {result.toString(), new Boolean(true)};
         

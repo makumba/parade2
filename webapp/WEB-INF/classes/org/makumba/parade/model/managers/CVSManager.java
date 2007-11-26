@@ -316,13 +316,13 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
     }
     
-    public static void updateCvsCache(String context, String path) {
+    public synchronized static void updateCvsCache(String context, String path, boolean local) {
         CVSManager cvsMgr = new CVSManager();
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         Row r = Row.getRow(p, context);
         Transaction tx = s.beginTransaction();
-        cvsMgr.directoryRefresh(r, path, false);
+        cvsMgr.directoryRefresh(r, path, local);
         tx.commit();
         s.close();
     }   

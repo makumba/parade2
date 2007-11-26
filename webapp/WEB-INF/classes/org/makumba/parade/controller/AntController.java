@@ -40,7 +40,7 @@ public class AntController {
             opResult+= e.getMessage();
         }
         
-        fileMgr.rowRefresh(entryRow);
+        //fileMgr.rowRefresh(entryRow);
 
         tx.commit();
         s.close();

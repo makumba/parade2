@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
 
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
@@ -22,9 +21,8 @@ import org.makumba.parade.model.managers.AntManager;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.MakumbaManager;
-import org.makumba.parade.model.managers.TrackerManager;
 import org.makumba.parade.model.managers.WebappManager;
-import org.makumba.parade.view.managers.RowStoreViewManager;
+import org.makumba.parade.tools.SimpleFileFilter;
 
 public class Parade {
 
@@ -35,7 +33,7 @@ public class Parade {
     private Map rows = new HashMap();
 
     private static Logger logger = Logger.getLogger(Parade.class.getName());
-
+    
     // ParaDe managers
     // TODO these should be injected using Spring
 
@@ -82,9 +80,7 @@ public class Parade {
             webappMgr.rowRefresh(r);
             makMgr.rowRefresh(r);
         }
-
-        addJNotifyListeners();
-
+        
         logger.info("ParaDe-wide refresh finished");
 
     }
@@ -184,11 +180,10 @@ public class Parade {
     /**
      * Initalises the file system monitoring using JNotify ({@link http://jnotify.sourceforge.net/})
      * 
-     * FIXME the watches should call much more fine-grained methods than they do now, or this may impact on the
-     * performance
+     * FIXME? we don't do anything if a directory is marked as changed. we only bother about individual files. we might miss something, but then again, it's much more performant, often directory changes are not relevant.
      * 
      */
-    private void addJNotifyListeners() {
+    public void addJNotifyListeners() {
 
         // for each row we create listeners that will inform us whenever a change occurs in the filesystem
         Iterator i = this.getRows().keySet().iterator();
@@ -211,58 +206,116 @@ public class Parade {
             boolean watchSubtree = true;
 
             // now we start watching
-            // FIXME the updates here should be much more fine-grained
             try {
                 int watchID = JNotify.addWatch(path, mask, watchSubtree, new JNotifyListener() {
                     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
                         logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
                         + oldName + " -> " + newName);
-                        directoryRefresh(rootPath);
+                        refreshCache(rootPath, oldName);
+                        refreshCache(rootPath, newName);
+                        
                     }
 
                     public void fileModified(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
-                        directoryRefresh(rootPath);
+                        refreshCache(rootPath, name);
                     }
 
                     public void fileDeleted(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
                         + name);
-                        directoryRefresh(rootPath);
+                        refreshCache(rootPath, name);
                     }
 
                     public void fileCreated(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
                         + name);
-                        directoryRefresh(rootPath);
+                        refreshCache(rootPath, name);
+                    }
+                    
+                    private synchronized void refreshCache(String rootPath, String fileName) {
+                        java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
+                        
+                        SimpleFileFilter sf = new SimpleFileFilter();
+                         
+                        if(sf.accept(f) && !f.isDirectory()) {
+                            fileRefresh(rootPath, fileName, null);
+                        }
                     }
 
                     private void directoryRefresh(String rootPath) {
                         if(rootPath == null)
                             return;
                         
-                        logger.info("Refreshing cache for directory " + rootPath);
-                        boolean row_found = false;
-                        Row r = null;
-
+                        logger.debug("Refreshing cache for directory " + rootPath);
                         Session s = InitServlet.getSessionFactory().openSession();
                         Transaction tx = s.beginTransaction();
-
-                        Parade p = (Parade) s.get(Parade.class, new Long(1));
-                        Iterator i = p.getRows().keySet().iterator();
-
-                        while (i.hasNext() && !row_found) {
-                            r = (Row) p.getRows().get(i.next());
-                            row_found = rootPath.startsWith(r.getRowpath());
+                        Row r = findRowFromContext(rootPath, s);
+                        
+                        if(r == null) {
+                            logger.warn("Couldn't determine row for context "+rootPath);
+                            return;
                         }
-
+                        
                         File modifiedDir = (File) r.getFiles().get(rootPath.replace(java.io.File.separatorChar, '/'));
                         modifiedDir.localRefresh();
 
                         tx.commit();
                         s.close();
-                        logger.info("Finished refreshing cache for directory " + rootPath);
+                        logger.debug("Finished refreshing cache for directory " + rootPath);
                     }
+                    
+                    private void fileRefresh(String rootPath, String fileName, Session s) {
+                        if(rootPath == null || fileName == null)
+                            return;
+                        
+                        logger.debug("Refreshing cache for file " + fileName + " of directory "+rootPath);
+                        
+                        
+                        FileManager fileMgr = new FileManager();
+                        Session session = null;
+                        
+                        try {
+                            if(s == null)
+                                session = InitServlet.getSessionFactory().openSession();
+                            else
+                                session = s;
+                            
+                            Parade p = (Parade) session.get(Parade.class, new Long(1));
+                            Row r = Row.getRow(p, rootPath);
+                            Transaction tx = s.beginTransaction();
+
+                            java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
+                            if (!f.exists())
+                                return;
+
+                            fileMgr.cacheFile(r, f, false);
+
+                            tx.commit();
+                 
+                        } finally {
+                            if(s == null)
+                                session.close();
+                        }
+                        
+                        logger.debug("Finished refreshing cache for file " + fileName + " of directory "+rootPath);
+                        
+                        
+                    }
+                    
+                    private Row findRowFromContext(String context, Session s) {
+                        Parade p = (Parade) s.get(Parade.class, new Long(1));
+                        Iterator i = p.getRows().keySet().iterator();
+                        
+                        boolean row_found = false;
+                        Row contextRow = null;
+                        while (i.hasNext() && !row_found) {
+                            contextRow = (Row) p.getRows().get(i.next());
+                            row_found = context.startsWith(contextRow.getRowpath());
+                        }
+                        return contextRow;
+                    }
+                    
                 });
                 logger.info("Adding filesystem watch to row " + r.getRowname());
             } catch (JNotifyException e) {
@@ -271,7 +324,7 @@ public class Parade {
             }
         }
     }
-
+    
     /* Model related fields and methods */
 
     public Long getId() {

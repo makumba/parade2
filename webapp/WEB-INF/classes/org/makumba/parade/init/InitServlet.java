@@ -1,15 +1,10 @@
 package org.makumba.parade.init;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-
-import net.contentobjects.jnotify.JNotify;
-import net.contentobjects.jnotify.JNotifyException;
-import net.contentobjects.jnotify.JNotifyListener;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -107,8 +102,10 @@ public class InitServlet extends HttpServlet implements Runnable {
             p = new Parade();
             p.setId(one);
             p.refresh();
+            p.addJNotifyListeners();
             session.save(p);
         }
+        p.addJNotifyListeners();
         
         Hibernate.initialize(p.getRows());
         

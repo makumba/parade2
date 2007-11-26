@@ -165,7 +165,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
     **/
 
 
-    private void cacheFile(Row row, java.io.File file, boolean local) {
+    public void cacheFile(Row row, java.io.File file, boolean local) {
         if (file.isDirectory()) {
             File dirData = setFileData(row, file, true);
             addFile(row, dirData);
@@ -346,24 +346,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         Transaction tx = s.beginTransaction();
 
         r.getFiles().remove(path);
-
-        tx.commit();
-        s.close();
-    }
-
-    /* updates file cache of a single file */
-    public static void updateSimpleFileCache(String context, String path) {
-        FileManager fileMgr = new FileManager();
-        Session s = InitServlet.getSessionFactory().openSession();
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
-        Row r = Row.getRow(p, context);
-        Transaction tx = s.beginTransaction();
-
-        java.io.File f = new java.io.File(path);
-        if (!f.exists())
-            return;
-
-        fileMgr.cacheFile(r, f, false);
 
         tx.commit();
         s.close();
