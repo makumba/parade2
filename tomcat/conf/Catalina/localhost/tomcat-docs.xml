@@ -1,0 +1,1 @@
+<Context path="/tomcat-docs" docBase="${catalina.home}/webapps/tomcat-docs" debug="0" reload="true" />
