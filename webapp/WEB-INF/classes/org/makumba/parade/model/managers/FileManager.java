@@ -77,6 +77,47 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         java.io.File currDir = new java.io.File(path);
 
         if (currDir.isDirectory()) {
+            
+            java.io.File[] dir = currDir.listFiles();
+            
+            Set dirContent = new HashSet();
+            for(int i = 0; i < dir.length; i++) {
+                dirContent.add(dir[i].getAbsolutePath());
+            }
+            
+            // clear the cache of the entries of this directory
+            File fileInCache = (File) row.getFiles().get(path);
+            if(fileInCache != null) {
+                List children = fileInCache.getChildren();
+                for(int i = 0; i<children.size(); i++) {
+                    File child = (File) children.get(i);
+
+                    // if we do a local update only, we keep the subdirectories
+                    if (local && child.getIsDir() && dirContent.contains(child.getPath()))
+                        continue;
+                    
+                    // otherwise, we trash
+                    row.getFiles().remove(child.getPath());
+                }
+            }
+            
+            for (int i = 0; i < dir.length; i++) {
+                if (filter.accept(dir[i]) && !(dir[i].getName() == null)) {
+
+                    java.io.File file = dir[i];
+
+                    cacheFile(row, file, local);
+                }
+            }
+        }
+    }
+    
+    /**
+    
+    public synchronized void directoryRefresh(Row row, String path, boolean local) {
+        java.io.File currDir = new java.io.File(path);
+
+        if (currDir.isDirectory()) {
 
             java.io.File[] dir = currDir.listFiles();
 
@@ -119,31 +160,30 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
                 }
             }
             logger.debug("Finished clearing cache");
-
-            
         }
     }
+    **/
 
-    private void cacheFile(Row row, java.io.File file, boolean local, HashSet cachedFiles) {
+
+    private void cacheFile(Row row, java.io.File file, boolean local) {
         if (file.isDirectory()) {
             File dirData = setFileData(row, file, true);
-            addFile(row, dirData, cachedFiles);
+            addFile(row, dirData);
 
             if (!local)
                 dirData.refresh();
 
         } else if (file.isFile()) {
             File fileData = setFileData(row, file, false);
-            addFile(row, fileData, cachedFiles);
+            addFile(row, fileData);
         }
     }
 
     /* adding file to Row files */
-    private void addFile(Row row, File fileData, HashSet cachedFiles) {
+    private void addFile(Row row, File fileData) {
 
         row.getFiles().put(fileData.getPath(), fileData);
-        if(cachedFiles != null) cachedFiles.add(fileData.getPath());
-
+        
         // logger.warn("Added file: "+fileData.getName());
     }
 
@@ -289,7 +329,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         File f = new File();
         java.io.File file = new java.io.File(path);
         f = setFileData(r, file, false);
-        addFile(r, f, null);
+        addFile(r, f);
 
         tx.commit();
         s.close();
@@ -323,7 +363,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         if (!f.exists())
             return;
 
-        fileMgr.cacheFile(r, f, false, null);
+        fileMgr.cacheFile(r, f, false);
 
         tx.commit();
         s.close();
@@ -347,7 +387,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         java.io.File f = new java.io.File(path);
         if (!f.exists())
             return;
-        cacheFile(row, f, false, null);
+        cacheFile(row, f, false);
 
     }
 
