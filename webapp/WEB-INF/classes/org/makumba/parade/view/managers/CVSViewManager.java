@@ -1,22 +1,12 @@
 package org.makumba.parade.view.managers;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
-import org.makumba.parade.model.AbstractFileData;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
-import org.makumba.parade.view.interfaces.FileView;
-import org.makumba.parade.view.interfaces.HeaderView;
 import org.makumba.parade.view.interfaces.ParadeView;
 
 import freemarker.template.SimpleHash;
@@ -24,8 +14,9 @@ import freemarker.template.SimpleHash;
 public class CVSViewManager implements ParadeView {
 
     public void setParadeViewHeader(List headers) {
-        headers.add("CVS user, module, branch");
-        
+        headers.add("CVS user");
+        headers.add("module");
+        headers.add("branch");
     }
 
     public void setParadeView(SimpleHash rowInformation, Row r) {
@@ -47,7 +38,7 @@ public class CVSViewManager implements ParadeView {
 
         String cvsweb = ParadeProperties.getProperty("cvs.site");
         String webPath = f.getPath().substring(r.getRowpath().length() + 1).replace(java.io.File.separatorChar,'/');
-        String cvswebLink = cvsweb + rowcvsdata.getModule() + webPath;
+        String cvswebLink = cvsweb + rowcvsdata.getModule() + "/" + webPath;
         
         // populating model
         fileView.put("cvsWebLink", cvswebLink);

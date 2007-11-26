@@ -9,6 +9,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
@@ -28,7 +29,7 @@ public class BrowserServlet extends HttpServlet {
             ServletException {
         resp.setContentType("text/html");
         resp.setCharacterEncoding("UTF-8");
-
+        
         // fetching parameters
         String display = req.getParameter("display");
         if (display == null)
@@ -81,8 +82,8 @@ public class BrowserServlet extends HttpServlet {
             
             //fetching data from the persistent store
             //this is needed for lazy connections
-            r.getFiles().size();
-            //Hibernate.initialize(r.getFiles());
+            //r.getFiles().size();
+            Hibernate.initialize(r.getFiles());
 
             // initialising the displays
             HeaderDisplay hdrV = new HeaderDisplay();

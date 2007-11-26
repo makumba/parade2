@@ -22,7 +22,9 @@
 <td align='center'><a href='/browse.jsp?context=${row.rowstore.rowname}'>${row.rowstore.rowname}</a> <#if row.rowstore.rowname == '(root)'><a href=''>(Surf)</a></#if><#if row.rowstore.rowname != '(root)'><a href='${row.rowstore.rowname}'>(Surf)</a></#if><br>
 <font style="font-size:smaller;">${row.rowstore.rowpath}</font></td>
 <td>${row.rowstore.rowdescription}</td>
-<td>${row.cvs.user}, <b>${row.cvs.module}</b>, ${row.cvs.branch}</td>
+<td>${row.cvs.user}</td>
+<td>${row.cvs.module}</td>
+<td>${row.cvs.branch}</td>
 <td>${row.ant.buildfile}<br>
 <#list row.ant.targets as target>
 <a href="/Ant.do?context=${row.rowstore.rowname}&path=&op=${target}">${target}</a>
@@ -50,6 +52,6 @@
 
 </TABLE>
 <BR><BR>
-<div class='command'><a href='/Rows.do?op=paraderefresh'>Refresh ParaDe</a></div>
+<!-- <div class='command'><a href='/Rows.do?op=paraderefresh'>Refresh ParaDe</a></div> -->
 
 </CENTER></BODY></HTML>

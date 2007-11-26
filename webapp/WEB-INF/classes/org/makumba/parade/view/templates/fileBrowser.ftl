@@ -52,6 +52,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 </td>
 <td align='right'>
 <a href='/File.do?op=editFile&context=${rowName}&path=${path}&file=${file.nameEncoded}'><img src='/images/edit.gif' alt='Edit ${file.name}'></a>
+&nbsp;&nbsp;
 <a href="javascript:deleteFile('${path}','${file.name}')"><img src='/images/delete.gif' alt='Delete ${file.name}'></a>
 </td>
 </#if>
@@ -139,7 +140,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 
 <!-- CONFLICT -->
 <#case 6>
-<a href='${file.cvsWebLink}' title='CVS log'><b><font color='red'>Conflict</font></b>${file.cvsWebLink}</a>
+<a href='${file.cvsWebLink}' title='CVS log'><b><font color='red'>Conflict</font></b></a>
 <a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit to repository'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 <#break>

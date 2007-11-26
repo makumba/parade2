@@ -1,24 +1,13 @@
 package org.makumba.parade.view.managers;
 
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
-import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.view.interfaces.CommandView;
 
 import freemarker.template.SimpleHash;

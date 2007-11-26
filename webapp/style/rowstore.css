@@ -2,17 +2,17 @@
 
 body {
      font-family:Tahoma,Arial;
-     font-size:1.8em;
+     font-size:2.8em;
 }
 
 div.success {
 	color:#228B22;
-	font-size:small;
+	font-size:medium;
 	font-weight:bold;
 }
 div.failure {
 	color:#FF0000;
-	font-size:small;
+	font-size:medium;
 	font-weight:bold;
 }
 
@@ -47,7 +47,8 @@ TH {
 }
 
 TD {
-	font:menu;
+	font-family:Tahoma,Arial;
+    font-size:0.8em;
     vertical-align:middle;
     padding:0px;
     padding-left:3px;

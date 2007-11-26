@@ -1,8 +1,6 @@
 package org.makumba.parade.view.managers;
 
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.makumba.parade.model.Row;
 import org.makumba.parade.view.interfaces.ParadeView;

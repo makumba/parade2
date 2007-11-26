@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.view.interfaces.HeaderView;
 
 import freemarker.template.SimpleHash;
 import freemarker.template.Template;
