@@ -13,6 +13,12 @@ public class SimpleFileFilter implements FileFilter {
         if ((name.equals("work") || name.equals("logs")) && f.isDirectory()
                 && f.getParentFile().getName().startsWith("tomcat"))
             return false;
+        if(name.startsWith("_new_"))
+            return false;
+        if (f.getParentFile().getName().equals("CVS"))
+            return false;
+        
+        
         return true;
     }
 }
