@@ -321,6 +321,8 @@ public class Parade {
             } catch (JNotifyException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            } catch (NullPointerException npe) {
+                // do nothing. JNotify returns plenty of those.
             }
         }
     }
