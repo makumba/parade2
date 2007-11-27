@@ -18,7 +18,27 @@ div.failure {
 
 div.command {
 	font-size:small;
-	}
+}
+
+div.notinstalled {
+	font-weight: bold;
+	color: grey;
+}
+
+div.installed {
+	font-weight: bold;
+	color: black;
+}
+
+div.stopped {
+	font-weight: bold;
+	color: red;
+}
+div.started {
+	font-weight: bold;
+	color: green;
+}
+
 
 table.rowstore {
     border:0;

@@ -31,18 +31,24 @@
 <#if target_has_next>, </#if>
 </#list>
 </td>
-<td>${row.webapp.webappPath}, <#if row.webapp.status == 0>not installed</#if><#if row.webapp.status == 1>stopped</#if><#if row.webapp.status == 2>installed</#if><br>
-<#if row.webapp.status = 2>
+<td>${row.webapp.webappPath}</td>
+<td>
+<#if row.webapp.status == 0><div class="notinstalled">not installed</div></#if>
+<#if row.webapp.status != 0><div class="installed">installed</div></#if>
+<#if row.webapp.status == 1><div class="stopped">stopped</div></#if>
+<#if row.webapp.status == 2><div class="started">started</div></#if>
+
+<#if row.webapp.status == 2>
 <a href='/Webapp.do?context=${row.rowstore.rowname}&path="+${row.webapp.path}&op=servletContextReload'>reload</a> 
 <a href='/Webapp.do?context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextStop'>stop</a>        
 </#if>
-<#if row.webapp.status = 1>
+<#if row.webapp.status == 1>
 <a href='/Webapp.do?context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextStart'>start</a>
 </#if>
 <#if row.webapp.status != 0>
 <a href='/Webapp.do?context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextRemove'>uninstall</a>
 </#if>
-<#if row.webapp.status = 0>
+<#if row.webapp.status == 0>
 <a href='/Webapp.do?context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextInstall'>install</a>
 </#if>
 </td>
