@@ -6,6 +6,8 @@ public class RowMakumba extends AbstractRowData implements RowData {
 
     private String version;
 
+    private String db;
+
     public Long getId() {
         return id;
     }
@@ -20,6 +22,14 @@ public class RowMakumba extends AbstractRowData implements RowData {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getDb() {
+        return db;
+    }
+
+    public void setDb(String database) {
+        this.db = database;
     }
 
 }

@@ -59,6 +59,7 @@
         <key column="ROWDATA_ID"/>
         
         <property name="version" />
+        <property name="db" />
         
     </joined-subclass>
     

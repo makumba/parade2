@@ -52,7 +52,9 @@
 <a href='/Webapp.do?context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextInstall'>install</a>
 </#if>
 </td>
-<td>${row.mak.version}</td>
+<td>${row.mak.version}<br>
+<font style="font-size:smaller;">${row.mak.database}</font>
+</td>
 </tr>
 </#list>
 

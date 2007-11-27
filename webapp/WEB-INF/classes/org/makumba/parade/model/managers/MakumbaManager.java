@@ -1,13 +1,15 @@
 package org.makumba.parade.model.managers;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import org.apache.log4j.Logger;
-import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowMakumba;
 import org.makumba.parade.model.RowWebapp;
@@ -28,9 +30,11 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         // if this is the ParaDe row, there's no Makumba
         if(row.getRowname().equals("(root)")) {
             makumbadata.setVersion("No makumba.jar");
+            makumbadata.setDb("No MakumbaDatabase.properties");
         } else {
             String root = row.getRowpath() + File.separator + ((RowWebapp) row.getRowdata().get("webapp")).getWebappPath();
             makumbadata.setVersion(getMakumbaVersion(root));
+            makumbadata.setDb(getMakumbaDatabase(root));
         }
 
         row.addManagerData(makumbadata);
@@ -59,6 +63,23 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         }
         return "Error detecting Makumba version";
     }
+    
+    public String getMakumbaDatabase(String root) {
+        
+        root = (root + "/WEB-INF/classes/").replace('/', File.separatorChar);
+        File f = new File(root + "MakumbaDatabase.properties");
+        if (!f.exists())
+            return "No MakumbaDatabase.properties found";
+        Properties p = new Properties();
+        try {
+            p.load(new FileInputStream(f));
+        } catch (IOException e) {
+            return "Invalid MakumbaDatabase.properties";
+        }
+        return "Default database: "+(String)p.get("default");
+    }
+        
+     
 
     public void newRow(String name, Row r, Map m) {
         // TODO Auto-generated method stub
