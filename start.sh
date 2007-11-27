@@ -5,8 +5,7 @@ cd tomcat
 export CATALINA_HOME=../tomcat
 export CATALINA_BASE=.
 #export CATALINA_TMPDIR=temp
-export JAVA_OPTS=-Xmx500M
-#  -Dfile.encoding=8859_1
+export JAVA_OPTS='-Xmx500M -Djava.library.path=../'
 
 # export PATH=$PATH:$CATALINA_HOME/bin
 # if it's not already defined in your environment, specify the JAVA_HOME directory
