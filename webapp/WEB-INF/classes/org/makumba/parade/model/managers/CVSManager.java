@@ -317,6 +317,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
     }
     
     public synchronized static void updateCvsCache(String context, String path, boolean local) {
+        logger.debug("Refreshing CVS cache for path "+path+" of row "+context+((local)?" locally":" recursively"));
         CVSManager cvsMgr = new CVSManager();
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
