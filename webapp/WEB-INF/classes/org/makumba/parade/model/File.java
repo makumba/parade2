@@ -173,8 +173,6 @@ public class File {
         q.setString("keyPath", keyPath);
         q.setString("rowname", row.getRowname());
         
-        System.out.println(Arrays.toString(q.getReturnTypes()));
-        
         List l = q.list();
         
         children =
