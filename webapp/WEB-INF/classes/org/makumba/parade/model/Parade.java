@@ -247,7 +247,7 @@ public class Parade {
                         if(rootPath == null)
                             return;
                         
-                        logger.debug("Refreshing cache for directory " + rootPath);
+                        logger.debug("Refreshing file cache for directory " + rootPath);
                         Session s = InitServlet.getSessionFactory().openSession();
                         Transaction tx = s.beginTransaction();
                         Row r = findRowFromContext(rootPath, s);
@@ -262,14 +262,14 @@ public class Parade {
 
                         tx.commit();
                         s.close();
-                        logger.debug("Finished refreshing cache for directory " + rootPath);
+                        logger.debug("Finished refreshing file cache for directory " + rootPath);
                     }
                     
                     private void fileRefresh(String rootPath, String fileName, Session s) {
                         if(rootPath == null || fileName == null)
                             return;
                         
-                        logger.debug("Refreshing cache for file " + fileName + " of directory "+rootPath);
+                        logger.debug("Refreshing file cache for file " + fileName + " of directory "+rootPath);
                         
                         
                         FileManager fileMgr = new FileManager();
@@ -298,7 +298,7 @@ public class Parade {
                                 session.close();
                         }
                         
-                        logger.debug("Finished refreshing cache for file " + fileName + " of directory "+rootPath);
+                        logger.debug("Finished refreshing file cache for file " + fileName + " of directory "+rootPath);
                         
                         
                     }
