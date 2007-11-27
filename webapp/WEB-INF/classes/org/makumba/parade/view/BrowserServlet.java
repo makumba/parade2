@@ -42,6 +42,10 @@ public class BrowserServlet extends HttpServlet {
         String view = req.getParameter("view");
         if (view == null)
             view = (String) req.getAttribute("view");
+        
+        String order = req.getParameter("order");
+        if (view == null)
+            view = (String) req.getAttribute("order");
 
         String file = req.getParameter("file");
         if (file == null)
@@ -101,7 +105,7 @@ public class BrowserServlet extends HttpServlet {
                 page = fileV.getTreeView(p, r);
             }
             if (display.equals("file")) {
-                page = filebrowserV.getFileBrowserView(p, r, path, opResult, success);
+                page = filebrowserV.getFileBrowserView(p, r, path, opResult, order, success);
             }
             if (display.equals("command")) {
                 page = cmdV.getCommandView(view, r, path, file, opResult);

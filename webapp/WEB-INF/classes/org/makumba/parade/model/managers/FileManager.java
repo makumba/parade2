@@ -88,7 +88,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             // clear the cache of the entries of this directory
             File fileInCache = (File) row.getFiles().get(path);
             if(fileInCache != null) {
-                List children = fileInCache.getChildren();
+                List children = fileInCache.getChildren(null);
                 for(int i = 0; i<children.size(); i++) {
                     File child = (File) children.get(i);
 
