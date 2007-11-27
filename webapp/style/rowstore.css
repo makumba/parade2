@@ -18,6 +18,7 @@ div.failure {
 
 div.result {
 	font-size:medium;
+	text-align: left;
 }
 
 div.command {
@@ -42,7 +43,6 @@ div.started {
 	font-weight: bold;
 	color: green;
 }
-
 
 table.rowstore {
     border:0;
