@@ -15,6 +15,7 @@ public class AntAction extends Action {
 
         String context = request.getParameter("context");
         String op = request.getParameter("op");
+        String display = request.getParameter("display");
         String path = request.getParameter("path");
         if(path == null)
             path = (String) request.getAttribute("path");
@@ -28,10 +29,10 @@ public class AntAction extends Action {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
+        request.setAttribute("display", display);
         request.setAttribute("view", "commandOutput");
         
-        return mapping.findForward("command"); 
+        return mapping.findForward(display); 
         
     }
 }

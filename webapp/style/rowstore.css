@@ -16,6 +16,10 @@ div.failure {
 	font-weight:bold;
 }
 
+div.result {
+	font-size:medium;
+}
+
 div.command {
 	font-size:small;
 }

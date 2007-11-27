@@ -15,6 +15,7 @@ public class WebappAction extends Action {
 
         String context = request.getParameter("context");
         String op = request.getParameter("op");
+        String display = request.getParameter("display");
         String path = request.getParameter("path");
         if(path == null)
             path = (String) request.getAttribute("path");
@@ -34,9 +35,8 @@ public class WebappAction extends Action {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
         request.setAttribute("view", view);
-        request.setAttribute("display","command");
+        request.setAttribute("display", display);
         
-        return mapping.findForward("command"); 
-        
+        return mapping.findForward(display);
     }
 }

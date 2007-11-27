@@ -107,6 +107,7 @@
                  >
                  
                  <forward name="command" path="/servlet/browse" />
+                 <forward name="index" path="/index.jsp" />
           
       </action>
       
@@ -116,6 +117,8 @@
                  >
                  
                  <forward name="command" path="/servlet/browse" />
+                 <forward name="index" path="/index.jsp" />
+                 
           
       </action>
       

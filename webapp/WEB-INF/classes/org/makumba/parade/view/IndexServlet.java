@@ -41,17 +41,18 @@ public class IndexServlet extends HttpServlet {
         if (context == null)
             context = (String) req.getAttribute("context");
         
-        String opResult = req.getParameter("opResult");
-        if (opResult == null)
-            opResult = (String) req.getAttribute("opResult");
+        String display = req.getParameter("display");
+        if (context == null)
+            context = (String) req.getAttribute("display");
         
+        String opResult = (String) req.getAttribute("result");
         Boolean successAttr = (Boolean) req.getAttribute("success");
         boolean success = true;
         if (successAttr == null)
             success = false;
         else
             success = successAttr.booleanValue();
-
+        
         PrintWriter out = resp.getWriter();
 
         Session s = InitServlet.getSessionFactory().openSession();
@@ -59,7 +60,7 @@ public class IndexServlet extends HttpServlet {
 
         Parade p = (Parade) s.get(Parade.class, new Long(1));
 
-        if (context != null) {
+        if (context != null && !display.equals("index")) {
             RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/browse");
             dispatcher.forward(req, resp);
         }

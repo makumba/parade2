@@ -112,7 +112,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
             return result;
         }
 
-        return "ParaDe is already running";
+        return "Error: ParaDe is already running";
     }
 
     public String servletContextStopRow(Row row) {
@@ -156,7 +156,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
                 result = config.getProperty("parade.servletContext.selfReloadWait");
 
             } catch (IOException e) {
-                result = "Cannot reload Parade " + e;
+                result = "Error: Cannot reload Parade " + e;
                 logger.error("Cannot reload ParaDe", e);
             }
         }
@@ -173,7 +173,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
             setWebappInfo(row, data);
             return result;
         }
-        return "Internal error: ParaDe should not be installed in this way !";
+        return "Error: ParaDe should not be installed in this way !";
     }
 
     public String servletContextRemoveRow(Row row) {
@@ -199,7 +199,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
         try {
             return row.getRowpath().equals(new File(ParadeProperties.getParadeBase()).getCanonicalPath());
         } catch (Throwable t) {
-            logger.error("Internal error: couldn't get row path", t);
+            logger.error("Error: couldn't get row path", t);
         }
         return true;
     }

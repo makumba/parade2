@@ -3,11 +3,7 @@
 <BORDER class='rowstore'>
 
 <#if opResult != "">
-	<#if success>
-	<div class='success'>${opResult}</div>
-	<#else>
-	<div class='failure'>${opResult}</div>
-	</#if>
+	<div class='result'>${opResult}</div><br/>
 </#if>
 
 <TABLE class='rowstore'>
@@ -27,7 +23,7 @@
 <td>${row.cvs.branch}</td>
 <td>${row.ant.buildfile}<br>
 <#list row.ant.targets as target>
-<a href="/Ant.do?context=${row.rowstore.rowname}&path=&op=${target}">${target}</a>
+<a href="/Ant.do?display=index&context=${row.rowstore.rowname}&path=&op=${target}">${target}</a>
 <#if target_has_next>, </#if>
 </#list>
 </td>
@@ -39,17 +35,17 @@
 <#if row.webapp.status == 2><div class="started">started</div></#if>
 
 <#if row.webapp.status == 2>
-<a href='/Webapp.do?context=${row.rowstore.rowname}&path="+${row.webapp.path}&op=servletContextReload'>reload</a> 
-<a href='/Webapp.do?context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextStop'>stop</a>        
+<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path="+${row.webapp.path}&op=servletContextReload'>reload</a> 
+<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextStop'>stop</a>        
 </#if>
 <#if row.webapp.status == 1>
-<a href='/Webapp.do?context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextStart'>start</a>
+<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextStart'>start</a>
 </#if>
 <#if row.webapp.status != 0>
-<a href='/Webapp.do?context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextRemove'>uninstall</a>
+<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextRemove'>uninstall</a>
 </#if>
 <#if row.webapp.status == 0>
-<a href='/Webapp.do?context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextInstall'>install</a>
+<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextInstall'>install</a>
 </#if>
 </td>
 <td>${row.mak.version}<br>

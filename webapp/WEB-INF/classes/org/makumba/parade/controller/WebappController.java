@@ -44,7 +44,7 @@ public class WebappController {
         tx.commit();
         s.close();
         
-        Object[] res = {opResult, new Boolean(true)};
+        Object[] res = {opResult, !opResult.startsWith("Error")};
         
         return res;
     }

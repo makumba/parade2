@@ -30,7 +30,7 @@ public class RowsAction extends Action {
         tx.commit();
         s.close();        
         
-        request.setAttribute("opResult", "ParaDe refreshed !");
+        request.setAttribute("result", "ParaDe refreshed !");
         request.setAttribute("success", new Boolean(true));
         
         return mapping.findForward("index"); 
