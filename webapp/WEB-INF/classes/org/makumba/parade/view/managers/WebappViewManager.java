@@ -1,7 +1,5 @@
 package org.makumba.parade.view.managers;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 
 import org.makumba.parade.model.Row;
@@ -15,8 +13,8 @@ import freemarker.template.SimpleHash;
 public class WebappViewManager implements HeaderView, ParadeView {
 
     public void setParadeViewHeader(List headers) {
-        headers.add("Webapp path, status");
-        
+        headers.add("Webapp path");
+        headers.add("Webapp status");
     }
 
     public void setParadeView(SimpleHash rowInformation, Row r) {
