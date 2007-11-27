@@ -326,5 +326,6 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         cvsMgr.directoryRefresh(r, path, local);
         tx.commit();
         s.close();
+        logger.debug("Finished refreshing CVS cache for path "+path+" of row "+context+((local)?" locally":" recursively"));
     }   
 }
