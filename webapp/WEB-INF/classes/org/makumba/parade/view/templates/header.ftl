@@ -37,7 +37,7 @@ function icqNewWin() {
   window.open('http://lite.icq.com/icqlite/web/0,,,00.html', 'TOFI','width=177,height=446,top=40,left='+leftpos+',directories=no,location=no,menubar=no,scroll=no,status=no,titlebar=no,toolbar=no,resizable='+resiz+'');
   } //-->
 </script>
-<td valign="top">&nbsp; ant: <#list antTargets as target><a href="/Ant.do?display=command&context=${rowName}&path=&op=${target}">${target}</a><#if target_has_next>, </#if></#list></td>
+<td valign="top">&nbsp; ant: <#list antTargets as target><a href="/Ant.do?getPathFromSession=true&display=command&context=${rowName}&path=&op=${target}">${target}</a><#if target_has_next>, </#if></#list></td>
 <td valign="top">
 <#if webapp.status = 2>
 &nbsp; webapp:
