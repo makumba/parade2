@@ -1,10 +1,7 @@
 package org.makumba.parade.view;
 
 import java.io.PrintWriter;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -17,7 +14,7 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.view.managers.CodePressFileEditViewManager;
-import org.makumba.parade.view.managers.FileEditViewManager;
+
 
 public class FileEditorServlet extends HttpServlet {
 
@@ -28,7 +25,6 @@ public class FileEditorServlet extends HttpServlet {
 		
 		Session s = InitServlet.getSessionFactory().openSession();
 		Transaction tx = s.beginTransaction();
-		
         /* context - the context / rowname
          * fileName - the name of the file to be edited
          * path - the relative path (displayed to the user)

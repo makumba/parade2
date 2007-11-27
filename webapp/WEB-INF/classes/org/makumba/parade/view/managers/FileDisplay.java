@@ -37,7 +37,7 @@ public class FileDisplay {
         return "File " + filename + " deleted";
     }
 
-    public String getFileBrowserView(Parade p, Row r, String path, String opResult, boolean success) {
+    public String getFileBrowserView(Parade p, Row r, String path, String opResult, String orderBy, boolean success) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
@@ -46,7 +46,8 @@ public class FileDisplay {
         
         path = path.replace(java.io.File.separatorChar, '/');
         
-        if (opResult == null) opResult = "";
+        if (opResult == null)
+            opResult = "";
         
         String pathEncoded = "";
         
@@ -90,7 +91,7 @@ public class FileDisplay {
             absolutePath = r.getRowpath();
             file = (File) r.getFiles().get(absolutePath);
         }
-        List files = file.getChildren();
+        List files = file.getChildren(orderBy);
                 
         List fileViews = new LinkedList();
 

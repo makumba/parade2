@@ -1,5 +1,6 @@
 package org.makumba.parade.model;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -144,7 +145,18 @@ public class File {
     }
 
     /* returns a List of the direct children (files, dirs) of a given Path */
-    public List<File> getChildren() {
+    public List<File> getChildren(String orderBy) {
+        
+        if(orderBy == null) {
+            orderBy = new String("f.isDir desc, f.name asc");
+        } else if(orderBy.equals("name")) {
+            orderBy = "f.isDir desc, f.name asc";
+        } else if(orderBy.equals("age")) {
+            orderBy = "f.isDir desc, f.date asc";
+        } else if(orderBy.equals("size")) {
+            orderBy = "f.isDir desc, f.size asc";
+        }
+        
         String keyPath = this.getPath().replace(java.io.File.separatorChar, '/');
 
         String absoulteRowPath = (new java.io.File(row.getRowpath()).getAbsolutePath());
@@ -156,11 +168,17 @@ public class File {
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
-        Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.row.rowname = :rowname order by f.isDir desc, f.name asc");
-        q.setCacheable(true);
+        Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.row.rowname = :rowname order by "+orderBy);
+        q.setCacheable(false);
         q.setString("keyPath", keyPath);
         q.setString("rowname", row.getRowname());
-
+        
+        System.out.println(Arrays.toString(q.getReturnTypes()));
+        
+        List l = q.list();
+        
+        children =
+        
         children = q.list();
 
         // we need to initialise the file data of this file
