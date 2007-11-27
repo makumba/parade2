@@ -173,10 +173,6 @@ public class File {
         q.setString("keyPath", keyPath);
         q.setString("rowname", row.getRowname());
         
-        List l = q.list();
-        
-        children =
-        
         children = q.list();
 
         // we need to initialise the file data of this file
