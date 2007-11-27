@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,8 +93,12 @@ public class FileDisplay {
             absolutePath = r.getRowpath();
             file = (File) r.getFiles().get(absolutePath);
         }
-        List files = file.getChildren(orderBy);
-                
+        
+            
+        List<File> files = file.getChildren(orderBy);
+        Collections.sort(files, new DirectorySorter());
+        
+            
         List fileViews = new LinkedList();
 
         Session s = InitServlet.getSessionFactory().openSession();
@@ -126,7 +132,7 @@ public class FileDisplay {
         
         return result.toString();
     }
-
+    
     private List getParentDir(Row r, String path) {
 
         if (path == null)
@@ -152,4 +158,16 @@ public class FileDisplay {
         return parentDirs;
     }
 
+}
+
+class DirectorySorter implements Comparator {
+    public int compare(Object element1, Object element2) {
+        if(!((File)element1).getIsDir() || !((File)element2).getIsDir())
+            return 0;
+        
+        String s1 = ((File)element1).getName();
+        String s2 = ((File)element2).getName();
+        
+        return s1.compareTo(s2);
+    }
 }

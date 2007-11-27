@@ -60,7 +60,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <a href="javascript:deleteFile('${path}','${file.name}')"><img src='/images/delete.gif' alt='Delete ${file.name}'></a>
 </td>
 </#if>
-<td><a title='${file.dateLong}'>${file.dateNice}</a></td>
+<#if file.isDir><td></td><#else><td><a title='${file.dateLong}'>${file.dateNice}</a></td></#if>
 <#if !file.isDir>
 <#if !file.isEmpty><td><a title='${file.sizeLong} bytes'>${file.sizeNice}</a><#else><td><i>empty<i></td></#if>
 <#else>
