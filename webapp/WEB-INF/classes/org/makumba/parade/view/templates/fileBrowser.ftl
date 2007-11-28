@@ -55,10 +55,12 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <#else>${file.name}</#if>
 </td>
 <td align='right'>
+<#if !(!file.cvsIsNull && file.cvsStatus == 2)>
 <a href='/File.do?op=editFile&context=${rowName}&path=${path}&file=${file.nameEncoded}'><img src='/images/edit.gif' alt='Edit ${file.name}'></a>
 &nbsp;&nbsp;
 <a href="javascript:deleteFile('${path}','${file.name}')"><img src='/images/delete.gif' alt='Delete ${file.name}'></a>
 </td>
+</#if>
 </#if>
 <#if file.isDir><td></td><#else><td><a title='${file.dateLong}'>${file.dateNice}</a></td></#if>
 <#if !file.isDir>
