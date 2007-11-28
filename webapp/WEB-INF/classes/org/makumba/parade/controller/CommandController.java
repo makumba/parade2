@@ -50,49 +50,65 @@ public class CommandController {
         
         FileManager fileMgr = new FileManager();
 
-        Session s = InitServlet.getSessionFactory().openSession();
-        Transaction tx = s.beginTransaction();
+        Session s = null;
+        Transaction tx = null;
+        boolean success = false;
+        Row row = null;
+        
+        try {
+            s = InitServlet.getSessionFactory().openSession();
+            tx = s.beginTransaction();
 
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
+            Parade p = (Parade) s.get(Parade.class, new Long(1));
 
-        Row row = (Row) p.getRows().get(context);
-        if (row == null) {
+            row = (Row) p.getRows().get(context);
+            if (row == null) {
+                tx.commit();
+                s.close();
+                return res("Unknown context " + context, false);
+            }
+            
+            String path = new String();
+            String absolutePath = row.getRowpath();
+            
+            if (relativePath == null || relativePath == "") path = absolutePath;
+            if (relativePath.equals("/")) path = absolutePath;
+            if (relativePath.endsWith("/")) relativePath = relativePath.substring(0, relativePath.length() - 1);
+            
+            if(relativePath.length() > 0) {
+                path = absolutePath + java.io.File.separator + relativePath.replace('/', java.io.File.separatorChar);
+            } else {
+                path = absolutePath;
+            }
+            
+            // security check - if the path of the file is outisde the path of the row, we deny any action
+            try {
+                if((new java.io.File(path).getCanonicalPath().length() < new java.io.File(absolutePath).getCanonicalPath().length())) {
+                    result = "Error: you can't access files outside of the row";
+                } else if (action.equals("newFile"))
+                    result = fileMgr.newFile(row, path, filename);
+                else if (action.equals("newDir"))
+                    result = fileMgr.newDir(row, path, filename);
+                else if (action.equals("deleteFile"))
+                    result = fileMgr.deleteFile(row, path, filename);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            success = result.startsWith("OK");
+            if(success) {
+                //updates the caches
+                //TODO the same for the other caches
+                
+                //FileManager.updateSimpleFileCache(context, path);
+                CVSManager.updateCvsCache(context, path, true);
+            }
+        } finally {
             tx.commit();
             s.close();
-            return res("Unknown context " + context, false);
         }
         
-        String path = new String();
-        String absolutePath = row.getRowpath();
-        
-        if (relativePath == null || relativePath == "") path = absolutePath;
-        if (relativePath.equals("/")) path = absolutePath;
-        if (relativePath.endsWith("/")) relativePath = relativePath.substring(0, relativePath.length() - 1);
-        
-        if(relativePath.length() > 0) {
-            path = absolutePath + java.io.File.separator + relativePath.replace('/', java.io.File.separatorChar);
-        } else {
-            path = absolutePath;
-        }
-
-        if (action.equals("newFile"))
-            result = fileMgr.newFile(row, path, filename);
-        else if (action.equals("newDir"))
-            result = fileMgr.newDir(row, path, filename);
-        else if (action.equals("deleteFile"))
-            result = fileMgr.deleteFile(row, path, filename);
-
-        boolean success = result.startsWith("OK");
-        if(success) {
-            //updates the caches
-            //TODO the same for the other caches
-            
-            //FileManager.updateSimpleFileCache(context, path);
-            CVSManager.updateCvsCache(context, path, true);
-        }
-        
-        tx.commit();
-        s.close();
         
         if (success) {
             if (action.equals("newFile"))
