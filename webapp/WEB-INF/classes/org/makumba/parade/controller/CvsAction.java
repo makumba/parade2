@@ -1,7 +1,5 @@
 package org.makumba.parade.controller;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,11 +7,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
-import org.makumba.parade.model.Row;
 
 public class CvsAction extends DispatchAction {
 

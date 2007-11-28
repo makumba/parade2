@@ -378,4 +378,28 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         pw.print(content);
     }
 
+    // checks if a file should still be cached or if it's a zombie
+    // fixme should probably be in a more general CacheManager or so
+    public static void checkShouldCache(String context, String absolutePath, String absoluteFilePath) {
+        Session s = InitServlet.getSessionFactory().openSession();
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        Row r = Row.getRow(p, context);
+        Transaction tx = s.beginTransaction();
+
+        java.io.File f = new java.io.File(absoluteFilePath);
+        if(!f.exists()) {
+            File cachedFile = (File) r.getFiles().get(absoluteFilePath);
+            if(cachedFile != null) {
+                boolean hasCvsData = (cachedFile.getFiledata().get("cvs") != null);
+                if(!hasCvsData) {
+                    r.getFiles().remove(absoluteFilePath);
+                }
+            }
+        }
+
+        tx.commit();
+        s.close();
+        
+    }
+
 }

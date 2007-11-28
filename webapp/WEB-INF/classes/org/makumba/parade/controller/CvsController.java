@@ -118,7 +118,7 @@ public class CvsController {
         // cvs commit can lead to conflicts, hence modifies the state of the file and of the cvs data
         //FileManager.updateSimpleFileCache(context, absoluteFilePath);
         CVSManager.updateCvsCache(context, absolutePath, true);
-                
+        FileManager.checkShouldCache(context, absolutePath, absoluteFilePath);   
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;

@@ -13,7 +13,7 @@ public class Row {
 
     private String description;
 
-    private Map files = new HashMap();
+    private Map<String, File> files = new HashMap<String, File>();
 
     private Map rowdata = new HashMap();
 
@@ -51,11 +51,11 @@ public class Row {
         this.id = id;
     }
     
-    public Map getFiles() {
+    public Map<String, File> getFiles() {
         return this.files;
     }
 
-    public void setFiles(Map files) {
+    public void setFiles(Map<String, File> files) {
         this.files = files;
     }
 

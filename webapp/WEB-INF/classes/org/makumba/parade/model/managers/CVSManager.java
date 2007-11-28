@@ -7,8 +7,12 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 
@@ -141,6 +145,8 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                 java.io.File.separatorChar));
         if (!f.exists())
             return;
+        
+        Set<String> cvsFiles = new HashSet<String>();
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
@@ -155,13 +161,18 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     String name = line.substring(1, n);
                     // logger.warn("Looking for CVS file: "+name);
 
+                    String absoluteFilePath = file.getPath() + java.io.File.separator + name;
+                    
+                    // we add this file entry to the other entries, for further checking agains the cache
+                    cvsFiles.add(absoluteFilePath);
+                    
                     // checking if the file we are looking for is mapped
-                    File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + name);
+                    File cvsfile = (File) r.getFiles().get(absoluteFilePath);
                     
                     boolean missing = false;
                     if (missing = (cvsfile == null)) {
                         cvsfile = FileManager.setVirtualFileData(r, file, name, false);
-                        r.getFiles().put(file.getPath() + java.io.File.separator + name, cvsfile);
+                        r.getFiles().put(absoluteFilePath, cvsfile);
                     }
                     FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
                     if (cvsdata == null) {
@@ -249,12 +260,17 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     if (n == -1)
                         continue;
                     String name = line.substring(2, n);
+                    
+                    String absoluteDirectoryPath = file.getPath() + java.io.File.separator + name;
+                    
+                    // we add this directory entry to the other entries, for further checking agains the cache
+                    cvsFiles.add(absoluteDirectoryPath);
 
                     // checking if the directory we are looking for is mapped
-                    File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + name);
+                    File cvsfile = (File) r.getFiles().get(absoluteDirectoryPath);
                     if (cvsfile == null) {
                         cvsfile = FileManager.setVirtualFileData(r, file, name, true);
-                        r.getFiles().put(file.getPath() + java.io.File.separator + name, cvsfile);
+                        r.getFiles().put(absoluteDirectoryPath, cvsfile);
                     }
 
                     FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
@@ -272,6 +288,20 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                 }
             }
             br.close();
+            
+            // now we check if our cache doesn't contain "zombie" cvsdata elements, i.e. if a file doesn't have
+            // outdated cvs information
+            List<String> cachedFiles = file.getChildrenPaths();
+            Iterator<String> i = cachedFiles.iterator();
+            while(i.hasNext()) {
+                String filePath = i.next();
+                if(!cvsFiles.contains(filePath)) {
+                    // remove zombie entry
+                    r.getFiles().get(filePath).getFiledata().remove("cvs");
+                }
+            }
+            
+            
         } catch (Throwable t) {
             logger.error("Error while trying to set CVS information for file " + file.getName(), t);
         }

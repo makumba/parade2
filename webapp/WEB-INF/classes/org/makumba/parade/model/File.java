@@ -1,6 +1,5 @@
 package org.makumba.parade.model;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,7 +29,7 @@ public class File {
 
     private Long size;
 
-    private Map filedata = new HashMap();
+    private Map<String, AbstractFileData> filedata = new HashMap<String, AbstractFileData>();
 
     private Row row;
 
@@ -92,11 +91,11 @@ public class File {
         this.date = date;
     }
 
-    public Map getFiledata() {
+    public Map<String, AbstractFileData> getFiledata() {
         return filedata;
     }
 
-    public void setFiledata(Map filedata) {
+    public void setFiledata(Map<String, AbstractFileData> filedata) {
         this.filedata = filedata;
     }
 
