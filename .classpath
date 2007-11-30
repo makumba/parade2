@@ -10,6 +10,6 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/struts.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jnotify-0.91.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/freemarker.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/log4j-1.2.14.jar" sourcepath="lib/logging-log4j-1.2.14.zip"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>

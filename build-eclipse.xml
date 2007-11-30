@@ -5,9 +5,35 @@
 		<copy toDir="triggerClasses/" overwrite="true">
 	         <fileset dir="webapp/WEB-INF/classes">
 	          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
+		      <include name="org/makumba/parade/tools/ServletRedirectionData*.class" />
+	          <include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
 	          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
 	         </fileset>
 		</copy>
 	</target>
+	
+	<target name="loggerCopy">
 
+		<copy toDir="loggerClasses/" overwrite="true">
+			<fileset dir=".">
+				<include name="logging.properties" />
+			</fileset>
+			<fileset dir="webapp/WEB-INF/classes">
+				<include name="org/makumba/parade/tools/ParadeConsoleHandler*.class" />
+				<include name="org/makumba/parade/tools/ParadeLogFormatter*.class" />
+				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
+			</fileset>
+		</copy>
+		
+		<copy toDir="tomcat/common/classes" overwrite="true">
+					<fileset dir=".">
+						<include name="logging.properties" />
+					</fileset>
+					<fileset dir="webapp/WEB-INF/classes">
+						<include name="org/makumba/parade/tools/ParadeConsoleHandler*.class" />
+					</fileset>
+				</copy>
+		
+	</target>
+	
 </project>

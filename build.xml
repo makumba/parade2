@@ -43,6 +43,7 @@
 			<include name="*.jar" />
 		</fileset>
 		<pathelement path="triggerClasses/" />
+		<pathelement path="loggerClasses/" />
 		<pathelement path="${temp.dir}" />
 		<fileset dir="${java.home}/lib/">
 			<include name="rt.jar" />
@@ -120,7 +121,9 @@
 		<copy toDir="tomcat/paradeCommon/classes/" overwrite="true">
 			<fileset dir="webapp/WEB-INF/classes">
 				<include name="org/makumba/parade/tools/TriggerFilter*.class" />
+				<include name="org/makumba/parade/tools/ServletRedirectionData*.class" />
 				<include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
+				<include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
 			</fileset>
 		</copy>
 
@@ -129,6 +132,18 @@
 		<copy toDir="tomcat/paradeCommon/lib/" overwrite="true">
 			<fileset dir="webapp/WEB-INF/lib">
 				<include name="mysql.jar" />
+			</fileset>
+		</copy>
+		
+		<!-- Tomcat 5.5 has a new way of handling logging, we need to copy logging to the tomcat common -->
+		<copy toDir="tomcat/common/classes/" overwrite="true">
+			<fileset dir=".">
+				<include name="logging.properties" />
+			</fileset>
+			<fileset dir="webapp/WEB-INF/classes">
+				<include name="org/makumba/parade/tools/ParadeConsoleHandler*.class" />
+				<include name="org/makumba/parade/tools/ParadeLogFormatter*.class" />
+				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
 			</fileset>
 		</copy>
 
@@ -144,6 +159,8 @@
 			<jvmarg value="-Xms70M" />
 			<jvmarg value="-Xmx500M" />
 			<jvmarg value="-Djava.library.path=." />
+			<jvmarg value="-Djava.util.logging.config.file='logging.properties'" />
+			
 			<arg value="start" />
 		</java>
 		<!-- give tomcat time to start up -->
