@@ -30,7 +30,7 @@ public class Parade {
 
     private String baseDir = new String();
 
-    private Map rows = new HashMap();
+    private Map<String, Row> rows = new HashMap<String, Row>();
 
     private static Logger logger = Logger.getLogger(Parade.class.getName());
     
@@ -337,11 +337,11 @@ public class Parade {
         this.id = id;
     }
 
-    public Map getRows() {
+    public Map<String, Row> getRows() {
         return rows;
     }
 
-    public void setRows(Map rows) {
+    public void setRows(Map<String, Row> rows) {
         this.rows = rows;
     }
 
