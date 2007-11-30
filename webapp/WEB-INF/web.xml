@@ -24,23 +24,7 @@
         <servlet-class>org.makumba.parade.init.InitServlet</servlet-class>
 	<load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet>
-        <servlet-name>log</servlet-name>
-        <servlet-class>org.makumba.parade.access.LogServlet</servlet-class>
-	<load-on-startup>2</load-on-startup>
-    </servlet>
-    
-<!--
-	<servlet>
-	   <servlet-name>invoker</servlet-name>
-	   <servlet-class>org.apache.catalina.servlets.InvokerServlet</servlet-class>
-	   <init-param>
-	     <param-name>debug</param-name>
-	     <param-value>0</param-value>
-	   </init-param>
-	   <load-on-startup>2</load-on-startup>
-	 </servlet>
-  -->	 
+ 
 	 <servlet>
 	   <servlet-name>index</servlet-name>
 	   <servlet-class>org.makumba.parade.view.IndexServlet</servlet-class>
@@ -55,20 +39,23 @@
 	   <servlet-name>edit</servlet-name>
 	   <servlet-class>org.makumba.parade.view.FileEditorServlet</servlet-class>
 	 </servlet>
+	 
+	 <servlet>
+	   <servlet-name>logs</servlet-name>
+	   <servlet-class>org.makumba.parade.view.LogViewServlet</servlet-class>
+	 </servlet>
 	 	 
-<!-- 
-	 <servlet-mapping>
-	   <servlet-name>invoker</servlet-name>
-	   <url-pattern>/servlet/*</url-pattern>
-	 </servlet-mapping>
- -->  
 	 <servlet-mapping>
 	   <servlet-name>index</servlet-name>
 	   <url-pattern>/index.jsp</url-pattern>
 	 </servlet-mapping>
+	 
+	 <servlet-mapping>
+	   <servlet-name>logs</servlet-name>
+	   <url-pattern>/logs</url-pattern>
+	 </servlet-mapping>
 
-
-	 <!-- Struts Action Servlet Configuration -->
+<!-- Struts Action Servlet Configuration -->
   <servlet>
     <servlet-name>action</servlet-name>
     <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -98,12 +85,5 @@
   		<taglib-uri>/WEB-INF/lib/tiles.tld</taglib-uri>
   		<taglib-location>/WEB-INF/lib/tiles.tld</taglib-location>
 	</taglib>
-
-<!--
-    <taglib>
-      <taglib-uri>http://jakarta.apache.org/taglibs/mailer</taglib-uri>
-      <taglib-location>/WEB-INF/mailer.tld</taglib-location>
-    </taglib>
--->
 
 </web-app>

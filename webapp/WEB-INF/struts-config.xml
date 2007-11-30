@@ -131,6 +131,15 @@
           
       </action>
       
+      <!-- Logs view -->
+      <action    path="/Logs"
+                 type="org.makumba.parade.controller.LogsAction"
+                 >
+                 
+                 <forward name="logs" path="/servlet/logs" />
+          
+      </action>
+      
 
       <!-- Change locale action
       <action
