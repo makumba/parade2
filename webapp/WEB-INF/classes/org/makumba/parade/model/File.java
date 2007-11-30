@@ -168,7 +168,7 @@ public class File {
         Transaction tx = s.beginTransaction();
 
         Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.row.rowname = :rowname order by "+orderBy);
-        q.setCacheable(false);
+        q.setCacheable(true);
         q.setString("keyPath", keyPath);
         q.setString("rowname", row.getRowname());
         
