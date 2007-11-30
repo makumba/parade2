@@ -30,12 +30,6 @@
            factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
           pathname="conf/tomcat-users.xml" />
 
-    <Resource name="IplabUserDatabase" auth="Container"
-              type="org.apache.catalina.UserDatabase"
-       description="User database that can be updated and saved"
-           factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
-          pathname="conf/iplab-users.xml" />
-
   </GlobalNamingResources>
 
 
@@ -60,7 +54,7 @@
        unpackWARs="true" autoDeploy="true"
        xmlValidation="false" xmlNamespaceAware="false"/>
        
-      <DefaultContext crosscontext="true" override="true" />
+      <DefaultContext crosscontext="true" override="false" /> <!--  override="true" -->
 
     </Engine>
 
