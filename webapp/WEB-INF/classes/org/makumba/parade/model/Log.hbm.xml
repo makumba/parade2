@@ -12,17 +12,13 @@
 			<generator class="native" />
 		</id>
 		
-		<property name="identifier" />
 		<property name="date" />
-		<property name="priority" />
-		<property name="category" />
-		<property name="thread" />
+		<property name="level" />
 		<property name="message" />
 		<property name="throwable" />
-		<property name="ndc" />
-		<property name="mdc" />
-		<property name="mdc2" />
-
+		<property name="user" />
+		<property name="context" />
+		
 	</class>
 </hibernate-mapping>
 

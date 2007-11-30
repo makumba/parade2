@@ -1,6 +1,5 @@
 package org.makumba.parade.access;
 
-import java.net.MalformedURLException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -92,15 +91,14 @@ public class AccessServlet extends HttpServlet {
         String contextPath = req.getContextPath();
         String contextPathOrig = contextPath;
         if (contextPath.equals("")) {
-            contextPath = "parade";
+            contextPath = "parade2";
             contextPathOrig = "/";
         } else
             contextPath = contextPath.substring(1);
         String nm = (String) req.getSession(true).getAttribute("org.makumba.parade.user");
         if (nm == null)
             nm = "(unknown user)";
-        PerThreadPrintStream.set(nm + "@" + contextPath);
-
+        PerThreadPrintStream.set("["+nm + "@" + contextPath+"]");
         ServletContext ctx = (ServletContext) req.getAttribute("org.eu.best.tools.TriggerFilter.context");
 
         try {
