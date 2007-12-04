@@ -75,7 +75,7 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         record.setNotThroughAccess(get() == null);
         
         enable.set(false);
-        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", "org.makumba.parade.PerThreadPrintStream.Result", record);
+        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", record);
         enable.set(true);
         
         //PrintStream w = new PrintStream(bao);

@@ -13,7 +13,7 @@ public class ParadeConsoleHandler extends ConsoleHandler {
         Object[] params = {PerThreadPrintStream.get()};
         record.setParameters(params);
         super.publish(record);
-        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", "org.makumba.parade.ParadeConsoleHandler.LogRecord", record);
+        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", record);
         //TriggerFilter.redirectToServlet("perThreadEnabler", "perThreadEnabled", new Boolean(true));
         PerThreadPrintStream.setEnabled(true);
     }
