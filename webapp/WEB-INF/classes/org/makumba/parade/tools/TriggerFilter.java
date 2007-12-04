@@ -2,8 +2,6 @@ package org.makumba.parade.tools;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.Filter;
@@ -127,7 +125,13 @@ public class TriggerFilter implements Filter {
     // we need a vector so adding from multiple threads simmultaneously is safe
     static Vector<TriggerFilterQueueData> queue= new Vector<TriggerFilterQueueData>();
     
-    public static void redirectToServlet(String servletName, Object attributeValue) {
+    static {
+        Object[] record = {new java.util.Date(), "Server restart"};
+        TriggerFilterQueueData restart = new TriggerFilterQueueData("/servlet/org.makumba.parade.access.DatabaseLogServlet", record);
+        queue.add(restart);
+    }
+    
+    public static synchronized void redirectToServlet(String servletName, Object attributeValue) {
         if (guard.get().equals(false)) {
             guard.set(true);
             try {
