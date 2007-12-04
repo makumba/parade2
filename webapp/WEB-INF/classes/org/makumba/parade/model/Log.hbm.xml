@@ -14,10 +14,11 @@
 		
 		<property name="date" />
 		<property name="level" />
-		<property name="message" />
+		<property name="message" length="1000"/>
 		<property name="throwable" />
 		<property name="user" />
 		<property name="context" />
+		<property name="origin" />
 		
 	</class>
 </hibernate-mapping>

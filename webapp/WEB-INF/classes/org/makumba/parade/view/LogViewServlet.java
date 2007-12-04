@@ -1,9 +1,7 @@
 package org.makumba.parade.view;
 
 import java.io.PrintWriter;
-import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.servlet.ServletException;
@@ -24,30 +22,39 @@ public void init() {}
         
         Session s = InitServlet.getSessionFactory().openSession();
         
-        String context = (String)req.getParameter("context");
+        String context = null;
+        Object ctxValues = req.getParameterValues("context");
+        if(ctxValues != null)
+            context = (String)(((Object[])ctxValues))[0];
         if(context == null)
             context = "all";
         
+        String view = (String)req.getParameter("view");
+        if(view == null)
+            view = "log";
+        
         Calendar now = GregorianCalendar.getInstance();
         
-        
         String years = req.getParameter("year");
-        if(years == null)
+        if(years == null || years.equals("") || years.equals("null"))
             years = Integer.valueOf(now.get(Calendar.YEAR)).toString();
         String months = req.getParameter("month");
-        if(months == null)
+        if(months == null || months.equals("") || months.equals("null"))
             months = Integer.valueOf(now.get(Calendar.MONTH)+1).toString();
         String days = req.getParameter("day");
-        if(days == null)
+        if(days == null || days.equals("") || days.equals("null"))
             days = Integer.valueOf(now.get(Calendar.DAY_OF_MONTH)).toString();
         
-
         resp.setContentType("text/html");
         resp.setCharacterEncoding("UTF-8");
         
         LogViewManager logV = new LogViewManager();
         
-        out.println(logV.getLogView(s, context, Integer.parseInt(years), (Integer.parseInt(months))-1, (Integer.parseInt(days))));
+        if(view.equals("logmenu")) {
+            out.println(logV.getLogMenuView(s, context, Integer.parseInt(years), (Integer.parseInt(months))-1, (Integer.parseInt(days))));    
+        } else {
+            out.println(logV.getLogView(s, context, Integer.parseInt(years), (Integer.parseInt(months))-1, (Integer.parseInt(days))));    
+        }            
         
         s.close();
     

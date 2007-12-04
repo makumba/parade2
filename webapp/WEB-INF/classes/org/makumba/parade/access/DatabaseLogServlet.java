@@ -14,12 +14,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Log;
-import org.makumba.parade.tools.PerThreadPrintStream;
 import org.makumba.parade.tools.PerThreadPrintStreamLogRecord;
 
 public class DatabaseLogServlet extends HttpServlet {
-
-    private Session s;
 
     public void init(ServletConfig conf) {
 
@@ -37,6 +34,7 @@ public class DatabaseLogServlet extends HttpServlet {
             return;
 
         // open a new session, which we need to perform extraction
+        Session s = null;
         try {
             
             s = InitServlet.getSessionFactory().openSession();
@@ -54,9 +52,11 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setDate(new Date(logrecord.getMillis()));
                 log.setLevel(logrecord.getLevel().getName());
                 log.setMessage(logrecord.getMessage());
+                log.setOrigin("java.util.Logging");
                 //log.setThrowable(logrecord.getThrown());
             } else if(record instanceof LoggingEvent) {
                 LoggingEvent logevent = (LoggingEvent) record;
+                log.setOrigin("log4j");
                 log.setDate(new Date(logevent.getStartTime()));
                 log.setLevel(logevent.getLevel().toString());
                 log.setMessage((String)logevent.getMessage());
@@ -67,17 +67,23 @@ public class DatabaseLogServlet extends HttpServlet {
             } else if(record instanceof PerThreadPrintStreamLogRecord) {
                 PerThreadPrintStreamLogRecord pRecord = (PerThreadPrintStreamLogRecord)record;
                 log.setDate(pRecord.getDate());
-                log.setLevel("stdout");
+                log.setOrigin("stdout");
+                log.setLevel("INFO");
                 log.setMessage(pRecord.getMessage());
                 //log.setThrowable(null);
+            } else if(record instanceof Object[]) {
+                Object[] rec = (Object[])record;
+                log.setDate((Date)rec[0]);
+                log.setOrigin("TriggerFilter");
+                log.setLevel("INFO");
+                log.setMessage((String)rec[1]);
             }
-            
+
             Transaction tx = s.beginTransaction();
 
             // write the guy to the db
-            s.save(log);
+            s.saveOrUpdate(log);
             tx.commit();
-            PerThreadPrintStream.canWriteToDb.set(true);
         } finally {
             // close the session in any case
             s.close();

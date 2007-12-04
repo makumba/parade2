@@ -6,12 +6,13 @@ public class Log {
     
     private Long id;
     
-    public Date date;
-    public String level;
-    public String message;
-    public Throwable throwable;
-    public String user;
-    public String context;
+    private Date date;
+    private String level;
+    private String message;
+    private Throwable throwable;
+    private String user;
+    private String context;
+    private String origin;
     
     public String getLevel() {
         return level;
@@ -67,6 +68,14 @@ public class Log {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
     }
     
     

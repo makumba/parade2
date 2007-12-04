@@ -23,8 +23,8 @@
 <input TYPE='submit' VALUE='Go!'>
 </td>
 </form>
-<td valign=top>[<a href='/logs?context=${rowName}' title='${rowName} log' target='directory'>log</a>] 
-<a href='/logs' title='Server log' target='directory'>all-log</a>-<a href='/logs' title='other logs' target='directory'>s</a> 
+<td valign=top>[<a href='/log.jsp?context=${rowName}' title='${rowName} log' target='_new'>log</a>] 
+<a href='/log.jsp?context=all' title='Server log' target='directory'>all-log</a>-<a href='/log.jsp?context=all' title='other logs' target='directory'>s</a> 
 <a href='/tomcat-docs' title='Tomcat documentation' target='directory'>Tomcat</a> 
 <a href='http://www.makumba.org' title='Makumba documentation' target='directory'>Makumba</a></td>
 
