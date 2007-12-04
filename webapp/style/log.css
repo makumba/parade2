@@ -1,0 +1,40 @@
+PRE {
+	font-size: .8em
+}
+
+.init {
+	color: #888888;
+	background: #f6f6f6
+}
+
+.FINEST {
+	color: #666666;
+	font-size: x-small
+}
+
+.FINER {
+	color: #666666;
+	font-size: small
+}
+
+.FINE {
+	color: #666666
+}
+
+.CONFIG {
+	color: orange
+}
+
+.INFO {
+	color: green
+}
+
+.WARNING {
+	color: blue;
+	background: pink
+}
+
+.SEVERE {
+	color: yellow;
+	background: red
+}
