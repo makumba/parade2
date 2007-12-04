@@ -48,11 +48,13 @@ public class InitServlet extends HttpServlet implements Runnable {
             cfg.addResource("org/makumba/parade/model/File.hbm.xml");
             cfg.addResource("org/makumba/parade/model/Log.hbm.xml");
 
-            sessionFactory = cfg.buildSessionFactory();
+            SessionFactory sf = cfg.buildSessionFactory();
 
             SchemaUpdate schemaUpdate = new SchemaUpdate(cfg);
             schemaUpdate.execute(true, true);
 
+            // now it's ready to be available for other classes
+            sessionFactory=sf;
         } catch (Throwable t) {
             logger.error(t);
             t.printStackTrace();
@@ -102,11 +104,18 @@ public class InitServlet extends HttpServlet implements Runnable {
             p = new Parade();
             p.setId(one);
             p.refresh();
-            p.addJNotifyListeners();
+            try{
+                p.addJNotifyListeners();
+            }catch(Throwable e){
+                e.printStackTrace();
+            }
             session.save(p);
         }
-        p.addJNotifyListeners();
-        
+        try{
+            p.addJNotifyListeners();
+        }catch(Throwable e){
+            e.printStackTrace();
+        }
         Hibernate.initialize(p.getRows());
         
         tx.commit();

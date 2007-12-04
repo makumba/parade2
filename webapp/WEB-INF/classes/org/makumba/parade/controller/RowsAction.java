@@ -25,7 +25,11 @@ public class RowsAction extends Action {
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         
         p.refresh();
-        p.addJNotifyListeners();
+        try{
+            p.addJNotifyListeners();
+        }catch(Throwable e){
+            e.printStackTrace();
+        }
         
         tx.commit();
         s.close();        
