@@ -1,7 +1,6 @@
 package org.makumba.parade.access;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.logging.LogRecord;
 
@@ -27,16 +26,13 @@ public class DatabaseLogServlet extends HttpServlet {
     }
 
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        
+        req.removeAttribute("org.makumba.parade.servletSuccess");
         if(InitServlet.getSessionFactory() == null)
             return;
-
+        req.setAttribute("org.makumba.parade.servletSuccess", true);
+        
         // retrieve the record guy
-        Object record = req.getAttribute("org.makumba.parade.ParadeConsoleHandler.LogRecord");
-        if(record == null)
-            record = req.getAttribute("org.makumba.parade.ParadeLog4jConsoleAppender.LoggingEvent");
-        if(record == null)
-            record = req.getAttribute("org.makumba.parade.PerThreadPrintStream.Result");
+        Object record = req.getAttribute("org.makumba.parade.servletParam");
         if (record == null)
             return;
 
@@ -48,32 +44,30 @@ public class DatabaseLogServlet extends HttpServlet {
             // extract useful information from the record
 
             Log log = new Log();
+            String prefix=(String)req.getAttribute("org.makumba.parade.logPrefix");
+            log.setContext(extractContextFromMessage(prefix));
+            log.setUser(extractUserFromMessage(prefix));
 
             // this is a java.util.logging.LogRecord
             if (record instanceof LogRecord) {
                 LogRecord logrecord = (LogRecord) record;
                 log.setDate(new Date(logrecord.getMillis()));
-                log.setContext(extractContextFromMessage(PerThreadPrintStream.get()));
                 log.setLevel(logrecord.getLevel().getName());
                 log.setMessage(logrecord.getMessage());
                 //log.setThrowable(logrecord.getThrown());
-                log.setUser(extractUserFromMessage(PerThreadPrintStream.get()));
             } else if(record instanceof LoggingEvent) {
                 LoggingEvent logevent = (LoggingEvent) record;
                 log.setDate(new Date(logevent.getStartTime()));
-                log.setContext(extractContextFromMessage("[some@(root)]")); //log4j event = ParaDe
                 log.setLevel(logevent.getLevel().toString());
                 log.setMessage((String)logevent.getMessage());
                 //if(logevent.getThrowableInformation() != null)
                     //log.setThrowable(logevent.getThrowableInformation().getThrowable());
                 //else
                     //log.setThrowable(null);
-                log.setUser(extractUserFromMessage(PerThreadPrintStream.get()));
             } else if(record instanceof PerThreadPrintStreamLogRecord) {
                 PerThreadPrintStreamLogRecord pRecord = (PerThreadPrintStreamLogRecord)record;
                 log.setDate(pRecord.getDate());
-                log.setLevel("INFO");
-                log.setContext(extractContextFromMessage(PerThreadPrintStream.get()));
+                log.setLevel("stdout");
                 log.setMessage(pRecord.getMessage());
                 //log.setThrowable(null);
             }
@@ -84,7 +78,6 @@ public class DatabaseLogServlet extends HttpServlet {
             s.save(log);
             tx.commit();
             PerThreadPrintStream.canWriteToDb.set(true);
-            
         } finally {
             // close the session in any case
             s.close();
@@ -98,7 +91,7 @@ public class DatabaseLogServlet extends HttpServlet {
      *            the log message that may contain a username
      * @return
      */
-    private String extractUserFromMessage(String prefix) {
+    private static String extractUserFromMessage(String prefix) {
         if(prefix == null)
             return null;
         String accessInfo = extractAccessInfo(prefix);
@@ -113,7 +106,7 @@ public class DatabaseLogServlet extends HttpServlet {
      *            the message containing the context name
      * @return a Row corresponding to the context
      */
-    private String extractContextFromMessage(String prefix) {
+    private static String extractContextFromMessage(String prefix) {
         
         if(prefix == null)
             return null;
@@ -125,7 +118,7 @@ public class DatabaseLogServlet extends HttpServlet {
         return accessInfo.substring(accessInfo.indexOf("@")+1);
     }
 
-    private String extractAccessInfo(String s) {
+    private static String extractAccessInfo(String s) {
         if (s.indexOf("@") > -1 && s.indexOf("[") > -1 && s.indexOf("]") > -1)
             return s.substring(s.indexOf("[")+1, s.indexOf("]"));
         else

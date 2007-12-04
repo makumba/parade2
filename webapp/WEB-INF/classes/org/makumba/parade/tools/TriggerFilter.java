@@ -1,8 +1,10 @@
 package org.makumba.parade.tools;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -33,11 +35,10 @@ public class TriggerFilter implements Filter {
 
     String beforeContext, afterContext, beforeServlet, afterServlet;
 
-    private static ThreadLocal<ServletRedirectionData> redirectionData = new ThreadLocal<ServletRedirectionData>();
-
-    private static ServletRedirectionData staticRedirectionData = null;
-
-    private static List<TriggerFilterQueueData> messageQueue = new LinkedList<TriggerFilterQueueData>();
+    // we need a context to be able to find others...
+    private static ServletContext staticContext;
+    
+    private static ServletContext staticRootCtx;
     
     // guard that makes sure that we don't enter in an infinite logging loop
     private static ThreadLocal guard = new ThreadLocal() {
@@ -48,22 +49,17 @@ public class TriggerFilter implements Filter {
 
     public void init(FilterConfig conf) {
         context = conf.getServletContext();
+        if(staticContext==null){
+            staticContext= context;
+        }
+        
         beforeContext = conf.getInitParameter("beforeContext");
         beforeServlet = conf.getInitParameter("beforeServlet");
         afterContext = conf.getInitParameter("afterContext");
         afterServlet = conf.getInitParameter("afterServlet");
-
-        ServletRedirectionData data = new ServletRedirectionData();
-        if (conf.getServletContext() != null) {
-            data.setContext(conf.getServletContext());
-            data.setReq(new HttpServletRequestDummy());
-            data.setResp(new HttpServletResponseDummy());
-            redirectionData.set(data);
-            if (staticRedirectionData == null)
-                staticRedirectionData = data;
-        }
+        
     }
-
+    
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws java.io.IOException,
             ServletException {
 
@@ -81,25 +77,12 @@ public class TriggerFilter implements Filter {
         req.setAttribute("org.eu.best.tools.TriggerFilter.response", resp);
         req.setAttribute("org.eu.best.tools.TriggerFilter.context", context);
 
+
         if (ctx == null) {
-            if (!((HttpServletRequest) req).getContextPath().equals("/manager"))
-                System.out
-                        .println("got null trying to search context "
-                                + beforeContext
-                                + " from context "
-                                + ((HttpServletRequest) req).getContextPath()
-                                + " it may be that <DefaultContext crossContext=\"true\"/> is not configured in Tomcat's conf/server.xml, under Engine or Host");
+            checkCrossContext(req, beforeContext);
         } else {
-
-            // we store everything in a threadLocal we need to do a "duringServlet"
-            ServletRedirectionData data = new ServletRedirectionData();
-            data.setContext(ctx);
-            data.setReq(req);
-            data.setResp(resp);
-            redirectionData.set(data);
-
             if (beforeServlet != null)
-                redirectToServlet(beforeServlet, null, null, ctx, dummyReq, resp);
+                invokeServlet(beforeServlet, ctx, dummyReq, resp);
 
         }
 
@@ -115,153 +98,114 @@ public class TriggerFilter implements Filter {
 
         ctx = context.getContext(afterContext);
         if (ctx == null) {
-            if (!((HttpServletRequest) req).getContextPath().equals("/manager"))
-                System.out
-                        .println("got null trying to search context "
-                                + beforeContext
-                                + " from context "
-                                + ((HttpServletRequest) req).getContextPath()
-                                + " it may be that <DefaultContext crossContext=\"true\"/> is not configured in Tomcat's conf/server.xml, under Engine or Host");
+            checkCrossContext(req, afterContext);
         } else {
 
             if (afterServlet != null)
-                redirectToServlet(afterServlet, null, null, ctx, req, resp);
+                invokeServlet(afterServlet, ctx, req, resp);
         }
+    }
+
+    private void checkCrossContext(ServletRequest req, String ctxName) {
+        if (!((HttpServletRequest) req).getContextPath().equals("/manager"))
+            System.out
+                    .println("got null trying to search context "
+                            + ctxName
+                            + " from context "
+                            + ((HttpServletRequest) req).getContextPath()
+                            + " it may be that <DefaultContext crossContext=\"true\"/> is not configured in Tomcat's conf/server.xml, under Engine or Host");
     }
 
     public void destroy() {
     }
 
-    private static void redirectToServlet(String servletName, String attributeName, Object attributeValue,
+    private static void invokeServlet(String servletName,
             ServletContext ctx, ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
-
-        if (req != null && attributeName != null && attributeValue != null)
-            req.setAttribute(attributeName, attributeValue);
-
         ctx.getRequestDispatcher(servletName).include(req, resp);
-        
     }
 
-    public static void redirectToServlet(String servletName, String attributeName, Object attributeValue) {
-
+    // we need a vector so adding from multiple threads simmultaneously is safe
+    static Vector<TriggerFilterQueueData> queue= new Vector<TriggerFilterQueueData>();
+    
+    public static void redirectToServlet(String servletName, Object attributeValue) {
         if (guard.get().equals(false)) {
             guard.set(true);
             try {
-                ServletRedirectionData data = redirectionData.get();
-                if (data == null)
-                    if (staticRedirectionData == null) {
-                        //addToQueue(servletName, attributeName, attributeValue);
-                        return;
-                    } else
-                        data = staticRedirectionData;
-
-                try {
-                    ServletContext rootCtx = data.getContext().getContext("/");
-                    if (rootCtx == null) {
-                        //addToQueue(servletName, attributeName, attributeValue);
-                        return;
-                    }
-                    
-                    // at this point we make sure that we can actually redirect without problem
-                    // so we process the queue
-                   /* if(PerThreadPrintStream.canWriteToDb.get()) {
-                        int i=0;
-                        while(!messageQueue.isEmpty()) {
-                            TriggerFilterQueueData queueElement = messageQueue.get(i);
-                            redirectToServlet(queueElement.getServletName(), queueElement.getAttributeName(), queueElement.getAttributeValue(), rootCtx, data.getReq(), data.getResp());
-                            messageQueue.remove(i);
-                            i++;
-                        }
-                    }*/
-                    redirectToServlet(servletName, attributeName, attributeValue, rootCtx, data.getReq(), data
-                            .getResp());
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (ServletException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                TriggerFilterQueueData data= new TriggerFilterQueueData(servletName, attributeValue);
+                if(staticRootCtx!=null)
+                    data.sendTo(staticRootCtx);
+                else{
+                    // this happens only in the beggining
+                    computeStaticRoot(data);
                 }
+                    
             } finally {
                 guard.set(false);
             }
         }
+
+
+    }
+    
+    private static synchronized void computeStaticRoot(TriggerFilterQueueData data) {
+        if(staticRootCtx!=null){
+            // probably staticRootCtx was set just afte we checked for it and just before we came into this method
+            data.sendTo(staticRootCtx);
+            return;
+        }
+        ServletContext ctx= null;
+ 
+        queue.add(data);
+        // here queue has at least one memmber!
+        
+        if(staticContext==null || (ctx= staticContext.getContext("/"))==null )
+            return;
+        
+        // we have a root context, we try to send the first guy
+        Iterator<TriggerFilterQueueData> i= queue.iterator();
+        if(!i.next().sendTo(ctx))
+            // root context is not ready to process
+            return;
+        // jackpot! the root context exists and is ready for action. we publish all shit before
+        for(; i.hasNext();)
+            i.next().sendTo(ctx);
+ 
+        
+        // now we are ready to publish the static so all other losers can use it without coming into synchronized code
+        staticRootCtx=ctx;    
     }
 
-    private static void addToQueue(String servletName, String attributeName, Object attributeValue) {
-        TriggerFilterQueueData data = new TriggerFilterQueueData();
-        data.setServletName(servletName);
-        data.setAttributeName(attributeName);
-        data.setAttributeValue(attributeValue);
-        messageQueue.add(data);
+    static class TriggerFilterQueueData {
+    
+    TriggerFilterQueueData(String servletName, Object attributeValue){
+        this.servletName= servletName;
+        this.attributeValue= attributeValue;
+        this.prefix=PerThreadPrintStream.get();
     }
-
-}
-
-class ServletRedirectionData {
-
-    private ServletContext context;
-
-    private ServletRequest req;
-
-    private ServletResponse resp;
-
-    public ServletContext getContext() {
-        return context;
+    
+    boolean sendTo(ServletContext rootCtx){
+        ServletRequest req= new HttpServletRequestDummy();
+        if (attributeValue != null)
+            req.setAttribute("org.makumba.parade.servletParam", attributeValue);
+        if(prefix!=null)
+            req.setAttribute("org.makumba.parade.logPrefix", prefix);
+        try{
+        invokeServlet(servletName, rootCtx, req, new HttpServletResponseDummy());
+        } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        } catch (ServletException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        }
+        return req.getAttribute("org.makumba.parade.servletSuccess")!=null;
     }
-
-    public void setContext(ServletContext context) {
-        this.context = context;
-    }
-
-    public ServletRequest getReq() {
-        return req;
-    }
-
-    public void setReq(ServletRequest req) {
-        this.req = req;
-    }
-
-    public ServletResponse getResp() {
-        return resp;
-    }
-
-    public void setResp(ServletResponse resp) {
-        this.resp = resp;
-    }
-
-}
-
-class TriggerFilterQueueData {
-
+    
+    private String prefix;
+    
     private String servletName;
-
-    private String attributeName;
 
     private Object attributeValue;
 
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
-    }
-
-    public Object getAttributeValue() {
-        return attributeValue;
-    }
-
-    public void setAttributeValue(Object attributeValue) {
-        this.attributeValue = attributeValue;
-    }
-
-    public String getServletName() {
-        return servletName;
-    }
-
-    public void setServletName(String servletName) {
-        this.servletName = servletName;
-    }
-
+}
 }
