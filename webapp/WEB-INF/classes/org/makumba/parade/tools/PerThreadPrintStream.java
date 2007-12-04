@@ -20,12 +20,6 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         }
     };
     
-    public static ThreadLocal<Boolean> canWriteToDb = new ThreadLocal<Boolean>() {
-        public Boolean initialValue() {
-            return new Boolean(false);
-        }
-    };
-
     static ThreadLocal lastEnter = new ThreadLocal() {
         public Object initialValue() {
             return dummy;
