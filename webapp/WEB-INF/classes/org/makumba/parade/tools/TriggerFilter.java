@@ -3,6 +3,7 @@ package org.makumba.parade.tools;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -47,7 +48,7 @@ public class TriggerFilter implements Filter {
 
     public void init(FilterConfig conf) {
         context = conf.getServletContext();
-        if(staticContext==null){
+        if(context.getContext("/") == context){
             staticContext= context;
         }
         
@@ -55,14 +56,15 @@ public class TriggerFilter implements Filter {
         beforeServlet = conf.getInitParameter("beforeServlet");
         afterContext = conf.getInitParameter("afterContext");
         afterServlet = conf.getInitParameter("afterServlet");
-        
+        System.out.println("handler: "+Logger.getLogger("org").getParent().getHandlers()[0].getClass());
+
     }
     
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws java.io.IOException,
             ServletException {
-
+        
         PerThreadPrintStream.setEnabled(true);
-
+        
         ServletContext ctx = context.getContext(beforeContext);
 
         HttpServletRequest dummyReq = new HttpServletRequestDummy();
@@ -81,7 +83,6 @@ public class TriggerFilter implements Filter {
         } else {
             if (beforeServlet != null)
                 invokeServlet(beforeServlet, ctx, dummyReq, resp);
-
         }
 
         req = (ServletRequest) dummyReq.getAttribute("org.eu.best.tools.TriggerFilter.request");
@@ -89,7 +90,7 @@ public class TriggerFilter implements Filter {
         if (req == null)
             // beforeServlet signaled closure
             return;
-
+        
         resp = (ServletResponse) dummyReq.getAttribute("org.eu.best.tools.TriggerFilter.response");
 
         chain.doFilter(req, resp);
@@ -162,7 +163,8 @@ public class TriggerFilter implements Filter {
         queue.add(data);
         // here queue has at least one memmber!
         
-        if(staticContext==null || (ctx= staticContext.getContext("/"))==null )
+        if((ctx=staticContext)==null )
+                //|| (ctx= staticContext.getContext("/"))==null )
             return;
         
         // we have a root context, we try to send the first guy
