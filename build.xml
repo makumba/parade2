@@ -137,7 +137,7 @@
 		</copy>
 		
 		<!-- Tomcat 5.5 has a new way of handling logging, we need to copy logging to the tomcat common -->
-		<copy toDir="tomcat/common/classes/" overwrite="true">
+		<copy toDir="tomcat/paradeCommon/classes" overwrite="true">
 			<fileset dir=".">
 				<include name="logging.properties" />
 			</fileset>
@@ -147,7 +147,7 @@
 				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
 			</fileset>
 		</copy>
-
+		
 		<!-- We also need to create a bunch of directories -->
 		<mkdir dir="tomcat/webapps_dummy" />
 
@@ -160,8 +160,8 @@
 			<jvmarg value="-Xms70M" />
 			<jvmarg value="-Xmx500M" />
 			<jvmarg value="-Djava.library.path=." />
-			<jvmarg value="-Djava.util.logging.config.file='logging.properties'" />
-			<jvmarg value="-Djava.util.logging.manager='org.apache.juli.ClassLoaderLogManager'" />
+			<!-- <jvmarg value="-Djava.util.logging.config.file='logging.properties'" /> -->
+			<!-- <jvmarg value="-Djava.util.logging.manager='org.apache.juli.ClassLoaderLogManager'" /> -->
 			
 			<arg value="start" />
 		</java>
