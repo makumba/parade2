@@ -65,11 +65,12 @@ public class LogViewManager {
         if(context.equals("all"))
             contextQuery = "";
         if(context.equals("(root)"))
-            contextQuery = "l.context is null or l.context = 'parade2'";
+            contextQuery = "(l.context is null or l.context = 'parade2')";
         
         String dateQuery = "l.date > :myDate";
         
-        String query = "from Log l where ("+contextQuery+(contextQuery.length()==0?"":") and ")+dateQuery;
+        boolean c = contextQuery.length()==0;
+        String query = "from Log l where "+contextQuery+(c?"":" and ")+dateQuery;
         
         Query q = s.createQuery(query);
         q.setCacheable(false);
