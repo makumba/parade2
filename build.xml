@@ -54,20 +54,18 @@
 		<fileset dir="${java.home}/lib/">
 			<include name="rt.jar" />
 		</fileset>
-		<fileset dir="${tomcat.home}">
-			<include name="bin/bootstrap.jar" />
-		</fileset>
-		<fileset dir="tomcat/paradeCommon/classes">
-			<include name="*.class" />
+		<fileset dir="lib">
+			<include name="tomcat-bootstrap.jar" />
+			<include name="servlet-api.jar" />
+			<include name="commons-logging-api.jar" />
+			<include name="ant-1.6.5.jar" />
+			<include name="ant-launcher.jar" />
 		</fileset>
 		<fileset dir="${webapp.path}/WEB-INF/lib">
 			<include name="jnotify-0.9.1.jar" />
 		</fileset>
-		<fileset dir="lib">
-			<include name="ant-1.6.5.jar" />
-			<include name="ant-launcher.jar" />
-			<include name="commons-logging-api.jar" />
-		</fileset>
+		<pathelement path="triggerClasses/" />
+		<pathelement path="loggerClasses/" />
 	</path>
 
 	<target name="compile" description="compile the java files">
@@ -116,28 +114,27 @@
 
 	<target name="prepareTomcat" description="Sets up tomcat with ParaDe-specific configuration" depends="compile">
 
-		<!-- First, we copy the trigger classes to paradeCommon -->
-		<mkdir dir="tomcat/paradeCommon/classes/" />
-		<copy toDir="tomcat/paradeCommon/classes/" overwrite="true">
-			<fileset dir="webapp/WEB-INF/classes">
-				<include name="org/makumba/parade/tools/TriggerFilter*.class" />
-				<include name="org/makumba/parade/tools/ServletRedirectionData*.class" />
-				<include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
-				<include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
-				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
-			</fileset>
-		</copy>
-
-		<!-- Then, we copy useful jars to paradeCommon/lib -->
-		<mkdir dir="tomcat/paradeCommon/lib/" />
-		<copy toDir="tomcat/paradeCommon/lib/" overwrite="true">
-			<fileset dir="webapp/WEB-INF/lib">
-				<include name="mysql.jar" />
-			</fileset>
-		</copy>
+		<!-- We also need to create a bunch of directories -->
+		<mkdir dir="tomcat/webapps_dummy" />
 		
-		<!-- Tomcat 5.5 has a new way of handling logging, we need to copy logging to the tomcat common -->
-		<copy toDir="tomcat/paradeCommon/classes" overwrite="true">
+		<antcall target="triggerCopy" />
+		<antcall target="loggerCopy" />
+	</target>
+			
+	<target name="triggerCopy">
+		<copy toDir="triggerClasses/" overwrite="true">
+	         <fileset dir="webapp/WEB-INF/classes">
+	          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
+		      <include name="org/makumba/parade/tools/ServletRedirectionData*.class" />
+	          <include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
+	          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
+	         </fileset>
+		</copy>
+	</target>
+	
+	<target name="loggerCopy">
+
+		<copy toDir="loggerClasses/" overwrite="true">
 			<fileset dir=".">
 				<include name="logging.properties" />
 			</fileset>
@@ -148,20 +145,18 @@
 			</fileset>
 		</copy>
 		
-		<!-- We also need to create a bunch of directories -->
-		<mkdir dir="tomcat/webapps_dummy" />
-
+		
 	</target>
 
 	<target name="tomcat-start" depends="prepareTomcat">
-		<java classname="org.apache.catalina.startup.Bootstrap" fork="yes" classpathref="tomcat.class.path">
+		<java classname="org.apache.catalina.startup.Bootstrap" fork="yes" classpathref="tomcat.class.path" append="true">
 			<jvmarg value="-Dcatalina.home=${tomcat.home}" />
 			<jvmarg value="-Dcatalina.base=tomcat" />
 			<jvmarg value="-Xms70M" />
-			<jvmarg value="-Xmx500M" />
+			<jvmarg value="-Xmx700M" />
 			<jvmarg value="-Djava.library.path=." />
-			<!-- <jvmarg value="-Djava.util.logging.config.file='logging.properties'" /> -->
-			<!-- <jvmarg value="-Djava.util.logging.manager='org.apache.juli.ClassLoaderLogManager'" /> -->
+			<jvmarg value="-Djava.util.logging.config.file=/home/parade/server/parade2/logging.properties" />
+			<!-- <jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" /> -->
 			
 			<arg value="start" />
 		</java>
