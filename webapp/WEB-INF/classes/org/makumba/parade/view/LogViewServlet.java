@@ -44,6 +44,9 @@ public void init() {}
         String days = req.getParameter("day");
         if(days == null || days.equals("") || days.equals("null"))
             days = Integer.valueOf(now.get(Calendar.DAY_OF_MONTH)).toString();
+        String filter = req.getParameter("filter");
+        if(filter == null || filter.equals("") || filter.equals("null"))
+         filter = "none";       
         
         resp.setContentType("text/html");
         resp.setCharacterEncoding("UTF-8");
@@ -51,9 +54,9 @@ public void init() {}
         LogViewManager logV = new LogViewManager();
         
         if(view.equals("logmenu")) {
-            out.println(logV.getLogMenuView(s, context, Integer.parseInt(years), (Integer.parseInt(months))-1, (Integer.parseInt(days))));    
+            out.println(logV.getLogMenuView(s, context, filter, Integer.parseInt(years), (Integer.parseInt(months))-1, (Integer.parseInt(days))));    
         } else {
-            out.println(logV.getLogView(s, context, Integer.parseInt(years), (Integer.parseInt(months))-1, (Integer.parseInt(days))));    
+            out.println(logV.getLogView(s, context, filter, Integer.parseInt(years), (Integer.parseInt(months))-1, (Integer.parseInt(days))));    
         }            
         
         s.close();

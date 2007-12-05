@@ -3,7 +3,10 @@ package org.makumba.parade.view.managers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,8 +25,15 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 public class LogViewManager {
+    
+    private static final String LAST_HOUR = "hour";
+    private static final String LAST_RESTART = "restart";
+    private static final String LAST_DAY = "day";
+    private static final String LAST_WEEK = "week";
+    
+        
 
-    public String getLogView(Session s, String context, Integer years, Integer months, Integer days) {
+    public String getLogView(Session s, String context, String filter, Integer years, Integer months, Integer days) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
@@ -43,15 +53,23 @@ public class LogViewManager {
         root.put("day", days.toString());
         
         Calendar cal = GregorianCalendar.getInstance();
-        
         cal.clear();
-        cal.set(years.intValue(), months.intValue(), days.intValue());
         
-        String query = "from Log l where l.context = :context and l.date > :date";
+        // here we have several filtering possibilities
+        // either by date, with day, month, year
+        // then depending on the context, either a specific one, or the root one (parade), or all
+        // then also by quick filter
+        
+        String contextQuery = "l.context = :context";
+        
         if(context.equals("all"))
-            query = "from Log l where l.date > :date";
+            contextQuery = "";
         if(context.equals("(root)"))
-            query = "from Log l where l.context is null or l.context = 'parade2' and l.date > :date";
+            contextQuery = "l.context is null or l.context = 'parade2'";
+        
+        String dateQuery = "l.date > :myDate";
+        
+        String query = "from Log l where ("+contextQuery+(contextQuery.length()==0?"":") and ")+dateQuery;
         
         Query q = s.createQuery(query);
         q.setCacheable(false);
@@ -59,7 +77,36 @@ public class LogViewManager {
         if(!context.equals("all") && !context.equals("(root)"))
           q.setString("context", context);
         
-        q.setDate("date", cal.getTime());
+        if(!filter.equals("none")) {
+            cal.setTime(new Date());
+            
+            if(filter.equals(LAST_HOUR)) {
+                cal.add(Calendar.HOUR_OF_DAY, -1);
+            }
+            if(filter.equals(LAST_DAY)) {
+                cal.add(Calendar.DAY_OF_MONTH, -1);
+            }
+            if(filter.equals(LAST_WEEK)) {
+                cal.add(Calendar.WEEK_OF_MONTH, -1);
+            }
+            if(filter.equals(LAST_RESTART)) {
+                //FIXME there's probably more performant way to do this
+                //FIXME like, using a report query
+                Query q1 = s.createQuery("from Log l where l.message = 'Server restart' order by l.date DESC");
+                Date d = null;
+                if(q1.list().size() > 0) {
+                    d = ((Log) q1.list().get(0)).getDate();
+                }
+                if(d != null)
+                    cal.setTime(d);
+            }
+        } else {
+            cal.set(years.intValue(), months.intValue(), days.intValue());
+        }
+        
+        System.out.println("cal time we set: "+cal.getTime());
+        q.setTimestamp("myDate", cal.getTime());
+        
         
         List<Log> entries = q.list();
         List viewEntries = new LinkedList();
@@ -72,6 +119,7 @@ public class LogViewManager {
             else
                 entry.put("serverRestart", false);
             entry.put("message", HtmlUtils.string2html(entries.get(i).getMessage()));
+            entry.put("date", entries.get(i).getDate().toString());
             entry.put("level", entries.get(i).getLevel());
             entry.put("user", (entries.get(i).getUser() == null)?"system":entries.get(i).getUser());
             entry.put("context", (entries.get(i).getContext() == null)?"parade2":entries.get(i).getContext());
@@ -96,7 +144,7 @@ public class LogViewManager {
         
     }
     
-    public String getLogMenuView(Session s, String context, Integer years, Integer months, Integer days) {
+    public String getLogMenuView(Session s, String context, String filter, Integer years, Integer months, Integer days) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
 
@@ -114,6 +162,7 @@ public class LogViewManager {
         root.put("year", years.toString());
         root.put("month", ""+(months.intValue()+1));
         root.put("day", days.toString());
+        root.put("filter", filter);
         
         List rows = new LinkedList();
         

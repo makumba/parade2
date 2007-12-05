@@ -7,7 +7,7 @@
 </head>
 
 <body class="header">
-<form target="logview" action="/logs?view=logs&context=${context}&years=${year}&months=${month}&days=${day}>
+<form class="nobreak" target="logview" action="/logs?view=logs&context=${context}&years=${year}&months=${month}&days=${day}&filter=${filter}>
 <script language="JavaScript">
 <!--
 var cal = new CalendarPopup();
@@ -29,9 +29,16 @@ Show logs since:
 <option value="${row}"<#if row = context> selected</#if>>${row}</option>
 </#list>
 </select>
+&nbsp;&nbsp;
+Quick filter: <select size="1" name="filter">
+<option value="none"<#if filter = 'none'> selected</#if>>-Pick one-</option>
+<option value="hour"<#if filter = 'hour'> selected</#if>>Last hour</option>
+<option value="restart"<#if filter = 'restart'> selected</#if>>Last server restart</option>
+<option value="day"<#if filter = 'day'> selected</#if>>Last day</option>
+<option value="week"<#if filter = 'week'> selected</#if>>Last week</option>
+</select>
 
-
-<input type="submit" value="Show">
+<input type="submit" value="Filter">
 </form>
 
 </body>

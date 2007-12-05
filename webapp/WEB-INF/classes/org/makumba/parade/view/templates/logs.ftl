@@ -8,7 +8,7 @@
 
 <pre>
 <#list entries as entry>
-<#if entry.serverRestart><hr></#if><span class="${entry.level}">${entry.user}@${entry.context}:  ${entry.message}</span>
+${entry.date} <#if entry.serverRestart><hr></#if><span class="${entry.level}">${entry.user}@${entry.context}:  ${entry.message}</span>
 </#list>
 </pre>
 
