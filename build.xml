@@ -161,6 +161,7 @@
 			<jvmarg value="-Xmx500M" />
 			<jvmarg value="-Djava.library.path=." />
 			<jvmarg value="-Djava.util.logging.config.file='logging.properties'" />
+			<jvmarg value="-Djava.util.logging.manager='org.apache.juli.ClassLoaderLogManager'" />
 			
 			<arg value="start" />
 		</java>
