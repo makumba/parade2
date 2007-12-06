@@ -2,6 +2,7 @@ package org.makumba.parade.tools;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,8 @@ public class PerThreadPrintStream extends java.io.PrintStream {
     public static DateFormat logDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     static Object dummy = "dummy";
+    
+    public static PrintStream oldSystemOut;
 
     static ThreadLocal prefix = new ThreadLocal();
 
@@ -26,6 +29,7 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         }
     };
     static {
+        oldSystemOut = System.out;
         java.io.PrintStream singleton = new PerThreadPrintStream(System.out);
         System.setOut(singleton);
         System.setErr(singleton);
