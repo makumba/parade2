@@ -38,3 +38,8 @@ PRE {
 	color: yellow;
 	background: red
 }
+
+FORM.nobreak {
+	display: inline;
+	margin:0 0 0 0;
+}
