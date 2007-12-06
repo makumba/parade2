@@ -128,6 +128,7 @@
 		      <include name="org/makumba/parade/tools/ServletRedirectionData*.class" />
 	          <include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
 	          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
+	          <include name="org/makumba/parade/access/ActionLogDTO*.class" />
 	         </fileset>
 		</copy>
 	</target>

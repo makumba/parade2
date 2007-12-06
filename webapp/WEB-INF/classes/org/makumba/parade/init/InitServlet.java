@@ -39,7 +39,6 @@ public class InitServlet extends HttpServlet implements Runnable {
     {
         /* Initializing Hibernate */
         try {
-
             cfg = new Configuration().configure();
             cfg.addResource("org/makumba/parade/model/AbstractFileData.hbm.xml");
             cfg.addResource("org/makumba/parade/model/Parade.hbm.xml");
@@ -47,7 +46,8 @@ public class InitServlet extends HttpServlet implements Runnable {
             cfg.addResource("org/makumba/parade/model/AbstractRowData.hbm.xml");
             cfg.addResource("org/makumba/parade/model/File.hbm.xml");
             cfg.addResource("org/makumba/parade/model/Log.hbm.xml");
-
+            cfg.addResource("org/makumba/parade/model/ActionLog.hbm.xml");
+            
             SessionFactory sf = cfg.buildSessionFactory();
 
             SchemaUpdate schemaUpdate = new SchemaUpdate(cfg);

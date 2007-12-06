@@ -3,8 +3,8 @@
       "-//Hibernate/Hibernate Mapping DTD//EN"
       "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
       
-<hibernate-mapping package="org.makumba.parade.model">
-	<class name="Log">
+<hibernate-mapping package="org.makumba.parade.model" default-lazy="false">
+	<class name="ActionLog">
 	
 		<cache usage="read-write" />
 	
@@ -12,13 +12,12 @@
 			<generator class="native" />
 		</id>
 		
-		<property name="date" />
-		<property name="level" />
-		<property name="message" length="2000"/>
-		<property name="throwable" />
+		<property name="date"/>
 		<property name="user" />
 		<property name="context" />
-		<property name="origin" />
+		<property name="url" />
+		<property name="queryString" />
+		<property name="post" />
 		
 	</class>
 </hibernate-mapping>

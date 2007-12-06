@@ -89,16 +89,19 @@ public class AccessServlet extends HttpServlet {
 
     void setOutputPrefix(HttpServletRequest req, HttpServletResponse resp) {
         String contextPath = req.getContextPath();
-        String contextPathOrig = contextPath;
         if (contextPath.equals("")) {
             contextPath = "parade2";
-            contextPathOrig = "/";
         } else
             contextPath = contextPath.substring(1);
         String nm = (String) req.getSession(true).getAttribute("org.makumba.parade.user");
         if (nm == null)
             nm = "(unknown user)";
         PerThreadPrintStream.set("["+nm + "@" + contextPath+"]");
+
+        // let's also put the user in the actionlog
+        ActionLogDTO log = (ActionLogDTO) req.getAttribute("org.eu.best.tools.TriggerFilter.actionlog");
+        log.setUser(nm);
+        
         ServletContext ctx = (ServletContext) req.getAttribute("org.eu.best.tools.TriggerFilter.context");
 
         try {
@@ -119,6 +122,7 @@ public class AccessServlet extends HttpServlet {
 
         HttpServletRequest origReq = (HttpServletRequest) req;
         req = (HttpServletRequest) req.getAttribute("org.eu.best.tools.TriggerFilter.request");
+        
         // Config.reloadLoggingConfig();
         // TODO implement equivalent of reloadLoggingConfig()
         setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
@@ -127,6 +131,7 @@ public class AccessServlet extends HttpServlet {
             // we set the output prefix again, now that we know the user
             setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
             origReq.setAttribute("org.eu.best.tools.TriggerFilter.request", req1);
+            
         } else
             // login failed, we tell the trigger filter not to filter further
             origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");

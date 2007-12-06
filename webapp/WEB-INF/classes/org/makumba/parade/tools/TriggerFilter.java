@@ -1,9 +1,9 @@
 package org.makumba.parade.tools;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,6 +14,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.tools.HttpServletRequestDummy;
 
 /**
@@ -39,6 +40,8 @@ public class TriggerFilter implements Filter {
     
     private static ServletContext staticRootCtx;
     
+    public static ThreadLocal<ActionLogDTO> actionLog = new ThreadLocal<ActionLogDTO>();
+    
     // guard that makes sure that we don't enter in an infinite logging loop
     private static ThreadLocal guard = new ThreadLocal() {
         public Object initialValue() {
@@ -56,7 +59,6 @@ public class TriggerFilter implements Filter {
         beforeServlet = conf.getInitParameter("beforeServlet");
         afterContext = conf.getInitParameter("afterContext");
         afterServlet = conf.getInitParameter("afterServlet");
-        System.out.println("handler: "+Logger.getLogger("org").getParent().getHandlers()[0].getClass());
 
     }
     
@@ -67,20 +69,31 @@ public class TriggerFilter implements Filter {
         
         ServletContext ctx = context.getContext(beforeContext);
 
+        ActionLogDTO log = new ActionLogDTO();
+        getActionContext(req, log);
+        actionLog.set(log);
+        
         HttpServletRequest dummyReq = new HttpServletRequestDummy();
         dummyReq.setAttribute("org.eu.best.tools.TriggerFilter.request", req);
         dummyReq.setAttribute("org.eu.best.tools.TriggerFilter.response", resp);
         dummyReq.setAttribute("org.eu.best.tools.TriggerFilter.context", context);
+        dummyReq.setAttribute("org.eu.best.tools.TriggerFilter.actionlog", log);
 
         req.setAttribute("org.eu.best.tools.TriggerFilter.dummyRequest", dummyReq);
         req.setAttribute("org.eu.best.tools.TriggerFilter.request", req);
         req.setAttribute("org.eu.best.tools.TriggerFilter.response", resp);
         req.setAttribute("org.eu.best.tools.TriggerFilter.context", context);
-
+        req.setAttribute("org.eu.best.tools.TriggerFilter.actionlog", log);
 
         if (ctx == null) {
             checkCrossContext(req, beforeContext);
         } else {
+            
+            // first, we ask the db servlet to log our actionlog
+            dummyReq.setAttribute("org.makumba.parade.servletParam", log);
+            invokeServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", ctx, dummyReq, resp);
+
+            // then we proceed
             if (beforeServlet != null)
                 invokeServlet(beforeServlet, ctx, dummyReq, resp);
         }
@@ -102,7 +115,34 @@ public class TriggerFilter implements Filter {
 
             if (afterServlet != null)
                 invokeServlet(afterServlet, ctx, req, resp);
+            
+            // in the end, we update the actionlog in the db
+            // the actionlog should be in the request after passing through the beforeServlet
+            req.setAttribute("org.makumba.parade.servletParam", req.getAttribute("org.eu.best.tools.TriggerFilter.actionlog"));
+            invokeServlet(afterServlet, ctx, req, resp);
         }
+        
+        actionLog.set(null);
+        
+    }
+
+    private void getActionContext(ServletRequest req, ActionLogDTO log) {
+        HttpServletRequest httpReq = ((HttpServletRequest) req);
+        String contextPath = httpReq.getContextPath();
+        if (contextPath.equals("")) {
+            contextPath = "parade2";
+        } else {
+            contextPath = contextPath.substring(1);
+        }
+        
+        log.setContext(contextPath);
+        log.setDate(new Date());
+        String pathInfo = httpReq.getPathInfo();
+        log.setUrl(httpReq.getServletPath() + (pathInfo==null?"":pathInfo));
+        log.setQueryString(httpReq.getQueryString());
+        
+        // TODO get post by reading inputstream of request
+    
     }
 
     private void checkCrossContext(ServletRequest req, String ctxName) {
@@ -133,6 +173,22 @@ public class TriggerFilter implements Filter {
     }
     
     public static synchronized void redirectToServlet(String servletName, Object attributeValue) {
+        /*if(actionLog.get() == null) {
+            //if it's the standard classloader it's tomcat
+            //if it's the main thread but not the standard classloader it's a context
+            //if it's not the main thread it's probably a thread started by a context
+            //we can get the path to the webapp by having a resource that is common to everyone
+            
+            //PerThreadPrintStream.oldSystemOut.println("Thread: "+Thread.currentThread());
+            //PerThreadPrintStream.oldSystemOut.println("Thread name:"+Thread.currentThread().getName());
+            //PerThreadPrintStream.oldSystemOut.println("Thread classloader: "+Thread.currentThread().getContextClassLoader());
+            try {
+            //PerThreadPrintStream.oldSystemOut.println("******Thread webinf: "+Thread.currentThread().getContextClassLoader().getResource("MakumbaDatabase.properties"));
+            } catch(Throwable t) {
+            }
+         }*/
+            
+        
         if (guard.get().equals(false)) {
             guard.set(true);
             try {
@@ -148,8 +204,6 @@ public class TriggerFilter implements Filter {
                 guard.set(false);
             }
         }
-
-
     }
     
     private static synchronized void computeStaticRoot(TriggerFilterQueueData data) {
