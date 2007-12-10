@@ -118,8 +118,8 @@ public class TriggerFilter implements Filter {
             
             // in the end, we update the actionlog in the db
             // the actionlog should be in the request after passing through the beforeServlet
-            req.setAttribute("org.makumba.parade.servletParam", req.getAttribute("org.eu.best.tools.TriggerFilter.actionlog"));
-            invokeServlet(afterServlet, ctx, req, resp);
+            req.setAttribute("org.makumba.parade.servletParam", log);
+            invokeServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", ctx, req, resp);
         }
         
         actionLog.set(null);

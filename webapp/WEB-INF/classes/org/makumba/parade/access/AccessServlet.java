@@ -87,7 +87,7 @@ public class AccessServlet extends HttpServlet {
         return null;
     }
 
-    void setOutputPrefix(HttpServletRequest req, HttpServletResponse resp) {
+    String setOutputPrefix(HttpServletRequest req, HttpServletResponse resp) {
         String contextPath = req.getContextPath();
         if (contextPath.equals("")) {
             contextPath = "parade2";
@@ -97,10 +97,6 @@ public class AccessServlet extends HttpServlet {
         if (nm == null)
             nm = "(unknown user)";
         PerThreadPrintStream.set("["+nm + "@" + contextPath+"]");
-
-        // let's also put the user in the actionlog
-        ActionLogDTO log = (ActionLogDTO) req.getAttribute("org.eu.best.tools.TriggerFilter.actionlog");
-        log.setUser(nm);
         
         ServletContext ctx = (ServletContext) req.getAttribute("org.eu.best.tools.TriggerFilter.context");
 
@@ -116,6 +112,8 @@ public class AccessServlet extends HttpServlet {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+        
+        return nm;
     }
 
     public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
@@ -129,7 +127,11 @@ public class AccessServlet extends HttpServlet {
         ServletRequest req1 = req;
         if (!shouldLogin(req) || (req1 = checkLogin(req, resp)) != null) {
             // we set the output prefix again, now that we know the user
-            setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
+            String user = setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
+            
+            // let's also put the user in the actionlog
+            ActionLogDTO log = (ActionLogDTO) req.getAttribute("org.eu.best.tools.TriggerFilter.actionlog");
+            log.setUser(user);
             origReq.setAttribute("org.eu.best.tools.TriggerFilter.request", req1);
             
         } else
