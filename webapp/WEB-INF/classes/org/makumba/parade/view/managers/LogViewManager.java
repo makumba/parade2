@@ -15,6 +15,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.model.Log;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
@@ -60,17 +61,17 @@ public class LogViewManager {
         // then depending on the context, either a specific one, or the root one (parade), or all
         // then also by quick filter
         
-        String contextQuery = "l.context = :context";
+        String contextQuery = "al.context = :context";
         
         if(context.equals("all"))
             contextQuery = "";
         if(context.equals("(root)"))
-            contextQuery = "(l.context is null or l.context = 'parade2')";
+            contextQuery = "(al.context is null or al.context = 'parade2')";
         
         String dateQuery = "l.date > :myDate";
         
         boolean c = contextQuery.length()==0;
-        String query = "from Log l where "+contextQuery+(c?"":" and ")+dateQuery;
+        String query = "from Log l, ActionLog al where l.actionLog = al and "+contextQuery+(c?"":" and ")+dateQuery;
         
         Query q = s.createQuery(query);
         q.setCacheable(false);
@@ -105,25 +106,24 @@ public class LogViewManager {
             cal.set(years.intValue(), months.intValue(), days.intValue());
         }
         
-        System.out.println("cal time we set: "+cal.getTime());
         q.setTimestamp("myDate", cal.getTime());
         
         
-        List<Log> entries = q.list();
+        List<Object[]> entries = q.list();
         List viewEntries = new LinkedList();
         for(int i=0; i<entries.size(); i++) {
+            Object[] res = entries.get(i);
+            Log log = (Log)res[0];
+            ActionLog actionLog = (ActionLog)res[1];
+            
             SimpleHash entry = new SimpleHash();
-            if(entries.get(i).getMessage().trim().length() == 0) //skip blank lines
+            
+            if(log.getMessage().trim().length() == 0) //skip blank lines
                 continue;
-            if(entries.get(i).getMessage().equals("Server restart"))
-                entry.put("serverRestart", true);
-            else
-                entry.put("serverRestart", false);
-            entry.put("message", HtmlUtils.string2html(entries.get(i).getMessage()));
-            entry.put("date", entries.get(i).getDate().toString());
-            entry.put("level", entries.get(i).getLevel());
-            entry.put("user", (entries.get(i).getUser() == null)?"system":entries.get(i).getUser());
-            entry.put("context", (entries.get(i).getContext() == null)?"parade2":entries.get(i).getContext());
+            populateLogEntry(entry, log);
+            
+            entry.put("user", (actionLog.getUser() == null)?"system":actionLog.getUser());
+            entry.put("context", (actionLog.getContext() == null)?"parade2":actionLog.getContext());
             
             viewEntries.add(entry);
         }
@@ -143,6 +143,76 @@ public class LogViewManager {
         
         return result.toString();
         
+    }
+
+    private void populateLogEntry(SimpleHash entry, Log log) {
+        if(log.getMessage().equals("Server restart"))
+            entry.put("serverRestart", true);
+        else
+            entry.put("serverRestart", false);
+        entry.put("message", HtmlUtils.string2html(log.getMessage()));
+        entry.put("date", log.getDate().toString());
+        entry.put("level", log.getLevel());
+        
+    }
+    
+    public String getActionLogView(Session s, String context) {
+        StringWriter result = new StringWriter();
+        PrintWriter out = new PrintWriter(result);
+
+        Template temp = null;
+        try {
+            temp = InitServlet.getFreemarkerCfg().getTemplate("actionLogs.ftl");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        // Creating the data model
+        SimpleHash root = new SimpleHash();
+        root.put("context", context);
+        
+        List viewEntries = new LinkedList();
+        
+        Query q = s.createQuery("from ActionLog al order by al.date DESC");
+        List<ActionLog> res = q.list();
+        for(int i=0; i<res.size(); i++) {
+            SimpleHash actionLogEntry = new SimpleHash();
+            List logEntries = new LinkedList();
+            ActionLog actionLog = res.get(i);
+            Query q1 = s.createQuery("from Log l where l.actionLog = :actionLog order by l.date DESC");
+            q1.setParameter("actionLog", actionLog);
+            List<Log> res1 = q1.list();
+            for(int j=0; j<res1.size();j++) {
+                SimpleHash entry = new SimpleHash();
+                Log log = res1.get(j);
+                populateLogEntry(entry, log);
+                logEntries.add(entry);
+            }
+            actionLogEntry.put("logEntries", logEntries);
+            actionLogEntry.put("date", actionLog.getDate());
+            actionLogEntry.put("url", actionLog.getUrl());
+            actionLogEntry.put("context", actionLog.getContext()==null?"no damn context, corrupt db":actionLog.getContext());
+            actionLogEntry.put("user", actionLog.getUser()==null?"no damn user, corrupt db":actionLog.getUser());
+            actionLogEntry.put("queryString", actionLog.getQueryString()==null?"":actionLog.getQueryString());
+            
+            viewEntries.add(actionLogEntry);
+        }
+        
+        root.put("entries", viewEntries);
+        
+        /* Merge data model with template */
+        try {
+            temp.process(root, out);
+        } catch (TemplateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return result.toString();
     }
     
     public String getLogMenuView(Session s, String context, String filter, Integer years, Integer months, Integer days) {

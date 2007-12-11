@@ -19,6 +19,26 @@ public class ActionLogDTO {
     private String queryString;
     
     private String post;
+    
+    private String action;
+    
+    private String origin;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
 
     public String getContext() {
         return context;
@@ -84,6 +104,24 @@ public class ActionLogDTO {
         log.setQueryString(queryString);
         log.setUrl(url);
         log.setUser(user);
+        log.setAction(action);
+        log.setOrigin(origin);
+    }
+    
+    public ActionLogDTO(ActionLog log) {
+        this.id = log.getId();
+        this.context = log.getContext();
+        this.date = log.getDate();
+        this.post = log.getPost();
+        this.queryString = log.getQueryString();
+        this.url = log.getUrl();
+        this.user = log.getUser();
+        this.action = log.getAction();
+        this.origin = log.getOrigin();
+    }
+    
+    public ActionLogDTO() { // empty constructor for TriggerFilter
+        
     }
     
 }

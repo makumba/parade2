@@ -10,9 +10,8 @@ public class Log {
     private String level;
     private String message;
     private Throwable throwable;
-    private String user;
-    private String context;
     private String origin;
+    private ActionLog actionLog;
     
     public String getLevel() {
         return level;
@@ -20,22 +19,6 @@ public class Log {
 
     public void setLevel(String level) {
         this.level = level;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public void setContext(String row) {
-        this.context = row;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
     }
 
     public Long getId() {
@@ -76,6 +59,14 @@ public class Log {
 
     public void setOrigin(String origin) {
         this.origin = origin;
+    }
+
+    public ActionLog getActionLog() {
+        return actionLog;
+    }
+
+    public void setActionLog(ActionLog actionLog) {
+        this.actionLog = actionLog;
     }
     
     

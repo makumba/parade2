@@ -16,6 +16,7 @@ import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.model.Log;
 import org.makumba.parade.tools.PerThreadPrintStreamLogRecord;
+import org.makumba.parade.tools.TriggerFilter;
 
 public class DatabaseLogServlet extends HttpServlet {
 
@@ -65,15 +66,19 @@ public class DatabaseLogServlet extends HttpServlet {
         log.populate(actionLog);
         s.saveOrUpdate(actionLog);
         tx.commit();
+        
+        // finally we also need to update the ActionLog in the thread
+        log.setId(actionLog.getId());
+        TriggerFilter.actionLog.set(log);
+        
     }
 
     private void handleLog(HttpServletRequest req, Object record, Session s) {
         // extract useful information from the record
 
         Log log = new Log();
-        String prefix=(String)req.getAttribute("org.makumba.parade.logPrefix");
-        log.setContext(extractContextFromMessage(prefix));
-        log.setUser(extractUserFromMessage(prefix));
+        ActionLog actionLog = retrieveActionLog(s);
+        log.setActionLog(actionLog);
 
         // this is a java.util.logging.LogRecord
         if (record instanceof LogRecord) {
@@ -88,7 +93,7 @@ public class DatabaseLogServlet extends HttpServlet {
             log.setOrigin("log4j");
             log.setDate(new Date(logevent.getStartTime()));
             log.setLevel(logevent.getLevel().toString());
-            log.setMessage((String)logevent.getMessage());
+            log.setMessage(logevent.getRenderedMessage());
             //if(logevent.getThrowableInformation() != null)
                 //log.setThrowable(logevent.getThrowableInformation().getThrowable());
             //else
@@ -115,45 +120,22 @@ public class DatabaseLogServlet extends HttpServlet {
         tx.commit();
     }
 
-    /**
-     * Gets the user who triggered the event
-     * 
-     * @param prefix
-     *            the log message that may contain a username
-     * @return
-     */
-    private static String extractUserFromMessage(String prefix) {
-        if(prefix == null)
-            return null;
-        String accessInfo = extractAccessInfo(prefix);
-
-        return accessInfo.substring(0, accessInfo.indexOf("@"));
-    }
-
-    /**
-     * Gets the context name from a log message
-     * 
-     * @param prefix
-     *            the message containing the context name
-     * @return a Row corresponding to the context
-     */
-    private static String extractContextFromMessage(String prefix) {
+    private ActionLog retrieveActionLog(Session s) {
+        ActionLogDTO actionLogDTO = TriggerFilter.actionLog.get();
+        ActionLog actionLog = new ActionLog();
+        actionLogDTO.populate(actionLog);
         
-        if(prefix == null)
-            return null;
-
-        String accessInfo = extractAccessInfo(prefix);
-        if (accessInfo == null)
-            return null;
-
-        return accessInfo.substring(accessInfo.indexOf("@")+1);
-    }
-
-    private static String extractAccessInfo(String s) {
-        if (s.indexOf("@") > -1 && s.indexOf("[") > -1 && s.indexOf("]") > -1)
-            return s.substring(s.indexOf("[")+1, s.indexOf("]"));
-        else
-            return null;
-    }
+        // if the actionLog is there but not persisted, we persist it first
+        if(actionLog.getId() == null) {
+            Transaction tx = s.beginTransaction();
+            s.save(actionLog);
+            tx.commit();
+            actionLogDTO.setId(actionLog.getId());
+            TriggerFilter.actionLog.set(actionLogDTO);
+        } else {
+            actionLog = (ActionLog) s.get(ActionLog.class, actionLogDTO.getId());
+        }
+        return actionLog;
+    }    
 
 }

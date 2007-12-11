@@ -18,8 +18,8 @@
 		<property name="url" />
 		<property name="queryString" />
 		<property name="post" />
+		<property name="action" />
+		<property name="origin" />
 		
 	</class>
-</hibernate-mapping>
-
-      
+</hibernate-mapping>     

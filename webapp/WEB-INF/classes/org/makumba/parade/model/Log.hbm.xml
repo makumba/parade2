@@ -16,9 +16,10 @@
 		<property name="level" />
 		<property name="message" length="2000"/>
 		<property name="throwable" />
-		<property name="user" />
-		<property name="context" />
 		<property name="origin" />
+		
+		<many-to-one name="actionLog" not-null="true" outer-join="false"/>
+		
 		
 	</class>
 </hibernate-mapping>

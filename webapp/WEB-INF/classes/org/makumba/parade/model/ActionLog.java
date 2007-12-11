@@ -18,6 +18,26 @@ public class ActionLog {
     
     private String post;
     
+    private String action;
+    
+    private String origin;
+    
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
     public String getContext() {
         return context;
     }
