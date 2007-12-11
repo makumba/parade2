@@ -55,6 +55,8 @@ public void init() {}
         
         if(view.equals("logmenu")) {
             out.println(logV.getLogMenuView(s, context, filter, Integer.parseInt(years), (Integer.parseInt(months))-1, (Integer.parseInt(days))));    
+        } else if(view.equals("actionlog")) {
+            out.println(logV.getActionLogView(s, context));
         } else {
             out.println(logV.getLogView(s, context, filter, Integer.parseInt(years), (Integer.parseInt(months))-1, (Integer.parseInt(days))));    
         }            
