@@ -9,6 +9,7 @@
 	          <include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
 	          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
 	          <include name="org/makumba/parade/access/ActionLogDTO*.class" />
+	          <include name="org/makumba/parade/model/ActionLog*.class" /> <!-- Needed for the DTO -->
 	         		         	
 	         </fileset>
 		</copy>
@@ -28,6 +29,7 @@
 			</fileset>
 		</copy>
 		
+		<!--
 		<copy toDir="tomcat/common/classes" overwrite="true">
 			<fileset dir=".">
 				<include name="logging.properties" />
@@ -36,7 +38,7 @@
 				<include name="org/makumba/parade/tools/ParadeConsoleHandler*.class" />
 			</fileset>
 		</copy>
-		
+		-->
 	</target>
 	
 </project>

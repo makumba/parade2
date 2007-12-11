@@ -84,6 +84,8 @@
 			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/*.java~" />
 			<fileset dir="${webapp.path}" includes="**/*.jsp~" />
 			<fileset dir="${webapp.path}/javadoc" />
+			<fileset dir="triggerClasses/" includes="**/*.class" />
+			<fileset dir="loggerClasses/" includes="**/*.class" />
 
 			<fileset dir="${basedir}/jspc" />
 		</delete>
@@ -129,6 +131,7 @@
 	          <include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
 	          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
 	          <include name="org/makumba/parade/access/ActionLogDTO*.class" />
+	          <include name="org/makumba/parade/model/ActionLog*.class" /> <!-- Needed for the DTO -->
 	         </fileset>
 		</copy>
 	</target>
