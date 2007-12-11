@@ -7,12 +7,14 @@ public class ParadeLog4jConsoleAppender extends ConsoleAppender {
     
     @Override
     public void append(LoggingEvent event) {
-        //TriggerFilter.redirectToServlet("perThreadEnabler", "perThreadEnabled", new Boolean(false));
         PerThreadPrintStream.setEnabled(false);
-        super.append(event);
         if(event != null)
             TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", event);
-        //TriggerFilter.redirectToServlet("perThreadEnabler", "perThreadEnabled", new Boolean(true));
+        /*String message = TriggerFilter.prefix.get() + "  " + event.getLevel().toString() + " "
+                        + event.getRenderedMessage() + " " + event.getLocationInformation().getClassName()+":"+event.getLocationInformation().getLineNumber()
+                        + " - " + event.getRenderedMessage();
+        */
+        super.append(event);
         PerThreadPrintStream.setEnabled(true);
     }
 }

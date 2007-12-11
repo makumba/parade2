@@ -15,8 +15,6 @@ public class PerThreadPrintStream extends java.io.PrintStream {
     
     public static PrintStream oldSystemOut;
 
-    static ThreadLocal prefix = new ThreadLocal();
-
     static ThreadLocal enable = new ThreadLocal() {
         public Object initialValue() {
             return true;
@@ -35,14 +33,6 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         System.setErr(singleton);
     }
 
-    public static void set(String o) {
-        prefix.set(o);
-    }
-
-    public static String get() {
-        return (String) prefix.get();
-    }
-    
     public static void setEnabled(boolean b) {
         enable.set(b);
     }
@@ -70,15 +60,12 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         PerThreadPrintStreamLogRecord record = new PerThreadPrintStreamLogRecord();
         record.setDate(new Date());
         record.setMessage(msg);
-        record.setNotThroughAccess(get() == null);
         
         enable.set(false);
         TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", record);
         enable.set(true);
         
-        //PrintStream w = new PrintStream(bao);
-        
-        String s = get();
+        String s = TriggerFilter.prefix.get();
         byte[] b = null;
         if (s != null)
             b = (s + ": ").getBytes();

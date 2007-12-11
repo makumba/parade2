@@ -15,6 +15,7 @@ import org.makumba.parade.tools.Authorizer;
 import org.makumba.parade.tools.DatabaseAuthorizer;
 import org.makumba.parade.tools.HttpLogin;
 import org.makumba.parade.tools.PerThreadPrintStream;
+import org.makumba.parade.tools.TriggerFilter;
 
 /**
  * The servlet called at the begining of each parade access, in all servlet contexts This servlet does: login, calls
@@ -90,13 +91,12 @@ public class AccessServlet extends HttpServlet {
     String setOutputPrefix(HttpServletRequest req, HttpServletResponse resp) {
         String contextPath = req.getContextPath();
         if (contextPath.equals("")) {
-            contextPath = "parade2";
+            contextPath = TriggerFilter.actionLog.get().getContext();
         } else
             contextPath = contextPath.substring(1);
         String nm = (String) req.getSession(true).getAttribute("org.makumba.parade.user");
         if (nm == null)
             nm = "(unknown user)";
-        PerThreadPrintStream.set("["+nm + "@" + contextPath+"]");
         
         ServletContext ctx = (ServletContext) req.getAttribute("org.eu.best.tools.TriggerFilter.context");
 

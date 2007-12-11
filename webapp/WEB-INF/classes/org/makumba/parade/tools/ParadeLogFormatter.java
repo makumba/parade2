@@ -22,7 +22,7 @@ public class ParadeLogFormatter extends SimpleFormatter {
         if (prefix == null)
             prefix = TOMCAT_PREFIX + "  ";
         else
-            prefix += ": ";
+            prefix += "  ";
 
         StringBuffer sb = new StringBuffer();
         BufferedReader b = new BufferedReader(new StringReader(record.getMessage()));

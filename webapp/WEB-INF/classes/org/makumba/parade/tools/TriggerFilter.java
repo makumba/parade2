@@ -1,9 +1,15 @@
 package org.makumba.parade.tools;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.LogRecord;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,6 +35,7 @@ import org.makumba.parade.tools.HttpServletRequestDummy;
  * by resetting the attribute "org.eu.best.tools.TriggerFilter.request" to null
  * 
  * @author Cristian Bogdan
+ * @author Manuel Gay
  */
 public class TriggerFilter implements Filter {
     ServletContext context;
@@ -41,6 +48,11 @@ public class TriggerFilter implements Filter {
     private static ServletContext staticRootCtx;
     
     public static ThreadLocal<ActionLogDTO> actionLog = new ThreadLocal<ActionLogDTO>();
+    
+    private static ThreadLocal<ActionLogDTO> tomcatActionLog = new ThreadLocal<ActionLogDTO>();
+    
+    public static ThreadLocal<String> prefix = new ThreadLocal<String>();
+    
     
     // guard that makes sure that we don't enter in an infinite logging loop
     private static ThreadLocal guard = new ThreadLocal() {
@@ -96,6 +108,10 @@ public class TriggerFilter implements Filter {
             // then we proceed
             if (beforeServlet != null)
                 invokeServlet(beforeServlet, ctx, dummyReq, resp);
+            
+            // now we have the user
+            TriggerFilter.setPrefix();
+            
         }
 
         req = (ServletRequest) dummyReq.getAttribute("org.eu.best.tools.TriggerFilter.request");
@@ -129,7 +145,7 @@ public class TriggerFilter implements Filter {
     private void getActionContext(ServletRequest req, ActionLogDTO log) {
         HttpServletRequest httpReq = ((HttpServletRequest) req);
         String contextPath = httpReq.getContextPath();
-        if (contextPath.equals("")) {
+        if (contextPath.equals("")) { //FIXME heuristic
             contextPath = "parade2";
         } else {
             contextPath = contextPath.substring(1);
@@ -142,7 +158,6 @@ public class TriggerFilter implements Filter {
         log.setQueryString(httpReq.getQueryString());
         
         // TODO get post by reading inputstream of request
-    
     }
 
     private void checkCrossContext(ServletRequest req, String ctxName) {
@@ -172,39 +187,234 @@ public class TriggerFilter implements Filter {
         queue.add(restart);
     }
     
-    public static synchronized void redirectToServlet(String servletName, Object attributeValue) {
-        /*if(actionLog.get() == null) {
-            //if it's the standard classloader it's tomcat
-            //if it's the main thread but not the standard classloader it's a context
-            //if it's not the main thread it's probably a thread started by a context
-            //we can get the path to the webapp by having a resource that is common to everyone
-            
-            //PerThreadPrintStream.oldSystemOut.println("Thread: "+Thread.currentThread());
-            //PerThreadPrintStream.oldSystemOut.println("Thread name:"+Thread.currentThread().getName());
-            //PerThreadPrintStream.oldSystemOut.println("Thread classloader: "+Thread.currentThread().getContextClassLoader());
-            try {
-            //PerThreadPrintStream.oldSystemOut.println("******Thread webinf: "+Thread.currentThread().getContextClassLoader().getResource("MakumbaDatabase.properties"));
-            } catch(Throwable t) {
-            }
-         }*/
-            
+    public static void redirectToServlet(String servletName, Object attributeValue) {
         
         if (guard.get().equals(false)) {
             guard.set(true);
+            
+            ActionLogDTO l = actionLog.get();
+            ActionLogDTO log = computeHeuristicContextInformation(attributeValue);
+            TriggerFilter.setPrefix();
+                
+            if(log != l) {
+              directSendToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+            }
+            
             try {
-                TriggerFilterQueueData data= new TriggerFilterQueueData(servletName, attributeValue);
-                if(staticRootCtx!=null)
-                    data.sendTo(staticRootCtx);
-                else{
-                    // this happens only in the beggining
-                    computeStaticRoot(data);
-                }
+                directSendToServlet(servletName, attributeValue);
                     
             } finally {
                 guard.set(false);
             }
         }
     }
+
+    private static void directSendToServlet(String servletName, Object attributeValue) {
+        TriggerFilterQueueData data= new TriggerFilterQueueData(servletName, attributeValue);
+        if(staticRootCtx!=null)
+            data.sendTo(staticRootCtx);
+        else{
+            // this happens only in the beggining
+            computeStaticRoot(data);
+        }
+    }
+    
+    private static final String TOMCAT_CLASSLOADER = "org.apache.catalina.loader.StandardClassLoader";
+    private static final String WEBAPP_CLASSLOADER = "WebappClassLoader";
+    
+    private static final String TOMCAT_STARTUP = "org.apache.catalina.startup.Bootstrap.load";
+    private static final String TOMCAT_SHUTDOWN = "org.apache.catalina.startup.Bootstrap.stopServer"; //NOT SURE IF THIS WORKS...
+    
+    private static final String MANAGER_DEPLOY = "Manager: install: Installing context configuration at";
+    private static final String MANAGER_UNDEPLOY = "Manager: undeploy: Undeploying web application at '/";
+    private static final String MANAGER_START = "Manager: start: Starting web application at '/";
+    private static final String MANAGER_STOP = "Manager: stop: Stopping web application at '/";
+    
+    private static final String MANAGER_INIT = "Manager: init:";
+    private static final String MANAGER_LIST = "Manager: list:";
+    
+    
+    /**
+     * Tries to compute the context information, based on the thread
+     * 
+     * @param log the ActionLogDTO in which to place the computed info
+     */
+    private static ActionLogDTO computeHeuristicContextInformation(Object attributeValue) {
+        
+        ActionLogDTO log = actionLog.get();
+        
+        String threadName = Thread.currentThread().getName();
+        String classLoaderName = Thread.currentThread().getContextClassLoader().toString();
+
+        // let's figure out here if this is tomcat doing some stuff
+        if(threadName.equals("main")) {
+            
+            //log = createEmptyActionLogDTO("system");
+            
+            // if we don't have a tomcatActionLog this means that probably we didn't start tomcat yet
+            if(tomcatActionLog.get() == null && log == null) {
+                
+                log = createEmptyActionLogDTO("system");
+                
+                StringWriter s = new StringWriter();
+                new Throwable().printStackTrace(new PrintWriter(s));
+                
+                if(s.toString().indexOf(TOMCAT_STARTUP) > -1) {
+                    // yes, it's definitely tomcat starting
+                    
+                    log.setAction("start");
+                    log.setOrigin("tomcat");
+                    
+                    // we also want to keep this guy for the record
+                    tomcatActionLog.set(log);
+                } else {
+                    // now this is strange...
+                    PerThreadPrintStream.oldSystemOut.println("HEURISTIC: I thought that tomcat was just starting up, but I couldn't detect it in the stacktrace. help!");
+                }
+                // anyway, let's set our new log
+                actionLog.set(log);
+            
+            
+                
+            } else if(tomcatActionLog.get() != null) {
+                // we are sure that tomcat is started
+                
+                StringWriter s = new StringWriter();
+                new Throwable().printStackTrace(new PrintWriter(s));
+                
+                if(s.toString().indexOf(TOMCAT_SHUTDOWN) > -1) {
+                    // tomcat shutting down, we want to register that
+                    
+                    if(log != null && !log.getAction().equals("stopping")) {
+                        log = createEmptyActionLogDTO("system");
+                        log.setAction("stopping");
+                        log.setOrigin("tomcat");
+                        actionLog.set(log);                        
+                    } else if(log != null && log.getAction().equals("stopping")) {
+                        // we already logged that.
+                        return log;
+                    }
+                } else {
+                    handleOtherCases(log);
+                }
+            }
+        } else if(!threadName.equals("main")) {
+            // we are in another thread
+            // and probably it's going to be some webapp
+            
+            if(classLoaderName.indexOf(WEBAPP_CLASSLOADER) > -1) {
+                
+                // ok, let's try to figure out what happens
+                // let's first try to see if this is the manager
+                
+                if(attributeValue instanceof LogRecord) {
+                    LogRecord record = (LogRecord) attributeValue;
+                    String message = record.getMessage();
+                    
+                    if(message.indexOf(MANAGER_DEPLOY) > -1) {
+                        // we are installing some context
+                        log = createEmptyActionLogDTO("manager");
+                        log.setAction("deploying");
+                        log.setOrigin("tomcat");
+                        
+                        // TODO: read in the deploy file and fetch the context
+                        // then store it in the log
+                        
+                        message = message.substring(MANAGER_DEPLOY.length() + " 'file:".length());
+                        message = message.substring(0, message.indexOf("'"));
+                        
+                        String contextPath = null;
+                        BufferedReader r = null;
+                        try {
+                            r = new BufferedReader(new FileReader(new java.io.File(message)));
+                            String line = r.readLine();
+                            contextPath = line.substring(line.indexOf("path=\"")+6);
+                            contextPath = contextPath.substring(0, contextPath.indexOf("\"")).substring(1);
+                            r.close();
+                        } catch (FileNotFoundException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        if(contextPath != null)
+                            log.setContext(contextPath);
+                        
+                        
+                        actionLog.set(log);  
+                    } else if(message.indexOf(MANAGER_UNDEPLOY) > -1) {
+                        // the manager is undeploying someone
+                        log = createEmptyActionLogDTO("manager");
+                        log.setAction("undeploying");
+                        message = message.substring(MANAGER_UNDEPLOY.length());
+                        log.setContext(message.substring(0, message.indexOf("'")));
+                        log.setOrigin("tomcat");
+                        actionLog.set(log);
+                    } else if(message.indexOf(MANAGER_START) > -1) {
+                        // the manager is starting someone
+                        log = createEmptyActionLogDTO("manager");
+                        log.setAction("starting");
+                        message = message.substring(MANAGER_START.length());
+                        log.setContext(message.substring(0, message.indexOf("'")));
+                        log.setOrigin("tomcat");
+                        actionLog.set(log);
+                    } else if(message.indexOf(MANAGER_STOP) > -1) {
+                        // the manager is stopping someone
+                        log = createEmptyActionLogDTO("manager");
+                        log.setAction("stopping");
+                        message = message.substring(MANAGER_STOP.length());
+                        log.setContext(message.substring(0, message.indexOf("'")));
+                        log.setOrigin("tomcat");
+                        actionLog.set(log);
+                    } else if(message.indexOf(MANAGER_LIST) > -1) {
+                        // the manager is listing the contexts
+                        log = createEmptyActionLogDTO("manager");
+                        log.setAction("listing contexts");
+                        log.setOrigin("tomcat");
+                        actionLog.set(log);  
+                    } else if(message.indexOf(MANAGER_INIT) > -1) {
+                        // the manager is initialising
+                        log = createEmptyActionLogDTO("manager");
+                        log.setAction("initialising");
+                        log.setOrigin("tomcat");
+                        actionLog.set(log);
+                    } else {
+                        handleOtherCases(log);
+                    }
+                } else {
+                    handleOtherCases(log);
+                }
+              
+                
+                handleOtherCases(log);
+                
+            } else {
+                handleOtherCases(log);
+           }
+        }
+        
+        return log;
+     
+    }
+    
+    private static void handleOtherCases(ActionLogDTO log) {
+        if(log == null) {
+            log = createEmptyActionLogDTO("system-u"); // "system-unknown"
+            log.setContext("parade2");
+            actionLog.set(log);
+        }
+    }
+    
+
+    private static ActionLogDTO createEmptyActionLogDTO(String user) {
+        ActionLogDTO log;
+        log = new ActionLogDTO();
+        log.setDate(new Date());
+        log.setUser(user);
+        return log;
+    }
+    
     
     private static synchronized void computeStaticRoot(TriggerFilterQueueData data) {
         if(staticRootCtx!=null){
@@ -215,7 +425,7 @@ public class TriggerFilter implements Filter {
         ServletContext ctx= null;
  
         queue.add(data);
-        // here queue has at least one memmber!
+        // here queue has at least one member!
         
         if((ctx=staticContext)==null )
                 //|| (ctx= staticContext.getContext("/"))==null )
@@ -234,13 +444,38 @@ public class TriggerFilter implements Filter {
         // now we are ready to publish the static so all other losers can use it without coming into synchronized code
         staticRootCtx=ctx;    
     }
+    
+    private static void setPrefix() {
+        String prefix = null;
+        if(TriggerFilter.actionLog.get() != null) {
+            String context = TriggerFilter.actionLog.get().getContext();
+            String user = TriggerFilter.actionLog.get().getUser();
+            if(context == null || context.equals("null")) {
+                if(actionLog.get().getOrigin() != null) {
+                    prefix = "["+actionLog.get().getOrigin()+"]";
+                } else {
+                    context = "parade2";
+                }
+            }
+            if(user == null  || user.equals("null"))
+                user = "(unknown user)";
+            
+            if(prefix == null)
+                prefix = "["+user+"@"+context+"]";
+        } else {
+            prefix = "(unknown user)@parade2";
+        }
+
+        TriggerFilter.prefix.set(prefix);
+    }
 
     static class TriggerFilterQueueData {
     
     TriggerFilterQueueData(String servletName, Object attributeValue){
         this.servletName= servletName;
         this.attributeValue= attributeValue;
-        this.prefix=PerThreadPrintStream.get();
+        TriggerFilter.setPrefix();
+        this.prefix = TriggerFilter.prefix.get();
     }
     
     boolean sendTo(ServletContext rootCtx){
