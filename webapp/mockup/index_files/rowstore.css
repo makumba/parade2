@@ -1,0 +1,114 @@
+/* StyleSheet for the RowStore view */
+
+body {
+     font-family:Tahoma,Arial;
+     font-size:2.8em;
+}
+
+div.success {
+	color:#228B22;
+	font-size:medium;
+	font-weight:bold;
+}
+div.failure {
+	color:#FF0000;
+	font-size:medium;
+	font-weight:bold;
+}
+
+div.result {
+	font-size:medium;
+	text-align: left;
+}
+
+div.command {
+	font-size:small;
+}
+
+.notinstalled {
+	font-weight: bold;
+	color: grey;
+}
+
+.installed {
+	font-weight: bold;
+	color: black;
+}
+
+.stopped {
+	font-weight: bold;
+	color: red;
+}
+.started {
+	font-weight: bold;
+	color: green;
+}
+
+table.rowstore {
+    border:0;
+    width:100%;
+    padding:0px;
+    border-spacing:0px;
+    border-width:0px;
+    border-collapse:collapse;
+}
+
+
+TR.odd {
+    background-color:#ffffff;
+}
+TR.even {
+    background-color:#f5f5ff;
+}
+TR:hover {
+    background-color:#ddddff;
+}
+TH {
+    font:caption;
+    background-color:#ddddff;
+    text-align:center;
+    font-weight:bold;
+}
+
+TD {
+	font-family:Tahoma,Arial;
+    font-size:0.8em;
+    vertical-align:middle;
+    padding:0px;
+    padding-left:3px;
+    padding-right:3px;
+    border-spacing:0px;
+    border-width:0px;
+}
+
+.viewed {
+   color: blue;
+}
+.edited {
+   color: orange;
+   font-weight: bold;
+}
+.tested {
+   color: navy;
+}
+.meta {
+   color: grey;
+}
+.cvsupdated {
+   color: green;
+}
+.cvscommited {
+	color: red;
+	text-decoration: underline;
+}
+.cvsneedupdate {
+	color: purple;
+
+}
+.mainuser {
+	text-decoration: underline;
+}
+
+
+
+   
