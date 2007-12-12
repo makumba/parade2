@@ -1,0 +1,57 @@
+<html><head><title>Command view for ducu-k</title>
+
+
+<link rel="StyleSheet" href="browse_data/parade.css" type="text/css">
+<link rel="StyleSheet" href="browse_data/header.css" type="text/css">
+<!-- base --><script charset="utf-8" id="injection_graph_func" src="browse_data/injection_graph_func.js"></script></head><body class="header">
+
+<img alt="remove frames" onmousedown="src='/images/win-x2.gif' onMouseUp=\" src="browse_data/win-x.gif" ;="" top.location="top.directory.location;&quot;" align="right" border="0" hspace="1" vspace="1">
+<table class="header">
+
+<form action="/browse.jsp?getPathFromSession=true" target="_top" style="margin: 0px;"></form>
+<tbody><tr>
+<td valign="top">
+<a href="http://robot-lab1.nada.kth.se:5050/" target="_top" title="back to front page">&lt;</a>
+<select size="1" name="context" onchange="javascript:form.submit();">
+<option value="(root)">(root)</option>
+<option value="ducu-k" selected="selected">ducu-k</option>
+<option value="filip-k">filip-k</option>
+<option value="giorgos-k">giorgos-k</option>
+<option value="gwen-k">gwen-k</option>
+<option value="joao-k">joao-k</option>
+<option value="lode-k">lode-k</option>
+<option value="manu-k">manu-k</option>
+<option value="maria-k">maria-k</option>
+<option value="risto-k">risto-k</option>
+<option value="rudi-k">rudi-k</option>
+<option value="trainees-k">trainees-k</option>
+<option value="trnDB">trnDB</option>
+<option value="vilius-k">vilius-k</option>
+</select>
+<input value="Go!" type="submit">
+</td>
+
+<td valign="top">[<a href="http://robot-lab1.nada.kth.se:5050/log.jsp?context=ducu-k" title="ducu-k log" target="_new">log</a>] 
+<a href="http://robot-lab1.nada.kth.se:5050/log.jsp?context=all" title="Server log" target="directory">all-log</a>-<a href="http://robot-lab1.nada.kth.se:5050/log.jsp?context=all" title="other logs" target="directory">s</a> 
+<a href="http://robot-lab1.nada.kth.se:5050/tomcat-docs" title="Tomcat documentation" target="directory">Tomcat</a> 
+<a href="http://www.makumba.org/" title="Makumba documentation" target="directory">Makumba</a></td>
+
+<td valign="top">
+<script language="JavaScript">
+<!--
+function icqNewWin() {
+  var leftpos = (screen.availWidth - 200)-40;
+  resiz = (navigator.appName=='Netscape') ? 0 : 1;
+  window.open('http://lite.icq.com/icqlite/web/0,,,00.html', 'TOFI','width=177,height=446,top=40,left='+leftpos+',directories=no,location=no,menubar=no,scroll=no,status=no,titlebar=no,toolbar=no,resizable='+resiz+'');
+  } //-->
+</script>
+</td><td valign="top">&nbsp; ant: <a href="http://robot-lab1.nada.kth.se:5050/Ant.do?getPathFromSession=true&amp;display=command&amp;context=ducu-k&amp;path=&amp;op=clean">clean</a>, <a href="http://robot-lab1.nada.kth.se:5050/Ant.do?getPathFromSession=true&amp;display=command&amp;context=ducu-k&amp;path=&amp;op=compile">compile</a>, <a href="http://robot-lab1.nada.kth.se:5050/Ant.do?getPathFromSession=true&amp;display=command&amp;context=ducu-k&amp;path=&amp;op=getMakumba">getMakumba</a></td>
+<td valign="top">
+&nbsp; webapp:
+<a href="http://robot-lab1.nada.kth.se:5050/Webapp.do?display=command&amp;context=ducu-k&amp;path=&amp;op=servletContextReload&amp;getPathFromSession=true">reload</a> 
+<a href="http://robot-lab1.nada.kth.se:5050/Webapp.do?display=command&amp;context=ducu-k&amp;path=&amp;op=servletContextStop&amp;getPathFromSession=true">stop</a>        
+<a href="http://robot-lab1.nada.kth.se:5050/Webapp.do?display=command&amp;context=ducu-k&amp;path=&amp;op=servletContextRemove&amp;getPathFromSession=true">uninstall</a>
+<a href="http://robot-lab1.nada.kth.se:5050/systemInfo.jsp" target="directory">System</a>
+</td>
+
+</tr></tbody></table></body></html>
