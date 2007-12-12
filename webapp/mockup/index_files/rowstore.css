@@ -79,36 +79,4 @@ TD {
     padding-right:3px;
     border-spacing:0px;
     border-width:0px;
-}
-
-.viewed {
-   color: blue;
-}
-.edited {
-   color: orange;
-   font-weight: bold;
-}
-.tested {
-   color: navy;
-}
-.meta {
-   color: grey;
-}
-.cvsupdated {
-   color: green;
-}
-.cvscommited {
-	color: red;
-	text-decoration: underline;
-}
-.cvsneedupdate {
-	color: purple;
-
-}
-.mainuser {
-	text-decoration: underline;
-}
-
-
-
-   
+}  
