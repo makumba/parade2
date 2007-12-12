@@ -1,0 +1,69 @@
+/* FILE LIST */
+
+body {
+    font-size:0.7em;
+}
+
+a img {
+  border:none;
+  border-width:0px;
+}
+
+H2 {
+    margin: 2px;
+    font-weight:normal;
+}
+div.success {
+	color:#228B22;
+	font-weight:bold;
+}
+div.failure {
+	color:#FF0000;
+	font-weight:bold;
+}
+div.pathOnDisk {
+    font-size:smaller;
+}
+table.files {
+    border:0;
+    width:100%;
+    padding:0px;
+    border-spacing:0px;
+    border-width:0px;
+    border-collapse:collapse;
+}
+img {
+    padding-right:2px;
+}
+TD {
+    font-family:Tahoma,Arial;
+    font-size:0.8em;
+    vertical-align:middle;
+    padding:0px;
+    padding-left:3px;
+    padding-right:3px;
+    border-spacing:0px;
+    border-width:0px;
+}
+TH {
+    font:caption;
+    background-color:#ddddff;
+    text-align:left;
+    font-weight:bold;
+}
+TR.odd {
+    background-color:#ffffff;
+}
+TR.even {
+    background-color:#f5f5ff;
+}
+TR:hover {
+    background-color:#ddddff;
+}
+
+/* cvs-specific should go to plugin-specific css */
+div.cvs-ignored {
+    font-size:smaller;
+    color:#999999;
+    font-style:italic;
+}

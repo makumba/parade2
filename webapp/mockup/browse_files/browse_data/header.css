@@ -1,0 +1,22 @@
+/* StyleSheet for header */
+
+body {
+	font-size:0.8em;
+	font-family:Tahoma,Arial;
+    margin: 0px 0px 0px 0px;
+	background-color:#ddddff;
+}
+
+table.header {
+    border:0;
+    width:100%;
+    padding:0px;
+    border-spacing:0px;
+    border-width:0px;
+    border-collapse:collapse;
+}
+
+TD {
+	font-size:0.8em;
+	font-family:Tahoma,Arial;
+}
