@@ -17,9 +17,16 @@ tomcat.manager.pass=somepass
 #where are the logs being stored?
 tomcat.output=logs/server-output.txt
 
-parade.authorizerClass=org.makumba.parade.tools.DummyAuthorizer
-parade.authorizationMessage=Parade, use password of your BEST private area account
-parade.authorizationDB=localhost_mysql_karamba
+parade.authorizerClass=org.makumba.parade.auth.LDAPAuthorizer
+parade.authorizationMessage=ParaDe 2, use password of your BEST private area account
+
+# LDAP authorizer properties
+parade.authorization.ldapHost=valladolid.BEST.eu.org
+parade.authorization.baseDN=ou=Members,dc=BEST,dc=eu,dc=org
+
+# leave blank for no encryption (plain text) or specify a comma-sparated list of encryptions to try
+# e.g. DIGEST-MD5,RSA-SHA1
+parade.authorization.encryption=
 
 ant.displayedOps=compile, clean, getTaglibs, getMakumba, getLocalMakumba, copyLocalMakumba, doc, applets
 
