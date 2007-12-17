@@ -23,6 +23,16 @@ public class ActionLogDTO {
     private String action;
     
     private String origin;
+    
+    private String paradecontext;
+
+    public String getParadecontext() {
+        return paradecontext;
+    }
+
+    public void setParadecontext(String paradecontext) {
+        this.paradecontext = paradecontext;
+    }
 
     public String getAction() {
         return action;
@@ -106,6 +116,7 @@ public class ActionLogDTO {
         log.setUser(user);
         log.setAction(action);
         log.setOrigin(origin);
+        log.setParadecontext(paradecontext);
     }
     
     public ActionLogDTO(ActionLog log) {
@@ -118,6 +129,7 @@ public class ActionLogDTO {
         this.user = log.getUser();
         this.action = log.getAction();
         this.origin = log.getOrigin();
+        this.paradecontext = log.getParadecontext();
     }
     
     public ActionLogDTO() { // empty constructor for TriggerFilter

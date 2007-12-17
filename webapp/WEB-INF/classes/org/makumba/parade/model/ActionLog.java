@@ -22,6 +22,8 @@ public class ActionLog {
     
     private String origin;
     
+    private String paradecontext;
+    
     public String getAction() {
         return action;
     }
@@ -92,6 +94,14 @@ public class ActionLog {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getParadecontext() {
+        return paradecontext;
+    }
+
+    public void setParadecontext(String paradecontext) {
+        this.paradecontext = paradecontext;
     }
     
 }

@@ -20,6 +20,7 @@
 		<property name="post" />
 		<property name="action" />
 		<property name="origin" />
+		<property name="paradecontext" />
 		
 	</class>
 </hibernate-mapping>     
