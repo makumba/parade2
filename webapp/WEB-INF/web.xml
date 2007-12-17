@@ -44,6 +44,11 @@
 	   <servlet-name>logs</servlet-name>
 	   <servlet-class>org.makumba.parade.view.LogViewServlet</servlet-class>
 	 </servlet>
+	 
+	 <servlet>
+	   <servlet-name>ticker</servlet-name>
+	   <servlet-class>org.makumba.parade.view.TickerTapeServlet</servlet-class>
+	 </servlet>
 	 	 
 	 <servlet-mapping>
 	   <servlet-name>index</servlet-name>
@@ -53,6 +58,11 @@
 	 <servlet-mapping>
 	   <servlet-name>logs</servlet-name>
 	   <url-pattern>/logs</url-pattern>
+	 </servlet-mapping>
+	 
+	 <servlet-mapping>
+	   <servlet-name>ticker</servlet-name>
+	   <url-pattern>/ticker</url-pattern>
 	 </servlet-mapping>
 
 <!-- Struts Action Servlet Configuration -->
