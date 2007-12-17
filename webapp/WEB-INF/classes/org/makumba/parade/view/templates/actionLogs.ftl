@@ -8,10 +8,9 @@
 
 <pre>
 <#list entries as entry>
-<strong>${entry.date}: user ${entry.user}@${entry.context} made an access to url: ${entry.url} with query string ${entry.queryString}</strong>
-&nbsp;&nbsp;
+<strong>${entry.date}: ${entry.user}@${entry.context} made an access to url: ${entry.url} with query string ${entry.queryString}</strong>
 <#list entry.logEntries as logentry>
-${logentry.date} <span class="${logentry.level}">${logentry.message}</span>
+<br>&nbsp;&nbsp;&nbsp;${logentry.date} <span class="${logentry.level}">${logentry.message}</span>
 </#list>
 
 </#list>
