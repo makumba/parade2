@@ -1,0 +1,151 @@
+<html><head><title>documentEdit.jsp - Code Press ParaDe editor</title>
+<link rel="StyleSheet" href="archive_files/parade.css" type="text/css">
+
+
+
+
+<script src="edit_files/codepress.js" type="text/javascript"></script><script charset="utf-8" id="injection_graph_func" src="edit_files/injection_graph_func.js"></script></head><body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" style="margin: 0px;" bgcolor="#dddddd" marginheight="0" marginwidth="0">
+
+<form name="sourceEdit" method="post" action="/File.do?op=editFile&amp;context=ducu-k&amp;path=public_html/archive&amp;file=documentEdit.jsp" style="margin: 0px;">
+
+<input name="Submit" value="(S)ave!" accesskey="S" onclick="myCpWindow.toggleEditor();" type="submit">
+<a href="http://robot-lab1.nada.kth.se:5050/browse.jsp?context=ducu-k" target="_top" title="ducu-k">ducu-k</a>:<a href="http://robot-lab1.nada.kth.se:5050/servlet/browse?display=file&amp;context=ducu-k&amp;path=public_html/archive">public_html/archive</a>/<b>documentEdit.jsp</b>
+| <a href="http://robot-lab1.nada.kth.se:5050/File.do?op=write&amp;context=ducu-k&amp;path=public_html/archive&amp;file=documentEdit.jsp" title="get the file from disk again, undo all changes since last save">Revert</a> 
+| <span class="edited" style="background: white">karina@karina-k (<a href="1">show</a>), ducu@ducu-k (<a href="1">show</a>), rudi@manu-k (<a href="1">show</a>)</span>
+<br>
+
+<div id="languages">
+	<em>set language:</em> 
+	<button onclick="myCpWindow.edit('myCpWindow','javascript')">JavaScript</button> 
+	<button onclick="myCpWindow.edit('myCpWindow','java')">Java</button>
+	<button onclick="myCpWindow.edit('myCpWindow','html')">HTML</button> 
+	<button onclick="myCpWindow.edit('myCpWindow','css')">CSS</button>
+</div>
+
+<iframe src="edit_files/codepress.htm" style="border: 1px solid gray; height: 744px; width: 1276px; visibility: visible; position: static; display: inline;" frameborder="0"></iframe><textarea disabled="disabled" id="myCpWindow_cp" class="codepress java" name="source" cols="90" rows="23" wrap="virtual" style="overflow: auto; width: 100%; height: 92%; display: none;">&lt;%
+/* $Header:
+/usr/local/cvsroot/karamba/public_html/archive/documentEdit.jsp,v 2.7
+2006/12/09 02:36:15 rudi Exp $ */ %&gt;&lt;%@taglib
+uri="http://www.makumba.org/presentation" prefix="mak"%&gt;
+&lt;mak:attribute name="document" var="docPtr"/&gt;&lt;% String
+responsePage="documentView.jsp?document="+docPtr ; String
+thisPage="documentEdit.jsp?document="+docPtr ; String titleVar=
+"/layout/header.jsp?title=Edit document's info"; int i;
+%&gt;&lt;jsp:include page="&lt;%=titleVar%&gt;" flush="false"/&gt;
+&lt;script language="javascript"&gt; function selectMember(name) {
+self.window.open("../lbg/member/popupGetMemberUsername.jsp?tb="+name,
+"selectMember", "width=250, height=150"); }
+&lt;/script&gt;
+&lt;mak:object from="general.archive.Document d, d.inArchives ar"
+where="d=$document" &gt;
+&lt;a href="&lt;%= "documentView.jsp?document="+docPtr
+%&gt;"&gt;[View]&lt;/a&gt;&amp;nbsp;
+&lt;a title="Removes the document from archive with ALL threads and
+attachments!!" href="&lt;%= "admin/documentDelete.jsp?document="+docPtr
+%&gt;"&gt;[Delete document]&lt;/a&gt;
+&lt;table border=0 width="100%"&gt; &lt;tr&gt;
+&lt;td&gt;&amp;nbsp;&lt;/td&gt; &lt;td&gt;&amp;nbsp;&lt;/td&gt; &lt;td
+width="80%"&gt;&amp;nbsp;&lt;/td&gt; &lt;/tr&gt; &lt;tr valign=top&gt;
+&lt;mak:form handler="editDocumentAuthorsHandler" method="post"
+action="&lt;%=thisPage%&gt;" message="Author(s) changed"&gt; &lt;td
+rowspan="6" style="border: solid 3px #aaaaaa;"&gt;&lt;b&gt;BEST
+Authors:&lt;/b&gt;&lt;br&gt;
+&lt;mak:input name="basedoc" value="d" type="hidden"/&gt; &lt;mak:list
+from="d.authors a" orderBy="a.name, a.surname" maxCountVar="maxcnt"&gt;
+&lt;input type=checkbox name="deleteAuthor" value="&lt;mak:value
+expr="a"/&gt;" &gt; &lt;a
+href="../lbg/member/memberView.jsp?person=&lt;mak:value expr="a"/&gt;"
+&gt;&lt;mak:value expr="a.name"/&gt; &lt;mak:value
+expr="a.surname"/&gt;&lt;/a&gt;&lt;br&gt; &lt;/mak:list&gt; &lt;img
+src="../layout/images/none.gif" width=1 height=10&gt;&lt;br&gt; &lt;%if
+(maxcnt.intValue() &gt; 0) { %&gt; Delete selected
+&lt;i&gt;and/or&lt;/i&gt; &lt;br&gt;&lt;img
+src="../layout/images/none.gif" width=1 height=5&gt;&lt;br&gt; &lt;% }
+%&gt; Add a username &lt;br&gt;&lt;input name="entryAuthor"
+id="entryAuthor"&gt; [&lt;a
+href="javascript:selectMember('entryAuthor')" title="Type part of the
+username to NARROW your search (and work faster)"&gt;&lt;font
+size='-1'&gt;Choose&lt;/font&gt;&lt;/a&gt;] &lt;p&gt;
+&lt;img src="../layout/images/none.gif" width=300 height=1&gt;
+&lt;b&gt;Other authors&lt;/b&gt; (groups or non-BESTies):&lt;br&gt;
+&lt;mak:input name="authorsChar" value="d.authorsChar" size="30"/&gt;
+&lt;br&gt;&lt;img src="../layout/images/none.gif" width=1
+height=10&gt;&lt;br&gt; &lt;div align=center&gt;&lt;input type="submit"
+value="Save author changes"&gt; &lt;br&gt;&lt;img
+src="../layout/images/none.gif" width=1 height=5&gt;&lt;br&gt;
+&lt;/div&gt; &lt;/td&gt;
+&lt;/mak:form&gt; &lt;td rowspan="6" width=15&gt;&amp;nbsp;&lt;/td&gt;
+&lt;mak:editForm object="d" action="&lt;%=responsePage%&gt;"
+method="post"&gt; &lt;td&gt;&lt;b&gt;Submitted by&lt;/b&gt;:
+&lt;mak:value expr="d.submittedBy.name"/&gt; &lt;mak:value
+expr="d.submittedBy.surname"/&gt;&lt;/td&gt; &lt;tr&gt;
+&lt;td&gt;&lt;b&gt;Category&lt;/b&gt;: &lt;mak:input field="category"
+style="width:80%"/&gt;&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
+&lt;td&gt;&lt;b&gt;Topic&lt;/b&gt;: &lt;mak:input
+field="topic"/&gt;&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
+&lt;td&gt;&lt;b&gt;Title&lt;/b&gt;: &lt;mak:input field="title"
+size="40" style="width:80%"/&gt;&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
+&lt;td&gt;&lt;b&gt;Temporary topics&lt;/b&gt;: &lt;mak:input
+field="tmp_topic"/&gt;&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
+&lt;td&gt;&lt;b&gt;Expiration date&lt;/b&gt;: &lt;mak:input
+field="expiredOn"/&gt;&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td
+colspan="3"&gt;&amp;nbsp;&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td
+colspan="3"&gt;&lt;b&gt;Content&lt;/b&gt;: &lt;br&gt; &lt;mak:input
+field="content.bytes" rows="20" cols="70"
+style="width:100%"/&gt;&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td
+colspan="3"&gt;&amp;nbsp;&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td
+colspan="3"&gt;&lt;b&gt;Add attachments &lt;font color=red&gt;&lt;a
+title="or you will be hanged on the closest Makumba tree for crashing
+Private Area!"&gt;not bigger than 5MB in file
+size!&lt;/a&gt;&lt;/font&gt;&lt;/b&gt; (in addition to current
+attachments - listed below):&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
+&lt;td&gt;&lt;b&gt;File Attachment 1&lt;/b&gt;&lt;/td&gt;&lt;td
+colspan="2"&gt;&lt;mak:input name="headers" dataType="text" type="file"
+display="false"/&gt;&lt;input name="upFile1"
+type="file"&gt;&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;&lt;b&gt;File
+Attachment 2&lt;/b&gt;&lt;/td&gt;&lt;td colspan="2"&gt;&lt;input
+name="upFile2" type="file"&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;b&gt;File Attachment
+3&lt;/b&gt;&lt;/td&gt;&lt;td colspan="2"&gt;&lt;input name="upFile3"
+type="file"&gt;&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt; &lt;td colspan="3"&gt;
+&lt;input type="submit" name="submit" value="Submit changes"&gt;
+&lt;/tr&gt;
+&lt;%/* Makumba should optimize this subquery better than it does now
+(it should just select o.name but it also selects d and a, which makes
+the transfer take 3 times as much). &lt;tr&gt;&lt;td&gt;&lt;font
+face=arial size="-2"&gt;&lt;mak:object from="d.archive.owner
+o"&gt;&lt;mak:value
+expr="o.name"/&gt;&lt;/mak:object&gt;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;
+*/%&gt;
+&lt;/table&gt;
+&lt;/mak:editForm&gt;
+&lt;hr&gt;&lt;b&gt;Current attachments:&lt;/b&gt;
+&lt;ul&gt;
+&lt;mak:list from="d.parts a, a.doc attdoc" orderBy="a.doc.title asc"
+maxCountVar="attCount"&gt;
+&lt;li&gt;
+&lt;mak:editForm object="attdoc" action="&lt;%=thisPage%&gt;"
+message="Filename changed" method="post"&gt;
+&lt;input type=hidden name="action" value="renameAttachment" &gt; &lt;a
+href="documentAttachmentDownload.jsp?attachment=&lt;mak:value
+expr="a.doc"/&gt;" title="&lt;mak:value
+expr="a.doc.content_type"/&gt;"&gt;&lt;mak:value
+expr="a.doc.title"/&gt;&lt;/a&gt;
+(&lt;mak:value expr="a.doc.content_length"
+printVar="size"/&gt;&lt;%=org.eu.best.ReadableFormatter.readableBytes(size)%&gt;)
+&lt;a href="admin/attachmentDelete.jsp?attachment=&lt;mak:value
+expr="a.doc"/&gt;" &gt;[delete attachment]&lt;/a&gt;
+&lt;br&gt;&lt;mak:input name="title" size="40"/&gt;&amp;nbsp;&lt;input
+type=submit value="Rename" style="font-size:90%"&gt;
+&lt;/mak:editForm&gt;&lt;/li&gt;
+&lt;/mak:list&gt;
+&lt;/ul&gt;
+&lt;%=(attCount.intValue()==0)?"--no attachments--":""%&gt;
+&lt;/mak:object&gt;
+&lt;jsp:include page="/layout/footer.jsp" flush="false"/&gt;
+</textarea>
+
+
+</form>
+
+</body></html>

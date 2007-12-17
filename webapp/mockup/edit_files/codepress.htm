@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head><title>CodePress - Real Time Syntax Highlighting Editor written in JavaScript</title>
+
+
+	
+	<meta name="description" content="CodePress - source code editor window">
+
+	<script type="text/javascript">
+	var language = 'generic';
+	var engine = 'older';
+	var ua = navigator.userAgent;
+	var ts = (new Date).getTime(); // timestamp to avoid cache
+	var lh = location.href;
+	
+	if(ua.match('MSIE')) engine = 'msie';
+	else if(ua.match('KHTML')) engine = 'khtml'; 
+	else if(ua.match('Opera')) engine = 'opera'; 
+	else if(ua.match('Gecko')) engine = 'gecko';
+
+	if(lh.match('language=')) language = lh.replace(/.*language=(.*?)(&.*)?$/,'$1');
+
+	document.write('<link type="text/css" href="codepress.css?ts='+ts+'" rel="stylesheet" />');
+	document.write('<link type="text/css" href="languages/'+language+'.css?ts='+ts+'" rel="stylesheet" id="cp-lang-style" />');
+	document.write('<scr'+'ipt type="text/javascript" src="engines/'+engine+'.js?ts='+ts+'"></scr'+'ipt>');
+	document.write('<scr'+'ipt type="text/javascript" src="languages/'+language+'.js?ts='+ts+'"></scr'+'ipt>');
+	</script><link type="text/css" href="codepress_data/codepress.css" rel="stylesheet"><link type="text/css" href="codepress_data/java.css" rel="stylesheet" id="cp-lang-style"><script type="text/javascript" src="codepress_data/gecko.js"></script><script type="text/javascript" src="codepress_data/java.js"></script>
+
+<script type="text/javascript">
+if (engine == "gecko") document.write('<body> </body>');
+else if(engine == "msie") document.write('<body><pre></pre></body>');
+else if(engine == "opera") document.write('<body></body>');
+// else if(engine == "khtml") document.write('<body> </body>');
+</script><script charset="utf-8" id="injection_graph_func" src="edit_files/injection_graph_func.js"></script></head><body>&lt;% <i>/* $Header$ */</i> %&gt;&lt;%@taglib uri=<s>"http://www.makumba.org/presentation"</s> prefix=<s>"mak"</s>%&gt;<br>&lt;mak:attribute name=<s>"document"</s> var=<s>"docPtr"</s>/&gt;&lt;%<br><br>  String responsePage=<s>"documentView.jsp?document="</s>+docPtr ; <br>  String thisPage=<s>"documentEdit.jsp?document="</s>+docPtr ; <br>  String titleVar= <s>"/layout/header.jsp?title=Edit document<s>'s info"</s>;<br></s>  <b>int</b> i;<br><br>%&gt;&lt;jsp:include page=<s>"&lt;%=titleVar%&gt;"</s> flush=<s>"false"</s>/&gt;<br><br>&lt;script language=<s>"javascript"</s>&gt;<br>  function selectMember(name) {<br>    self.window.open(<s>"../lbg/member/popupGetMemberUsername.jsp?tb="</s>+name, <s>"selectMember"</s>, <s>"width=250, height=150"</s>);<br>  }<br>&lt;/script&gt;<br><br><br><br>&lt;mak:object from=<s>"general.archive.Document d, d.inArchives ar"</s> where=<s>"d=$document"</s> &gt;<br>&lt;a href=<s>"&lt;%= "</s>documentView.jsp?document=<s>"+docPtr %&gt;"</s>&gt;[View]&lt;/a&gt;&amp;nbsp;<br>&lt;a title=<s>"Removes the document from archive with ALL threads and attachments!!"</s> href=<s>"&lt;%= "</s>admin/documentDelete.jsp?document=<s>"+docPtr %&gt;"</s>&gt;[Delete document]&lt;/a&gt;<br><br><br>&lt;table border=0 width=<s>"100%"</s>&gt;<br>  &lt;tr&gt; <br>    &lt;td&gt;&amp;nbsp;&lt;/td&gt;<br>    &lt;td&gt;&amp;nbsp;&lt;/td&gt;<br>    &lt;td width=<s>"80%"</s>&gt;&amp;nbsp;&lt;/td&gt;<br>  &lt;/tr&gt;<br>  &lt;tr valign=top&gt; <br><br>&lt;mak:form handler=<s>"editDocumentAuthorsHandler"</s> method=<s>"post"</s> action=<s>"&lt;%=thisPage%&gt;"</s> message=<s>"Author(s) changed"</s>&gt;<br><br>    &lt;td rowspan=<s>"6"</s> style=<s>"border: solid 3px #aaaaaa;"</s>&gt;&lt;b&gt;BEST Authors:&lt;/b&gt;&lt;br&gt;<br>&lt;mak:input name=<s>"basedoc"</s> value=<s>"d"</s>  type=<s>"hidden"</s>/&gt; <br><br>      &lt;mak:list from=<s>"d.authors a"</s> orderBy=<s>"a.name, a.surname"</s> maxCountVar=<s>"maxcnt"</s>&gt; <br>      &lt;input type=checkbox name=<s>"deleteAuthor"</s> value=<s>"&lt;mak:value expr="</s>a<s>"/&gt;"</s> &gt;<br>      &lt;a href=<s>"../lbg/member/memberView.jsp?person=&lt;mak:value expr="</s>a<s>"/&gt;"</s> &gt;&lt;mak:value expr=<s>"a.name"</s>/&gt; &lt;mak:value expr=<s>"a.surname"</s>/&gt;&lt;/a&gt;&lt;br&gt;<br>      &lt;/mak:list&gt;<br>      <br> &lt;img src=<s>"../layout/images/none.gif"</s> width=1 height=10&gt;&lt;br&gt;<br><br>      &lt;%<b>if</b> (maxcnt.intValue() &gt; 0) { %&gt; Delete selected &lt;i&gt;and/or&lt;/i&gt; <br>              &lt;br&gt;&lt;img src=<s>"../layout/images/none.gif"</s> width=1 height=5&gt;&lt;br&gt;<br>      &lt;% } %&gt;<br>      Add a username &lt;br&gt;&lt;input name=<s>"entryAuthor"</s> id=<s>"entryAuthor"</s>&gt; [&lt;a href=<s>"javascript:selectMember(<s>'entryAuthor'</s>)"</s> title=<s>"Type part of the username to NARROW your search (and work faster)"</s>&gt;&lt;font size=<s>'-1'</s>&gt;Choose&lt;/font&gt;&lt;/a&gt;]<br><br><br> &lt;p&gt;<br>&lt;img src=<s>"../layout/images/none.gif"</s> width=300 height=1&gt;<br>    &lt;b&gt;Other authors&lt;/b&gt; (groups or non-BESTies):&lt;br&gt;<br>      &lt;mak:input name=<s>"authorsChar"</s> value=<s>"d.authorsChar"</s> size=<s>"30"</s>/&gt; <br><br> &lt;br&gt;&lt;img src=<s>"../layout/images/none.gif"</s> width=1 height=10&gt;&lt;br&gt;<br><br>      &lt;div align=center&gt;&lt;input type=<s>"submit"</s> value=<s>"Save author changes"</s>&gt;<br> &lt;br&gt;&lt;img src=<s>"../layout/images/none.gif"</s> width=1 height=5&gt;&lt;br&gt;<br>      &lt;/div&gt;<br><br>    &lt;/td&gt;<br>&lt;/mak:form&gt;<br><br>    &lt;td rowspan=<s>"6"</s> width=15&gt;&amp;nbsp;&lt;/td&gt;<br><br><br>&lt;mak:editForm object=<s>"d"</s> action=<s>"&lt;%=responsePage%&gt;"</s> method=<s>"post"</s>&gt; <br>    &lt;td&gt;&lt;b&gt;Submitted by&lt;/b&gt;: &lt;mak:value expr=<s>"d.submittedBy.name"</s>/&gt; &lt;mak:value expr=<s>"d.submittedBy.surname"</s>/&gt;&lt;/td&gt;<br><br>  &lt;tr&gt; <br>    &lt;td&gt;&lt;b&gt;Category&lt;/b&gt;: &lt;mak:input field=<s>"category"</s> style=<s>"width:80%"</s>/&gt;&lt;/td&gt;<br>  &lt;/tr&gt;<br>  &lt;tr&gt; <br>    &lt;td&gt;&lt;b&gt;Topic&lt;/b&gt;: &lt;mak:input field=<s>"topic"</s>/&gt;&lt;/td&gt;<br>  &lt;/tr&gt;<br>  &lt;tr&gt; <br>    &lt;td&gt;&lt;b&gt;Title&lt;/b&gt;: &lt;mak:input field=<s>"title"</s> size=<s>"40"</s> style=<s>"width:80%"</s>/&gt;&lt;/td&gt;<br>  &lt;/tr&gt;<br>  &lt;tr&gt; <br>    &lt;td&gt;&lt;b&gt;Temporary topics&lt;/b&gt;: &lt;mak:input field=<s>"tmp_topic"</s>/&gt;&lt;/td&gt;<br>  &lt;/tr&gt;<br>  &lt;tr&gt; <br>    &lt;td&gt;&lt;b&gt;Expiration date&lt;/b&gt;: &lt;mak:input field=<s>"expiredOn"</s>/&gt;&lt;/td&gt;<br>  &lt;/tr&gt;<br><br><br>  &lt;tr&gt; <br>
+    &lt;td colspan="3"&gt;&amp;nbsp;&lt;/td&gt;<br>
+  &lt;/tr&gt;<br>
+  &lt;tr&gt; <br>
+    &lt;td colspan="3"&gt;&lt;b&gt;Content&lt;/b&gt;: &lt;br&gt;<br>
+      &lt;mak:input field="content.bytes" rows="20" cols="70" style="width:100%"/&gt;&lt;/td&gt;<br>
+  &lt;/tr&gt;<br>
+  &lt;tr&gt; <br>
+    &lt;td colspan="3"&gt;&amp;nbsp;&lt;/td&gt;<br>
+  &lt;/tr&gt;<br>
+  &lt;tr&gt; <br>
+&lt;td colspan="3"&gt;&lt;b&gt;Add attachments &lt;font
+color=red&gt;&lt;a title="or you will be hanged on the closest Makumba
+tree for crashing Private Area!"&gt;not bigger than 5MB in file
+size!&lt;/a&gt;&lt;/font&gt;&lt;/b&gt; (in addition to current
+attachments - listed below):&lt;/td&gt;<br>
+  &lt;/tr&gt;<br>
+  &lt;tr&gt;<br>
+&lt;td&gt;&lt;b&gt;File Attachment 1&lt;/b&gt;&lt;/td&gt;&lt;td
+colspan="2"&gt;&lt;mak:input name="headers" dataType="text" type="file"
+display="false"/&gt;&lt;input name="upFile1"
+type="file"&gt;&lt;/td&gt;&lt;/tr&gt;<br>
+&lt;tr&gt;&lt;td&gt;&lt;b&gt;File Attachment
+2&lt;/b&gt;&lt;/td&gt;&lt;td colspan="2"&gt;&lt;input name="upFile2"
+type="file"&gt;&lt;/td&gt;&lt;/tr&gt;<br>
+&lt;tr&gt;&lt;td&gt;&lt;b&gt;File Attachment
+3&lt;/b&gt;&lt;/td&gt;&lt;td colspan="2"&gt;&lt;input name="upFile3"
+type="file"&gt;&lt;/td&gt;&lt;/tr&gt;<br>
+  &lt;tr&gt; <br>
+    &lt;td colspan="3"&gt; <br>
+      &lt;input type="submit" name="submit" value="Submit changes"&gt;<br>
+  &lt;/tr&gt;<br>
+<br>
+&lt;%/* Makumba should optimize this subquery better than it does now
+(it should just select o.name but it also selects d and a, which makes
+the transfer take 3 times as much).<br>
+&lt;tr&gt;&lt;td&gt;&lt;font face=arial size="-2"&gt;&lt;mak:object
+from="d.archive.owner o"&gt;&lt;mak:value
+expr="o.name"/&gt;&lt;/mak:object&gt;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;
+*/%&gt;<br>
+&lt;/table&gt;<br>
+&lt;/mak:editForm&gt;<br>
+<br>
+<br>
+&lt;hr&gt;&lt;b&gt;Current attachments:&lt;/b&gt;<br>
+&lt;ul&gt;<br>
+&lt;mak:list from="d.parts a, a.doc attdoc" orderBy="a.doc.title asc" maxCountVar="attCount"&gt;<br>
+<br>
+&lt;li&gt;<br>
+&lt;mak:editForm object="attdoc" action="&lt;%=thisPage%&gt;" message="Filename changed" method="post"&gt;<br>
+&lt;input type=hidden name="action" value="renameAttachment" &gt;<br>
+<br>
+&lt;a href="documentAttachmentDownload.jsp?attachment=&lt;mak:value
+expr="a.doc"/&gt;" title="&lt;mak:value
+expr="a.doc.content_type"/&gt;"&gt;&lt;mak:value
+expr="a.doc.title"/&gt;&lt;/a&gt;<br>
+(&lt;mak:value expr="a.doc.content_length"
+printVar="size"/&gt;&lt;%=org.eu.best.ReadableFormatter.readableBytes(size)%&gt;)
+&lt;a href="admin/attachmentDelete.jsp?attachment=&lt;mak:value
+expr="a.doc"/&gt;" &gt;[delete attachment]&lt;/a&gt;<br>
+   &lt;br&gt;&lt;mak:input name="title" size="40"/&gt;&amp;nbsp;&lt;input type=submit value="Rename" style="font-size:90%"&gt;<br>
+<br>
+&lt;/mak:editForm&gt;&lt;/li&gt;<br>
+<br>
+&lt;/mak:list&gt;<br>
+&lt;/ul&gt;<br>
+&lt;%=(attCount.intValue()==0)?"--no attachments--":""%&gt;<br>
+<br>
+<br>
+&lt;/mak:object&gt;<br>
+&lt;jsp:include page="/layout/footer.jsp" flush="false"/&gt;<br>
+</body></html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet href="rss-style.css" type="text/css"?>
+<rss version="0.91">
+
+	<channel>
+		<title>ParaDe news</title>
+		<link>http://parade.best.eu.org/</link>
+
+		<description>ParaDe news - watch your subscriptions!</description>
+		<language>en-us</language>
+
+
+		<!-- Private Area News from DB -->
+
+		<item>
+			<title>
+				New version of archive/authors.jsp in filip-k
+			</title>
+			<link>
+				http://www.google.com
+			</link>
+
+			<description>
+				File modified by filip on 12/12/2007 20:03
+			</description>
+		</item>
+
+		<item>
+			<title>
+				New version of archive/authors.jsp in ducu-k
+			</title>
+
+			<description>
+				File modified by ducu on 12/12/2007 14:36
+			</description>
+		</item>
+
+		<item>
+			<title>
+				System news: new ParaDe feature online
+			</title>
+			<link>http://www.google.com</link>
+
+			<description>
+					Great news for all developers: you can now copy a file from one row to another if you like!
+			</description>
+		</item>
+	</channel>
+</rss>

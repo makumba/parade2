@@ -1,19 +1,49 @@
 <html><head>
 
-<meta http-equiv="refresh" content="30;URL=/tipOfTheDay.jsp"><title>Parade tip of the day</title>
+<meta http-equiv="refresh" content="30;URL=/tipOfTheDay.jsp"><title>ParaDe ticker</title>
 
-<link rel="StyleSheet" href="browse_data/parade.css" type="text/css"><script charset="utf-8" id="injection_graph_func" src="browse_data/injection_graph_func.js"></script></head><body>
-<table width="100%">
-<tbody><tr><td>
-<font size="+1"><b>Did you know...</b></font><br>
-</td><td align="right">
-<a href="http://robot-lab1.nada.kth.se:5050/tipOfTheDay.jsp">more wisdom</a>
+<link rel="StyleSheet" href="../archive_files/parade.css" type="text/css">
+<link rel="StyleSheet" href="../ticker/tickertape.css" type="text/css">
+<script charset="utf-8" id="injection_graph_func" src="browse_data/injection_graph_func.js"></script></head><body>
+
+<table>
+<thead>
+<th>My work</th>
+<th>All events <a href=""><img src="../index_files/rss-hq.png" width="20"></a></th>
+<th>People</th>
+</thead>
+<tr>
+<td>
+<input type="checkbox"><span class="tested">tested archive/authors.jsp</span></input><br>
+<input type="checkbox"><span class="edited">edited archive/authors.jsp</span></input><br>
+<input type="checkbox"><span class="edited">edited archive/editDocument.jsp</span></input><br>
+<br>
+Comment: <input type="text"><br>
+<input type="button" value="Save"> or <input type="button" value="Commit files">
 </td>
-</tr><tr><td colspan="2">
-<img src="browse_data_004/litebulb.gif" align="left">
-<a href="http://www.best.eu.org/" target="_new">BEST</a> members really can drink Palinka.
+<td>
+<ul>
+<li><strong><font color="red" size="+1">karina@karina-k edited archive/documentEdit.jsp</font></strong>
+<li>joao@joao-k edited merger/mergerStep1.jsp
+<li><font size="+1">karina@karina-k tested archive/viewDocument.jsp</font></i>
+<li><font color="green">rudi just logged in</font>
+<li><font color="blue">manu@ducu-k commited <a href="seemore">3 files</a></font></li>
+<li><u>maria@ducu-k</u> tested emails/writeMail.jsp</li>
+</ul>
+</td>
+<td>
+<strong><font color="green">karina (<a href="1">karina-k</a>)</font></strong><br>
+<strong><font color="green">filip (<a href="1">rudi-k</a>)</font></strong><br>
+<strong><font color="green">rudi (<a href="1">rudi-k</a>, <a href="1">filip-k</a>)</font></strong><br>
+<font color="grey">maja (trainees-k), 2 days ago</font><br>
+<font color="grey">maria (trainees-k), 1 week ago</font>
+</td>
+</tr>
+</table>
+<br>
 
-</td></tr>
-</tbody></table>
+<script type="text/javascript" src="../ticker/TickerTape.js?v101"></script>
+<script type="text/javascript">var ticker = new TickerTape('../ticker/demo-data.txt', 'horizontalTickerTape', 3000, true);</script>
+
 
 </body></html>
