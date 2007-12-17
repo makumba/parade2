@@ -17,6 +17,8 @@ import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.model.Log;
 import org.makumba.parade.tools.PerThreadPrintStreamLogRecord;
 import org.makumba.parade.tools.TriggerFilter;
+import org.makumba.parade.view.TickerTapeData;
+import org.makumba.parade.view.TickerTapeServlet;
 
 public class DatabaseLogServlet extends HttpServlet {
 
@@ -55,6 +57,12 @@ public class DatabaseLogServlet extends HttpServlet {
 
     private void handleActionLog(HttpServletRequest req, Object record, Session s) {
         ActionLogDTO log = (ActionLogDTO) record;
+        
+        if(!shouldLog(log))
+            return;
+        
+        filterLog(log);
+        
         //let's see if we have already someone. if not, we create one
         Transaction tx = s.beginTransaction();
         ActionLog actionLog = null;
@@ -67,10 +75,64 @@ public class DatabaseLogServlet extends HttpServlet {
         s.saveOrUpdate(actionLog);
         tx.commit();
         
+        //if we didn't have a brand new actionLog (meaning, a log with some info)
+        //we add the populated actionLog as an event to the tickertape
+        if(log.getId() != null) {
+            String row = (log.getParadecontext()==null || log.getParadecontext().equals("null"))?((log.getContext()==null || log.getContext().equals("null"))?"parade2":log.getContext()):log.getParadecontext();
+            String actionText = "";
+            if(log.getAction() != null && !log.getAction().equals("null"))
+                actionText = "user "+log.getUser()+" in row "+ row + " did action: "+log.getAction();
+            TickerTapeData data = new TickerTapeData(actionText, "", log.getDate().toString());
+            TickerTapeServlet.addItem(data);
+        }
         // finally we also need to update the ActionLog in the thread
         log.setId(actionLog.getId());
         TriggerFilter.actionLog.set(log);
         
+    }
+
+    /**
+     * Simple filter that does some "cosmetics" on the log
+     * @param log the original log to be altered
+     */
+    private void filterLog(ActionLogDTO log) {
+        
+        String queryString = log.getQueryString();
+        String uri = log.getUrl();
+        if(uri == null)
+            uri = "";
+        if(queryString != null) {
+            // let's analyse a bit this string
+            if(queryString.indexOf("context=")>0) {
+                String context = queryString.substring(queryString.indexOf("context=") +8);
+                if(context.indexOf("&") >0)
+                    context = context.substring(0, context.indexOf("&"));
+                log.setParadecontext(context);
+            }
+            if(uri.indexOf("Ant") > 0) {
+                log.setAction("Ant action");
+            }
+            if(uri.indexOf("Webapp") > 0) {
+                log.setAction("Webapp action");
+            }
+            if(uri.indexOf("Cvs") > 0) {
+                log.setAction("Cvs");
+            }
+        }
+        
+    }
+
+    private boolean shouldLog(ActionLogDTO log) {
+        
+        if(log.getUrl() != null && (log.getUrl().indexOf(".ico") != -1 
+                || log.getUrl().indexOf(".css") != -1
+                || log.getUrl().indexOf(".gif") != -1
+                || log.getUrl().equals("/servlet/ticker"))
+                || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))) {
+            return false;
+        }
+        
+        return true;
     }
 
     private void handleLog(HttpServletRequest req, Object record, Session s) {
