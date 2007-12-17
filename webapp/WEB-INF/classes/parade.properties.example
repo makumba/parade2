@@ -17,7 +17,7 @@ tomcat.manager.pass=somepass
 #where are the logs being stored?
 tomcat.output=logs/server-output.txt
 
-#parade.authorizerClass=org.eu.best.BestMemberAuthorizer
+parade.authorizerClass=org.makumba.parade.tools.DummyAuthorizer
 parade.authorizationMessage=Parade, use password of your BEST private area account
 parade.authorizationDB=localhost_mysql_karamba
 
