@@ -6,6 +6,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.makumba.parade.auth.Authorizer;
+
 /**
  * this class provides http login on a servlet according to a given authorization policy
  */

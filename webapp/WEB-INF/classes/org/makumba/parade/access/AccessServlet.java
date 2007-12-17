@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.makumba.parade.auth.Authorizer;
+import org.makumba.parade.auth.DatabaseAuthorizer;
 import org.makumba.parade.init.ParadeProperties;
-import org.makumba.parade.tools.Authorizer;
-import org.makumba.parade.tools.DatabaseAuthorizer;
 import org.makumba.parade.tools.HttpLogin;
 import org.makumba.parade.tools.PerThreadPrintStream;
 import org.makumba.parade.tools.TriggerFilter;

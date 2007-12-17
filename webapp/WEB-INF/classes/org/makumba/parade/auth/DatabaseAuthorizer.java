@@ -1,4 +1,5 @@
-package org.makumba.parade.tools;
+package org.makumba.parade.auth;
+
 
 public class DatabaseAuthorizer implements Authorizer {
     String database;
