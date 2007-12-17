@@ -191,9 +191,9 @@ public class LogViewManager {
             }
             actionLogEntry.put("logEntries", logEntries);
             actionLogEntry.put("date", actionLog.getDate());
-            actionLogEntry.put("url", actionLog.getUrl());
-            actionLogEntry.put("context", actionLog.getContext()==null?"no damn context, corrupt db":actionLog.getContext());
-            actionLogEntry.put("user", actionLog.getUser()==null?"no damn user, corrupt db":actionLog.getUser());
+            actionLogEntry.put("url", actionLog.getUrl()==null?"":actionLog.getUrl());
+            actionLogEntry.put("context", actionLog.getContext()==null?"tomcat":actionLog.getContext());
+            actionLogEntry.put("user", actionLog.getUser()==null?"(unknown user)":actionLog.getUser());
             actionLogEntry.put("queryString", actionLog.getQueryString()==null?"":actionLog.getQueryString());
             
             viewEntries.add(actionLogEntry);
