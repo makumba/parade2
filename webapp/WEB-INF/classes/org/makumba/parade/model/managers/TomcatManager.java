@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.makumba.parade.auth.ForeignHttpAuthorizer;
 import org.makumba.parade.init.ParadeProperties;
-import org.makumba.parade.tools.ForeignHttpAuthorizer;
 
 public class TomcatManager implements ServletContainer {
 
