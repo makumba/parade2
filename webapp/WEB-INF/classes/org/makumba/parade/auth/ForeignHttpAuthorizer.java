@@ -6,8 +6,13 @@ import java.net.URLConnection;
 
 import org.makumba.parade.tools.Base64;
 
-/** this class connects to a http site and tests if a password is ok */
+/**
+ * This class connects to a http site and tests if a password is ok.
+ * 
+ * @author Cristian Bogdan
+ */
 public class ForeignHttpAuthorizer implements Authorizer {
+    
     String url;
 
     public static HttpURLConnection sendAuth(URL u, String username, String password) throws java.io.IOException {

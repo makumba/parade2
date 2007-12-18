@@ -65,7 +65,6 @@ public class LDAPAuthorizer implements Authorizer {
     public boolean auth(String username, String password) {
 
         int ldapPort = LDAPConnection.DEFAULT_PORT;
-
         int ldapVersion = LDAPConnection.LDAP_V3;
 
         LDAPConnection lc = new LDAPConnection();
@@ -73,19 +72,10 @@ public class LDAPAuthorizer implements Authorizer {
         String loginDN = "uid=" + username + "," + baseDN;
 
         if (encryption.length != 0) {
-
             try {
-
-                Security.addProvider(new
-
-                com.novell.sasl.client.SaslProvider());
-
+                Security.addProvider(new com.novell.sasl.client.SaslProvider());
             } catch (Exception e) {
-
-                System.err.println("Error loading security provider (" +
-
-                e.getMessage() + ")");
-
+                System.err.println("Error loading security provider (" + e.getMessage() + ")");
             }
         }
 
@@ -95,12 +85,15 @@ public class LDAPAuthorizer implements Authorizer {
             lc.connect(ldapHost, ldapPort);
 
             // bind to the server
+            // the way we bind depends on whether we use encryption or not
 
             if (encryption.length != 0) {
                 lc.bind(loginDN, "dn: " + loginDN, encryption, null, new BindCallbackHandler(password));
             } else {
                 lc.bind(ldapVersion, loginDN, password.getBytes("UTF8"));
             }
+
+            // in the end we disconnect
             lc.disconnect();
             return true;
 
@@ -122,64 +115,24 @@ class BindCallbackHandler implements CallbackHandler {
 
     private char[] m_password;
 
-    BindCallbackHandler(String password)
-
-    {
-
+    BindCallbackHandler(String password) {
         m_password = new char[password.length()];
-
         password.getChars(0, password.length(), m_password, 0);
-
     }
 
-    public void handle(Callback[] callbacks)
+    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 
-    throws IOException, UnsupportedCallbackException
+        for (int i = 0; i < callbacks.length; i++) {
 
-    {
-
-        for (int i = 0; i < callbacks.length; i++)
-
-        {
-
-            if (callbacks[i] instanceof PasswordCallback)
-
-            {
-
+            if (callbacks[i] instanceof PasswordCallback) {
                 ((PasswordCallback) callbacks[i]).setPassword(m_password);
-
-            }
-
-            else if (callbacks[i] instanceof NameCallback)
-
-            {
-
-                ((NameCallback) callbacks[i]).setName(
-
-                ((NameCallback) callbacks[i]).getDefaultName());
-
-            }
-
-            else if (callbacks[i] instanceof RealmCallback)
-
-            {
-
-                ((RealmCallback) callbacks[i]).setText(
-
-                ((RealmCallback) callbacks[i]).getDefaultText());
-
-            }
-
-            else if (callbacks[i] instanceof RealmChoiceCallback)
-
-            {
-
+            } else if (callbacks[i] instanceof NameCallback) {
+                ((NameCallback) callbacks[i]).setName(((NameCallback) callbacks[i]).getDefaultName());
+            } else if (callbacks[i] instanceof RealmCallback) {
+                ((RealmCallback) callbacks[i]).setText(((RealmCallback) callbacks[i]).getDefaultText());
+            } else if (callbacks[i] instanceof RealmChoiceCallback) {
                 ((RealmChoiceCallback) callbacks[i]).setSelectedIndex(0);
-
             }
-
         }
-
     }
-
 }
