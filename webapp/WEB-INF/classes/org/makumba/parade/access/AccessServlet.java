@@ -18,8 +18,15 @@ import org.makumba.parade.tools.PerThreadPrintStream;
 import org.makumba.parade.tools.TriggerFilter;
 
 /**
- * The servlet called at the begining of each parade access, in all servlet contexts This servlet does: login, calls
- * Config.reloadLoggingConfig for refreshing of logging.properties, and
+ * The servlet called at the begining of each parade access, in all servlet contexts.
+ * It performs login and passes the username to an {@link ActionLogDTO} that comes from the {@link TriggerFilter}.
+ * 
+ * TODO: implement an equivalent of the previous Config.reloadLoggingConfig()
+ * TODO: refactoring: there's some useless code in here, from the time in which ParaDe used Makumba
+ * 
+ * @author Cristian Bogdan
+ * @author Manuel Gay
+ * 
  */
 public class AccessServlet extends HttpServlet {
     ServletContext context;

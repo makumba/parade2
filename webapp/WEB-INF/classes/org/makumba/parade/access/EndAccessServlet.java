@@ -9,7 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The servlet called at the end of each parade access, in all servlet contexts It just logs the access that was made.
+ * The servlet called at the end of each parade access, in all servlet contexts.
+ * It just logs the access that was made.
+ * 
+ * TODO remove this
+ * 
+ * @author Cristian Bogdan
  */
 public class EndAccessServlet extends HttpServlet {
     ServletContext context;

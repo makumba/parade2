@@ -20,6 +20,19 @@ import org.makumba.parade.tools.TriggerFilter;
 import org.makumba.parade.view.TickerTapeData;
 import org.makumba.parade.view.TickerTapeServlet;
 
+/**
+ * This servlet makes it possible to log events from various sources into the database.
+ * It persists two kinds of logs:
+ * <ul>
+ * <li>ActionLogs, generated at each access</li>
+ * <li>Logs, which are representing one log "line" and link to the ActionLog which led to their generation</li>
+ * </ul>
+ * 
+ * TODO improve filtering
+ * 
+ * @author Manuel Gay
+ *
+ */
 public class DatabaseLogServlet extends HttpServlet {
 
     public void init(ServletConfig conf) {
@@ -27,6 +40,10 @@ public class DatabaseLogServlet extends HttpServlet {
     }
 
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        
+        // when we start tomcat we are not ready yet to log
+        // we first need a Hibernate SessionFactory to be initalised
+        // this happens only after the Initservlet was loaded
         req.removeAttribute("org.makumba.parade.servletSuccess");
         if(InitServlet.getSessionFactory() == null)
             return;
@@ -58,9 +75,11 @@ public class DatabaseLogServlet extends HttpServlet {
     private void handleActionLog(HttpServletRequest req, Object record, Session s) {
         ActionLogDTO log = (ActionLogDTO) record;
         
+        // first check if this should be logged at all
         if(!shouldLog(log))
             return;
         
+        // filter the log, generate additional information and give some meaning
         filterLog(log);
         
         //let's see if we have already someone. if not, we create one
@@ -77,6 +96,7 @@ public class DatabaseLogServlet extends HttpServlet {
         
         //if we didn't have a brand new actionLog (meaning, a log with some info)
         //we add the populated actionLog as an event to the tickertape
+        //TODO refactor me
         if(log.getId() != null) {
             String row = (log.getParadecontext()==null || log.getParadecontext().equals("null"))?((log.getContext()==null || log.getContext().equals("null"))?"parade2":log.getContext()):log.getParadecontext();
             String actionText = "";
@@ -122,6 +142,11 @@ public class DatabaseLogServlet extends HttpServlet {
         
     }
 
+    /**
+     * Checks whether this access should be logged or not
+     * @param log the DTO containing the log entry
+     * @return <code>true</code> if this is worth logging, <code>false</code> otherwise
+     */
     private boolean shouldLog(ActionLogDTO log) {
         
         if(log.getUrl() != null && (log.getUrl().indexOf(".ico") != -1 

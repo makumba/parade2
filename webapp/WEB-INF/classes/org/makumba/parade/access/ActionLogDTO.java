@@ -3,27 +3,35 @@ package org.makumba.parade.access;
 import java.util.Date;
 
 import org.makumba.parade.model.ActionLog;
+import org.makumba.parade.tools.TriggerFilter;
 
+/**
+ * A simple Data Transfer Object of an {@link ActionLog}. We need this class because the {@link TriggerFilter} and all
+ * other classes that are loaded tomcat-wide shouldn't know anything about Hibernate.
+ * 
+ * @author Manuel Gay
+ * 
+ */
 public class ActionLogDTO {
-    
+
     private Long id;
 
     private Date date;
-    
+
     private String user;
-    
+
     private String context;
-    
+
     private String url;
-    
+
     private String queryString;
-    
+
     private String post;
-    
+
     private String action;
-    
+
     private String origin;
-    
+
     private String paradecontext;
 
     public String getParadecontext() {
@@ -105,7 +113,11 @@ public class ActionLogDTO {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
+    /**
+     * Populates an ActionLog
+     * @param log the ActionLog to be populated by this DTO
+     */
     public void populate(ActionLog log) {
         log.setId(id);
         log.setContext(context);
@@ -118,7 +130,7 @@ public class ActionLogDTO {
         log.setOrigin(origin);
         log.setParadecontext(paradecontext);
     }
-    
+
     public ActionLogDTO(ActionLog log) {
         this.id = log.getId();
         this.context = log.getContext();
@@ -131,9 +143,9 @@ public class ActionLogDTO {
         this.origin = log.getOrigin();
         this.paradecontext = log.getParadecontext();
     }
-    
+
     public ActionLogDTO() { // empty constructor for TriggerFilter
-        
+
     }
-    
+
 }
