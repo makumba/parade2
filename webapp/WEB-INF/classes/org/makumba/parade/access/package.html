@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<body bgcolor="white">
+
+This package holds servlets which are involved in the access mechanism.
+<br>
+Before each access, the {@link org.makumba.parade.tools.TriggerFilter}
+invokes the {@link AccessServlet}.
+<br>
+After each access, it invokes the {@link EndAccessServlet}.
+<br>
+<br>
+The {@link DatabaseLogServlet} is writing one {@link
+org.makumba.parade.model.ActionLog} per relevant access. It also can be
+invoked through the TriggerFilter's redirectToServlet method, which
+redirects a request to a servlet and sets an attribute.
+<br>
+In addition to the ActionLogs, the DatabaseLogServlet also logs regular
+log events provided by java.util.Logging, log4j and the
+PerThreadPrintStream class.<br>
+
+
+</body>
+</html>
