@@ -59,9 +59,9 @@
 </TABLE>
 <BR><BR>
 <!-- <div class='command'><a href='/Rows.do?op=paraderefresh'>Refresh ParaDe</a></div> -->
-
+<!--
 <script type="text/javascript" src="/scripts/tickertape/TickerTape.js?v101"></script>
 <script type="text/javascript">var ticker = new TickerTape('/servlet/ticker', 'horizontalTickerTape', 3000, true);</script>
-
+-->
 
 </CENTER></BODY></HTML>
