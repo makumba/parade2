@@ -153,7 +153,7 @@
 			<jvmarg value="-Xms70M" />
 			<jvmarg value="-Xmx700M" />
 			<jvmarg value="-Djava.library.path=." />
-			<jvmarg value="-Djava.util.logging.config.file=/home/parade/server/parade2/logging.properties" />
+			<jvmarg value="-Djava.util.logging.config.file=${basedir}/logging.properties" />
 			<!-- <jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" /> -->
 			
 			<arg value="start" />
