@@ -68,7 +68,7 @@
 
 	<target name="compile" description="compile the java files">
 		<antcall target="clean" />
-		<javac srcdir="${webapp.path}/WEB-INF/classes">
+		<javac srcdir="${webapp.path}/WEB-INF/classes" debug="on">
 			<classpath refid="generic.class.path" />
 		</javac>
 	</target>
