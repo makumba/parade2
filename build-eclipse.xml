@@ -1,44 +1,27 @@
 <!-- $Header$ -->
-<project name="PARADE-ECLIPSE" basedir="." default="triggerCopy">
+<project name="PARADE-ECLIPSE" basedir="." default="globalClasses">
 
-	<target name="triggerCopy">
-		<copy toDir="triggerClasses/" overwrite="true">
-	         <fileset dir="webapp/WEB-INF/classes">
-	          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
-		      <include name="org/makumba/parade/tools/ServletRedirectionData*.class" />
-	          <include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
-	          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
-	          <include name="org/makumba/parade/access/ActionLogDTO*.class" />
-	          <include name="org/makumba/parade/model/ActionLog*.class" /> <!-- Needed for the DTO -->
-	         		         	
-	         </fileset>
-		</copy>
-		
-	</target>
-	
-	<target name="loggerCopy">
-
-		<copy toDir="loggerClasses/" overwrite="true">
-			<fileset dir=".">
-				<include name="logging.properties" />
-			</fileset>
+	<target name="globalClasses">
+		<copy toDir="globalClasses/" overwrite="true">
 			<fileset dir="webapp/WEB-INF/classes">
+				<include name="org/makumba/parade/tools/TriggerFilter*.class" />
+				<include name="org/makumba/parade/tools/ServletRedirectionData*.class" />
+				<include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
+				<include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
+				<include name="org/makumba/parade/access/ActionLogDTO*.class" />
+				<!-- Needed for the DTO -->
+				<include name="org/makumba/parade/model/ActionLog*.class" />
+				
 				<include name="org/makumba/parade/tools/ParadeConsoleHandler*.class" />
 				<include name="org/makumba/parade/tools/ParadeLogFormatter*.class" />
 				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
 			</fileset>
-		</copy>
-		
-		<!--
-		<copy toDir="tomcat/common/classes" overwrite="true">
+
 			<fileset dir=".">
 				<include name="logging.properties" />
 			</fileset>
-			<fileset dir="webapp/WEB-INF/classes">
-				<include name="org/makumba/parade/tools/ParadeConsoleHandler*.class" />
-			</fileset>
+
 		</copy>
-		-->
+
 	</target>
-	
 </project>
