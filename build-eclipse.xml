@@ -2,6 +2,7 @@
 <project name="PARADE-ECLIPSE" basedir="." default="globalClasses">
 
 	<target name="globalClasses">
+		<mkdir dir="globalClasses" />
 		<copy toDir="globalClasses/" overwrite="true">
 			<fileset dir="webapp/WEB-INF/classes">
 				<include name="org/makumba/parade/tools/TriggerFilter*.class" />
