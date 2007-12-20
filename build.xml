@@ -122,20 +122,6 @@
 			
 	<target name="globalClassesCopy">
 		<copy toDir="globalClasses/" overwrite="true">
-	         <fileset dir="webapp/WEB-INF/classes">
-	          <include name="org/makumba/parade/tools/TriggerFilter*.class" />
-		      <include name="org/makumba/parade/tools/ServletRedirectionData*.class" />
-	          <include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
-	          <include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
-	          <include name="org/makumba/parade/access/ActionLogDTO*.class" />
-	          <include name="org/makumba/parade/model/ActionLog*.class" /> <!-- Needed for the DTO -->
-	         </fileset>
-		</copy>
-	</target>
-	
-	<target name="loggerCopy">
-
-		<copy toDir="globalClasses/" overwrite="true">
 			<fileset dir="webapp/WEB-INF/classes">
 				<include name="org/makumba/parade/tools/TriggerFilter*.class" />
 				<include name="org/makumba/parade/tools/ServletRedirectionData*.class" />
@@ -144,7 +130,7 @@
 				<include name="org/makumba/parade/access/ActionLogDTO*.class" />
 				<!-- Needed for the DTO -->
 				<include name="org/makumba/parade/model/ActionLog*.class" />
-						
+								
 				<include name="org/makumba/parade/tools/ParadeConsoleHandler*.class" />
 				<include name="org/makumba/parade/tools/ParadeLogFormatter*.class" />
 				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
