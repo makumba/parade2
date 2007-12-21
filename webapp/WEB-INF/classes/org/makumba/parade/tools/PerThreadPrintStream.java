@@ -1,5 +1,8 @@
 package org.makumba.parade.tools;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -14,7 +17,7 @@ public class PerThreadPrintStream extends java.io.PrintStream {
     static Object dummy = "dummy";
 
     public static PrintStream oldSystemOut;
-
+    
     static ThreadLocal enable = new ThreadLocal() {
         public Object initialValue() {
             return true;
@@ -27,8 +30,16 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         }
     };
     static {
+        OutputStream bos = null;
+        try {
+            bos = new FileOutputStream(System.getProperty("catalina.base") + java.io.File.separator + "logs" + java.io.File.separator + "catalina.out");
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         oldSystemOut = System.out;
-        java.io.PrintStream singleton = new PerThreadPrintStream(System.out);
+        java.io.PrintStream singleton = new PerThreadPrintStream(bos);
         System.setOut(singleton);
         System.setErr(singleton);
     }
@@ -48,11 +59,12 @@ public class PerThreadPrintStream extends java.io.PrintStream {
     }
 
     public void write(byte[] buffer, int start, int len) {
-
+        
         try {
 
             if (!(Boolean) enable.get()) {
-                super.write(buffer, start, len);
+                outWrite(buffer, start, len);
+                //super.write(buffer, start, len);
                 return;
             }
             String msg = new String(buffer, start, len);
@@ -79,27 +91,27 @@ public class PerThreadPrintStream extends java.io.PrintStream {
                     // here.
                     {
                         if (lastEnter.get() != null) {
-                            out.write(b, 0, b.length);
+                            outWrite(b, 0, b.length);
                         }
 
                         else
                             lastEnter.set(dummy);
-                        out.write(buffer, lastStart, i - lastStart + 1);
+                        outWrite(buffer, lastStart, i - lastStart + 1);
                         // w.write(buffer, lastStart, i - lastStart + 1);
                         lastStart = i + 1;
                     }
                 }
                 if (lastStart < start + len) {
                     if (lastEnter.get() != null) {
-                        out.write(b, 0, b.length);
+                        outWrite(b, 0, b.length);
                     }
 
                     lastEnter.set(null);
-                    out.write(buffer, lastStart, start + len - lastStart);
+                    outWrite(buffer, lastStart, start + len - lastStart);
                     // w.write(buffer, lastStart, start + len - lastStart);
                 }
             } else {
-                out.write(buffer, start, len);
+                outWrite(buffer, start, len);
                 // w.write(buffer, start, len);
             }
         } catch (Throwable e) {
@@ -107,5 +119,12 @@ public class PerThreadPrintStream extends java.io.PrintStream {
             e.printStackTrace(p);
             p.flush();
         }
+    }
+
+    private void outWrite(byte[] buffer, int start, int len) throws IOException {
+        out.write(buffer, start, len);
+        out.flush();
+        oldSystemOut.write(buffer, start, len);
+        oldSystemOut.flush();
     }
 }
