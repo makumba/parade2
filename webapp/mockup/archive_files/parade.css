@@ -22,31 +22,6 @@ td {
 	}
 
 
-
-.viewed {
-   color: blue;
-}
-.edited {
-   color: orange;
-   font-weight: bold;
-}
-.tested {
-   color: fuchsia;
-}
-.meta {
-   color: grey;
-}
-.cvsupdated {
-   color: green;
-}
-.cvscommited {
-	color: red;
-	text-decoration: underline;
-}
-.cvsneedupdate {
-	color: purple;
-
-}
 .mainuser {
 	text-decoration: underline;
 }

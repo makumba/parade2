@@ -77,6 +77,11 @@ TD {
     padding:0px;
     padding-left:3px;
     padding-right:3px;
+    padding-bottom: 3px;
     border-spacing:0px;
     border-width:0px;
-}  
+}
+
+TD.expanded {
+	padding-bottom: 12px;
+}

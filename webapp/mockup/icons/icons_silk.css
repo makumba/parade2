@@ -1,0 +1,650 @@
+/* $Header$ */
+/* Silk icons */
+/*  based on FamFamFam and elaborated further */
+
+/* height attribute is needed by IE to render properly in TD and in A environments without text */
+
+.icon_skype {
+  background: url(icons/std/skype.gif) left center no-repeat;
+  padding-left: 17;  height: 15;
+}
+
+.icon_xls {
+  background: url(icons/silk/xls.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_csv {
+  background: url(icons/silk/csv.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_word {
+  background: url(icons/silk/word.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_rtf {
+  background: url(icons/silk/rtf.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_ppt {
+  background: url(icons/silk/ppt.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_publisher {
+  background: url(icons/silk/publisher.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_access {
+  background: url(icons/silk/access.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_msproject {
+  background: url(icons/silk/msproject.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_pdf {
+  background: url(icons/silk/pdf.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_zip {
+  background: url(icons/silk/zip.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_video {
+  background: url(icons/silk/video.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_image {
+  background: url(icons/silk/image.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_audio {
+  background: url(icons/silk/audio.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_download {
+  background: url(icons/silk/download.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_upload {
+  background: url(icons/silk/upload.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_info {
+  background: url(icons/silk/information.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_close {
+  background: url(icons/silk/close.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_question {
+  background: url(icons/silk/help.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_logout {
+  background: url(icons/silk/logout.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_warning {
+  background: url(icons/silk/exclamation.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_favourite {
+  background: url(icons/silk/favourite.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_award {
+  background: url(icons/silk/award.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_vcard {
+  background: url(icons/silk/vcard.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_bday {
+  background: url(icons/silk/bday.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_home {
+  background: url(icons/silk/home.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_email {
+  background: url(icons/silk/email.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_email_edit {
+  background: url(icons/silk/email_edit.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_mobile {
+  background: url(icons/silk/mobile.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_progress {
+  background: url(icons/silk/progress.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_new {
+  background: url(icons/silk/new.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_new_na {
+  background: url(icons/silk/new_na.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+  color: #666666;
+}
+.icon_add {
+  background: url(icons/silk/add.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_add_na {
+  background: url(icons/silk/add_na.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+  color: #666666;
+}
+.icon_add_small {
+  background: url(icons/silk/add_sm.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_add_na_small {
+  background: url(icons/silk/add_na_sm.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+  color: #666666;
+}
+.icon_delete {
+  background: url(icons/silk/delete.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_delete_na {
+  background: url(icons/silk/delete_na.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+  color: #666666;
+}
+.icon_delete_small {
+  background: url(icons/silk/delete_sm.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_delete_na_small {
+  background: url(icons/silk/delete_na_sm.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+  color: #666666;
+}
+.icon_tree {
+  background: url(icons/silk/tree.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_list {
+  background: url(icons/silk/list.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_list_na {
+  background: url(icons/silk/list_na.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+  color: #666666;
+}
+.icon_print {
+  background: url(icons/silk/print.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_find {
+  background: url(icons/silk/find.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_move {
+  background: url(icons/silk/move.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_create_user {
+  background: url(icons/silk/user_add.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_create_user_na {
+  background: url(icons/silk/create_user_na.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+  color: #666666;
+}
+.icon_back {
+  background: url(icons/silk/back.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_admin {
+  background: url(icons/silk/admin.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_adjust {
+  background: url(icons/silk/adjust.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_survey {
+  background: url(icons/silk/survey.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_tasks {
+  background: url(icons/silk/tasks.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_project {
+  background: url(icons/silk/project.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_event1 {
+  background: url(icons/silk/flake_blue.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_event2 {
+  background: url(icons/silk/flake_green.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_event3 {
+  background: url(icons/silk/flake_yel.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_event4 {
+  background: url(icons/silk/flake_red.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_box1 {
+  background: url(icons/silk/box_red.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_box2 {
+  background: url(icons/silk/box_blue.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+.icon_calendar {
+  background: url(icons/silk/calendar.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_statistics {
+  background: url(icons/silk/statistics.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_chat {
+  background: url(icons/silk/chat.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_members {
+  background: url(icons/silk/members.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_groups {
+  background: url(icons/silk/groups.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_contacts {
+  background: url(icons/silk/contacts.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_man {
+  background: url(icons/silk/male.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_woman {
+  background: url(icons/silk/female.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_blocks {
+  background: url(icons/silk/blocks.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_attach {
+  background: url(icons/silk/attach.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_archives {
+  background: url(icons/silk/archives.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_folder {
+  background: url(icons/silk/folder.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_file {
+  background: url(icons/silk/file.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_euro {
+  background: url(icons/silk/euro.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_business {
+  background: url(icons/silk/business.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_award {
+  background: url(icons/silk/award.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_favorite {
+  background: url(icons/silk/favorite.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_university {
+  background: url(icons/silk/university.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_photos {
+  background: url(icons/silk/photos.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_allow {
+  background: url(icons/silk/accept.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_deny {
+  background: url(icons/silk/stop.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_cancel { 
+  background: url(icons/silk/cancel.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_error { 
+  background: url(icons/silk/error.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_checked {
+  background: url(icons/silk/checked.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_unchecked {
+  background: url(icons/silk/unchecked.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_collapse {
+  background: url(icons/silk/minus.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_expand {
+  background: url(icons/silk/plus.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_first {
+  background: url(icons/silk/resultset_first.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_last {
+  background: url(icons/silk/resultset_last.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_prev {
+  background: url(icons/silk/resultset_previous.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_next {
+  background: url(icons/silk/resultset_next.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_arrow_down {
+  background: url(icons/silk/arrow_down.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_arrow_up {
+  background: url(icons/silk/arrow_up.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_sorted_by {
+  background: url(icons/silk/sorted_by.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_sorted_by_dec {
+  background: url(icons/silk/sorted_by_dec.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_rss {
+  background: url(icons/silk/rss.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+/* Added by Marian */
+
+.icon_cart {
+  background: url(icons/silk/cart.gif) left center no-repeat ;
+  padding-left: 16;  height: 16;
+}
+.icon_cart_add {
+  background: url(icons/silk/cart_add.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_cart_remove {
+  background: url(icons/silk/cart_remove.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_pending {
+  background: url(icons/silk/pending.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_comment {
+  background: url(icons/silk/comment.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_comment_add {
+  background: url(icons/silk/comment_add.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_comment_remove {
+  background: url(icons/silk/comment_remove.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_comment_edit {
+  background: url(icons/silk/comment_edit.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_user_delete {
+  background: url(icons/silk/user_delete.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_image_add {
+  background: url(icons/silk/image_add.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_image_delete {
+  background: url(icons/silk/image_delete.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_save {
+  background: url(icons/silk/save.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_user_edit {
+  background: url(icons/silk/user_edit.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_user_edit_na {
+  background: url(icons/silk/user_edit_na.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+} 
+.icon_search {
+  background: url(icons/silk/search.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+} 
+.icon_java {
+  background: url(icons/silk/java.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}	
+.icon_html {
+  background: url(icons/silk/html.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}	
+.icon_idea {
+  background: url(icons/silk/lightbulb.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_move {
+  background: url(icons/silk/move.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_move_na {
+  background: url(icons/silk/move_na.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_private {
+  background: url(icons/silk/docPrivate.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_inProgress {
+  background: url(icons/silk/docInProgress.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_outDated {
+  background: url(icons/silk/docOutdated.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_emailReply {
+  background: url(icons/silk/email_add.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_emailSend {
+  background: url(icons/silk/email_go.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_googlemaps {
+  background: url(icons/silk/googlemaps.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+.icon_viamichelin {
+  background: url(icons/silk/viamichelin.gif) left center no-repeat;
+  padding-left: 16;  height: 16;
+}
+
+
+
+
+.viewed_title {
+  background: url(icons/silk/view.gif) top center no-repeat;
+  height: 22;  padding-top: 16; padding-left: 8; padding-right: 8;
+  position: relative; top: 16;
+  margin-bottom: 16;
+  border: dotted 1px; border-color: black;
+}
+.viewed_title_na {
+  background: url(icons/silk/view_na.gif) top center no-repeat;
+  height: 16;  padding-top: 16; padding-left: 8; padding-right: 8;
+  color: #666666;
+  position: relative; top: 16;
+  border: dotted 1px; border-color: black;
+}
+
+.edited_title {
+  background: url(icons/silk/edit.gif) top center no-repeat;
+  height: 16;  padding-top: 16; padding-left: 8; padding-right: 8;
+  position: relative; top: 16;
+  border: dotted 1px; border-color: black;
+  
+}
+.edited_title_na {
+  background: url(icons/silk/edit_na.gif) top center no-repeat;
+  height: 16;  padding-top: 16; padding-left: 8; padding-right: 8;
+  color: #666666;
+  position: relative; top: 16;
+  border: dotted 1px; border-color: black;
+}
+.tested_title {
+  background: url(icons/silk/settings.gif) top center no-repeat;
+  height: 16;  padding-top: 16; padding-left: 8; padding-right: 8;
+  position: relative; top: 16;
+  border: dotted 1px; border-color: black;
+}
+.meta_title {
+  background: url(icons/silk/modules.gif) top center no-repeat;
+  height: 16;  padding-top: 16; padding-left: 8; padding-right: 8;
+  position: relative; top: 16;
+  border: dotted 1px; border-color: black;
+}
+
+.cvsupdated_title {
+  background: url(icons/cvs-update.gif) top center no-repeat;
+  height: 16;  padding-top: 16; padding-left: 8; padding-right: 8;
+  position: relative; top: 16;
+  border: dotted 1px; border-color: black;
+}
+
+.cvscommited_title {
+  background: url(icons/cvs-committ.gif) top center no-repeat;
+  height: 16;  padding-top: 16; padding-left: 8; padding-right: 8;
+  position: relative; top: 16;
+  border: dotted 1px; border-color: black;
+}
+
+.cvsneedupdate_title {
+  background: url(icons/cvs-need-update.gif) top center no-repeat;
+  height: 16;  padding-top: 16; padding-left: 8; padding-right: 8;
+  position: relative; top: 16;
+  border: dotted 1px; border-color: black;
+}
+
+
+
+.edited {
+  background: url(icons/silk/edit.gif) right center no-repeat;
+  padding-right: 16;  height: 16;
+  
+}
+.edited_na {
+  background: url(icons/silk/edit_na.gif) right center no-repeat;
+  padding-right: 16;  height: 16;
+  color: #666666;
+}
+.viewed {
+  background: url(icons/silk/view.gif) right no-repeat;
+  padding-right: 16;  height: 16;
+}
+.viewed_na {
+  background: url(icons/silk/view_na.gif) right no-repeat;
+  padding-right: 16;  height: 16;
+  color: #666666;
+}
+.tested {
+  background: url(icons/silk/settings.gif) right no-repeat;
+  padding-right: 16;  height: 16;
+}
+.meta {
+  background: url(icons/silk/modules.gif) right no-repeat;
+  padding-right: 16;  height: 16;
+  color: #666666;
+}
+.meta_na {
+  background: url(icons/silk/modules_na.gif) right no-repeat;
+  padding-right: 16;  height: 16;
+}
+
+.cvsupdated {
+  background: url(icons/cvs-update.gif) right no-repeat;
+  padding-right: 16;  height: 16;
+
+}
+
+.cvscommited {
+  background: url(icons/cvs-committ.gif) right no-repeat;
+  padding-right: 16;  height: 16;
+}
+
+.cvsneedupdate {
+  background: url(icons/cvs-need-update.gif) right no-repeat;
+  padding-right: 16;  height: 16;
+}
+
+.user_online {
+  background: url(icons/silk/user_green.png) right no-repeat;
+  padding-right: 16;  height: 16;	
+}
