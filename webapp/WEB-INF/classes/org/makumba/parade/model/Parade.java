@@ -239,7 +239,7 @@ public class Parade {
                         SimpleFileFilter sf = new SimpleFileFilter();
                          
                         if(sf.accept(f) && !f.isDirectory()) {
-                            fileRefresh(rootPath, fileName, null);
+                            fileRefresh(rootPath, fileName);
                         }
                     }
 
@@ -265,7 +265,7 @@ public class Parade {
                         logger.debug("Finished refreshing file cache for directory " + rootPath);
                     }
                     
-                    private void fileRefresh(String rootPath, String fileName, Session s) {
+                    private void fileRefresh(String rootPath, String fileName) {
                         if(rootPath == null || fileName == null)
                             return;
                         
@@ -276,14 +276,11 @@ public class Parade {
                         Session session = null;
                         
                         try {
-                            if(s == null)
-                                session = InitServlet.getSessionFactory().openSession();
-                            else
-                                session = s;
+                            session = InitServlet.getSessionFactory().openSession();
                             
                             Parade p = (Parade) session.get(Parade.class, new Long(1));
                             Row r = Row.getRow(p, rootPath);
-                            Transaction tx = s.beginTransaction();
+                            Transaction tx = session.beginTransaction();
 
                             java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
                             if (!f.exists())
@@ -294,8 +291,7 @@ public class Parade {
                             tx.commit();
                  
                         } finally {
-                            if(s == null)
-                                session.close();
+                           session.close();
                         }
                         
                         logger.debug("Finished refreshing file cache for file " + fileName + " of directory "+rootPath);
