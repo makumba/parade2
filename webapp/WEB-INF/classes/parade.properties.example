@@ -30,8 +30,6 @@ parade.authorization.encryption=
 
 ant.displayedOps=compile, clean, getTaglibs, getMakumba, getLocalMakumba, copyLocalMakumba, doc, applets
 
-access.managers=org.makumba.parade.LoggingManager
-
 makumba.site=http://download.makumba.org/makumba/download/
 cvs.site=http://cvs.makumba.org/cgi-bin/cvsweb.cgi/
 
