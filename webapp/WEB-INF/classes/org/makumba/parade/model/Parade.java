@@ -283,9 +283,11 @@ public class Parade {
                             Transaction tx = session.beginTransaction();
 
                             java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
-                            if (!f.exists())
+                            if (!f.exists()) {
+                                session.close();
                                 return;
-
+                            }
+                                
                             fileMgr.cacheFile(r, f, false);
 
                             tx.commit();
