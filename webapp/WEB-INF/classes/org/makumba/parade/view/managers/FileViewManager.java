@@ -187,7 +187,16 @@ public class FileViewManager implements FileView, TreeView {
             String path = (String)line[0];
             String name = (String)line[1];
             
-            String simplePath = !path.equals(r.getRowpath())?path.substring(path.indexOf(r.getRowpath()) + r.getRowpath().length() + 1):r.getRowname();
+            String simplePath = null;
+            try {
+                simplePath = !path.equals(r.getRowpath())?path.substring(path.indexOf(r.getRowpath()) + r.getRowpath().length() + 1):r.getRowname();
+            } catch(StringIndexOutOfBoundsException e) {
+                logger.error("StringIndexOutOfBoundsException while computing simplePath for path "+path+" of row "+r.getRowname()+" with rowpath "+r.getRowpath());
+            }
+            
+            if(simplePath == null)
+                continue;
+            
             simplePath = simplePath.replace(java.io.File.separatorChar, '/');
             if(!simplePath.equals(r.getRowname())) simplePath = r.getRowname() + "/" + simplePath;
             
