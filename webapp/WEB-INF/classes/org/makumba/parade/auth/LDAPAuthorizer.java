@@ -98,8 +98,7 @@ public class LDAPAuthorizer implements Authorizer {
             return true;
 
         } catch (LDAPException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.err.println("LDAP AUTHORIZER ERROR: login failed for user "+username+", loginDN "+loginDN);
             return false;
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
