@@ -26,7 +26,7 @@
 <td>${row.ant.buildfile}<br>
 <#list row.ant.targets as target>
 <a href="/Ant.do?display=index&context=${row.rowstore.rowname}&path=&op=${target}">${target}</a>
-<#if target_has_next>, </#if>
+<#if target_has_next>,</#if>
 </#list>
 </td>
 <td>${row.webapp.webappPath}</td>
