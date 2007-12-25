@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
+import org.makumba.parade.model.Row;
 
 public class RowsAction extends Action {
 
@@ -24,20 +25,49 @@ public class RowsAction extends Action {
 
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         
-        p.refresh();
-        try{
-            p.addJNotifyListeners();
-        }catch(Throwable e){
-            e.printStackTrace();
+        if(op != null && op.equals("row")) {
+            String context = request.getParameter("context");
+            if(context == null) {
+                s.close();
+                request.setAttribute("result", "Error: no context given");
+                request.setAttribute("success", new Boolean(false));
+                return mapping.findForward("index"); 
+            }
+            
+            Row r = p.getRows().get(context);
+            if(r == null) {
+                s.close();
+                request.setAttribute("result", "Error: no row corresponding to context "+context);
+                request.setAttribute("success", new Boolean(false));
+                return mapping.findForward("index"); 
+            }
+            
+            p.refreshRow(r);
+            
+            tx.commit();
+            s.close();
+            
+            request.setAttribute("result", "Row "+context+" refreshed !");
+            request.setAttribute("success", new Boolean(true));
+            
+            return mapping.findForward("index");
+            
+        } else {
+            p.refresh();
+            try{
+                p.addJNotifyListeners();
+            }catch(Throwable e){
+                e.printStackTrace();
+            }
+            
+            tx.commit();
+            s.close();
+            
+            request.setAttribute("result", "ParaDe refreshed !");
+            request.setAttribute("success", new Boolean(true));
+            
+            return mapping.findForward("index"); 
         }
-        
-        tx.commit();
-        s.close();        
-        
-        request.setAttribute("result", "ParaDe refreshed !");
-        request.setAttribute("success", new Boolean(true));
-        
-        return mapping.findForward("index"); 
         
     }
 }

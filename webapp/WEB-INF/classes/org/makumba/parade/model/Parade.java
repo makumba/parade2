@@ -73,16 +73,19 @@ public class Parade {
         while (i.hasNext()) {
 
             Row r = (Row) rows.get((String) i.next());
-
-            fileMgr.rowRefresh(r);
-            CVSMgr.rowRefresh(r);
-            antMgr.rowRefresh(r);
-            webappMgr.rowRefresh(r);
-            makMgr.rowRefresh(r);
+            refreshRow(r);
         }
         
         logger.info("ParaDe-wide refresh finished");
 
+    }
+
+    public void refreshRow(Row r) {
+        fileMgr.rowRefresh(r);
+        CVSMgr.rowRefresh(r);
+        antMgr.rowRefresh(r);
+        webappMgr.rowRefresh(r);
+        makMgr.rowRefresh(r);
     }
 
     /* Creates/updates rows */
