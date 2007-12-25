@@ -17,6 +17,8 @@ public class SimpleFileFilter implements FileFilter {
             return false;
         if (f.getParentFile().getName().equals("CVS"))
             return false;
+        if (name.endsWith(".unison.tmp"))
+            return false;
         //TODO this should be customisable, parade-wide in parade.properties
         if(name.equals("PageCount.txt"))
             return false;
