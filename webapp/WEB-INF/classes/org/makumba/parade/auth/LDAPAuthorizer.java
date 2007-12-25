@@ -63,6 +63,9 @@ public class LDAPAuthorizer implements Authorizer {
     }
 
     public boolean auth(String username, String password) {
+        
+        if(username.equals(""))
+            return false;
 
         int ldapPort = LDAPConnection.DEFAULT_PORT;
         int ldapVersion = LDAPConnection.LDAP_V3;
