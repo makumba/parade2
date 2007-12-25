@@ -231,7 +231,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     try {
                         cvsdata.setDate(fd = cvsDateFormat.parse(date));
                     } catch (Throwable t) {
-                        logger.error("Couldn't parse date of CVS File " + file.getName(), t);
+                        logger.error("Couldn't parse date of CVS File " + file.getPath(), t);
                         continue;
                     }
 
