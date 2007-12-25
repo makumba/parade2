@@ -14,12 +14,12 @@ public class Execute {
         String command = "";
         String[] cmd = new String[v.size()];
         String sep = "";
-        //scans the arguements for spaces, surrounds with "" if some found (Windows) 
+        //scans the arguements for spaces, surrounds with "" if some found (Windows)
         for (int i = 0; i < cmd.length; i++) {
             cmd[i] = (String) v.elementAt(i);
             command += sep;
             sep = " ";
-            if (cmd[i].indexOf(' ') != -1)
+            if (cmd[i].indexOf(' ') != -1 && !(cmd[i].startsWith("\"") && cmd[i].endsWith("\"")))
                 command += "\"" + cmd[i] + "\"";
             else
                 command += cmd[i];
