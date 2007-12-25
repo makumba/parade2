@@ -179,9 +179,6 @@ public class Parade {
 
     /**
      * Initalises the file system monitoring using JNotify ({@link http://jnotify.sourceforge.net/})
-     * 
-     * FIXME? we don't do anything if a directory is marked as changed. we only bother about individual files. we might miss something, but then again, it's much more performant, often directory changes are not relevant.
-     * 
      */
     public void addJNotifyListeners() {
 
