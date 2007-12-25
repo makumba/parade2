@@ -149,9 +149,11 @@ public class DatabaseLogServlet extends HttpServlet {
      */
     private boolean shouldLog(ActionLogDTO log) {
         
-        if(log.getUrl() != null && (log.getUrl().indexOf(".ico") != -1 
-                || log.getUrl().indexOf(".css") != -1
-                || log.getUrl().indexOf(".gif") != -1
+        if(log.getUrl() != null && (
+                   !log.getUrl().endsWith(".ico") 
+                || !log.getUrl().endsWith(".css")
+                || !log.getUrl().endsWith(".gif")
+                || !log.getUrl().endsWith(".js")
                 || log.getUrl().equals("/servlet/ticker"))
                 || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))) {
             return false;
