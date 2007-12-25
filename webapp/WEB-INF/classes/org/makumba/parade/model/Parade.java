@@ -208,69 +208,76 @@ public class Parade {
             // now we start watching
             try {
                 int watchID = JNotify.addWatch(path, mask, watchSubtree, new JNotifyListener() {
+                    
                     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
                         logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
                         + oldName + " -> " + newName);
-                        refreshCache(rootPath, oldName);
-                        refreshCache(rootPath, newName);
+                        cacheDeleted(rootPath, oldName);
+                        cacheNew(rootPath, newName);
                         
                     }
 
                     public void fileModified(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
-                        refreshCache(rootPath, name);
+                        cacheModified(rootPath, name);
                     }
 
                     public void fileDeleted(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
                         + name);
-                        refreshCache(rootPath, name);
+                        cacheDeleted(rootPath, name);
                     }
 
                     public void fileCreated(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
                         + name);
-                        refreshCache(rootPath, name);
+                        cacheNew(rootPath, name);
                     }
                     
-                    private synchronized void refreshCache(String rootPath, String fileName) {
+                    private synchronized void cacheNew(String rootPath, String fileName) {
+                        java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
+                        
+                        if(!f.exists())
+                            return;
+                        
+                        SimpleFileFilter sf = new SimpleFileFilter();
+                         
+                        if(sf.accept(f)) {
+                            cacheFile(rootPath, fileName);
+                        }
+                    }
+                    
+                    private synchronized void cacheModified(String rootPath, String fileName) {
+                        java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
+                        
+                        if(!f.exists())
+                            return;
+                        
+                        SimpleFileFilter sf = new SimpleFileFilter();
+                         
+                        // we don't refresh directories, since the modification of files in there are going to be notified
+                        if(sf.accept(f) && !f.isDirectory()) {
+                            cacheFile(rootPath, fileName);
+                        }
+                    }
+                    
+                    private synchronized void cacheDeleted(String rootPath, String fileName) {
                         java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
                         
                         SimpleFileFilter sf = new SimpleFileFilter();
                          
                         if(sf.accept(f) && !f.isDirectory()) {
-                            fileRefresh(rootPath, fileName);
+                            deleteFile(rootPath, fileName);
                         }
-                    }
-
-                    private void directoryRefresh(String rootPath) {
-                        if(rootPath == null)
-                            return;
-                        
-                        logger.debug("Refreshing file cache for directory " + rootPath);
-                        Session s = InitServlet.getSessionFactory().openSession();
-                        Transaction tx = s.beginTransaction();
-                        Row r = findRowFromContext(rootPath, s);
-                        
-                        if(r == null) {
-                            logger.warn("Couldn't determine row for context "+rootPath);
-                            return;
-                        }
-                        
-                        File modifiedDir = (File) r.getFiles().get(rootPath.replace(java.io.File.separatorChar, '/'));
-                        modifiedDir.localRefresh();
-
-                        tx.commit();
-                        s.close();
-                        logger.debug("Finished refreshing file cache for directory " + rootPath);
                     }
                     
-                    private void fileRefresh(String rootPath, String fileName) {
+                    private void cacheFile(String rootPath, String fileName) {
                         if(rootPath == null || fileName == null)
                             return;
-                        
+
                         logger.debug("Refreshing file cache for file " + fileName + " of directory "+rootPath);
                         
+                        java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
                         
                         FileManager fileMgr = new FileManager();
                         Session session = null;
@@ -282,12 +289,6 @@ public class Parade {
                             Row r = Row.getRow(p, rootPath);
                             Transaction tx = session.beginTransaction();
 
-                            java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
-                            if (!f.exists()) {
-                                session.close();
-                                return;
-                            }
-                                
                             fileMgr.cacheFile(r, f, false);
 
                             tx.commit();
@@ -299,6 +300,35 @@ public class Parade {
                         logger.debug("Finished refreshing file cache for file " + fileName + " of directory "+rootPath);
                         
                         
+                    }
+                    
+                    private void deleteFile(String rootPath, String fileName) {
+                        if(rootPath == null || fileName == null)
+                            return;
+
+                        logger.debug("Deleting file cache for file " + fileName + " of directory "+rootPath);
+                        
+                        java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
+                        
+                        FileManager fileMgr = new FileManager();
+                        Session session = null;
+                        
+                        try {
+                            session = InitServlet.getSessionFactory().openSession();
+                            
+                            Parade p = (Parade) session.get(Parade.class, new Long(1));
+                            Row r = Row.getRow(p, rootPath);
+                            Transaction tx = session.beginTransaction();
+
+                            fileMgr.removeFileCache(r, rootPath, fileName);
+
+                            tx.commit();
+                 
+                        } finally {
+                           session.close();
+                        }
+                        
+                        logger.debug("Finished deleting file cache for file " + fileName + " of directory "+rootPath);
                     }
                     
                     private Row findRowFromContext(String context, Session s) {

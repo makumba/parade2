@@ -295,30 +295,34 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         boolean success = f.delete();
         if (success) {
 
-            Session s = InitServlet.getSessionFactory().openSession();
-            Transaction tx = s.beginTransaction();
-
-            File cacheFile = (File) r.getFiles().get(path + java.io.File.separator + entry);
-
-            Object cvsData = cacheFile.getFiledata().get("cvs");
-
-            // if there is CVS data for this file
-            // TODO do this check for Tracker as well once it will be done
-            if (cvsData != null) {
-                FileCVS cvsCache = (FileCVS) cvsData;
-                cacheFile.setOnDisk(false);
-                cvsCache.setStatus(CVSManager.NEEDS_CHECKOUT);
-            } else
-                r.getFiles().remove(path + java.io.File.separator + entry);
-
-            tx.commit();
-            s.close();
+            removeFileCache(r, path, entry);
 
             return "OK#" + f.getName();
         }
         logger.error("Error while trying to delete file " + f.getAbsolutePath() + " " + "\n" + "Reason: exists: "
                 + f.exists() + ", canRead: " + f.canRead() + ", canWrite: " + f.canWrite());
         return "Error while trying to delete file " + f.getName();
+    }
+
+    public void removeFileCache(Row r, String path, String entry) {
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+
+        File cacheFile = (File) r.getFiles().get(path + java.io.File.separator + entry);
+
+        Object cvsData = cacheFile.getFiledata().get("cvs");
+
+        // if there is CVS data for this file
+        // TODO do this check for Tracker as well once it will be done
+        if (cvsData != null) {
+            FileCVS cvsCache = (FileCVS) cvsData;
+            cacheFile.setOnDisk(false);
+            cvsCache.setStatus(CVSManager.NEEDS_CHECKOUT);
+        } else
+            r.getFiles().remove(path + java.io.File.separator + entry);
+
+        tx.commit();
+        s.close();
     }
 
     public String uploadFile(Parade p, String path, String context) {
