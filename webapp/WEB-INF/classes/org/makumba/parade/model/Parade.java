@@ -289,7 +289,8 @@ public class Parade {
                             Row r = Row.getRow(p, rootPath);
                             Transaction tx = session.beginTransaction();
 
-                            fileMgr.cacheFile(r, f, false);
+                            // we cache the file, and if it's a directory it will be a local update
+                            fileMgr.cacheFile(r, f, true);
 
                             tx.commit();
                  
