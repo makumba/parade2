@@ -314,9 +314,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
     }
 
     public void removeFileCache(Row r, String path, String entry) {
-        Session s = InitServlet.getSessionFactory().openSession();
-        Transaction tx = s.beginTransaction();
-
         File cacheFile = (File) r.getFiles().get(path + java.io.File.separator + entry);
 
         Object cvsData = cacheFile.getFiledata().get("cvs");
@@ -329,9 +326,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             cvsCache.setStatus(CVSManager.NEEDS_CHECKOUT);
         } else
             r.getFiles().remove(path + java.io.File.separator + entry);
-
-        tx.commit();
-        s.close();
     }
 
     public String uploadFile(Parade p, String path, String context) {
