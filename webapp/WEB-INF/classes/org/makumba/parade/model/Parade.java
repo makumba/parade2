@@ -286,7 +286,7 @@ public class Parade {
                             session = InitServlet.getSessionFactory().openSession();
                             
                             Parade p = (Parade) session.get(Parade.class, new Long(1));
-                            Row r = Row.getRow(p, rootPath);
+                            Row r = findRowFromContext(rootPath, p);
                             Transaction tx = session.beginTransaction();
 
                             // we cache the file, and if it's a directory it will be a local update
@@ -318,7 +318,7 @@ public class Parade {
                             session = InitServlet.getSessionFactory().openSession();
                             
                             Parade p = (Parade) session.get(Parade.class, new Long(1));
-                            Row r = Row.getRow(p, rootPath);
+                            Row r = findRowFromContext(rootPath, p);
                             Transaction tx = session.beginTransaction();
 
                             fileMgr.removeFileCache(r, rootPath, fileName);
@@ -332,15 +332,14 @@ public class Parade {
                         logger.debug("Finished deleting file cache for file " + fileName + " of directory "+rootPath);
                     }
                     
-                    private Row findRowFromContext(String context, Session s) {
-                        Parade p = (Parade) s.get(Parade.class, new Long(1));
+                    private Row findRowFromContext(String rowPath, Parade p) {
                         Iterator i = p.getRows().keySet().iterator();
                         
                         boolean row_found = false;
                         Row contextRow = null;
                         while (i.hasNext() && !row_found) {
                             contextRow = (Row) p.getRows().get(i.next());
-                            row_found = context.startsWith(contextRow.getRowpath());
+                            row_found = rowPath.startsWith(contextRow.getRowpath());
                         }
                         return contextRow;
                     }
