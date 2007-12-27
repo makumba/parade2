@@ -40,14 +40,8 @@ public class CVSViewManager implements ParadeView {
         RowCVS rowcvsdata = (RowCVS) r.getRowdata().get("cvs");        
 
         String cvsweb = ParadeProperties.getProperty("cvs.site");
-        String webPath = null;
-        try {
-            webPath = f.getPath().substring(r.getRowpath().length() + 1).replace(java.io.File.separatorChar,'/');
-        } catch (StringIndexOutOfBoundsException e1) {
-            logger.warn("StringIndexOutOfBoundsException while trying to get the encoded path for file "+f.getPath()+" of row "+r.getRowname()+" with path "+r.getRowpath());
-            return;
-        }
-        String cvswebLink = cvsweb + rowcvsdata.getModule() + "/" + webPath==null?"":webPath;
+        String webPath = f.getPath().substring(r.getRowpath().length() + 1).replace(java.io.File.separatorChar,'/');
+        String cvswebLink = cvsweb + rowcvsdata.getModule() + "/" + webPath;
         
         // populating model
         fileView.put("cvsWebLink", cvswebLink);

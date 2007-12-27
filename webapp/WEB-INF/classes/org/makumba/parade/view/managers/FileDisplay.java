@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
@@ -25,6 +26,8 @@ import freemarker.template.TemplateException;
 
 public class FileDisplay {
 
+    static Logger logger = Logger.getLogger(FileDisplay.class.getName());
+    
     // TODO move this somewhere else
     public static String creationFileOK(String rowname, String path, String filename) {
         return "New file " + filename + " created. " + "<a href='/File.do?op=editFile&context=" + rowname + "&path="
@@ -50,7 +53,7 @@ public class FileDisplay {
         
         if (opResult == null)
             opResult = "";
-        
+                
         String pathEncoded = "";
         
         try {
@@ -106,6 +109,13 @@ public class FileDisplay {
                 
         for (Iterator j = files.iterator(); j.hasNext();) {
             File currentFile = (File) j.next();
+            
+            // if this is a symbolic link
+            if(currentFile.getPath().length() < r.getRowpath().length() + 1) {
+                logger.warn("Symbolic link detected:" + currentFile.getName() +" redirects to "+currentFile.getPath());
+                continue;
+            }
+                
             
             SimpleHash fileView = new SimpleHash();
             fileV.setFileView(fileView, r, path, currentFile);

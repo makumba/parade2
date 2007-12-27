@@ -45,10 +45,7 @@ public class FileViewManager implements FileView, TreeView {
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (StringIndexOutOfBoundsException e1) {
-            logger.warn("StringIndexOutOfBoundsException while trying to get the encoded path for file "+f.getPath()+" of row "+r.getRowname()+" with path "+r.getRowpath());
-            return;
-        }
+        } 
         
         fileView.put("path", f.getPath().substring(r.getRowpath().length() + 1));
         fileView.put("pathEncoded", pathEncoded);
