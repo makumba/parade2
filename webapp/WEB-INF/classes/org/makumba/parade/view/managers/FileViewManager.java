@@ -191,7 +191,7 @@ public class FileViewManager implements FileView, TreeView {
             try {
                 simplePath = !path.equals(r.getRowpath())?path.substring(path.indexOf(r.getRowpath()) + r.getRowpath().length() + 1):r.getRowname();
             } catch(StringIndexOutOfBoundsException e) {
-                logger.error("StringIndexOutOfBoundsException while computing simplePath for path "+path+" of row "+r.getRowname()+" with rowpath "+r.getRowpath());
+                logger.warn("Symbolic link detected while computing the tree, "+path+" of row "+r.getRowname()+ " links to something outside of the row");
             }
             
             if(simplePath == null)
