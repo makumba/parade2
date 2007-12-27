@@ -159,18 +159,6 @@ public class CommandController {
         }
         
         if (success) {
-
-            // updating the cache
-            
-            Session s = InitServlet.getSessionFactory().openSession();
-            Transaction tx = s.beginTransaction();
-
-            Parade p = (Parade) s.get(Parade.class, new Long(1));
-            FileManager fileMgr = new FileManager();
-            fileMgr.uploadFile(p, saveFilePath, context);
-
-            tx.commit();
-            s.close();
             
             // generating result view
             result = CommandViewManager.getUploadResponseView(context, path, fileName, contentType, fileSize, saveFilePath);
