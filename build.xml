@@ -147,6 +147,9 @@
 	</target>
 
 	<target name="tomcat-start" depends="prepareTomcat">
+		<tstamp>
+			<format timezone="GMT" property="TSTAMP" pattern="yyyyMMddHHmm"/>
+		</tstamp>
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="yes" classpathref="tomcat.class.path" append="true">
 			<jvmarg value="-Dcatalina.home=${tomcat.home}" />
 			<jvmarg value="-Dcatalina.base=tomcat" />
@@ -154,6 +157,7 @@
 			<jvmarg value="-Xmx700M" />
 			<jvmarg value="-Djava.library.path=." />
 			<jvmarg value="-Djava.util.logging.config.file=${basedir}/logging.properties" />
+			<jvmarg value="-Dstartup.tstamp=${TSTAMP}" />
 			<!-- <jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" /> -->
 			
 			<arg value="start" />
