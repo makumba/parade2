@@ -315,6 +315,8 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
     public void removeFileCache(Row r, String path, String entry) {
         File cacheFile = (File) r.getFiles().get(path + java.io.File.separator + entry);
+        if(cacheFile == null)
+            return;
 
         Object cvsData = cacheFile.getFiledata().get("cvs");
 
