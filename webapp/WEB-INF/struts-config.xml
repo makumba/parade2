@@ -66,7 +66,7 @@
                  scope="request"
                  validate="true"
                  parameter="op"
-                 input="/webapp/FileUpload.jsp">
+                 input="/webapp/uploadFile.jsp">
          
           <forward name="browse" path="/servlet/browse"/>
       </action>
