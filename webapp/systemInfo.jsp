@@ -8,6 +8,7 @@ Browser: <%=request.getHeader("User-Agent")%><br>
 Host (IP): <%=request.getRemoteHost() %> (<%=request.getRemoteAddr() %>)<br>
 
 <h2>Server info</h2>
+Server is up since: <b><%=System.getProperty(startupProp)%></b> (<%=org.makumba.parade.DisplayFormatter.readableTime( (new Date()).getTime() - new Date(System.getProperty(startupProp)).getTime() )%> ago)
 <%   String port=String.valueOf(request.getServerPort());
   if(port.equals("80")) {port="";}
     else {port=":"+port;}
