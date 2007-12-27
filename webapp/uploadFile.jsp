@@ -4,7 +4,14 @@
 <html:html locale="true">
 <head>
 <title>ParaDe file upload</title>
-<html:base/>
+<base href="<%
+String referer = request.getHeader("Referer");
+String rurl = referer.substring(0, referer.indexOf("?"));
+String context = request.getParameter("context");
+if(rurl.startsWith("http://")) rurl=rurl.substring(7);
+rurl = rurl.substring(0, rurl.indexOf("/"));
+if(!rurl.endsWith("/")) rurl += "/";
+out.print("http://"+rurl + context); %>" >
 </head>
 <body bgcolor="white">
 <html:form action="/FileUpload" method="post" enctype="multipart/form-data">
