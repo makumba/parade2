@@ -3,8 +3,6 @@ package org.makumba.parade.view.managers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.DateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -71,7 +69,8 @@ public class LogViewManager {
         String dateQuery = "l.date > :myDate";
         
         boolean c = contextQuery.length()==0;
-        String query = "from Log l, ActionLog al where l.actionLog = al and "+contextQuery+(c?"":" and ")+dateQuery;
+        //FIXME the server restart should be detected solely as ActionLog (and generated as such in TriggerFilter), but here we list ActionLog-Log couples
+        String query = "from Log l, ActionLog al where l.actionLog = al and ("+contextQuery+ " or (al.origin = 'tomcat' and al.action='start' and l.origin='TriggerFilter'))"+(c?"":" and ")+dateQuery;
         
         Query q = s.createQuery(query);
         q.setCacheable(false);
