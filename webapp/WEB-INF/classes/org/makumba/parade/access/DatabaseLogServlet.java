@@ -180,7 +180,7 @@ public class DatabaseLogServlet extends HttpServlet {
         } else if(record instanceof LoggingEvent) {
             LoggingEvent logevent = (LoggingEvent) record;
             log.setOrigin("log4j");
-            log.setDate(new Date(logevent.getStartTime()));
+            log.setDate(new Date(logevent.timeStamp));
             log.setLevel(logevent.getLevel().toString());
             log.setMessage(logevent.getRenderedMessage());
             //if(logevent.getThrowableInformation() != null)
