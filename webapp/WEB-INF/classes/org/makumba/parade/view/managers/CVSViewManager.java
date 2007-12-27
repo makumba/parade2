@@ -2,6 +2,7 @@ package org.makumba.parade.view.managers;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
@@ -12,6 +13,8 @@ import org.makumba.parade.view.interfaces.ParadeView;
 import freemarker.template.SimpleHash;
 
 public class CVSViewManager implements ParadeView {
+    
+    static Logger logger = Logger.getLogger(CVSViewManager.class.getName());
 
     public void setParadeViewHeader(List headers) {
         headers.add("CVS user");
@@ -37,8 +40,14 @@ public class CVSViewManager implements ParadeView {
         RowCVS rowcvsdata = (RowCVS) r.getRowdata().get("cvs");        
 
         String cvsweb = ParadeProperties.getProperty("cvs.site");
-        String webPath = f.getPath().substring(r.getRowpath().length() + 1).replace(java.io.File.separatorChar,'/');
-        String cvswebLink = cvsweb + rowcvsdata.getModule() + "/" + webPath;
+        String webPath = null;
+        try {
+            webPath = f.getPath().substring(r.getRowpath().length() + 1).replace(java.io.File.separatorChar,'/');
+        } catch (StringIndexOutOfBoundsException e1) {
+            logger.warn("StringIndexOutOfBoundsException while trying to get the encoded path for file "+f.getPath()+" of row "+r.getRowname()+" with path "+r.getRowpath());
+            return;
+        }
+        String cvswebLink = cvsweb + rowcvsdata.getModule() + "/" + webPath==null?"":webPath;
         
         // populating model
         fileView.put("cvsWebLink", cvswebLink);
