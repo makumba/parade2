@@ -12,7 +12,7 @@ public class SimpleFileFilter implements FileFilter {
             return false;
         
         // if this is a CVS directory
-        if (f.isDirectory() && (name.endsWith("/CVS") || name.equals("CVS")))
+        if (f.isDirectory() && (name.trim().equals("CVS")))
             return false;
         
         // if this is a CVS information file
