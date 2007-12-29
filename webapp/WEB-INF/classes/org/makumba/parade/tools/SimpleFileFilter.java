@@ -19,6 +19,10 @@ public class SimpleFileFilter implements FileFilter {
         if (f.getParentFile().getName().equals("CVS"))
             return false;
         
+        // if this a new file coming from CVS
+        if (name.startsWith(".new."))
+            return false;
+        
         // if this is a serialized file
         if(name.endsWith("/serialized") || name.equals("serialized"))
             return false;
