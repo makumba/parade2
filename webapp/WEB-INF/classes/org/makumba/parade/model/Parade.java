@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.makumba.parade.controller.CvsController;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
@@ -46,7 +47,7 @@ public class Parade {
     public WebappManager webappMgr = new WebappManager();
 
     public MakumbaManager makMgr = new MakumbaManager();
-
+    
     /*
      * 1. Calls create row for the new/to be updated rows 2. Calls for each row: - rowRefresh() - directoryRefresh() 3.
      * Add listener to trigger refresh if needed
@@ -212,6 +213,8 @@ public class Parade {
                     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
                         logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
                         + oldName + " -> " + newName);
+                        if(isLocked(rootPath, oldName, JNotify.FILE_RENAMED))
+                            return;
                         cacheDeleted(rootPath, oldName);
                         cacheNew(rootPath, newName);
                         
@@ -219,18 +222,24 @@ public class Parade {
 
                     public void fileModified(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
+                        if(isLocked(rootPath, name, JNotify.FILE_MODIFIED))
+                            return;
                         cacheModified(rootPath, name);
                     }
 
                     public void fileDeleted(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
                         + name);
+                        if(isLocked(rootPath, name, JNotify.FILE_DELETED))
+                            return;
                         cacheDeleted(rootPath, name);
                     }
 
                     public void fileCreated(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
                         + name);
+                        if(isLocked(rootPath, name, JNotify.FILE_CREATED))
+                            return;
                         cacheNew(rootPath, name);
                     }
                     
@@ -342,6 +351,41 @@ public class Parade {
                             row_found = rowPath.startsWith(contextRow.getRowpath());
                         }
                         return contextRow;
+                    }
+                    
+                    /**
+                     * Avoids conflicts with CVS Manager by checking whether there's a lock on the files to come in the
+                     * directory / subdirectories affected by the lock.
+                     * 
+                     */
+                    private boolean isLocked(String rootPath, String fileName, int mask) {
+                        String path = rootPath + java.io.File.separator + (fileName.indexOf(java.io.File.separator) > -1?fileName.substring(0, fileName.indexOf(java.io.File.separator)):"");
+                        
+                        if(fileName.endsWith(CvsController.CVS_LOCK) && mask == JNotify.FILE_CREATED) {
+                            // a lock was just created, we register the directory
+                            CvsController.lockedDirectories.add(path);
+                            return true; // we don't want to cache this file anyway
+                        } else if(fileName.endsWith(CvsController.CVS_LOCK) && mask == JNotify.FILE_DELETED) {
+                            // a lock was removed, we unregister the directory
+                            if(CvsController.lockedDirectories.contains(path)) {
+                                CvsController.lockedDirectories.remove(path);
+                            } else {
+                                logger.error("Tried to remove lock for directory "+path+" but there was no lock registered");
+                            }
+                            return true; // we don't want to cache this file anyway
+                        } else if(fileName.endsWith(CvsController.CVS_LOCK) && mask == JNotify.FILE_MODIFIED) {
+                            // WTF?
+                            logger.warn("Lock of directory "+path+ " modified, shouldn't happen.");
+                        }
+                        
+                        // does the actual check
+                        for(int i=0; i<CvsController.lockedDirectories.size(); i++) {
+                            if(path.startsWith(CvsController.lockedDirectories.get(i))) {
+                                return true;
+                            }
+                        }
+                        
+                        return false;
                     }
                     
                 });

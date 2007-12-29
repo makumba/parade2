@@ -1,6 +1,7 @@
 package org.makumba.parade.controller;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Vector;
@@ -11,6 +12,10 @@ import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.Execute;
 
 public class CvsController {
+    
+    public static final String CVS_LOCK = "parade-cvs-lock~";
+    
+    public static Vector<String> lockedDirectories = new Vector<String>();
     
     public static Object[] onCheck(String context, String[] params) {
         String absolutePath = params[0];
@@ -58,11 +63,14 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
+        createCVSUpdateLock(f.getAbsolutePath());
         Execute.exec(cmd, f, getPrintWriterCVS(out));
+        removeCVSUpdateLock(f.getAbsolutePath());
         
         // cvs update modifies state of file and of cvs data, locally
-        //FileManager.updateFileCache(context, absolutePath, true);
+        FileManager.updateFileCache(context, absolutePath, true);
         CVSManager.updateCvsCache(context, absolutePath, true);
+        
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -85,10 +93,12 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
+        createCVSUpdateLock(f.getAbsolutePath());
         Execute.exec(cmd, f, getPrintWriterCVS(out));
+        removeCVSUpdateLock(f.getAbsolutePath());
         
         // cvs recursive update modifies state of file and of cvs data, recursively
-        //FileManager.updateSimpleFileCache(context, absolutePath);
+        FileManager.updateFileCache(context, absolutePath, false);
         CVSManager.updateCvsCache(context, absolutePath, false);
         
         Object[] res = {result.toString(), new Boolean(true)};
@@ -236,6 +246,22 @@ public class CvsController {
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;
+    }
+    
+    private static void createCVSUpdateLock(String absoluteDirectoryPath) {
+        java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + CVS_LOCK);
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    private static void removeCVSUpdateLock(String absoluteDirectoryPath) {
+        java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + CVS_LOCK);
+        
+        f.delete();
     }
     
     /* displays output with colors */
