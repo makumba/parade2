@@ -70,13 +70,16 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
             // you never know
             if (!(currFile == null) && currFile.getIsDir())
-                readFiles(row, currFile);
+                readFiles(row, currFile, null);
         }
     }
     
-    public void fileRefresh(Row row, String path) {
-        // TODO Auto-generated method stub
-        
+    public void fileRefresh(Row row, String absolutePath) {
+        java.io.File f = new java.io.File(absolutePath);
+        File currFile = (File) row.getFiles().get(f.getParent());
+        if(!(currFile == null) && currFile.getIsDir()) {
+            readFiles(row, currFile, f.getName());
+        }
     }
 
     public void rowRefresh(Row row) {
@@ -132,15 +135,15 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
     }
 
-    private void readFiles(Row r, File f) {
+    private void readFiles(Row r, File f, String entry) {
 
-        readCVSEntries(r, f);
+        readCVSEntries(r, f, entry);
         readCVSIgnore(r, f);
         // readCVSCheckUpdate(paradeRow, data, pc);
     }
 
     /* Reads Entries file and extracts information */
-    private void readCVSEntries(Row r, File file) {
+    private void readCVSEntries(Row r, File file, String entry) {
         java.io.File f = new java.io.File((file.getPath() + "/" + "CVS/Entries").replace('/',
                 java.io.File.separatorChar));
         if (!f.exists())
@@ -159,9 +162,15 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     if (n == -1)
                         continue;
                     String name = line.substring(1, n);
+                    
+                    if(entry != null && !name.equals(entry))
+                        continue;
+                    
                     // logger.warn("Looking for CVS file: "+name);
 
                     String absoluteFilePath = file.getPath() + java.io.File.separator + name;
+                    java.io.File currFile = new java.io.File(absoluteFilePath);
+
                     
                     // we add this file entry to the other entries, for further checking agains the cache
                     cvsFiles.add(absoluteFilePath);
@@ -170,7 +179,22 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     File cvsfile = (File) r.getFiles().get(absoluteFilePath);
                     
                     boolean missing = false;
-                    if (missing = (cvsfile == null)) {
+                    boolean fileOnDisk = currFile.exists();
+                    if(cvsfile == null && !fileOnDisk) {
+                        missing = true;
+                    } else if(cvsfile != null && !fileOnDisk && cvsfile.getOnDisk()) {
+                        //this ain't a virtual file but it's still there
+                        //that's not ok, we have some zombie file info in cache
+                        r.getFiles().remove(absoluteFilePath);
+                        missing = true;
+                    } else if(cvsfile == null && fileOnDisk) {
+                        //the bloody filemanager didn't do his job. we ask it to do it again
+                        FileManager fileMgr = new FileManager();
+                        fileMgr.cacheFile(r, currFile, true);
+                        missing = false;
+                    }
+                        
+                    if (missing) {
                         cvsfile = FileManager.setVirtualFileData(r, file, name, false);
                         r.getFiles().put(absoluteFilePath, cvsfile);
                     }
@@ -237,10 +261,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
                     long cvsModified = fd.getTime();
 
-                    long l = fl.lastModified() - cvsModified
-                    // -(TimeZone.getDefault().inDaylightTime(new
-                    // Date(fl.lastModified()))?3600000:0);
-                    ;
+                    long l = fl.lastModified() - cvsModified;
                     if (Math.abs(l) < 1500
                     // for some stupid reason, lastModified() is different in
                             // Windows than Unix
@@ -286,6 +307,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         cvsdata.setRevision("(dir)");
                     }
                 }
+                
             }
             br.close();
             
@@ -357,5 +379,17 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         tx.commit();
         s.close();
         logger.debug("Finished refreshing CVS cache for path "+path+" of row "+context+((local)?" locally":" recursively"));
-    }   
+    }
+    
+    public synchronized static void updateSimpleCvsCache(String context, String path, String filename) {
+        logger.debug("Refreshing CVS cache for file "+filename+" in path "+path+" of row "+context);
+        CVSManager cvsMgr = new CVSManager();
+        Session s = InitServlet.getSessionFactory().openSession();
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        Row r = Row.getRow(p, context);
+        Transaction tx = s.beginTransaction();
+        cvsMgr.fileRefresh(r, path + java.io.File.separator + filename);
+        tx.commit();
+        s.close();logger.debug("Finished refreshing CVS cache for file "+filename+" in path "+path+" of row "+context);
+    }
 }

@@ -102,7 +102,7 @@ public class CommandController {
                 //TODO the same for the other caches
                 
                 //FileManager.updateSimpleFileCache(context, path);
-                CVSManager.updateCvsCache(context, path, true);
+                CVSManager.updateSimpleCvsCache(context, path, filename);
             }
         } finally {
             tx.commit();
