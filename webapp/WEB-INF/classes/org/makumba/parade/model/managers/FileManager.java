@@ -270,24 +270,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             return ("Error while trying to create file " + entry);
         }
         if (success) {
-            
-            File newFile = setFileData(r, f, false);
-            try {
-                Session s = InitServlet.getSessionFactory().openSession();
-                Transaction tx = s.beginTransaction();
-
-                s.load(Row.class, r.getId());
-                r.getFiles().put(f.getCanonicalPath(), newFile);
-
-                tx.commit();
-                s.close();
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            
-
             return "OK#" + f.getName();
         }
         return "Error while trying to create file " + entry;
@@ -302,26 +284,8 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         boolean success = f.mkdir();
 
         if (success) {
-            
-            File newFile = setFileData(r, f, true);
-            try {
-                Session s = InitServlet.getSessionFactory().openSession();
-                Transaction tx = s.beginTransaction();
-
-                r.getFiles().put(f.getCanonicalPath(), newFile);
-
-                tx.commit();
-                s.close();
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            
-
             return "OK#" + f.getName();
         }
-
         return "Error while trying to create directory " + absolutePath
                 + ". Make sure ParaDe has the security rights to write on the filesystem.";
 
@@ -332,9 +296,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         java.io.File f = new java.io.File(path + java.io.File.separator + entry);
         boolean success = f.delete();
         if (success) {
-            
-            removeFileCache(r, path, entry);
-
             return "OK#" + f.getName();
         }
         logger.error("Error while trying to delete file " + f.getAbsolutePath() + " " + "\n" + "Reason: exists: "
@@ -399,8 +360,13 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
     public void fileRefresh(Row row, String path) {
         java.io.File f = new java.io.File(path);
-        if (!f.exists())
+        if (!f.exists() && row.getFiles().get(path) != null) {
+            // file was deleted but cache still exists
+            row.getFiles().remove(path);
             return;
+        } else if(!f.exists() && row.getFiles().get(path) == null) {
+            return;
+        }
         cacheFile(row, f, false);
 
     }
