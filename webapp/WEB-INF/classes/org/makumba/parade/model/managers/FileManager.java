@@ -219,6 +219,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         if((fileData = row.getFiles().get(path)) != null) {
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
+            fileData.setOnDisk(true);
         
         // otherwise we make a new file
         } else {
