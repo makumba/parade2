@@ -61,7 +61,7 @@ public class CvsController {
         Execute.exec(cmd, f, getPrintWriterCVS(out));
         
         // cvs update modifies state of file and of cvs data, locally
-        FileManager.updateFileCache(context, absolutePath, true);
+        //FileManager.updateFileCache(context, absolutePath, true);
         CVSManager.updateCvsCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
@@ -115,9 +115,11 @@ public class CvsController {
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         
-        // cvs commit can lead to conflicts, hence modifies the state of the file and of the cvs data
-        //FileManager.updateSimpleFileCache(context, absoluteFilePath);
         CVSManager.updateCvsCache(context, absolutePath, true);
+        
+        // in case of a cvs commit that leads to the deletion of a file of the repository
+        // we need to make sure that the file gets removed from the cache or it will appear as "zombie"
+        
         FileManager.checkShouldCache(context, absolutePath, absoluteFilePath);   
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -163,7 +165,6 @@ public class CvsController {
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         
-        // cvs add doesn't modify the state of the file, only of the cvs data
         CVSManager.updateCvsCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
@@ -189,7 +190,6 @@ public class CvsController {
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         
-        // cvs add doesn't modify the state of the file, only of the cvs data
         CVSManager.updateCvsCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
@@ -210,7 +210,6 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        //FileManager.updateSimpleFileCache(context, absoluteFilePath);
         CVSManager.updateCvsCache(context, absolutePath, true);
         
         Object[] res = {result.toString(), new Boolean(true)};
@@ -232,7 +231,6 @@ public class CvsController {
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         
-        // cvs delete modifies only the state of the cvs data, the file was deleted before
         CVSManager.updateCvsCache(context, absolutePath, true);
                 
         Object[] res = {result.toString(), new Boolean(true)};
