@@ -101,7 +101,7 @@ public class CommandController {
                 //updates the caches
                 //TODO the same for the other caches
                 
-                //FileManager.updateSimpleFileCache(context, path);
+                FileManager.updateSimpleFileCache(context, path);
                 CVSManager.updateSimpleCvsCache(context, path, filename);
             }
         } finally {
