@@ -52,6 +52,7 @@ public class FileViewManager implements FileView, TreeView {
         fileView.put("nameEncoded", nameEncoded);
         fileView.put("name", f.getName());
         fileView.put("isDir", f.getIsDir());
+        fileView.put("isOnDisk", f.getOnDisk());
 
         // icons
         String fl = f.getName().toLowerCase();
