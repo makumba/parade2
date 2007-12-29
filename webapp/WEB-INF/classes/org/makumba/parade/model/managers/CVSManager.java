@@ -70,7 +70,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
             // you never know
             if (!(currFile == null) && currFile.getIsDir())
-                readFiles(row, currFile, null);
+                readFiles(row, currFile);
         }
     }
     
@@ -78,7 +78,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         java.io.File f = new java.io.File(absolutePath);
         File currFile = (File) row.getFiles().get(f.getParent());
         if(!(currFile == null) && currFile.getIsDir()) {
-            readFiles(row, currFile, f.getName());
+            readCVSEntries(row, currFile, f.getName());
         }
     }
 
@@ -135,9 +135,9 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
     }
 
-    private void readFiles(Row r, File f, String entry) {
+    private void readFiles(Row r, File f) {
 
-        readCVSEntries(r, f, entry);
+        readCVSEntries(r, f, null);
         readCVSIgnore(r, f);
         // readCVSCheckUpdate(paradeRow, data, pc);
     }
@@ -277,6 +277,9 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
                     // if the entry is a dir
                 } else if (line.startsWith("D/")) {
+                    if(entry != null)
+                        return;
+                    
                     int n = line.indexOf('/', 2);
                     if (n == -1)
                         continue;
@@ -310,6 +313,9 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                 
             }
             br.close();
+            
+            if(entry != null)
+                return;
             
             // now we check if our cache doesn't contain "zombie" cvsdata elements, i.e. if a file doesn't have
             // outdated cvs information
