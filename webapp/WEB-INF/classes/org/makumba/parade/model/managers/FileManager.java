@@ -198,20 +198,37 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
     /* setting File informations */
     private File setFileData(Row row, java.io.File file, boolean isDir) {
-        File fileData = new File();
-        fileData.setIsDir(isDir);
-        fileData.setRow(row);
+        File fileData = null;
+        String path = null;
         try {
-            fileData.setPath(file.getCanonicalPath());
+            path = (file.getCanonicalPath());
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        fileData.setParentPath(file.getParent().replace(java.io.File.separatorChar, '/'));
-        fileData.setName(file.getName());
-        fileData.setDate(new Long(file.lastModified()));
-        fileData.setSize(new Long(file.length()));
-        fileData.setOnDisk(true);
+        
+        // if we already had a file in cache we simple update it
+        if((fileData = row.getFiles().get(path)) != null) {
+            fileData.setDate(new Long(file.lastModified()));
+            fileData.setSize(new Long(file.length()));
+        
+        // otherwise we make a new file
+        } else {
+            fileData = new File();
+            fileData.setIsDir(isDir);
+            fileData.setRow(row);
+            try {
+                fileData.setPath(file.getCanonicalPath());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            fileData.setParentPath(file.getParent().replace(java.io.File.separatorChar, '/'));
+            fileData.setName(file.getName());
+            fileData.setDate(new Long(file.lastModified()));
+            fileData.setSize(new Long(file.length()));
+            fileData.setOnDisk(true);
+        }
         return fileData;
     }
 
