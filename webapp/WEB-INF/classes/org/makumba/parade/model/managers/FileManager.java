@@ -270,7 +270,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             return ("Error while trying to create file " + entry);
         }
         if (success) {
-            /*
+            
             File newFile = setFileData(r, f, false);
             try {
                 Session s = InitServlet.getSessionFactory().openSession();
@@ -286,7 +286,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            */
+            
 
             return "OK#" + f.getName();
         }
@@ -302,7 +302,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         boolean success = f.mkdir();
 
         if (success) {
-            /*
+            
             File newFile = setFileData(r, f, true);
             try {
                 Session s = InitServlet.getSessionFactory().openSession();
@@ -317,7 +317,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            */
+            
 
             return "OK#" + f.getName();
         }
@@ -332,6 +332,8 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         java.io.File f = new java.io.File(path + java.io.File.separator + entry);
         boolean success = f.delete();
         if (success) {
+            
+            removeFileCache(r, path, entry);
 
             return "OK#" + f.getName();
         }
