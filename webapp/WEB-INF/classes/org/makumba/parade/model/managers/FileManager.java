@@ -405,7 +405,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
     }
 
     // checks if a file should still be cached or if it's a zombie
-    // fixme should probably be in a more general CacheManager or so
+    // FIXME should probably be in a more general CacheManager or so
     public static void checkShouldCache(String context, String absolutePath, String absoluteFilePath) {
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
