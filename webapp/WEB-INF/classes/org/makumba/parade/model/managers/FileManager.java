@@ -25,6 +25,14 @@ import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.SimpleFileFilter;
 
+/**
+ * This class manages the cache for the files in ParaDe.
+ * 
+ * TODO clean it up and document
+ * 
+ * @author Manuel Gay
+ *
+ */
 public class FileManager implements RowRefresher, CacheRefresher, ParadeManager {
 
     static Logger logger = Logger.getLogger(FileManager.class.getName());
@@ -262,6 +270,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             return ("Error while trying to create file " + entry);
         }
         if (success) {
+            /*
             File newFile = setFileData(r, f, false);
             try {
                 Session s = InitServlet.getSessionFactory().openSession();
@@ -277,6 +286,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            */
 
             return "OK#" + f.getName();
         }
@@ -292,6 +302,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         boolean success = f.mkdir();
 
         if (success) {
+            /*
             File newFile = setFileData(r, f, true);
             try {
                 Session s = InitServlet.getSessionFactory().openSession();
@@ -306,6 +317,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            */
 
             return "OK#" + f.getName();
         }
@@ -320,8 +332,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         java.io.File f = new java.io.File(path + java.io.File.separator + entry);
         boolean success = f.delete();
         if (success) {
-
-            removeFileCache(r, path, entry);
 
             return "OK#" + f.getName();
         }
@@ -345,23 +355,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             cvsCache.setStatus(CVSManager.NEEDS_CHECKOUT);
         } else
             r.getFiles().remove(path + java.io.File.separator + entry);
-    }
-
-    public String uploadFile(Parade p, String path, String context) {
-        Session s = InitServlet.getSessionFactory().openSession();
-        Transaction tx = s.beginTransaction();
-
-        Row r = (Row) p.getRows().get(context);
-        File f = new File();
-        java.io.File file = new java.io.File(path);
-        f = setFileData(r, file, false);
-        addFile(r, f);
-
-        tx.commit();
-        s.close();
-
-        return path;
-
     }
 
     /* removes a file from the cache */
