@@ -356,6 +356,17 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         } else
             r.getFiles().remove(path + java.io.File.separator + entry);
     }
+    
+    public static void updateSimpleFileCache(String context, String path) {
+        Session s = InitServlet.getSessionFactory().openSession();
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        Row r = Row.getRow(p, context);
+        Transaction tx = s.beginTransaction();
+        FileManager fileMgr = new FileManager();
+        fileMgr.fileRefresh(r, path);
+        tx.commit();
+        s.close();
+    }
 
     /* removes a file from the cache */
     public static void deleteSimpleFileCache(String context, String path) {
