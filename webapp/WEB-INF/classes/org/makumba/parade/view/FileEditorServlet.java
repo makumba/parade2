@@ -14,6 +14,7 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.view.managers.CodePressFileEditViewManager;
+import org.makumba.parade.view.managers.FileEditViewManager;
 
 
 public class FileEditorServlet extends HttpServlet {
@@ -29,6 +30,7 @@ public class FileEditorServlet extends HttpServlet {
          * fileName - the name of the file to be edited
          * path - the relative path (displayed to the user)
          * source - the source (content of the file)
+         * editor - the kind of editor
          */
 		
 		Parade p = (Parade) s.get(Parade.class, new Long(1));
@@ -36,6 +38,7 @@ public class FileEditorServlet extends HttpServlet {
 		String fileName = (String)req.getParameter("file");
 		String path = (String)req.getParameter("path");
         String[] source =  req.getParameterValues("source");
+        String editor = req.getParameter("editor");
 		
 		
 		Row r = (Row)p.getRows().get(context);
@@ -53,15 +56,14 @@ public class FileEditorServlet extends HttpServlet {
                 resp.setContentType("text/html");
 				resp.setCharacterEncoding("UTF-8");
 				
-                // TODO we should give the possibility to choose which editor to use
-                // but maybe it's not that relevant anymore since almost everyone has JS
+                FileEditViewManager oldFileEditV = new FileEditViewManager();
+				CodePressFileEditViewManager codepressFileEditV = new CodePressFileEditViewManager();
                 
-                //FileEditViewManager fileEditV = new FileEditViewManager();
-				
-                //uncomment here to toggle to codepress
-                CodePressFileEditViewManager fileEditV = new CodePressFileEditViewManager();
-                
-                out.println(fileEditV.getFileEditorView(r, path, file, source));
+                if(editor.equals("codepress")) {
+                    out.println(codepressFileEditV.getFileEditorView(r, path, file, source));
+                } else {
+                    out.println(oldFileEditV.getFileEditorView(r, path, file, source));
+                }
 			}
 		}
 		
