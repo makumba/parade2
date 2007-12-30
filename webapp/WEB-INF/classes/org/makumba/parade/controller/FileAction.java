@@ -35,7 +35,7 @@ public class FileAction extends Action {
             //we need to refresh the status of this specific file
             String absoluteFilePath = Parade.constructAbsolutePath(context, path);
             //FileManager.updateSimpleFileCache(context, absoluteFilePath);
-            CVSManager.updateCvsCache(context, absoluteFilePath, true);
+            CVSManager.updateSimpleCvsCache(context, absoluteFilePath, file);
             
             return (mapping.findForward("edit"));
         }
