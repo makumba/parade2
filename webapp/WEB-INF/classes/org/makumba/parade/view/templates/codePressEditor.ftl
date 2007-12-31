@@ -7,7 +7,7 @@
 </head>
 <body bgcolor="#dddddd" TOPMARGIN=0 LEFTMARGIN=0 RIGHTMARGIN=0 BOTTOMMARGIN=0 marginwidth=0 marginheight=0 STYLE="margin: 0px">
 
-<form name="sourceEdit" method="post" action="/File.do?op=editFile&context=${rowName}&path=${path}&file=${fileName}" style="margin:0px;">
+<form name="sourceEdit" method="post" action="/File.do?op=editFile&context=${rowName}&path=${path}&file=${fileName}&editor=codepress" style="margin:0px;">
 
 <input type="submit" name="Submit" value="(S)ave!" ACCESSKEY="S" onclick="myCpWindow.toggleEditor();">
 <a href="browse.jsp?context=${rowName}" target="_top" title="${rowName}">${rowName}</a>:<a href="/servlet/browse?display=file&context=${rowName}&path=${path}">${path}</a>/<b>${fileName}</b>
