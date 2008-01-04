@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
@@ -47,6 +48,8 @@ public class Parade {
     public WebappManager webappMgr = new WebappManager();
 
     public MakumbaManager makMgr = new MakumbaManager();
+
+    public static Vector<String> lockedDirectories = new Vector<String>();
     
     /*
      * 1. Calls create row for the new/to be updated rows 2. Calls for each row: - rowRefresh() - directoryRefresh() 3.
@@ -363,12 +366,12 @@ public class Parade {
                         String filePath = rootPath + java.io.File.separator + fileName;
                         if(fileName.endsWith(CvsController.CVS_LOCK) && mask == JNotify.FILE_CREATED) {
                             // a lock was just created, we register the directory
-                            CvsController.lockedDirectories.add(path);
+                            Parade.lockedDirectories.add(path);
                             return true; // we don't want to cache this file anyway
                         } else if(fileName.endsWith(CvsController.CVS_LOCK) && mask == JNotify.FILE_DELETED) {
                             // a lock was removed, we unregister the directory
-                            if(CvsController.lockedDirectories.contains(path)) {
-                                CvsController.lockedDirectories.remove(path);
+                            if(Parade.lockedDirectories.contains(path)) {
+                                Parade.lockedDirectories.remove(path);
                             } else {
                                 logger.error("Tried to remove lock for directory "+path+" but there was no lock registered");
                             }
@@ -379,8 +382,8 @@ public class Parade {
                         }
                         
                         // does the actual check
-                        for(int i=0; i<CvsController.lockedDirectories.size(); i++) {
-                            if(path.startsWith(CvsController.lockedDirectories.get(i)) || filePath.equals(CvsController.lockedDirectories.get(i))) {
+                        for(int i=0; i<Parade.lockedDirectories.size(); i++) {
+                            if(path.startsWith(Parade.lockedDirectories.get(i)) || filePath.equals(Parade.lockedDirectories.get(i))) {
                                 return true;
                             }
                         }

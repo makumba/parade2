@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.util.Vector;
 
 import org.makumba.parade.tools.HtmlUtils;
+import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.Execute;
@@ -14,8 +15,6 @@ import org.makumba.parade.tools.Execute;
 public class CvsController {
     
     public static final String CVS_LOCK = "parade-cvs-lock~";
-    
-    public static Vector<String> lockedDirectories = new Vector<String>();
     
     public static Object[] onCheck(String context, String[] params) {
         String absolutePath = params[0];
@@ -270,11 +269,11 @@ public class CvsController {
     }
     
     private static void createFileLock(String absoluteFilePath) {
-        lockedDirectories.add(absoluteFilePath);
+        Parade.lockedDirectories.add(absoluteFilePath);
     }
     
     private static void removeFileLock(String absoluteFilePath) {
-        lockedDirectories.remove(absoluteFilePath);
+        Parade.lockedDirectories.remove(absoluteFilePath);
     }
     
     /* displays output with colors */

@@ -81,6 +81,8 @@ public class CommandController {
                 path = absolutePath;
             }
             
+            Parade.lockedDirectories.add(path + java.io.File.separator + filename);
+            
             // security check - if the path of the file is outisde the path of the row, we deny any action
             try {
                 if((new java.io.File(path).getCanonicalPath().length() < new java.io.File(absolutePath).getCanonicalPath().length())) {
@@ -103,6 +105,9 @@ public class CommandController {
                 FileManager.updateSimpleFileCache(context, path, filename);
                 CVSManager.updateSimpleCvsCache(context, path + java.io.File.separator + filename);
             }
+
+            Parade.lockedDirectories.remove(path + java.io.File.separator + filename);
+
         } finally {
             tx.commit();
             s.close();
