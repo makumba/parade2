@@ -81,7 +81,7 @@ public class CommandController {
                 path = absolutePath;
             }
             
-            Parade.lockedDirectories.add(path + java.io.File.separator + filename);
+            Parade.createFileLock(path + java.io.File.separator + filename);
             
             // security check - if the path of the file is outisde the path of the row, we deny any action
             try {
@@ -106,7 +106,7 @@ public class CommandController {
                 CVSManager.updateSimpleCvsCache(context, path + java.io.File.separator + filename);
             }
 
-            Parade.lockedDirectories.remove(path + java.io.File.separator + filename);
+            Parade.removeFileLock(path + java.io.File.separator + filename);
 
         } finally {
             tx.commit();

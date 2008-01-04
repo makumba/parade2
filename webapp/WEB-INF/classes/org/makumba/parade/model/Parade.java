@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.makumba.parade.controller.CvsController;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
@@ -48,6 +47,8 @@ public class Parade {
     public WebappManager webappMgr = new WebappManager();
 
     public MakumbaManager makMgr = new MakumbaManager();
+
+    public static final String LOCK = ".parade-lock~";
 
     public static Vector<String> lockedDirectories = new Vector<String>();
     
@@ -361,29 +362,44 @@ public class Parade {
                      * directory / subdirectories affected by the lock.
                      * 
                      */
-                    private boolean isLocked(String rootPath, String fileName, int mask) {
-                        String path = rootPath + (fileName.indexOf(java.io.File.separator) > -1?java.io.File.separator:"") + (fileName.indexOf(java.io.File.separator) > -1?fileName.substring(0, fileName.lastIndexOf(java.io.File.separator)):"");
-                        String filePath = rootPath + java.io.File.separator + fileName;
-                        if(fileName.endsWith(CvsController.CVS_LOCK) && mask == JNotify.FILE_CREATED) {
-                            // a lock was just created, we register the directory
-                            Parade.lockedDirectories.add(path);
+                    private boolean isLocked(String rootPath, String relativeFilePath, int mask) {
+                        if(rootPath == null || relativeFilePath == null)
+                            return false;
+                        
+                        String relativePath = relativeFilePath.indexOf(java.io.File.separator) > -1?java.io.File.separator:"";
+                        String fileName = relativeFilePath.indexOf(java.io.File.separator) > -1?relativeFilePath.substring(relativeFilePath.lastIndexOf(java.io.File.separator)):relativeFilePath;
+                        String path = rootPath + (relativePath.length() > 0?java.io.File.separator:"") + relativePath;
+                        String filePath = path + java.io.File.separator + fileName;
+                        
+                        if(fileName.endsWith(LOCK) && mask == JNotify.FILE_CREATED) {
+                            // a lock was just created, we register it
+                            if(fileName.equals(LOCK))
+                                lockedDirectories.add(path);
+                            else if(fileName.endsWith(LOCK) && fileName.length() > LOCK.length())
+                                lockedDirectories.add(path + fileName.substring(0, fileName.indexOf(LOCK)));
                             return true; // we don't want to cache this file anyway
-                        } else if(fileName.endsWith(CvsController.CVS_LOCK) && mask == JNotify.FILE_DELETED) {
+                        } else if(fileName.endsWith(LOCK) && mask == JNotify.FILE_DELETED) {
                             // a lock was removed, we unregister the directory
-                            if(Parade.lockedDirectories.contains(path)) {
-                                Parade.lockedDirectories.remove(path);
+                            String lockPath = "";
+                            if(fileName.equals(LOCK))
+                                lockPath = path;
+                            else if(fileName.endsWith(LOCK) && fileName.length() > LOCK.length())
+                                lockPath = path + fileName.substring(0, fileName.indexOf(LOCK));
+                            
+                            if(lockedDirectories.contains(lockPath)) {
+                                lockedDirectories.remove(lockPath);
                             } else {
                                 logger.error("Tried to remove lock for directory "+path+" but there was no lock registered");
                             }
                             return true; // we don't want to cache this file anyway
-                        } else if(fileName.endsWith(CvsController.CVS_LOCK) && mask == JNotify.FILE_MODIFIED) {
+                        } else if(fileName.endsWith(LOCK) && mask == JNotify.FILE_MODIFIED) {
                             // WTF?
                             logger.warn("Lock of directory "+path+ " modified, shouldn't happen.");
                         }
                         
                         // does the actual check
-                        for(int i=0; i<Parade.lockedDirectories.size(); i++) {
-                            if(path.startsWith(Parade.lockedDirectories.get(i)) || filePath.equals(Parade.lockedDirectories.get(i))) {
+                        for(int i=0; i<lockedDirectories.size(); i++) {
+                            if(path.startsWith(lockedDirectories.get(i)) || filePath.equals(lockedDirectories.get(i))) {
                                 return true;
                             }
                         }
@@ -430,6 +446,37 @@ public class Parade {
 
     public void setBaseDir(String paradeBase) {
         this.baseDir = paradeBase;
+    }
+
+    public static void createFileLock(String absoluteFilePath) {
+        java.io.File lock = new java.io.File(absoluteFilePath + LOCK);
+        try {
+            lock.createNewFile();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeFileLock(String absoluteFilePath) {
+        java.io.File f = new java.io.File(absoluteFilePath);
+        java.io.File lock = new java.io.File(f.getPath() + java.io.File.separator + f.getName() + LOCK);
+        lock.delete();
+    }
+
+    public static void createDirectoryLock(String absoluteDirectoryPath) {
+        java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + LOCK);
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeDirectoryLock(String absoluteDirectoryPath) {
+        java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + LOCK);
+        f.delete();
     }
 
     public static String constructAbsolutePath(String context, String relativePath) {

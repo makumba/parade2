@@ -1,7 +1,6 @@
 package org.makumba.parade.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Vector;
@@ -13,8 +12,6 @@ import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.Execute;
 
 public class CvsController {
-    
-    public static final String CVS_LOCK = "parade-cvs-lock~";
     
     public static Object[] onCheck(String context, String[] params) {
         String absolutePath = params[0];
@@ -62,9 +59,9 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        createDirectoryLock(f.getAbsolutePath());
+        Parade.createDirectoryLock(f.getAbsolutePath());
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        removeDirectoryLock(f.getAbsolutePath());
+        Parade.removeDirectoryLock(f.getAbsolutePath());
         
         // cvs update modifies state of file and of cvs data, locally
         FileManager.updateDirectoryCache(context, absolutePath, true);
@@ -92,9 +89,9 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        createDirectoryLock(f.getAbsolutePath());
+        Parade.createDirectoryLock(f.getAbsolutePath());
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        removeDirectoryLock(f.getAbsolutePath());
+        Parade.removeDirectoryLock(f.getAbsolutePath());
         
         // cvs recursive update modifies state of file and of cvs data, recursively
         FileManager.updateDirectoryCache(context, absolutePath, false);
@@ -172,10 +169,10 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        createFileLock(f.getAbsolutePath());
+        Parade.createFileLock(f.getAbsolutePath());
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         CVSManager.updateSimpleCvsCache(context, f.getAbsolutePath());
-        removeFileLock(f.getAbsolutePath());
+        Parade.removeFileLock(f.getAbsolutePath());
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -198,10 +195,10 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        createFileLock(f.getAbsolutePath());
+        Parade.createFileLock(f.getAbsolutePath());
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         CVSManager.updateSimpleCvsCache(context, f.getAbsolutePath());
-        removeFileLock(f.getAbsolutePath());
+        Parade.removeFileLock(f.getAbsolutePath());
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -220,11 +217,11 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        createFileLock(absoluteFilePath);
+        Parade.createFileLock(absoluteFilePath);
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         FileManager.updateSimpleFileCache(context, p.getAbsolutePath(), f.getName());
         CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
-        removeFileLock(absoluteFilePath);
+        Parade.removeFileLock(absoluteFilePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -243,37 +240,14 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        createFileLock(absoluteFilePath);
+        Parade.createFileLock(absoluteFilePath);
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
-        removeFileLock(absoluteFilePath);
+        Parade.removeFileLock(absoluteFilePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;
-    }
-    
-    private static void createDirectoryLock(String absoluteDirectoryPath) {
-        java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + CVS_LOCK);
-        try {
-            f.createNewFile();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-    
-    private static void removeDirectoryLock(String absoluteDirectoryPath) {
-        java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + CVS_LOCK);
-        f.delete();
-    }
-    
-    private static void createFileLock(String absoluteFilePath) {
-        Parade.lockedDirectories.add(absoluteFilePath);
-    }
-    
-    private static void removeFileLock(String absoluteFilePath) {
-        Parade.lockedDirectories.remove(absoluteFilePath);
     }
     
     /* displays output with colors */
