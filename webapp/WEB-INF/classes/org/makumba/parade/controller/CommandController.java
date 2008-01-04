@@ -98,11 +98,10 @@ public class CommandController {
 
             success = result.startsWith("OK");
             if(success) {
-                //updates the caches
-                //TODO the same for the other caches
-                
-                FileManager.updateSimpleFileCache(context, path);
-                CVSManager.updateSimpleCvsCache(context, path, filename);
+                // updates the caches
+                // TODO add other caches (e.g. tracker) here
+                FileManager.updateSimpleFileCache(context, path, filename);
+                CVSManager.updateSimpleCvsCache(context, path + java.io.File.separator + filename);
             }
         } finally {
             tx.commit();

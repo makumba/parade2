@@ -58,6 +58,12 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         cvsDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
+    /**
+     * Refreshes the CVS cache of a directory
+     * @param row the row in which the operation takes place
+     * @param path the path to the directory
+     * @param local should <code>true</code> if this action should be done locally, <code>false</code> if it should propagate also to sub-directories
+     */
     public void directoryRefresh(Row row, String path, boolean local) {
 
         // for the root paths
@@ -74,6 +80,11 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         }
     }
     
+    /**
+     * Updates the CVS cache of a file
+     * @param row the row in which the operation takes place
+     * @param absolutePath the absolute path to the file to update
+     */
     public void fileRefresh(Row row, String absolutePath) {
         java.io.File f = new java.io.File(absolutePath);
         File currFile = (File) row.getFiles().get(f.getParent());
@@ -150,11 +161,15 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
             return;
         
         Set<String> cvsFiles = new HashSet<String>();
+        
+        boolean updatedSimpleFileCache = false;
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line = null;
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null || !updatedSimpleFileCache) {
+                if(line == null)
+                    return;
 
                 // if the Entry is a file
                 if (line.startsWith("/")) {
@@ -163,7 +178,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         continue;
                     String name = line.substring(1, n);
                     
-                    if(entry != null && !name.equals(entry))
+                    if(entry != null && !(updatedSimpleFileCache = name.equals(entry)))
                         continue;
                     
                     // logger.warn("Looking for CVS file: "+name);
@@ -282,7 +297,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     // if the entry is a dir
                 } else if (line.startsWith("D/")) {
                     if(entry != null)
-                        return;
+                        continue;
                     
                     int n = line.indexOf('/', 2);
                     if (n == -1)
@@ -335,7 +350,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
             
             
         } catch (Throwable t) {
-            logger.error("Error while trying to set CVS information for file " + file.getName(), t);
+            logger.error("Error while trying to set CVS information for file " + file.getName() + "at path "+file.getPath(), t);
         }
     }
 
@@ -378,6 +393,13 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
     }
     
+    /**
+     * Updates the CVS cache for a whole directory.
+     * 
+     * @param context the context in which the operation takes place
+     * @param path the absolute path to the directory
+     * @param local should <code>true</code> if this action should be done locally, <code>false</code> if it should propagate also to sub-directories
+     */
     public synchronized static void updateCvsCache(String context, String path, boolean local) {
         logger.debug("Refreshing CVS cache for path "+path+" of row "+context+((local)?" locally":" recursively"));
         CVSManager cvsMgr = new CVSManager();
@@ -391,15 +413,22 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         logger.debug("Finished refreshing CVS cache for path "+path+" of row "+context+((local)?" locally":" recursively"));
     }
     
-    public synchronized static void updateSimpleCvsCache(String context, String path, String filename) {
-        logger.debug("Refreshing CVS cache for file "+filename+" in path "+path+" of row "+context);
+    /**
+     * Updates the CVS cache for a single file.
+     * @param context the context in which the operation takes place
+     * @param path the absolute path to the directory of the file
+     * @param filename the name of the file of which to update the cache
+     */    
+    public synchronized static void updateSimpleCvsCache(String context, String absolutePath) {
+        logger.debug("Refreshing CVS cache for file "+absolutePath+" of row "+context);
         CVSManager cvsMgr = new CVSManager();
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         Row r = Row.getRow(p, context);
         Transaction tx = s.beginTransaction();
-        cvsMgr.fileRefresh(r, path + java.io.File.separator + filename);
+        cvsMgr.fileRefresh(r, absolutePath);
         tx.commit();
-        s.close();logger.debug("Finished refreshing CVS cache for file "+filename+" in path "+path+" of row "+context);
+        s.close();
+        logger.debug("Finished refreshing CVS cache for file "+absolutePath+" of row "+context);
     }
 }

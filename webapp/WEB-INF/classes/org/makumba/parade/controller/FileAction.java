@@ -32,10 +32,10 @@ public class FileAction extends Action {
         }
 
         if (op != null && op.startsWith("editFile")) {
+            
             //we need to refresh the status of this specific file
-            String absoluteFilePath = Parade.constructAbsolutePath(context, path);
-            //FileManager.updateSimpleFileCache(context, absoluteFilePath);
-            CVSManager.updateSimpleCvsCache(context, absoluteFilePath, file);
+            String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + file;
+            CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
             
             return (mapping.findForward("edit"));
         }

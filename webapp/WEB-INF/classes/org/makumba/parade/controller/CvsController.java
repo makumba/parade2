@@ -68,7 +68,7 @@ public class CvsController {
         removeCVSUpdateLock(f.getAbsolutePath());
         
         // cvs update modifies state of file and of cvs data, locally
-        FileManager.updateFileCache(context, absolutePath, true);
+        FileManager.updateDirectoryCache(context, absolutePath, true);
         CVSManager.updateCvsCache(context, absolutePath, true);
         
         
@@ -98,7 +98,7 @@ public class CvsController {
         removeCVSUpdateLock(f.getAbsolutePath());
         
         // cvs recursive update modifies state of file and of cvs data, recursively
-        FileManager.updateFileCache(context, absolutePath, false);
+        FileManager.updateDirectoryCache(context, absolutePath, false);
         CVSManager.updateCvsCache(context, absolutePath, false);
         
         Object[] res = {result.toString(), new Boolean(true)};
@@ -125,7 +125,7 @@ public class CvsController {
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         
-        CVSManager.updateCvsCache(context, absolutePath, true);
+        CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
         
         // in case of a cvs commit that leads to the deletion of a file of the repository
         // we need to make sure that the file gets removed from the cache or it will appear as "zombie"
@@ -174,8 +174,7 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        
-        CVSManager.updateCvsCache(context, absolutePath, true);
+        CVSManager.updateSimpleCvsCache(context, f.getAbsolutePath());
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -200,7 +199,7 @@ public class CvsController {
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         
-        CVSManager.updateCvsCache(context, absolutePath, true);
+        CVSManager.updateSimpleCvsCache(context, f.getAbsolutePath());
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -220,7 +219,8 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        CVSManager.updateCvsCache(context, absolutePath, true);
+        FileManager.updateSimpleFileCache(context, p.getAbsolutePath(), f.getName());
+        CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -240,9 +240,8 @@ public class CvsController {
         PrintWriter out = new PrintWriter(result);
         
         Execute.exec(cmd, p, getPrintWriterCVS(out));
+        CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
         
-        CVSManager.updateCvsCache(context, absolutePath, true);
-                
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;

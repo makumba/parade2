@@ -304,49 +304,57 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         return "Error while trying to delete file " + f.getName();
     }
 
+    public void fileRefresh(Row row, String path) {
+        java.io.File f = new java.io.File(path);
+        File cacheFile = null;
+        if (!f.exists() && (cacheFile = row.getFiles().get(path)) != null) {
+            // file was deleted but cache still exists
+            removeFileCache(cacheFile);
+            return;
+        } else if(!f.exists() && row.getFiles().get(path) == null) {
+            return;
+        }
+        cacheFile(row, f, false);
+
+    }
+    
     public void removeFileCache(Row r, String path, String entry) {
         File cacheFile = (File) r.getFiles().get(path + java.io.File.separator + entry);
         if(cacheFile == null)
             return;
-
-        Object cvsData = cacheFile.getFiledata().get("cvs");
+        
+        removeFileCache(cacheFile);
+    }
+    
+    public void removeFileCache(File file) {
+        
+        Object cvsData = file.getFiledata().get("cvs");
 
         // if there is CVS data for this file
         // TODO do this check for Tracker as well once it will be done
         if (cvsData != null) {
             FileCVS cvsCache = (FileCVS) cvsData;
-            cacheFile.setOnDisk(false);
+            file.setOnDisk(false);
             cvsCache.setStatus(CVSManager.NEEDS_CHECKOUT);
         } else
-            r.getFiles().remove(path + java.io.File.separator + entry);
+            file.getRow().getFiles().remove(file.getPath());
     }
     
-    public static void updateSimpleFileCache(String context, String path) {
+    public static void updateSimpleFileCache(String context, String path, String filename) {
+        logger.debug("Refreshing file cache for file "+filename+" in path "+path+" of row "+context);
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         Row r = Row.getRow(p, context);
         Transaction tx = s.beginTransaction();
         FileManager fileMgr = new FileManager();
-        fileMgr.fileRefresh(r, path);
+        fileMgr.fileRefresh(r, path + java.io.File.separator + filename);
         tx.commit();
         s.close();
-    }
-
-    /* removes a file from the cache */
-    public static void deleteSimpleFileCache(String context, String path) {
-        Session s = InitServlet.getSessionFactory().openSession();
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
-        Row r = Row.getRow(p, context);
-        Transaction tx = s.beginTransaction();
-
-        r.getFiles().remove(path);
-
-        tx.commit();
-        s.close();
+        logger.debug("Finished refreshing file cache for file "+filename+" in path "+path+" of row "+context);
     }
 
     /* updates the File cache of a directory */
-    public static void updateFileCache(String context, String path, boolean local) {
+    public static void updateDirectoryCache(String context, String path, boolean local) {
         FileManager fileMgr = new FileManager();
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
@@ -357,19 +365,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
         tx.commit();
         s.close();
-    }
-
-    public void fileRefresh(Row row, String path) {
-        java.io.File f = new java.io.File(path);
-        if (!f.exists() && row.getFiles().get(path) != null) {
-            // file was deleted but cache still exists
-            row.getFiles().remove(path);
-            return;
-        } else if(!f.exists() && row.getFiles().get(path) == null) {
-            return;
-        }
-        cacheFile(row, f, false);
-
     }
 
     public static void fileWrite(java.io.File file, String content) throws IOException {
