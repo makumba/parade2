@@ -360,7 +360,7 @@ public class Parade {
                      */
                     private boolean isLocked(String rootPath, String fileName, int mask) {
                         String path = rootPath + (fileName.indexOf(java.io.File.separator) > -1?java.io.File.separator:"") + (fileName.indexOf(java.io.File.separator) > -1?fileName.substring(0, fileName.lastIndexOf(java.io.File.separator)):"");
-                        
+                        String filePath = rootPath + java.io.File.separator + fileName;
                         if(fileName.endsWith(CvsController.CVS_LOCK) && mask == JNotify.FILE_CREATED) {
                             // a lock was just created, we register the directory
                             CvsController.lockedDirectories.add(path);
@@ -380,7 +380,7 @@ public class Parade {
                         
                         // does the actual check
                         for(int i=0; i<CvsController.lockedDirectories.size(); i++) {
-                            if(path.startsWith(CvsController.lockedDirectories.get(i))) {
+                            if(path.startsWith(CvsController.lockedDirectories.get(i)) || filePath.equals(CvsController.lockedDirectories.get(i))) {
                                 return true;
                             }
                         }

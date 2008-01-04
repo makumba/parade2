@@ -63,9 +63,9 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        createCVSUpdateLock(f.getAbsolutePath());
+        createDirectoryLock(f.getAbsolutePath());
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        removeCVSUpdateLock(f.getAbsolutePath());
+        removeDirectoryLock(f.getAbsolutePath());
         
         // cvs update modifies state of file and of cvs data, locally
         FileManager.updateDirectoryCache(context, absolutePath, true);
@@ -93,9 +93,9 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        createCVSUpdateLock(f.getAbsolutePath());
+        createDirectoryLock(f.getAbsolutePath());
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        removeCVSUpdateLock(f.getAbsolutePath());
+        removeDirectoryLock(f.getAbsolutePath());
         
         // cvs recursive update modifies state of file and of cvs data, recursively
         FileManager.updateDirectoryCache(context, absolutePath, false);
@@ -173,8 +173,10 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
+        createFileLock(f.getAbsolutePath());
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         CVSManager.updateSimpleCvsCache(context, f.getAbsolutePath());
+        removeFileLock(f.getAbsolutePath());
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -197,9 +199,10 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
+        createFileLock(f.getAbsolutePath());
         Execute.exec(cmd, p, getPrintWriterCVS(out));
-        
         CVSManager.updateSimpleCvsCache(context, f.getAbsolutePath());
+        removeFileLock(f.getAbsolutePath());
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -218,9 +221,11 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
+        createFileLock(absoluteFilePath);
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         FileManager.updateSimpleFileCache(context, p.getAbsolutePath(), f.getName());
         CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
+        removeFileLock(absoluteFilePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -239,15 +244,17 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
+        createFileLock(absoluteFilePath);
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
+        removeFileLock(absoluteFilePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
         return res;
     }
     
-    private static void createCVSUpdateLock(String absoluteDirectoryPath) {
+    private static void createDirectoryLock(String absoluteDirectoryPath) {
         java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + CVS_LOCK);
         try {
             f.createNewFile();
@@ -257,10 +264,17 @@ public class CvsController {
         }
     }
     
-    private static void removeCVSUpdateLock(String absoluteDirectoryPath) {
+    private static void removeDirectoryLock(String absoluteDirectoryPath) {
         java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + CVS_LOCK);
-        
         f.delete();
+    }
+    
+    private static void createFileLock(String absoluteFilePath) {
+        lockedDirectories.add(absoluteFilePath);
+    }
+    
+    private static void removeFileLock(String absoluteFilePath) {
+        lockedDirectories.remove(absoluteFilePath);
     }
     
     /* displays output with colors */
