@@ -366,28 +366,32 @@ public class Parade {
                         if(rootPath == null || relativeFilePath == null)
                             return false;
                         
-                        String relativePath = relativeFilePath.indexOf(java.io.File.separator) > -1?java.io.File.separator:"";
-                        String fileName = relativeFilePath.indexOf(java.io.File.separator) > -1?relativeFilePath.substring(relativeFilePath.lastIndexOf(java.io.File.separator)):relativeFilePath;
+                        String relativePath = relativeFilePath.indexOf(java.io.File.separator) > -1?relativeFilePath.substring(0, relativeFilePath.lastIndexOf(java.io.File.separator)):"";
+                        String fileName = relativeFilePath.indexOf(java.io.File.separator) > -1?relativeFilePath.substring(relativeFilePath.lastIndexOf(java.io.File.separator)+1):relativeFilePath;
                         String path = rootPath + (relativePath.length() > 0?java.io.File.separator:"") + relativePath;
                         String filePath = path + java.io.File.separator + fileName;
-                        
                         if(fileName.endsWith(LOCK) && mask == JNotify.FILE_CREATED) {
                             // a lock was just created, we register it
-                            if(fileName.equals(LOCK))
+                            if(fileName.equals(LOCK)) {
                                 lockedDirectories.add(path);
-                            else if(fileName.endsWith(LOCK) && fileName.length() > LOCK.length())
-                                lockedDirectories.add(path + fileName.substring(0, fileName.indexOf(LOCK)));
-                            return true; // we don't want to cache this file anyway
+				logger.debug("Adding lock for directory "+path);
+			    } else if(fileName.endsWith(LOCK) && fileName.length() > LOCK.length()) {
+                                lockedDirectories.add(path + java.io.File.separator + fileName.substring(0, fileName.indexOf(LOCK)));
+				logger.debug("Adding lock for file " + path + java.io.File.separator + fileName.substring(0, fileName.indexOf(LOCK)));
+                            }
+			    return true; // we don't want to cache this file anyway
+			 
                         } else if(fileName.endsWith(LOCK) && mask == JNotify.FILE_DELETED) {
                             // a lock was removed, we unregister the directory
                             String lockPath = "";
                             if(fileName.equals(LOCK))
                                 lockPath = path;
                             else if(fileName.endsWith(LOCK) && fileName.length() > LOCK.length())
-                                lockPath = path + fileName.substring(0, fileName.indexOf(LOCK));
+                                lockPath = path + java.io.File.separator + fileName.substring(0, fileName.indexOf(LOCK));
                             
                             if(lockedDirectories.contains(lockPath)) {
                                 lockedDirectories.remove(lockPath);
+				logger.debug("Removing lock "+lockPath);
                             } else {
                                 logger.error("Tried to remove lock for directory "+path+" but there was no lock registered");
                             }
@@ -400,7 +404,8 @@ public class Parade {
                         // does the actual check
                         for(int i=0; i<lockedDirectories.size(); i++) {
                             if(path.startsWith(lockedDirectories.get(i)) || filePath.equals(lockedDirectories.get(i))) {
-                                return true;
+                                logger.debug("Lock detected for "+lockedDirectories.get(i));
+				return true;
                             }
                         }
                         
@@ -459,8 +464,7 @@ public class Parade {
     }
 
     public static void removeFileLock(String absoluteFilePath) {
-        java.io.File f = new java.io.File(absoluteFilePath);
-        java.io.File lock = new java.io.File(f.getPath() + java.io.File.separator + f.getName() + LOCK);
+        java.io.File lock = new java.io.File(absoluteFilePath + LOCK);
         lock.delete();
     }
 
