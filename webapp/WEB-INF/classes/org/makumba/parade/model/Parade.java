@@ -34,7 +34,7 @@ public class Parade {
     private Map<String, Row> rows = new HashMap<String, Row>();
 
     private static Logger logger = Logger.getLogger(Parade.class.getName());
-    
+
     // ParaDe managers
     // TODO these should be injected using Spring
 
@@ -51,7 +51,7 @@ public class Parade {
     public static final String LOCK = ".parade-lock~";
 
     public static Vector<String> lockedDirectories = new Vector<String>();
-    
+
     /*
      * 1. Calls create row for the new/to be updated rows 2. Calls for each row: - rowRefresh() - directoryRefresh() 3.
      * Add listener to trigger refresh if needed
@@ -80,7 +80,7 @@ public class Parade {
             Row r = (Row) rows.get((String) i.next());
             refreshRow(r);
         }
-        
+
         logger.info("ParaDe-wide refresh finished");
 
     }
@@ -201,8 +201,8 @@ public class Parade {
             if (r.getRowpath().equals(getBaseDir()))
                 continue;
 
-            //String webappPath = ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
-            String path = r.getRowpath(); //+ java.io.File.separator + webappPath;
+            // String webappPath = ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
+            String path = r.getRowpath(); // + java.io.File.separator + webappPath;
 
             // what kind of changes do we want to watch
             int mask = JNotify.FILE_CREATED | JNotify.FILE_DELETED | JNotify.FILE_MODIFIED | JNotify.FILE_RENAMED;
@@ -213,91 +213,90 @@ public class Parade {
             // now we start watching
             try {
                 int watchID = JNotify.addWatch(path, mask, watchSubtree, new JNotifyListener() {
-                    
+
                     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
-                        logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", "
-                        + oldName + " -> " + newName);
-                        if(isLocked(rootPath, oldName, JNotify.FILE_RENAMED))
+                        logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", " + oldName
+                                + " -> " + newName);
+                        if (isLocked(rootPath, oldName, JNotify.FILE_RENAMED))
                             return;
                         cacheDeleted(rootPath, oldName);
                         cacheNew(rootPath, newName);
-                        
+
                     }
 
                     public void fileModified(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
-                        if(isLocked(rootPath, name, JNotify.FILE_MODIFIED))
+                        if (isLocked(rootPath, name, JNotify.FILE_MODIFIED))
                             return;
                         cacheModified(rootPath, name);
                     }
 
                     public void fileDeleted(int wd, String rootPath, String name) {
-                        logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", "
-                        + name);
-                        if(isLocked(rootPath, name, JNotify.FILE_DELETED))
+                        logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", " + name);
+                        if (isLocked(rootPath, name, JNotify.FILE_DELETED))
                             return;
                         cacheDeleted(rootPath, name);
                     }
 
                     public void fileCreated(int wd, String rootPath, String name) {
-                        logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", "
-                        + name);
-                        if(isLocked(rootPath, name, JNotify.FILE_CREATED))
+                        logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", " + name);
+                        if (isLocked(rootPath, name, JNotify.FILE_CREATED))
                             return;
                         cacheNew(rootPath, name);
                     }
-                    
+
                     private synchronized void cacheNew(String rootPath, String fileName) {
                         java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
-                        
-                        if(!f.exists())
+
+                        if (!f.exists())
                             return;
-                        
+
                         SimpleFileFilter sf = new SimpleFileFilter();
-                         
-                        if(sf.accept(f)) {
+
+                        if (sf.accept(f)) {
                             cacheFile(rootPath, fileName);
                         }
                     }
-                    
+
                     private synchronized void cacheModified(String rootPath, String fileName) {
                         java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
-                        
-                        if(!f.exists())
+
+                        if (!f.exists())
                             return;
-                        
+
                         SimpleFileFilter sf = new SimpleFileFilter();
-                         
-                        // we don't refresh directories, since the modification of files in there are going to be notified
-                        if(sf.accept(f) && !f.isDirectory()) {
+
+                        // we don't refresh directories, since the modification of files in there are going to be
+                        // notified
+                        if (sf.accept(f) && !f.isDirectory()) {
                             cacheFile(rootPath, fileName);
                         }
                     }
-                    
+
                     private synchronized void cacheDeleted(String rootPath, String fileName) {
                         java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
-                        
+
                         SimpleFileFilter sf = new SimpleFileFilter();
-                         
-                        if(sf.accept(f) && !f.isDirectory()) {
+
+                        if (sf.accept(f) && !f.isDirectory()) {
                             deleteFile(rootPath, fileName);
                         }
                     }
-                    
+
                     private void cacheFile(String rootPath, String fileName) {
-                        if(rootPath == null || fileName == null)
+                        if (rootPath == null || fileName == null)
                             return;
 
-                        logger.debug("Refreshing file cache for file " + fileName + " of directory "+rootPath);
-                        
+                        logger.debug("Refreshing file cache for file " + fileName + " of directory " + rootPath);
+
                         java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
-                        
+
                         FileManager fileMgr = new FileManager();
                         Session session = null;
-                        
+
                         try {
                             session = InitServlet.getSessionFactory().openSession();
-                            
+
                             Parade p = (Parade) session.get(Parade.class, new Long(1));
                             Row r = findRowFromContext(rootPath, p);
                             Transaction tx = session.beginTransaction();
@@ -306,30 +305,30 @@ public class Parade {
                             fileMgr.cacheFile(r, f, true);
 
                             tx.commit();
-                 
+
                         } finally {
-                           session.close();
+                            session.close();
                         }
-                        
-                        logger.debug("Finished refreshing file cache for file " + fileName + " of directory "+rootPath);
-                        
-                        
+
+                        logger.debug("Finished refreshing file cache for file " + fileName + " of directory "
+                                + rootPath);
+
                     }
-                    
+
                     private void deleteFile(String rootPath, String fileName) {
-                        if(rootPath == null || fileName == null)
+                        if (rootPath == null || fileName == null)
                             return;
 
-                        logger.debug("Deleting file cache for file " + fileName + " of directory "+rootPath);
-                        
+                        logger.debug("Deleting file cache for file " + fileName + " of directory " + rootPath);
+
                         java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
-                        
+
                         FileManager fileMgr = new FileManager();
                         Session session = null;
-                        
+
                         try {
                             session = InitServlet.getSessionFactory().openSession();
-                            
+
                             Parade p = (Parade) session.get(Parade.class, new Long(1));
                             Row r = findRowFromContext(rootPath, p);
                             Transaction tx = session.beginTransaction();
@@ -337,17 +336,17 @@ public class Parade {
                             fileMgr.removeFileCache(r, rootPath, fileName);
 
                             tx.commit();
-                 
+
                         } finally {
-                           session.close();
+                            session.close();
                         }
-                        
-                        logger.debug("Finished deleting file cache for file " + fileName + " of directory "+rootPath);
+
+                        logger.debug("Finished deleting file cache for file " + fileName + " of directory " + rootPath);
                     }
-                    
+
                     private Row findRowFromContext(String rowPath, Parade p) {
                         Iterator i = p.getRows().keySet().iterator();
-                        
+
                         boolean row_found = false;
                         Row contextRow = null;
                         while (i.hasNext() && !row_found) {
@@ -356,62 +355,69 @@ public class Parade {
                         }
                         return contextRow;
                     }
-                    
+
                     /**
                      * Avoids conflicts with CVS Manager by checking whether there's a lock on the files to come in the
                      * directory / subdirectories affected by the lock.
                      * 
                      */
                     private boolean isLocked(String rootPath, String relativeFilePath, int mask) {
-                        if(rootPath == null || relativeFilePath == null)
+                        if (rootPath == null || relativeFilePath == null)
                             return false;
-                        
-                        String relativePath = relativeFilePath.indexOf(java.io.File.separator) > -1?relativeFilePath.substring(0, relativeFilePath.lastIndexOf(java.io.File.separator)):"";
-                        String fileName = relativeFilePath.indexOf(java.io.File.separator) > -1?relativeFilePath.substring(relativeFilePath.lastIndexOf(java.io.File.separator)+1):relativeFilePath;
-                        String path = rootPath + (relativePath.length() > 0?java.io.File.separator:"") + relativePath;
+
+                        String relativePath = relativeFilePath.indexOf(java.io.File.separator) > -1 ? relativeFilePath
+                                .substring(0, relativeFilePath.lastIndexOf(java.io.File.separator)) : "";
+                        String fileName = relativeFilePath.indexOf(java.io.File.separator) > -1 ? relativeFilePath
+                                .substring(relativeFilePath.lastIndexOf(java.io.File.separator) + 1) : relativeFilePath;
+                        String path = rootPath + (relativePath.length() > 0 ? java.io.File.separator : "")
+                                + relativePath;
                         String filePath = path + java.io.File.separator + fileName;
-                        if(fileName.endsWith(LOCK) && mask == JNotify.FILE_CREATED) {
+                        if (fileName.endsWith(LOCK) && mask == JNotify.FILE_CREATED) {
                             // a lock was just created, we register it
-                            if(fileName.equals(LOCK)) {
+                            if (fileName.equals(LOCK)) {
                                 lockedDirectories.add(path);
-				logger.debug("Adding lock for directory "+path);
-			    } else if(fileName.endsWith(LOCK) && fileName.length() > LOCK.length()) {
-                                lockedDirectories.add(path + java.io.File.separator + fileName.substring(0, fileName.indexOf(LOCK)));
-				logger.debug("Adding lock for file " + path + java.io.File.separator + fileName.substring(0, fileName.indexOf(LOCK)));
-                            }
-			    return true; // we don't want to cache this file anyway
-			 
-                        } else if(fileName.endsWith(LOCK) && mask == JNotify.FILE_DELETED) {
-                            // a lock was removed, we unregister the directory
-                            String lockPath = "";
-                            if(fileName.equals(LOCK))
-                                lockPath = path;
-                            else if(fileName.endsWith(LOCK) && fileName.length() > LOCK.length())
-                                lockPath = path + java.io.File.separator + fileName.substring(0, fileName.indexOf(LOCK));
-                            
-                            if(lockedDirectories.contains(lockPath)) {
-                                lockedDirectories.remove(lockPath);
-				logger.debug("Removing lock "+lockPath);
-                            } else {
-                                logger.error("Tried to remove lock for directory "+path+" but there was no lock registered");
+                                logger.debug("Adding lock for directory " + path);
+                            } else if (fileName.endsWith(LOCK) && fileName.length() > LOCK.length()) {
+                                lockedDirectories.add(path + java.io.File.separator
+                                        + fileName.substring(0, fileName.indexOf(LOCK)));
+                                logger.debug("Adding lock for file " + path + java.io.File.separator
+                                        + fileName.substring(0, fileName.indexOf(LOCK)));
                             }
                             return true; // we don't want to cache this file anyway
-                        } else if(fileName.endsWith(LOCK) && mask == JNotify.FILE_MODIFIED) {
+
+                        } else if (fileName.endsWith(LOCK) && mask == JNotify.FILE_DELETED) {
+                            // a lock was removed, we unregister the directory
+                            String lockPath = "";
+                            if (fileName.equals(LOCK))
+                                lockPath = path;
+                            else if (fileName.endsWith(LOCK) && fileName.length() > LOCK.length())
+                                lockPath = path + java.io.File.separator
+                                        + fileName.substring(0, fileName.indexOf(LOCK));
+
+                            if (lockedDirectories.contains(lockPath)) {
+                                lockedDirectories.remove(lockPath);
+                                logger.debug("Removing lock " + lockPath);
+                            } else {
+                                logger.error("Tried to remove lock for directory " + path
+                                        + " but there was no lock registered");
+                            }
+                            return true; // we don't want to cache this file anyway
+                        } else if (fileName.endsWith(LOCK) && mask == JNotify.FILE_MODIFIED) {
                             // WTF?
-                            logger.warn("Lock of directory "+path+ " modified, shouldn't happen.");
+                            logger.warn("Lock of directory " + path + " modified, shouldn't happen.");
                         }
-                        
+
                         // does the actual check
-                        for(int i=0; i<lockedDirectories.size(); i++) {
-                            if(path.startsWith(lockedDirectories.get(i)) || filePath.equals(lockedDirectories.get(i))) {
-                                logger.debug("Lock detected for "+lockedDirectories.get(i));
-				return true;
+                        for (int i = 0; i < lockedDirectories.size(); i++) {
+                            if (path.startsWith(lockedDirectories.get(i)) || filePath.equals(lockedDirectories.get(i))) {
+                                logger.debug("Lock detected for " + lockedDirectories.get(i));
+                                return true;
                             }
                         }
-                        
+
                         return false;
                     }
-                    
+
                 });
                 logger.info("Adding filesystem watch to row " + r.getRowname());
             } catch (JNotifyException e) {
@@ -422,7 +428,7 @@ public class Parade {
             }
         }
     }
-    
+
     /* Model related fields and methods */
 
     public Long getId() {
@@ -486,7 +492,7 @@ public class Parade {
     public static String constructAbsolutePath(String context, String relativePath) {
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
-        
+
         Row entryRow = null;
 
         if (context != null) {
