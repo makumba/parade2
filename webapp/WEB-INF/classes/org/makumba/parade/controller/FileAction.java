@@ -10,6 +10,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.managers.CVSManager;
+import org.makumba.parade.model.managers.FileManager;
 
 public class FileAction extends Action {
 
@@ -35,7 +36,10 @@ public class FileAction extends Action {
             
             //we need to refresh the status of this specific file
             String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + file;
+            Parade.createFileLock(absoluteFilePath);
+            FileManager.updateSimpleFileCache(context, path, file);
             CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
+            Parade.removeFileLock(absoluteFilePath);
             
             return (mapping.findForward("edit"));
         }
