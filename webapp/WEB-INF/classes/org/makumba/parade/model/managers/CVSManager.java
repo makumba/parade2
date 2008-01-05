@@ -204,8 +204,18 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         missing = true;
                     } else if(cvsfile != null && !fileOnDisk && !cvsfile.getOnDisk()) {
                         // this is a virtual file which isn't on disk
-                        // so it is missing
-                        missing = true;
+                        // so either it is missing or it was scheduled for deletion
+                        FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
+                        if(cvsdata != null) {
+                            if(cvsdata.getRevision().startsWith("-")) {
+                                missing = false;
+                            } else {
+                                // strange.
+                                missing = true;
+                            }
+                        } else {
+                            missing = true;
+                        }
                     } else if(cvsfile == null && fileOnDisk) {
                         //the bloody filemanager didn't do his job. we ask it to do it again
                         FileManager fileMgr = new FileManager();

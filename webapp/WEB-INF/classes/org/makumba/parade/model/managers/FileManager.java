@@ -333,9 +333,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         // if there is CVS data for this file
         // TODO do this check for Tracker as well once it will be done
         if (cvsData != null) {
-            FileCVS cvsCache = (FileCVS) cvsData;
             file.setOnDisk(false);
-            cvsCache.setStatus(CVSManager.NEEDS_CHECKOUT);
         } else
             file.getRow().getFiles().remove(file.getPath());
     }

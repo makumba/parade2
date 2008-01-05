@@ -242,6 +242,7 @@ public class CvsController {
         
         Parade.createFileLock(absoluteFilePath);
         Execute.exec(cmd, p, getPrintWriterCVS(out));
+        FileManager.updateSimpleFileCache(context, absolutePath, f.getName());
         CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
         Parade.removeFileLock(absoluteFilePath);
         
