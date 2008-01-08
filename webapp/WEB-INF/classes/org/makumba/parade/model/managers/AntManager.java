@@ -161,15 +161,15 @@ public class AntManager implements RowRefresher, ParadeManager {
         logger.debug("Attempting to execute ANT command " + command + " with a java heap of " + memSize);
         
         Execute.exec(v, buildFile.getParentFile(), out);
-        out.flush();
-
+        
         rt.gc();
         long memSize1 = rt.totalMemory() - rt.freeMemory();
         logger.debug("Finished to execute ANT command " + command + " with a java heap of " + memSize1);
 
         out.println("heap size: " + memSize1);
         out.println("heap grew with: " + (memSize1 - memSize));
-
+        out.flush();
+        
         return HtmlUtils.text2html(result.toString(), "", "<br>");
 
         
