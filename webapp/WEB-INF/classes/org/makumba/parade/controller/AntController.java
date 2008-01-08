@@ -33,12 +33,7 @@ public class AntController {
         if (context != null)
             entryRow = Row.getRow(p, context);
 
-        try {
-            opResult = antMgr.executeAntCommand(entryRow, op);
-        } catch (IOException e) {
-            opResult = "Internal ParaDe error: error during execution of Ant Command:\n";
-            opResult+= e.getMessage();
-        }
+        opResult = antMgr.executeAntCommand(entryRow, op);
         
         //fileMgr.rowRefresh(entryRow);
 
