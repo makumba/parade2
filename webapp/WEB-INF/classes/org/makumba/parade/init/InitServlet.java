@@ -104,11 +104,6 @@ public class InitServlet extends HttpServlet implements Runnable {
             p = new Parade();
             p.setId(one);
             p.refresh();
-            try{
-                p.addJNotifyListeners();
-            }catch(Throwable e){
-                e.printStackTrace();
-            }
             session.save(p);
         }
         try{
