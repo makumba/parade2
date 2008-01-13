@@ -29,30 +29,10 @@ public class FileEditViewManager implements FileEditorView {
 		PrintWriter out = new PrintWriter(result);
 		
 		java.io.File f= new java.io.File(file.getPath());
-		java.io.File d;
 		String content="";
 		
 		if (source != null) {
 			content = source[0];
-
-			// we save
-			if (f.getParent() != null) {
-				d = new java.io.File(f.getParent());
-				d.mkdirs();
-			}
-			try {
-				f.createNewFile();
-				boolean windows = System.getProperty("line.separator").length() > 1;
-				PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(f)));
-				for (int i = 0; i < content.length(); i++) {
-					if (windows || content.charAt(i) != '\r')
-						pw.print(content.charAt(i));
-				}
-				pw.close();
-			} catch (IOException e) {
-				logger.error("Error while creating file ",e);
-			}
-			
 		}
 		else {
 			// we read the file

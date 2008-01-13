@@ -21,6 +21,7 @@ public class FileAction extends Action {
         String path = request.getParameter("path");
         String file = request.getParameter("file");
         String op = request.getParameter("op");
+        String[] source =  request.getParameterValues("source");
         
         // we reconstruct the absolute path
 
@@ -34,14 +35,19 @@ public class FileAction extends Action {
 
         if (op != null && op.startsWith("editFile")) {
             
-            //we need to refresh the status of this specific file
+            return (mapping.findForward("edit"));
+        }
+        
+        if(op != null && op.startsWith("saveFile")) {
             String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + file;
             Parade.createFileLock(absoluteFilePath);
+            FileController.saveFile(absoluteFilePath, source);
+            
             FileManager.updateSimpleFileCache(context, path, file);
             CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
             Parade.removeFileLock(absoluteFilePath);
             
-            return (mapping.findForward("edit"));
+            return (mapping.findForward("edit"));            
         }
         
         if (op != null && op.startsWith("upload")) {
@@ -69,14 +75,7 @@ public class FileAction extends Action {
             return mapping.findForward("browse");
            
         }
-        if (op != null && op.startsWith("write")) {
-            String content = request.getParameter("source");
-            request.setAttribute("file", file);
-            request.setAttribute("content", content);
-            
-            return mapping.findForward("fileWrite");
-        }
-
+        
         request.setAttribute("context", context);
         request.setAttribute("path", path);
         request.setAttribute("file", file);
