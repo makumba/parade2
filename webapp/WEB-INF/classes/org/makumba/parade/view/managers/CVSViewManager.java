@@ -26,9 +26,9 @@ public class CVSViewManager implements ParadeView {
         SimpleHash cvsModel = new SimpleHash();
         RowCVS cvsdata = (RowCVS) r.getRowdata().get("cvs");
         
-        cvsModel.put("user", cvsdata.getUser());
-        cvsModel.put("module", cvsdata.getModule());
-        cvsModel.put("branch", cvsdata.getBranch());
+        cvsModel.put("user", cvsdata.getUser()==null?"":cvsdata.getUser());
+        cvsModel.put("module", cvsdata.getModule()==null?"":cvsdata.getModule());
+        cvsModel.put("branch", cvsdata.getBranch()==null?"":cvsdata.getBranch());
         
         rowInformation.put("cvs", cvsModel);
 
