@@ -52,7 +52,7 @@ public class RowsAction extends Action {
             
             return mapping.findForward("index");
             
-        } else {
+        } else if(op != null && op.equals("parade")) {
             p.refresh();
             try{
                 p.addJNotifyListeners();
@@ -67,6 +67,12 @@ public class RowsAction extends Action {
             request.setAttribute("success", new Boolean(true));
             
             return mapping.findForward("index"); 
+        } else {
+
+            request.setAttribute("result", "Error: wrong op parameter");
+            request.setAttribute("success", new Boolean(false));
+            return mapping.findForward("index"); 
+
         }
         
     }
