@@ -45,8 +45,9 @@ public class AntManager implements RowRefresher, ParadeManager {
             Project p = getInitProject(buildFile, row, antdata);
             if (p == null) {
                 logger.error("AntManager: couldn't initialise the project");
+            } else {
+                setTargets(antdata, p);
             }
-            setTargets(antdata, p);
         }
 
         row.addManagerData(antdata);
