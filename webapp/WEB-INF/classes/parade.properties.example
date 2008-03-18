@@ -14,9 +14,6 @@ webapp.path=webapp
 tomcat.manager.user=someuser
 tomcat.manager.pass=somepass
 
-#where are the logs being stored?
-tomcat.output=logs/server-output.txt
-
 parade.authorizerClass=org.makumba.parade.auth.LDAPAuthorizer
 parade.authorizationMessage=ParaDe 2, use password of your BEST private area account
 
