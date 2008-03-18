@@ -175,7 +175,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
     public void cacheFile(Row row, java.io.File file, boolean local) {
         if(!file.exists() || file == null) {
-            logger.warn("Trying to add null file");
+            logger.warn("Trying to add non-existing/null file");
             return;
         }
         if(row == null) {
