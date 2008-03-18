@@ -16,7 +16,7 @@ public class RowProperties {
     
     private static String DEFAULT_ROWSFILE = "/rows.properties";
 
-    public Map rowDefinitions = new HashMap();
+    public Map<String, Map<String, String>> rowDefinitions = new HashMap<String, Map<String, String>>();
     
     static Logger logger = Logger.getLogger(ParadeProperties.class.getName());
 
@@ -27,14 +27,14 @@ public class RowProperties {
 
     
     /* Get Row definitions */
-    public Map getRowDefinitions() {
+    public Map<String, Map<String, String>> getRowDefinitions() {
         return this.rowDefinitions;
 
     }
 
     /* Add a row definition */
     public void addRowDefinition(String name, String path, String webapp, String description) {
-        Map row = new HashMap();
+        Map<String, String> row = new HashMap<String, String>();
         row.put("name", name);
         row.put("path", path);
         row.put("webapp", webapp);
@@ -49,7 +49,7 @@ public class RowProperties {
 
     }
 
-    public void setRowDefinitions(Map rowStoreProperties) {
+    public void setRowDefinitions(Map<String, Map<String, String>> rowStoreProperties) {
         this.rowDefinitions = rowStoreProperties;
     }
 

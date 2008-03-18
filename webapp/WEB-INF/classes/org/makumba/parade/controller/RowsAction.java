@@ -42,7 +42,7 @@ public class RowsAction extends Action {
                 return mapping.findForward("index"); 
             }
             
-            p.refreshRow(r);
+            p.rebuildRowCache(r);
             
             tx.commit();
             s.close();

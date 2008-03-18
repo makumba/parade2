@@ -33,6 +33,8 @@ public class Parade {
 
     private Map<String, Row> rows = new HashMap<String, Row>();
 
+    private RowProperties rowproperties = new RowProperties();
+    
     private static Logger logger = Logger.getLogger(Parade.class.getName());
 
     // ParaDe managers
@@ -62,7 +64,7 @@ public class Parade {
         this.baseDir = ParadeProperties.getParadeBase();
 
         /* Reads the row definitions and perfoms update/creation */
-        Map rowstore = (new RowProperties()).getRowDefinitions();
+        Map rowstore = rowproperties.getRowDefinitions();
         if (rowstore.isEmpty()) {
             logger.warn("No row definitions found, check RowProperties");
         }
@@ -84,6 +86,24 @@ public class Parade {
         logger.info("ParaDe-wide refresh finished");
 
     }
+    
+    public void rebuildRowCache(Row r) {
+        
+        String rowName = r.getRowname();
+        
+        // first we trash the existing row
+        this.getRows().remove(r);
+        
+        // then we read the row information from the rowstore
+        Map<String, String> rowDefinition = rowproperties.getRowDefinitions().get(rowName);
+        
+        // then we build it again
+        r = buildRow(rowDefinition);
+        
+        // finally, we refresh it
+        refreshRow(r);
+        
+    }
 
     public void refreshRow(Row r) {
         fileMgr.rowRefresh(r);
@@ -103,59 +123,7 @@ public class Parade {
 
         while (i.hasNext()) {
             rowDefinition = (Map) rowstore.get((String) i.next());
-            rowname = ((String) rowDefinition.get("name")).trim();
-
-            // looks if the row with the same name already exists and updates if necessary
-            if (this.getRows().containsKey(rowname)) {
-
-                Row storedRow = (Row) this.getRows().get(rowname);
-
-                String path = ((String) rowDefinition.get("path")).trim();
-                String canonicalPath = path;
-                try {
-                    canonicalPath = new java.io.File(path).getCanonicalPath();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                // the path is modified
-                if (!canonicalPath.equals(storedRow.getRowpath())) {
-                    storedRow.setRowpath((String) rowDefinition.get("path"));
-                    logger.warn("The path of row " + rowname + " was updated to " + (String) rowDefinition.get("path"));
-                }
-
-                // the description is modified
-                if (!((String) rowDefinition.get("desc")).trim().equals(storedRow.getDescription())) {
-                    storedRow.setDescription((String) rowDefinition.get("desc"));
-                    logger.warn("The description of row " + rowname + " was updated to "
-                            + (String) rowDefinition.get("desc"));
-                }
-
-                // updating the specific row data
-                newRow(storedRow, rowDefinition);
-
-                // this is a new row
-            } else {
-
-                // creating Row object and passing the information
-                Row r = new Row();
-                String name = ((String) rowDefinition.get("name")).trim();
-                r.setRowname(name);
-                String path = ((String) rowDefinition.get("path")).trim();
-                String canonicalPath = path;
-                try {
-                    canonicalPath = new java.io.File(path).getCanonicalPath();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                r.setRowpath(canonicalPath);
-                r.setDescription((String) rowDefinition.get("desc"));
-
-                newRow(r, rowDefinition);
-
-            }
+            buildRow(rowDefinition);
         }
 
         // removing deleted rows from cache
@@ -171,7 +139,64 @@ public class Parade {
         }
     }
 
-    public void newRow(Row r, Map rowDefinition) {
+    private Row buildRow(Map<String, String> rowDefinition) {
+        String rowname;
+        rowname = rowDefinition.get("name").trim();
+
+        // looks if the row with the same name already exists and updates if necessary
+        if (this.getRows().containsKey(rowname)) {
+
+            Row storedRow = (Row) this.getRows().get(rowname);
+
+            String path = rowDefinition.get("path").trim();
+            String canonicalPath = path;
+            try {
+                canonicalPath = new java.io.File(path).getCanonicalPath();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            // the path is modified
+            if (!canonicalPath.equals(storedRow.getRowpath())) {
+                storedRow.setRowpath(rowDefinition.get("path"));
+                logger.warn("The path of row " + rowname + " was updated to " + rowDefinition.get("path"));
+            }
+
+            // the description is modified
+            if (!rowDefinition.get("desc").trim().equals(storedRow.getDescription())) {
+                storedRow.setDescription(rowDefinition.get("desc"));
+                logger.warn("The description of row " + rowname + " was updated to "
+                        + (String) rowDefinition.get("desc"));
+            }
+
+            // updating the specific row data
+            return newRow(storedRow, rowDefinition);
+
+            // this is a new row
+        } else {
+
+            // creating Row object and passing the information
+            Row r = new Row();
+            String name = ((String) rowDefinition.get("name")).trim();
+            r.setRowname(name);
+            String path = ((String) rowDefinition.get("path")).trim();
+            String canonicalPath = path;
+            try {
+                canonicalPath = new java.io.File(path).getCanonicalPath();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            r.setRowpath(canonicalPath);
+            r.setDescription((String) rowDefinition.get("desc"));
+
+            return newRow(r, rowDefinition);
+
+        }
+    }
+
+    public Row newRow(Row r, Map rowDefinition) {
         logger.info("Registering new row " + r.getRowname());
 
         r.setParade(this);
@@ -182,6 +207,8 @@ public class Parade {
         antMgr.newRow(r.getRowname(), r, rowDefinition);
         webappMgr.newRow(r.getRowname(), r, rowDefinition);
         makMgr.newRow(r.getRowname(), r, rowDefinition);
+        
+        return r;
 
     }
 
