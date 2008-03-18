@@ -68,13 +68,19 @@ public class TriggerFilter implements Filter {
     public static ThreadLocal<ActionLogDTO> actionLog = new ThreadLocal<ActionLogDTO>();
 
     private static ThreadLocal<ActionLogDTO> tomcatActionLog = new ThreadLocal<ActionLogDTO>();
-
+    
     public static ThreadLocal<String> prefix = new ThreadLocal<String>();
 
     // guard that makes sure that we don't enter in an infinite logging loop
     private static ThreadLocal guard = new ThreadLocal() {
         public Object initialValue() {
             return false;
+        }
+    };
+    
+    public static ThreadLocal<Boolean> shutDown = new ThreadLocal<Boolean>() {
+        public Boolean initialValue() {
+            return new Boolean(false);
         }
     };
 
@@ -243,6 +249,13 @@ public class TriggerFilter implements Filter {
             guard.set(true);
 
             ActionLogDTO l = actionLog.get();
+            
+            // if we're shutting down tomcat, we stop logging, or tomcat can't shutdown anymore
+            if(shutDown.get()) {
+                return;
+            }
+            
+            
             ActionLogDTO log = computeHeuristicContextInformation(attributeValue);
             TriggerFilter.setPrefix();
 
@@ -275,8 +288,7 @@ public class TriggerFilter implements Filter {
 
     private static final String TOMCAT_STARTUP = "org.apache.catalina.startup.Bootstrap.load";
 
-    // NOT SURE IF THIS ONE WORKS
-    private static final String TOMCAT_SHUTDOWN = "org.apache.catalina.startup.Bootstrap.stopServer";
+    private static final String TOMCAT_SHUTDOWN = "org.apache.catalina.startup.Catalina.stop";
 
     private static final String MANAGER_DEPLOY = "Manager: install: Installing context configuration at";
 
@@ -339,6 +351,9 @@ public class TriggerFilter implements Filter {
                 new Throwable().printStackTrace(new PrintWriter(s));
 
                 if (s.toString().indexOf(TOMCAT_SHUTDOWN) > -1) {
+                    
+                    PerThreadPrintStream.oldSystemOut.println("debug tomcat shutdown:\n"+s.toString());
+
                     // tomcat shutting down, we want to register that
 
                     if (log != null && !log.getAction().equals("stopping")) {
@@ -346,6 +361,8 @@ public class TriggerFilter implements Filter {
                         log.setAction("stopping");
                         log.setOrigin("tomcat");
                         actionLog.set(log);
+                        shutDown.set(new Boolean(true));
+                        PerThreadPrintStream.setEnabled(false);
                     } else if (log != null && log.getAction().equals("stopping")) {
                         // we already logged that.
                         return log;
