@@ -1,6 +1,7 @@
 package org.makumba.parade.model;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -89,19 +90,29 @@ public class Parade {
     
     public void rebuildRowCache(Row r) {
         
+        long start = new Date().getTime();
+        logger.info("Starting to rebuild cache of row "+r.getRowname());
+        
         String rowName = r.getRowname();
         
         // first we trash the existing row
+        logger.info("Emptying cache of row "+r.getRowname());
         this.getRows().remove(r);
         
         // then we read the row information from the rowstore
         Map<String, String> rowDefinition = rowproperties.getRowDefinitions().get(rowName);
         
         // then we build it again
-        r = buildRow(rowDefinition);
+        Row r1 = buildRow(rowDefinition);
         
         // finally, we refresh it
-        refreshRow(r);
+        logger.info("Populating cache of row "+r.getRowname());
+        refreshRow(r1);
+        
+        long end = new Date().getTime();
+        
+        logger.info("Finished rebuilding cache of row "+rowName+". Operation took "+(end - start)+" ms");
+
         
     }
 
@@ -171,15 +182,15 @@ public class Parade {
             }
 
             // updating the specific row data
-            return newRow(storedRow, rowDefinition);
+            return registerRow(storedRow, rowDefinition);
 
             // this is a new row
         } else {
-
             // creating Row object and passing the information
             Row r = new Row();
             String name = ((String) rowDefinition.get("name")).trim();
             r.setRowname(name);
+            logger.info("Registering row " + r.getRowname());
             String path = ((String) rowDefinition.get("path")).trim();
             String canonicalPath = path;
             try {
@@ -191,14 +202,12 @@ public class Parade {
             r.setRowpath(canonicalPath);
             r.setDescription((String) rowDefinition.get("desc"));
 
-            return newRow(r, rowDefinition);
+            return registerRow(r, rowDefinition);
 
         }
     }
 
-    public Row newRow(Row r, Map rowDefinition) {
-        logger.info("Registering new row " + r.getRowname());
-
+    public Row registerRow(Row r, Map<String, String> rowDefinition) {
         r.setParade(this);
         rows.put(r.getRowname(), r);
 
