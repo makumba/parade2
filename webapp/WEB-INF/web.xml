@@ -1,99 +1,120 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- NOTE for co-developers: 
-     Tomcat may reload the webapp automatically when this file changes. However, sometimes an explicit reload, or even an uninstall/reinstall may be needed.
-     Tomcat 4.1 XML parser used to demand a certain order in the tags below. This is no longer true for Tomcat 5.
+	Tomcat may reload the webapp automatically when this file changes. However, sometimes an explicit reload, or even an uninstall/reinstall may be needed.
+	Tomcat 4.1 XML parser used to demand a certain order in the tags below. This is no longer true for Tomcat 5.
 -->
 
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-         version="2.4">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
 
-<!-- Tomcat 5 honours welcome files before any filtering.
-      This is not suitable for the VHostFilter or the UriRewriteFilter (in BEST webpass).
-      (in general, it misses a lot of the servlets' flexibility)
--->
+	<!-- Tomcat 5 honours welcome files before any filtering.
+		This is not suitable for the VHostFilter or the UriRewriteFilter (in BEST webpass).
+		(in general, it misses a lot of the servlets' flexibility)
+	-->
 
-<!-- put your  handler filters and it's mapping -->
+	<!-- put your  handler filters and it's mapping -->
 
-<!-- after all redirections are done, the makumba controller is applied -->
+	<!-- after all redirections are done, the makumba controller is applied -->
 
-<!-- ============  DEFINE servlets to handle ============== -->
-    <servlet>
-        <servlet-name>init</servlet-name>
-        <servlet-class>org.makumba.parade.init.InitServlet</servlet-class>
-	<load-on-startup>1</load-on-startup>
-    </servlet>
- 
-	 <servlet>
-	   <servlet-name>index</servlet-name>
-	   <servlet-class>org.makumba.parade.view.IndexServlet</servlet-class>
-	 </servlet>
-	 
-	 <servlet>
-	   <servlet-name>browse</servlet-name>
-	   <servlet-class>org.makumba.parade.view.BrowserServlet</servlet-class>
-	 </servlet>
-	 
-	 <servlet>
-	   <servlet-name>edit</servlet-name>
-	   <servlet-class>org.makumba.parade.view.FileEditorServlet</servlet-class>
-	 </servlet>
-	 
-	 <servlet>
-	   <servlet-name>logs</servlet-name>
-	   <servlet-class>org.makumba.parade.view.LogViewServlet</servlet-class>
-	 </servlet>
-	 
-	 <servlet>
-	   <servlet-name>ticker</servlet-name>
-	   <servlet-class>org.makumba.parade.view.TickerTapeServlet</servlet-class>
-	 </servlet>
-	 	 
-	 <servlet-mapping>
-	   <servlet-name>index</servlet-name>
-	   <url-pattern>/index.jsp</url-pattern>
-	 </servlet-mapping>
-	 
-	 <servlet-mapping>
-	   <servlet-name>logs</servlet-name>
-	   <url-pattern>/logs</url-pattern>
-	 </servlet-mapping>
-	 
-	 <servlet-mapping>
-	   <servlet-name>ticker</servlet-name>
-	   <url-pattern>/ticker</url-pattern>
-	 </servlet-mapping>
+	<!-- ============  DEFINE servlets to handle ============== -->
+	<servlet>
+		<servlet-name>init</servlet-name>
+		<servlet-class>
+			org.makumba.parade.init.InitServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
 
-<!-- Struts Action Servlet Configuration -->
-  <servlet>
-    <servlet-name>action</servlet-name>
-    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
-    <init-param>
-      <param-name>config</param-name>
-      <param-value>/WEB-INF/struts-config.xml</param-value>
-    </init-param>
-    <load-on-startup>3</load-on-startup>
-  </servlet>
-	 
+	<servlet>
+		<servlet-name>index</servlet-name>
+		<servlet-class>
+			org.makumba.parade.view.IndexServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>browse</servlet-name>
+		<servlet-class>
+			org.makumba.parade.view.BrowserServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>edit</servlet-name>
+		<servlet-class>
+			org.makumba.parade.view.FileEditorServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>logs</servlet-name>
+		<servlet-class>
+			org.makumba.parade.view.LogViewServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>ticker</servlet-name>
+		<servlet-class>
+			org.makumba.parade.view.TickerTapeServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>index</servlet-name>
+		<url-pattern>/index.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>logs</servlet-name>
+		<url-pattern>/logs</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ticker</servlet-name>
+		<url-pattern>/ticker</url-pattern>
+	</servlet-mapping>
+
+	<!-- Struts Action Servlet Configuration -->
+	<servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>
+			org.apache.struts.action.ActionServlet
+		</servlet-class>
+		<init-param>
+			<param-name>config</param-name>
+			<param-value>/WEB-INF/struts-config.xml</param-value>
+		</init-param>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
 
 
-<!-- =========== MAP servlets with URL ================= -->
 
-      <!-- Action Servlet Mapping -->
-	  <servlet-mapping>
-	    <servlet-name>action</servlet-name>
-	    <url-pattern>*.do</url-pattern>
-	  </servlet-mapping>
+	<!-- =========== MAP servlets with URL ================= -->
+
+	<!-- Action Servlet Mapping -->
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
 
 
 	<welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
 
 	<taglib>
-  		<taglib-uri>/WEB-INF/lib/tiles.tld</taglib-uri>
-  		<taglib-location>/WEB-INF/lib/tiles.tld</taglib-location>
+		<taglib-uri>/WEB-INF/lib/tiles.tld</taglib-uri>
+		<taglib-location>/WEB-INF/lib/tiles.tld</taglib-location>
 	</taglib>
+
+
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error.jsp</location>
+	</error-page>
 
 </web-app>

@@ -8,6 +8,7 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
+import org.makumba.parade.tools.ParadeException;
 import org.makumba.parade.view.interfaces.ParadeView;
 
 import freemarker.template.SimpleHash;
@@ -27,7 +28,7 @@ public class CVSViewManager implements ParadeView {
         RowCVS cvsdata = (RowCVS) r.getRowdata().get("cvs");
         
         if(cvsdata == null) {
-            throw new RuntimeException("Could not properly display CVS information, probably the index is being rebuilt. Please come back in 5 minutes.");
+            throw new ParadeException("Could not properly display CVS information, probably the index is being rebuilt. Please come back in 5 minutes.");
         }
         
         cvsModel.put("user", cvsdata.getUser()==null?"":cvsdata.getUser());

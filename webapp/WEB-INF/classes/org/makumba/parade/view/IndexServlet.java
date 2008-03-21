@@ -18,6 +18,7 @@ import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.tools.ParadeException;
 import org.makumba.parade.view.managers.AntViewManager;
 import org.makumba.parade.view.managers.CVSViewManager;
 import org.makumba.parade.view.managers.MakumbaViewManager;
@@ -119,7 +120,7 @@ public class IndexServlet extends HttpServlet {
         List rows = new LinkedList();
         
         if(p == null) {
-            throw new RuntimeException("Could not display index, probably the server is rebuilding it. Please come back in about 5 minutes.");
+            throw new ParadeException("Could not display index, probably the server is rebuilding it. Please come back in about 5 minutes.");
         }
         
         Iterator rowIterator = p.getRows().keySet().iterator();
