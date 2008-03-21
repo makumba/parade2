@@ -118,6 +118,10 @@ public class IndexServlet extends HttpServlet {
         
         List rows = new LinkedList();
         
+        if(p == null) {
+            throw new RuntimeException("Could not display index, probably the server is rebuilding it. Please come back in about 5 minutes.");
+        }
+        
         Iterator rowIterator = p.getRows().keySet().iterator();
         while (rowIterator.hasNext()) {
             String key = (String) rowIterator.next();

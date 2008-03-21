@@ -26,6 +26,10 @@ public class CVSViewManager implements ParadeView {
         SimpleHash cvsModel = new SimpleHash();
         RowCVS cvsdata = (RowCVS) r.getRowdata().get("cvs");
         
+        if(cvsdata == null) {
+            throw new RuntimeException("Could not properly display CVS information, probably the index is being rebuilt. Please come back in 5 minutes.");
+        }
+        
         cvsModel.put("user", cvsdata.getUser()==null?"":cvsdata.getUser());
         cvsModel.put("module", cvsdata.getModule()==null?"":cvsdata.getModule());
         cvsModel.put("branch", cvsdata.getBranch()==null?"":cvsdata.getBranch());
