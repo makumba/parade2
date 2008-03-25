@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -48,7 +49,29 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
             java.io.File fl = new java.io.File((path + "/WEB-INF/lib/makumba.jar").replace('/',
                     java.io.File.separatorChar));
             
-            if(!fl.exists()) return "No makumba.jar";
+            if(!fl.exists()) {
+                java.io.File lib = new java.io.File((path + "/WEB-INF/lib/").replace('/', java.io.File.separatorChar));
+                String[] libs = lib.list();
+                Vector<String> mak = new Vector<String>();
+                for(int i=0; i<libs.length; i++) {
+                    if(libs[i].indexOf("makumba") > -1 && libs[i].indexOf(".jar") > 0) {
+                        mak.add(libs[i]);
+                    }
+                }
+                
+                if(mak.size() == 0) {
+                    return "No makumba.jar";
+                } else if(mak.size() > 1) {
+                    return "Two makumba JARs found! Please remove one";
+                } else {
+                    String makPath = path + "/WEB-INF/lib/"+mak.get(0).replace('/', java.io.File.separatorChar);
+                    if(makPath.endsWith(java.io.File.separator)) {
+                        makPath = makPath.substring(0, makPath.length() - 1);
+                    }
+                    fl = new java.io.File(makPath);
+                }
+                
+            }
             
             JarFile jar = new JarFile(fl);
             Manifest mf = jar.getManifest();
