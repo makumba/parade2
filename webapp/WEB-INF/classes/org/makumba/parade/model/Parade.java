@@ -111,7 +111,7 @@ public class Parade {
         
         long end = new Date().getTime();
         
-        logger.info("Finished rebuilding cache of row "+rowName+". Operation took "+(end - start)+" ms");
+        logger.info("Finished rebuilding cache of row "+rowName+". Operation took " + (end - start) + " ms");
 
         
     }
@@ -253,6 +253,8 @@ public class Parade {
                     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
                         logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", " + oldName
                                 + " -> " + newName);
+                        checkSpecialFile(rootPath, oldName);
+                        checkSpecialFile(rootPath, newName);
                         if (isLocked(rootPath, oldName, JNotify.FILE_RENAMED))
                             return;
                         cacheDeleted(rootPath, oldName);
@@ -262,6 +264,7 @@ public class Parade {
 
                     public void fileModified(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
+                        checkSpecialFile(rootPath, name);
                         if (isLocked(rootPath, name, JNotify.FILE_MODIFIED))
                             return;
                         cacheModified(rootPath, name);
@@ -269,6 +272,7 @@ public class Parade {
 
                     public void fileDeleted(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", " + name);
+                        checkSpecialFile(rootPath, name);
                         if (isLocked(rootPath, name, JNotify.FILE_DELETED))
                             return;
                         cacheDeleted(rootPath, name);
@@ -276,9 +280,44 @@ public class Parade {
 
                     public void fileCreated(int wd, String rootPath, String name) {
                         logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", " + name);
+                        checkSpecialFile(rootPath, name);
                         if (isLocked(rootPath, name, JNotify.FILE_CREATED))
                             return;
                         cacheNew(rootPath, name);
+                    }
+
+                    /**
+                     * Checks whether this is a special file and if something should be done, like refreshing a manager or so
+                     * @param rootPath the root path of the file
+                     * @param name the name of the file
+                     */
+                    private void checkSpecialFile(String rootPath, String name) {
+                        
+                        // TODO this should be available to all the model managers, via the interface
+                        
+                        // we check if this is the makumba jar, and if yes, we recompute the version number cache
+                        String filePath = rootPath + java.io.File.separator + name;
+                        if(filePath.indexOf("WEB-INF/lib/makumba") > -1 && filePath.indexOf(".jar") > -1) {
+                            
+                            logger.info("Makumba JAR "+filePath+" was changed, refreshing its version.");
+                            
+                            Session session = null;
+                            try {
+                                session = InitServlet.getSessionFactory().openSession();
+
+                                Parade p = (Parade) session.get(Parade.class, new Long(1));
+                                Transaction tx = session.beginTransaction();
+
+                                makMgr.rowRefresh(findRowFromContext(rootPath, p));
+
+                                tx.commit();
+
+                            } finally {
+                                session.close();
+                            }
+
+                        }
+                        
                     }
 
                     private synchronized void cacheNew(String rootPath, String fileName) {
