@@ -1,0 +1,152 @@
+#! /bin/sh
+#
+
+# parade        Initscript for parade
+#
+# Author:       Heinrich Moser <heinrich.moser@best.eu.org>
+#
+# Version:      initial 1.0 03-Jan-2006  heinrich.moser@best.eu.org
+#               added reload option 1.1 03-Jan-2006 rudolf.mayer@best.eu.org
+#               increased restart sleep time 1.2 10-Apr-2007 heinrich.moser@best.eu.org
+#               made script modifications to use parade2 1.3 24-Dec-2007 manuel.gay@best.eu.org
+#               added check for inotify value, so that JNotify works well 1.4 29-Jan-2008 manuel.gay@best.eu.org
+#               increased sleeping time before parade restart 1.5 29-Mar-2008 manuel.gay@best.eu.org
+#               added function that cleans the database cache 1.6 29-Mar-2008 manuel.gay@best.eu.org
+#
+
+set -e
+
+DESC="BEST Parade"
+SCRIPTNAME=/etc/init.d/parade
+D_USER=parade
+D_PATH=~parade/server/parade2
+
+eval D_HOME=~$D_USER
+
+#
+#       Function that starts the daemon/service.
+#
+d_start() {
+        if [ `cat /proc/sys/fs/inotify/max_user_watches` -lt 64000 ]; then
+          echo "Error launching ParaDe: you have to increase the number of inode watches to 64000 by running 'echo 64000 > /proc/sys/fs/inotify/max_user_watches' as root"
+          exit 1
+        fi
+        su -c "cd $D_PATH; nohup ant tomcat &" - "$D_USER"
+}
+
+#
+#       Function that stops the daemon/service.
+#
+d_stop() {
+        su -c "cd $D_PATH; ant tomcat-stop" - "$D_USER"
+        echo "Initiated stopping, sleeping 15 seconds"
+        sleep 15
+        echo "Tomcat logs (check if tomcat really stopped, look for a line like 'Tomcat terminated at ... '):"
+        tail -n 15 $D_PATH/tomcat/logs/catalina.out
+}
+
+# 
+#       Function that sends a SIGHUP to the daemon/service.
+#
+d_reload() {
+        su -c "cd $D_PATH; ant reload" - "$D_USER"
+}
+
+#
+#       Function that takes the stacktrace logs to a file.
+#
+d_stacktrace() {
+        TOMCATID=`pgrep -u parade -f 'org.apache.catalina.startup.Bootstrap start$'`
+        LOGFILE=$D_HOME/server/parade/webapp/stacktraces/parade-crash-stacktrace_`date +%Y%m%d_%H%M`.txt
+        echo ". Kill -QUIT process ID '$TOMCATID'"
+        su -c "kill -QUIT $TOMCATID" - "$D_USER"
+        echo "Initiated strack traces, sleeping 5 seconds"
+        sleep 5
+        echo "Writing last 1500 lines of the logs to file '$LOGFILE'."
+        echo "If this is not enough lines, please run manually 'tail -n1500 $D_PATH/tomcat/logs/catalina.out > $LOGFILE' with a higher value!"
+        tail -n1500 $D_PATH/tomcat/logs/catalina.out > $LOGFILE
+}
+
+#
+#       Function that kills the process.
+#
+d_kill() {
+        TOMCATID=`pgrep -u parade -f 'org.apache.catalina.startup.Bootstrap start$'`
+        echo ". Killing Tomcat with process ID '$TOMCATID'"
+        su -c "kill -9 $TOMCATID"  - "$D_USER"
+}
+
+#
+#	Function that cleans the database cache after dumping it.
+#
+d_clean() {
+        echo Dumping ParaDe database...
+        mysqldump -u root parade -h localhost > $D_PATH/parade.sql
+        echo Finished dumping parade database
+        echo Cleaning ParaDe cache...
+        mysql parade -h localhost -u root < $D_PATH/cleanParadeCache.sql
+        echo Finished cleaning ParaDe cache
+}
+
+#
+#       Function that does the whole process.
+#
+d_all() {
+        d_stacktrace
+        d_kill
+        d_start
+}
+
+case "$1" in
+  start)
+        echo -n "Starting $DESC"
+        d_start
+        echo "."
+        ;;
+  stop)
+        echo -n "Stopping $DESC"
+        d_stop
+        echo "."
+        ;;
+  reload|force-reload)
+        echo -n "Reloading $DESC configuration..."
+        d_reload
+        echo "."
+        ;;
+  restart)
+        echo -n "Restarting $DESC"
+        d_stop
+        echo "Sleeping 15 seconds to give $DESC time to shut down."
+        sleep 15
+        d_start
+        echo "."
+        ;;
+  stacktrace)
+        echo -n "Taking $DESC logs"
+        d_stacktrace
+        echo "."
+        ;;
+  kill)
+        echo -n "Killing $DESC"
+        d_kill
+        echo "."
+        ;;
+  clean)
+	echo -n "Cleaning the database"
+	d_stop
+	d_clean
+	d_start
+	echo "."
+	;;
+  all)
+        echo -n "Full service $DESC"
+        d_all
+        echo "."
+        ;;
+  *)
+        echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload|kill|stacktrace|clean|all}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
