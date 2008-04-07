@@ -181,6 +181,11 @@ public class Parade {
         String appName = rowDefinition.get("application");
         if (r.getRowpath().equals(this.baseDir))
             appName = "parade";
+        
+        if(appName.length() == 0) {
+            appName = ParadeProperties.getProperty("parade.applications.default");
+        }
+        
         Application a = this.getApplications().get(appName);
         if (a == null) {
             logger.error("Application " + appName + " of row " + r.getRowname()
@@ -227,7 +232,15 @@ public class Parade {
         // the application is modified
         String application = rowDefinition.get("application").trim();
         if (storedRow.getApplication() != null && !application.equals(storedRow.getApplication().getName())) {
-            Application a = this.getApplications().get(rowDefinition.get("application"));
+            
+            String appName = rowDefinition.get("application");
+            
+            if(appName.length() == 0) {
+                appName = ParadeProperties.getProperty("parade.applications.default");
+            }
+
+            
+            Application a = this.getApplications().get(appName);
             if (a == null) {
                 logger.error("Application " + application + " is not configured. Check your parade.properties file.");
             }
