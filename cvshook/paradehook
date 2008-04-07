@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# This CVS hook sends a request to the parade server each time a new set of files is commited to the CVS repository
+# in order to use it, the following line should be added to the "loginfo" file of the CVS repository:
+# DEFAULT /path/to/paradehook $USER %{sVv}
+
+#PARADE_HOST="http://tequila.best.eu.org"
+PARADE_HOST="localhost:5050"
+QUERY_STRING="?commit="
+
+for file in $*
+  do
+    QUERY_STRING=${QUERY_STRING}$file:
+  done
+
+wget -q --spider $PARADE_HOST/servlet/cvscommit/$QUERY_STRING
+
+# Eat extra input
+cat > /dev/null
