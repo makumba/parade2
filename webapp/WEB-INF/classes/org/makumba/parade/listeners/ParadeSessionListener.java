@@ -26,9 +26,10 @@ public class ParadeSessionListener implements HttpSessionListener {
 
     public void sessionCreated(HttpSessionEvent e) {
         activeSessions.put(e.getSession().getId(), e.getSession());
-        System.out.println("session created");
-        System.out.println("id: "+e.getSession().getId());
-        System.out.println("user attribute: "+e.getSession().getAttribute("org.makumba.parade.user"));
+        
+        //System.out.println("session created");
+        //System.out.println("id: "+e.getSession().getId());
+        //System.out.println("user attribute: "+e.getSession().getAttribute("org.makumba.parade.user"));
         
         // TODO create a custom event, send it to dbservlet
 
@@ -36,9 +37,11 @@ public class ParadeSessionListener implements HttpSessionListener {
 
     public void sessionDestroyed(HttpSessionEvent e) {
         activeSessions.remove(e.getSession().getId());
-        System.out.println("session destroyed");
-        System.out.println("id: "+e.getSession().getId());
-        System.out.println("user attribute: "+e.getSession().getAttribute("org.makumba.parade.user"));
+        
+        //System.out.println("session destroyed");
+        //System.out.println("id: "+e.getSession().getId());
+        //System.out.println("user attribute: "+e.getSession().getAttribute("org.makumba.parade.user"));
+        
         // TODO create a custom event, send it to dbservlet
 
     }
