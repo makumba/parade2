@@ -9,11 +9,23 @@
     <div class='result'>${opResult}</div><br/>
   </#if>
 </#if>
+<table width="100%" cellpadding="0" cellspacing="0" >
+<tr>
+<td align="left">
+<strong>Currently online:</strong> <#list onlineUsers as user>${user}&nbsp;&nbsp;</#list>
+</td>
+<td align="right">
+<a href="logout.jsp">Logout</a>
+</td>
+</tr>
+</table>
 
-Hi ${userNickName}! Have a nice time on ParaDe!<br><br>
+<br>
+Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 
 <BORDER class='rowstore'>
 
+<br>
 <TABLE class='rowstore'>
 <tr>
 <#list headers as header>

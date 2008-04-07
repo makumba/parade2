@@ -19,6 +19,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.listeners.ParadeSessionListener;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.User;
@@ -120,6 +121,7 @@ public class IndexServlet extends HttpServlet {
         } else if(results.size() == 1) {
             // we know the guy, let's put more stuff in the session
             u = results.get(0);
+            ((HttpServletRequest)req).getSession().setAttribute("org.makumba.parade.userObject", u);
             ((HttpServletRequest)req).getSession().setAttribute("user.name", u.getName());
             ((HttpServletRequest)req).getSession().setAttribute("user.surname", u.getSurname());
             ((HttpServletRequest)req).getSession().setAttribute("user.nickname", u.getNickname());
@@ -173,6 +175,8 @@ public class IndexServlet extends HttpServlet {
         makView.setParadeViewHeader(headers);
         
         root.put("headers", headers);
+        
+        root.put("onlineUsers", ParadeSessionListener.getActiveSessionNicknames());
         
         // Iteration over the rows
         

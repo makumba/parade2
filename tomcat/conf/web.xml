@@ -1000,5 +1000,14 @@
         <welcome-file>index.htm</welcome-file>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+    
+    
+    <!-- Listeners -->
+	<listener>
+		<listener-class>
+		org.makumba.parade.listeners.ParadeSessionListener
+		</listener-class>
+	</listener>
+    
 
 </web-app>

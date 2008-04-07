@@ -134,6 +134,9 @@
 				<include name="org/makumba/parade/tools/ParadeConsoleHandler*.class" />
 				<include name="org/makumba/parade/tools/ParadeLogFormatter*.class" />
 				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
+				
+				<include name="org/makumba/parade/listeners/ParadeSessionListener*.class" />
+				
 			</fileset>
 
 			<fileset dir=".">
