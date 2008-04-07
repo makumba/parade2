@@ -11,6 +11,7 @@ import org.apache.struts.upload.FormFile;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
+import org.makumba.parade.tools.ParadeJNotifyListener;
 
 public class FileAction extends Action {
 
@@ -40,12 +41,12 @@ public class FileAction extends Action {
         
         if(op != null && op.startsWith("saveFile")) {
             String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + file;
-            Parade.createFileLock(absoluteFilePath);
+            ParadeJNotifyListener.createFileLock(absoluteFilePath);
             FileController.saveFile(absoluteFilePath, source);
             
             FileManager.updateSimpleFileCache(context, path, file);
             CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
-            Parade.removeFileLock(absoluteFilePath);
+            ParadeJNotifyListener.removeFileLock(absoluteFilePath);
             
             return (mapping.findForward("edit"));            
         }

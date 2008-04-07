@@ -61,6 +61,20 @@
 			org.makumba.parade.view.TickerTapeServlet
 		</servlet-class>
 	</servlet>
+	
+	<servlet>
+		<servlet-name>cvscommit</servlet-name>
+		<servlet-class>
+			org.makumba.parade.listeners.CVSCommitListenerServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>user</servlet-name>
+		<servlet-class>
+			org.makumba.parade.view.UserServlet
+		</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>index</servlet-name>
@@ -76,6 +90,17 @@
 		<servlet-name>ticker</servlet-name>
 		<url-pattern>/ticker</url-pattern>
 	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>cvscommit</servlet-name>
+		<url-pattern>/cvscommit</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>user</servlet-name>
+		<url-pattern>/user</url-pattern>
+	</servlet-mapping>
+
 
 	<!-- Struts Action Servlet Configuration -->
 	<servlet>

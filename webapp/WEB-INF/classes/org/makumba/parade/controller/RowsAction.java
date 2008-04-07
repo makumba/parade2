@@ -67,13 +67,26 @@ public class RowsAction extends Action {
             request.setAttribute("success", new Boolean(true));
             
             return mapping.findForward("index"); 
+            
+        } else if(op != null && op.equals("newRow")) {
+            
+            p.createNewRows();
+            
+            tx.commit();
+            s.close();
+            
+            request.setAttribute("result", "New rows added!");
+            request.setAttribute("success", new Boolean(true));
+            
+            return mapping.findForward("index");
+            
         } else {
 
             request.setAttribute("result", "Error: wrong op parameter");
             request.setAttribute("success", new Boolean(false));
             return mapping.findForward("index"); 
 
-        }
+        } 
         
     }
 }

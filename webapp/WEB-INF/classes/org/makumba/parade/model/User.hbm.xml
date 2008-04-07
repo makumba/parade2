@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+      "-//Hibernate/Hibernate Mapping DTD//EN"
+      "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+      
+<hibernate-mapping package="org.makumba.parade.model">
+	<class name="User">
+	
+		<cache usage="read-write" />
+	
+		<id name="id" unsaved-value="undefined">
+			<generator class="native" />
+		</id>
+		
+		<property name="login" />
+		<property name="name" />
+		<property name="surname" />
+		<property name="nickname" />
+		<property name="email" />
+		<property name="PAptr" />
+		
+		<one-to-one name="row" class="Row" />
+		
+		<many-to-one name="parade" class="Parade" />
+		
+		        
+	</class>
+</hibernate-mapping>
+
+      

@@ -80,10 +80,13 @@ public class AccessServlet extends HttpServlet {
             return false;
         if (((HttpServletRequest) req).getContextPath().equals("/manager"))
             return false;
+        if (((HttpServletRequest) req).getRequestURI().startsWith("/servlet/cvscommit"))
+            return false;
         return true;
     }
 
     HttpServletRequest checkLogin(ServletRequest req, ServletResponse resp) throws java.io.IOException {
+        
         if (checker.login(req, (HttpServletResponse) req.getAttribute("org.eu.best.tools.TriggerFilter.response"))) {
             return new HttpServletRequestWrapper((HttpServletRequest) req) {
                 public String getRemoteUser() {

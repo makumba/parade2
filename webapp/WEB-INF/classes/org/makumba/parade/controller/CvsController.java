@@ -6,7 +6,7 @@ import java.io.StringWriter;
 import java.util.Vector;
 
 import org.makumba.parade.tools.HtmlUtils;
-import org.makumba.parade.model.Parade;
+import org.makumba.parade.tools.ParadeJNotifyListener;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.Execute;
@@ -59,9 +59,9 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        Parade.createDirectoryLock(f.getAbsolutePath());
+        ParadeJNotifyListener.createDirectoryLock(f.getAbsolutePath());
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        Parade.removeDirectoryLock(f.getAbsolutePath());
+        ParadeJNotifyListener.removeDirectoryLock(f.getAbsolutePath());
         
         // cvs update modifies state of file and of cvs data, locally
         FileManager.updateDirectoryCache(context, absolutePath, true);
@@ -89,9 +89,9 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        Parade.createDirectoryLock(f.getAbsolutePath());
+        ParadeJNotifyListener.createDirectoryLock(f.getAbsolutePath());
         Execute.exec(cmd, f, getPrintWriterCVS(out));
-        Parade.removeDirectoryLock(f.getAbsolutePath());
+        ParadeJNotifyListener.removeDirectoryLock(f.getAbsolutePath());
         
         // cvs recursive update modifies state of file and of cvs data, recursively
         FileManager.updateDirectoryCache(context, absolutePath, false);
@@ -169,10 +169,10 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        Parade.createFileLock(f.getAbsolutePath());
+        ParadeJNotifyListener.createFileLock(f.getAbsolutePath());
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         CVSManager.updateSimpleCvsCache(context, f.getAbsolutePath());
-        Parade.removeFileLock(f.getAbsolutePath());
+        ParadeJNotifyListener.removeFileLock(f.getAbsolutePath());
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -195,10 +195,10 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        Parade.createFileLock(f.getAbsolutePath());
+        ParadeJNotifyListener.createFileLock(f.getAbsolutePath());
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         CVSManager.updateSimpleCvsCache(context, f.getAbsolutePath());
-        Parade.removeFileLock(f.getAbsolutePath());
+        ParadeJNotifyListener.removeFileLock(f.getAbsolutePath());
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -217,11 +217,11 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        Parade.createFileLock(absoluteFilePath);
+        ParadeJNotifyListener.createFileLock(absoluteFilePath);
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         FileManager.updateSimpleFileCache(context, p.getAbsolutePath(), f.getName());
         CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
-        Parade.removeFileLock(absoluteFilePath);
+        ParadeJNotifyListener.removeFileLock(absoluteFilePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         
@@ -240,11 +240,11 @@ public class CvsController {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         
-        Parade.createFileLock(absoluteFilePath);
+        ParadeJNotifyListener.createFileLock(absoluteFilePath);
         Execute.exec(cmd, p, getPrintWriterCVS(out));
         FileManager.updateSimpleFileCache(context, absolutePath, f.getName());
         CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
-        Parade.removeFileLock(absoluteFilePath);
+        ParadeJNotifyListener.removeFileLock(absoluteFilePath);
         
         Object[] res = {result.toString(), new Boolean(true)};
         

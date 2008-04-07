@@ -227,6 +227,9 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         cvsfile = FileManager.setVirtualFileData(r, file, name, false);
                         r.getFiles().put(absoluteFilePath, cvsfile);
                     }
+                    if(cvsfile == null)
+                        continue;
+                    
                     FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
                     if (cvsdata == null) {
                         cvsdata = new FileCVS();

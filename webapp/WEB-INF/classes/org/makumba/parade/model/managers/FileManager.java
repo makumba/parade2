@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.model.AbstractFileData;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Parade;
@@ -251,6 +252,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         cvsfile.setRow(r);
         cvsfile.setDate(new Long((new Date()).getTime()));
         cvsfile.setSize(new Long(0));
+        cvsfile.setFiledata(new HashMap<String, AbstractFileData>());
         return cvsfile;
     }
 

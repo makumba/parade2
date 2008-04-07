@@ -11,4 +11,5 @@ drop table ROW_TRACKER;
 drop table ROW_WEBAPP;
 drop table Row;
 drop table RowData;
-
+drop table CvsFiles;
+drop table Application;

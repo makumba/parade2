@@ -16,12 +16,11 @@ out.print("http://"+rurl + context); %>" >
 <body bgcolor="white">
 <html:form action="/FileUpload" method="post" enctype="multipart/form-data">
 Choose file: <html:file property="theFile"/> 
-
 <input type="hidden" name="context" value="${param.context}"/>
 <input type="hidden" name="path" value="${param.path}"/>
 <input type="hidden" name="op" value="upload"/>
-
 <html:submit>Upload File</html:submit>
+<br><font style="font-size: smaller;">(in ${param.context}/${param.path})</font>
 
 </html:form>
 </body>

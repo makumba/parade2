@@ -12,15 +12,9 @@ import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
+import org.makumba.parade.tools.ParadeJNotifyListener;
 import org.makumba.parade.view.managers.CommandViewManager;
 import org.makumba.parade.view.managers.FileDisplay;
-
-
-/**
- * 
- * @author manu
- * @version $id
- */
 
 public class CommandController {
 
@@ -81,7 +75,7 @@ public class CommandController {
                 path = absolutePath;
             }
             
-            Parade.createFileLock(path + java.io.File.separator + filename);
+            ParadeJNotifyListener.createFileLock(path + java.io.File.separator + filename);
             
             // security check - if the path of the file is outisde the path of the row, we deny any action
             try {
@@ -106,7 +100,7 @@ public class CommandController {
                 CVSManager.updateSimpleCvsCache(context, path + java.io.File.separator + filename);
             }
 
-            Parade.removeFileLock(path + java.io.File.separator + filename);
+            ParadeJNotifyListener.removeFileLock(path + java.io.File.separator + filename);
 
         } finally {
             tx.commit();

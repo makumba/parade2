@@ -3,250 +3,245 @@
           "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
           "http://struts.apache.org/dtds/struts-config_1_2.dtd">
 <!--
- $Header$
- $Revision$
- $Date$
-
- Copyright 2000-2004 Apache Software Foundation
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+	$Header$
+	$Revision$
+	$Date$
+	
+	Copyright 2000-2004 Apache Software Foundation
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+	
+	http://www.apache.org/licenses/LICENSE-2.0
+	
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
 -->
 <struts-config>
-  <display-name><![CDATA[
+	<display-name><![CDATA[
      controller
   ]]>
-  </display-name>
-    <description><![CDATA[
+	</display-name>
+	<description><![CDATA[
      Dispatches actions to right places, and performs needed controller actions
   ]]>
-  </description>
-  
-  <!-- ========== Form beans ============================== -->
-  <form-beans>
-    <form-bean name="FileUpload" type="org.makumba.parade.controller.UploadForm"/>
-  </form-beans>
+	</description>
 
-  <!-- ========== Global Forward Definitions ============================== -->
-  <global-forwards>
-    <forward   name="welcome"              path="/Welcome.do"/>
-    <forward   name="logoff"               path="/Logoff.do"/>
-    <forward   name="logon"                path="/Logon.do"/>
-    <forward   name="success"              path="/MainMenu.do"/>
-  </global-forwards>
+	<!-- ========== Form beans ============================== -->
+	<form-beans>
+		<form-bean name="FileUpload"
+			type="org.makumba.parade.controller.UploadForm" />
+	</form-beans>
 
-
-  <!-- ========== Action Mapping Definitions ============================== -->
-  <action-mappings>
-
-      <!-- File view -->
-      <action    path="/File"
-                 type="org.makumba.parade.controller.FileAction"
-                 parameter="op"
-                 >
-          
-          <forward name="browse" path="/servlet/browse" />
-          <forward name="edit" path="/servlet/edit" />
-          
-      </action>
-      
-      <!-- File upload -->
-      <action    path="/FileUpload"
-                 type="org.makumba.parade.controller.FileAction"
-                 name="FileUpload"
-                 scope="request"
-                 validate="true"
-                 parameter="op"
-                 input="/webapp/uploadFile.jsp">
-         
-          <forward name="browse" path="/servlet/browse"/>
-      </action>
-      
-      <!-- Command view -->
-      <action    path="/Command"
-                 type="org.makumba.parade.controller.CommandAction"
-                 parameter="op"
-                 >
-                 
-          <forward name="files" path="/servlet/browse" />
-          
-      </action>
-       
-      <!-- Edit view -->
-      <action    path="/Edit"
-                 type="org.makumba.parade.controller.EditAction"
-                 parameter="op"
-                 >
-                 
-          <forward name="files" path="/servlet/browse" />
-          
-      </action>
-      
-      <!-- CVS view -->
-      <action    path="/Cvs"
-                 type="org.makumba.parade.controller.CvsAction"
-                 parameter="op"
-                 >
-                 
-          <forward name="command" path="/servlet/browse" />
-          
-      </action>
-      
-      <!-- Webapp view -->
-      <action    path="/Webapp"
-                 type="org.makumba.parade.controller.WebappAction"
-                 >
-                 
-                 <forward name="command" path="/servlet/browse" />
-                 <forward name="index" path="/index.jsp" />
-          
-      </action>
-      
-      <!-- Ant view -->
-      <action    path="/Ant"
-                 type="org.makumba.parade.controller.AntAction"
-                 >
-                 
-                 <forward name="command" path="/servlet/browse" />
-                 <forward name="index" path="/index.jsp" />
-                 
-          
-      </action>
-      
-       <!-- Rowstore view -->
-      <action    path="/Rows"
-                 type="org.makumba.parade.controller.RowsAction"
-                 >
-                 
-                 <forward name="index" path="/index.jsp" />
-          
-      </action>
-      
-      <!-- Logs view -->
-      <action    path="/Logs"
-                 type="org.makumba.parade.controller.LogsAction"
-                 >
-                 
-                 <forward name="logs" path="/servlet/logs" />
-          
-      </action>
-      
-
-      <!-- Change locale action
-      <action
-          path="/Locale"
-          type="org.apache.struts.webapp.example.LocaleAction"
-          parameter="welcome" />
-
-      
-      <action    path="/Registration"
-                 forward="/registration.jsp"/>
-
-      
-      <action    path="/MainMenu"
-                 forward="/mainMenu.jsp"/>
-
-      
-      <action    path="/Logon"
-                 forward="/logon.jsp"/>
-
-       
-       <action    path="/SubmitLogon"
-                  type="org.apache.struts.webapp.example.LogonAction"
-                  name="LogonForm"
-                 scope="request"
-                 input="logon">
-         <exception
-                   key="expired.password"
-                  type="org.apache.struts.webapp.example.ExpiredPasswordException"
-                  path="/ExpiredPassword.do"/>
-       </action>
-
-      
-       <action    path="/Logoff"
-                  type="org.apache.struts.webapp.example.LogoffAction">
-         <forward name="success"              path="/Welcome.do"/>
-       </action>
-
-      
-      <action    path="/EditSubscription"
-                 type="org.apache.struts.webapp.example.EditSubscriptionAction"
-                 name="SubscriptionForm"
-                scope="request"
-             validate="false">
-        <forward name="failure"              path="/MainMenu.do"/>
-        <forward name="success"              path="/subscription.jsp"/>
-      </action>
-
-       
-       <action    path="/SaveSubscription"
-                  type="org.apache.struts.webapp.example.SaveSubscriptionAction"
-                  name="SubscriptionForm"
-                 scope="request"
-                 input="subscription">
-         <forward name="subscription"    path="/subscription.jsp"/>
-         <forward name="success"         path="/EditRegistration.do?action=Edit"/>
-       </action>
-
-      
-      <action    path="/ExpiredPassword"
-              forward="/changePassword.jsp">
-      </action>
-
-      <action    path="/Tour"
-              forward="/tour.html">
-      </action>
--->
-  </action-mappings>
-  
-
-  <!-- ========== Controller Configuration ================================ -->
-
-  <controller pagePattern="$M$P" inputForward="true" />
-    <!-- pagePattern: use this pattern when creating URIs to resources.
-        $M=module, $P=path -->
-    <!-- inputForward: The "input" parameter on "action" elements is the name of a
-         local or global "forward" rather than a module-relative path -->
+	<!-- ========== Global Forward Definitions ============================== -->
+	<global-forwards>
+		<forward name="welcome" path="/Welcome.do" />
+		<forward name="logoff" path="/Logoff.do" />
+		<forward name="logon" path="/Logon.do" />
+		<forward name="success" path="/MainMenu.do" />
+	</global-forwards>
 
 
-  <!-- ========== Message Resources Definitions =========================== -->
-<!--
-  <message-resources
-    parameter="org.apache.struts.webapp.example.ApplicationResources"/>
+	<!-- ========== Action Mapping Definitions ============================== -->
+	<action-mappings>
 
-  <message-resources
-    parameter="org.apache.struts.webapp.example.AlternateApplicationResources"
-    key="alternate"/>
+		<!-- File view -->
+		<action path="/File"
+			type="org.makumba.parade.controller.FileAction" parameter="op">
 
--->
-  <!-- ========== Plug Ins Configuration ================================== -->
-  
-<!--
-  <plug-in className="org.apache.struts.plugins.ModuleConfigVerifier"/>
+			<forward name="browse" path="/servlet/browse" />
+			<forward name="edit" path="/servlet/edit" />
 
-  <plug-in className="org.apache.struts.webapp.example.memory.MemoryDatabasePlugIn">
-    <set-property property="pathname" value="/WEB-INF/database.xml"/>
-  </plug-in>
+		</action>
 
-  <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
-    <set-property property="pathnames"
-                     value="/WEB-INF/validator-rules.xml,
-                            /WEB-INF/validation.xml"/>
-  </plug-in>
+		<!-- File upload -->
+		<action path="/FileUpload"
+			type="org.makumba.parade.controller.FileAction" name="FileUpload"
+			scope="request" validate="true" parameter="op"
+			input="/webapp/uploadFile.jsp">
 
-  <plug-in className="org.apache.struts.plugins.DigestingPlugIn">
-    <set-property property="key" value="serverTypes"/>
-    <set-property property="configPath" value="/WEB-INF/server-types.xml"/>
-    <set-property property="digesterPath" value="/WEB-INF/lvb-digester-rules.xml"/>
-  </plug-in>
--->
+			<forward name="browse" path="/servlet/browse" />
+		</action>
+
+		<!-- Command view -->
+		<action path="/Command"
+			type="org.makumba.parade.controller.CommandAction" parameter="op">
+
+			<forward name="files" path="/servlet/browse" />
+
+		</action>
+
+		<!-- Edit view -->
+		<action path="/Edit"
+			type="org.makumba.parade.controller.EditAction" parameter="op">
+
+			<forward name="files" path="/servlet/browse" />
+
+		</action>
+
+		<!-- CVS view -->
+		<action path="/Cvs"
+			type="org.makumba.parade.controller.CvsAction" parameter="op">
+
+			<forward name="command" path="/servlet/browse" />
+
+		</action>
+
+		<!-- Webapp view -->
+		<action path="/Webapp"
+			type="org.makumba.parade.controller.WebappAction">
+
+			<forward name="command" path="/servlet/browse" />
+			<forward name="index" path="/index.jsp" />
+
+		</action>
+
+		<!-- Ant view -->
+		<action path="/Ant"
+			type="org.makumba.parade.controller.AntAction">
+
+			<forward name="command" path="/servlet/browse" />
+			<forward name="index" path="/index.jsp" />
+
+
+		</action>
+
+		<!-- Rowstore view -->
+		<action path="/Rows"
+			type="org.makumba.parade.controller.RowsAction">
+
+			<forward name="index" path="/index.jsp" />
+
+		</action>
+
+		<!-- Logs view -->
+		<action path="/Logs"
+			type="org.makumba.parade.controller.LogsAction">
+
+			<forward name="logs" path="/servlet/logs" />
+
+		</action>
+
+
+		<!-- User creation view -->
+		<action path="/User"
+			type="org.makumba.parade.controller.UserAction" parameter="op">
+
+			<forward name="index" path="/index.jsp" />
+			<forward name="newuser" path="/servlet/user" />
+
+		</action>
+
+		<!-- Change locale action
+			<action
+			path="/Locale"
+			type="org.apache.struts.webapp.example.LocaleAction"
+			parameter="welcome" />
+			
+			
+			<action    path="/Registration"
+			forward="/registration.jsp"/>
+			
+			
+			<action    path="/MainMenu"
+			forward="/mainMenu.jsp"/>
+			
+			
+			<action    path="/Logon"
+			forward="/logon.jsp"/>
+			
+			
+			<action    path="/SubmitLogon"
+			type="org.apache.struts.webapp.example.LogonAction"
+			name="LogonForm"
+			scope="request"
+			input="logon">
+			<exception
+			key="expired.password"
+			type="org.apache.struts.webapp.example.ExpiredPasswordException"
+			path="/ExpiredPassword.do"/>
+			</action>
+			
+			
+			<action    path="/Logoff"
+			type="org.apache.struts.webapp.example.LogoffAction">
+			<forward name="success"              path="/Welcome.do"/>
+			</action>
+			
+			
+			<action    path="/EditSubscription"
+			type="org.apache.struts.webapp.example.EditSubscriptionAction"
+			name="SubscriptionForm"
+			scope="request"
+			validate="false">
+			<forward name="failure"              path="/MainMenu.do"/>
+			<forward name="success"              path="/subscription.jsp"/>
+			</action>
+			
+			
+			<action    path="/SaveSubscription"
+			type="org.apache.struts.webapp.example.SaveSubscriptionAction"
+			name="SubscriptionForm"
+			scope="request"
+			input="subscription">
+			<forward name="subscription"    path="/subscription.jsp"/>
+			<forward name="success"         path="/EditRegistration.do?action=Edit"/>
+			</action>
+			
+			
+			<action    path="/ExpiredPassword"
+			forward="/changePassword.jsp">
+			</action>
+			
+			<action    path="/Tour"
+			forward="/tour.html">
+			</action>
+		-->
+	</action-mappings>
+
+
+	<!-- ========== Controller Configuration ================================ -->
+
+	<controller pagePattern="$M$P" inputForward="true" />
+	<!-- pagePattern: use this pattern when creating URIs to resources.
+		$M=module, $P=path -->
+	<!-- inputForward: The "input" parameter on "action" elements is the name of a
+		local or global "forward" rather than a module-relative path -->
+
+
+	<!-- ========== Message Resources Definitions =========================== -->
+	<!--
+		<message-resources
+		parameter="org.apache.struts.webapp.example.ApplicationResources"/>
+		
+		<message-resources
+		parameter="org.apache.struts.webapp.example.AlternateApplicationResources"
+		key="alternate"/>
+		
+	-->
+	<!-- ========== Plug Ins Configuration ================================== -->
+
+	<!--
+		<plug-in className="org.apache.struts.plugins.ModuleConfigVerifier"/>
+		
+		<plug-in className="org.apache.struts.webapp.example.memory.MemoryDatabasePlugIn">
+		<set-property property="pathname" value="/WEB-INF/database.xml"/>
+		</plug-in>
+		
+		<plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+		<set-property property="pathnames"
+		value="/WEB-INF/validator-rules.xml,
+		/WEB-INF/validation.xml"/>
+		</plug-in>
+		
+		<plug-in className="org.apache.struts.plugins.DigestingPlugIn">
+		<set-property property="key" value="serverTypes"/>
+		<set-property property="configPath" value="/WEB-INF/server-types.xml"/>
+		<set-property property="digesterPath" value="/WEB-INF/lvb-digester-rules.xml"/>
+		</plug-in>
+	-->
 </struts-config>

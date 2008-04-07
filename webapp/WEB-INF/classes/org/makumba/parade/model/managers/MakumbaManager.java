@@ -17,62 +17,67 @@ import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 
-
 public class MakumbaManager implements RowRefresher, ParadeManager {
-    
+
     private static Logger logger = Logger.getLogger(MakumbaManager.class.getName());
 
     public void rowRefresh(Row row) {
-        logger.debug("Refreshing row information for row "+row.getRowname());
+        logger.debug("Refreshing row information for row " + row.getRowname());
 
         RowMakumba makumbadata = new RowMakumba();
         makumbadata.setDataType("makumba");
-        
+
         // if this is the ParaDe row, there's no Makumba
-        if(row.getRowname().equals("(root)")) {
+        if (row.getRowname().equals("(root)")) {
             makumbadata.setVersion("No makumba.jar");
             makumbadata.setDb("No MakumbaDatabase.properties");
         } else {
-            String root = row.getRowpath() + File.separator + ((RowWebapp) row.getRowdata().get("webapp")).getWebappPath();
-            makumbadata.setVersion(getMakumbaVersion(root));
+            String root = row.getRowpath() + File.separator
+                    + ((RowWebapp) row.getRowdata().get("webapp")).getWebappPath();
+            makumbadata.setVersion(getMakumbaVersion(root, row));
             makumbadata.setDb(getMakumbaDatabase(root));
         }
 
         row.addManagerData(makumbadata);
     }
 
-    public String getMakumbaVersion(String p) {
+    public String getMakumbaVersion(String p, Row r) {
         final String path = p;
         String version = "unknown";
 
         try {
             java.io.File fl = new java.io.File((path + "/WEB-INF/lib/makumba.jar").replace('/',
                     java.io.File.separatorChar));
-            
-            if(!fl.exists()) {
+
+            if (!fl.exists()) {
                 java.io.File lib = new java.io.File((path + "/WEB-INF/lib/").replace('/', java.io.File.separatorChar));
                 String[] libs = lib.list();
                 Vector<String> mak = new Vector<String>();
-                for(int i=0; i<libs.length; i++) {
-                    if(libs[i].indexOf("makumba") > -1 && libs[i].indexOf(".jar") > 0) {
-                        mak.add(libs[i]);
+                if (libs == null) {
+                    logger.error("No WEB-INF/lib directory found for row " + r.getRowname()
+                            + ". Cannot detected Makumba version.");
+                } else {
+                    for (int i = 0; i < libs.length; i++) {
+                        if (libs[i].indexOf("makumba") > -1 && libs[i].indexOf(".jar") > 0) {
+                            mak.add(libs[i]);
+                        }
                     }
                 }
-                
-                if(mak.size() == 0) {
+
+                if (mak.size() == 0) {
                     return "No makumba.jar";
-                } else if(mak.size() > 1) {
+                } else if (mak.size() > 1) {
                     return "Two makumba JARs found! Please remove one";
                 } else {
-                    String makPath = path + "/WEB-INF/lib/"+mak.get(0).replace('/', java.io.File.separatorChar);
-                    if(makPath.endsWith(java.io.File.separator)) {
+                    String makPath = path + "/WEB-INF/lib/" + mak.get(0).replace('/', java.io.File.separatorChar);
+                    if (makPath.endsWith(java.io.File.separator)) {
                         makPath = makPath.substring(0, makPath.length() - 1);
                     }
                     fl = new java.io.File(makPath);
                 }
-                
+
             }
-            
+
             JarFile jar = new JarFile(fl);
             Manifest mf = jar.getManifest();
             Attributes att = mf.getAttributes("Makumba");
@@ -86,9 +91,9 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         }
         return "Error detecting Makumba version";
     }
-    
+
     public String getMakumbaDatabase(String root) {
-        
+
         root = (root + "/WEB-INF/classes/").replace('/', File.separatorChar);
         File f = new File(root + "MakumbaDatabase.properties");
         if (!f.exists())
@@ -99,10 +104,8 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         } catch (IOException e) {
             return "Invalid MakumbaDatabase.properties";
         }
-        return "Default database: "+(String)p.get("default");
+        return "Default database: " + (String) p.get("default");
     }
-        
-     
 
     public void newRow(String name, Row r, Map m) {
         // TODO Auto-generated method stub

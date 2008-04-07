@@ -18,7 +18,7 @@ Committing <strong>${fileName}</strong> with message:<br>
 <ul>
 <li>if committing from context that is not yours, make sure to include your name</li>
 <li>make sure there are no line breaks on the commit message</li>
-<li>make sure that the commit message is sensible</li>
+<li>make sure that the commit message is meaningful</li>
 </ul>
 </td></tr></table>
 </body></html>

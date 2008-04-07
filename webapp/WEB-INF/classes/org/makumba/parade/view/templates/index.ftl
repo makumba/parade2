@@ -2,11 +2,17 @@
 <link rel='StyleSheet' href='/style/rowstore.css' type='text/css'>
 <link rel='StyleSheet' href='/scripts/tickertape/tickertape.css'>
 
-<BORDER class='rowstore'>
-
 <#if opResult != "">
-	<div class='result'>${opResult}</div><br/>
+  <#if displaySuccess>
+	<div class='<#if success>success<#else>failure</#if>'>${opResult}</div><br/>
+  <#else>
+    <div class='result'>${opResult}</div><br/>
+  </#if>
 </#if>
+
+Hi ${userNickName}! Have a nice time on ParaDe!<br><br>
+
+<BORDER class='rowstore'>
 
 <TABLE class='rowstore'>
 <tr>

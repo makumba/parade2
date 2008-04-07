@@ -47,6 +47,9 @@ public class InitServlet extends HttpServlet implements Runnable {
             cfg.addResource("org/makumba/parade/model/File.hbm.xml");
             cfg.addResource("org/makumba/parade/model/Log.hbm.xml");
             cfg.addResource("org/makumba/parade/model/ActionLog.hbm.xml");
+            cfg.addResource("org/makumba/parade/model/Application.hbm.xml");
+            cfg.addResource("org/makumba/parade/model/User.hbm.xml");
+            
             
             SessionFactory sf = cfg.buildSessionFactory();
 

@@ -18,6 +18,16 @@ public class Row {
     private Map rowdata = new HashMap();
 
     private Parade parade;
+    
+    private Application application;
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
+    }
 
     public void addManagerData(RowData data) {
 

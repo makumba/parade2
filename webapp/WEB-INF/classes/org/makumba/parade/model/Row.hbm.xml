@@ -17,7 +17,9 @@
         <property name="description"/>
         
         
-        <many-to-one name="parade" column="id_parade" not-null="true"/>
+        <many-to-one name="parade" column="id_parade"/>
+        
+        <one-to-one name="application" class="Application" />
         
         <!-- <one-to-one name="root" class="File" property-ref="row" />  -->
         
