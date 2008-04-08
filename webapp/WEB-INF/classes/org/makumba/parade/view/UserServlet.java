@@ -77,7 +77,7 @@ public class UserServlet  extends HttpServlet {
         int n = username.indexOf(".");
         if(n > -1) {
             name = username.substring(0, n);
-            root.put("niceUserName", name.substring(0, 1).toUpperCase() + name.substring(2));
+            root.put("niceUserName", name.substring(0, 1).toUpperCase() + name.substring(1));
         } else {
             root.put("niceUserName", username);
         }
