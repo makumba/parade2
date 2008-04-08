@@ -126,7 +126,6 @@ public class IndexServlet extends HttpServlet {
             ((HttpServletRequest)req).getSession().setAttribute("user.surname", u.getSurname());
             ((HttpServletRequest)req).getSession().setAttribute("user.nickname", u.getNickname());
             ((HttpServletRequest)req).getSession().setAttribute("user.email", u.getEmail());
-            ((HttpServletRequest)req).getSession().setAttribute("user.PAptr", u.getPAptr());
         }
         
         return u;

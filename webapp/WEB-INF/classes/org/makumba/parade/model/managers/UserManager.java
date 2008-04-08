@@ -13,8 +13,8 @@ import org.makumba.parade.model.User;
  */
 public class UserManager {
 
-    public Object[] createUser(String login, String name, String surname, String nickname, String email, String PAptr) {
-        User u = new User(login, name, surname, nickname, email, PAptr);
+    public Object[] createUser(String login, String name, String surname, String nickname, String email) {
+        User u = new User(login, name, surname, nickname, email);
         
         boolean success = false;
         Session s = null;

@@ -20,18 +20,18 @@ public class UserAction extends DispatchAction {
             String surname = request.getParameter("surname");
             String nickname = request.getParameter("nickname");
             String email = request.getParameter("email");
-            String PAptr = request.getParameter("PAptr");
+            //String PAptr = request.getParameter("PAptr");
            
             UserManager userMgr = new UserManager();
             
-            Object[] result = userMgr.createUser(login, name, surname, nickname, email, PAptr);
+            Object[] result = userMgr.createUser(login, name, surname, nickname, email);
             User u = (User) result[2];
             request.getSession(true).setAttribute("org.makumba.parade.userObject", u);
             request.getSession(true).setAttribute("user.name", u.getName());
             request.getSession(true).setAttribute("user.surname", u.getSurname());
             request.getSession(true).setAttribute("user.nickname", u.getNickname());
             request.getSession(true).setAttribute("user.email", u.getEmail());
-            request.getSession(true).setAttribute("user.PAptr", u.getPAptr());
+            //request.getSession(true).setAttribute("user.PAptr", u.getPAptr());
 
             request.setAttribute("result", (String) result[0]);
             request.setAttribute("success", (Boolean) result[1]);

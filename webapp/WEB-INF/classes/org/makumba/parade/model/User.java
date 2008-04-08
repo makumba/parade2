@@ -80,17 +80,16 @@ public class User {
         
     }
     
-    public User(String login, String name, String surname, String nickname, String email, String PAptr) {
+    public User(String login, String name, String surname, String nickname, String email) {
         this.login = login;
         this.name = name;
         this.surname = surname;
         this.nickname = nickname;
         this.email = email;
-        this.PAptr = PAptr;
     }
     
     public static User getUnknownUser() {
-        return new User("unknown", "unknown", "unknown", "unknown", "unknown@unknown.com", "");
+        return new User("unknown", "unknown", "unknown", "unknown", "unknown@unknown.com");
     }
 
     public String getLogin() {
