@@ -21,7 +21,31 @@ public class UserAction extends DispatchAction {
             String nickname = request.getParameter("nickname");
             String email = request.getParameter("email");
             //String PAptr = request.getParameter("PAptr");
-           
+            
+            if(name == null || name.length() == 0) {
+                request.setAttribute("result", "Please provide your name");
+                request.setAttribute("success", false);
+                return (mapping.findForward("newuser"));
+            }
+
+            if(surname == null || surname.length() == 0) {
+                request.setAttribute("result", "Please provide your surname");
+                request.setAttribute("success", false);
+                return (mapping.findForward("newuser"));
+            }
+
+            if(nickname == null || nickname.length() == 0) {
+                request.setAttribute("result", "Please provide your nickname");
+                request.setAttribute("success", false);
+                return (mapping.findForward("newuser"));
+            }
+            
+            if(email == null || email.length() == 0) {
+                request.setAttribute("result", "Please provide your email");
+                request.setAttribute("success", false);
+                return (mapping.findForward("newuser"));
+            }
+            
             UserManager userMgr = new UserManager();
             
             Object[] result = userMgr.createUser(login, name, surname, nickname, email);
