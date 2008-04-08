@@ -3,7 +3,7 @@
 <%@page import="org.makumba.parade.model.User"%>
 <%@page import="java.util.Enumeration"%>
 <%@page import="java.util.Date"%>
-<html><head>Active sessions</head>
+<html><head><title>Active sessions</title></head>
 <body>
 <h1>Active sessions</h1>
 <% List<HttpSession> sessions = ParadeSessionListener.getActiveSessions();
