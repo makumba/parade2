@@ -63,9 +63,13 @@ public class ParadeSessionListener implements HttpSessionListener {
         
         Iterator<String> it = activeSessions.keySet().iterator();
         while(it.hasNext()) {
-            String nickName = (String)activeSessions.get(it.next()).getAttribute("user.nickname");
-            if(nickName != null && nickName.length() > 0) {
-                online.add(nickName);
+            try {
+                String nickName = (String)activeSessions.get(it.next()).getAttribute("user.nickname");
+                if(nickName != null && nickName.length() > 0) {
+                    online.add(nickName);
+                }
+            } catch(java.lang.IllegalStateException e) {
+                // do nothing
             }
         }
         
@@ -75,7 +79,5 @@ public class ParadeSessionListener implements HttpSessionListener {
         }
         
         return onlineUsers;
-
     }
-
 }
