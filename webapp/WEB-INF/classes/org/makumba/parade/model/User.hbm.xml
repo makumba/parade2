@@ -17,7 +17,6 @@
 		<property name="surname" />
 		<property name="nickname" />
 		<property name="email" />
-		<property name="PAptr" />
 		
 		<one-to-one name="row" class="Row" />
 		
