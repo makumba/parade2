@@ -52,6 +52,7 @@ public class ParadeSessionListener implements HttpSessionListener {
         while (it.hasNext()) {
             HttpSession s = activeSessions.get(it.next());
             try {
+                s.getAttribute("org.makumba.parade.user"); // check if the session is still valid
                 sessions.add(s);
             } catch (java.lang.IllegalStateException e) {
                 // this session is invalidated, we need to remove it
