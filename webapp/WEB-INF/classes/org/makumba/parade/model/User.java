@@ -14,8 +14,6 @@ public class User {
     
     private String email;
     
-    private String PAptr;
-    
     private Row row;
 
     private Parade parade;
@@ -52,14 +50,6 @@ public class User {
         this.email = email;
     }
 
-    public String getPAptr() {
-        return PAptr;
-    }
-
-    public void setPAptr(String aptr) {
-        PAptr = aptr;
-    }
-
     public Row getRow() {
         return row;
     }
@@ -81,10 +71,33 @@ public class User {
     }
     
     public User(String login, String name, String surname, String nickname, String email) {
+
         this.login = login;
+
+        String loginName = "", loginSurname="";
+        if(login.indexOf(".") > -1) {
+             loginName = login.substring(0, login.indexOf("."));
+             loginSurname = login.substring(login.indexOf(".")+1, login.length());
+        }
+        
         this.name = name;
+        
+        if(this.name == null || this.name.length() == 0) {
+            this.name = loginName.substring(0, 1).toUpperCase() + loginName.substring(1);
+        }
+
         this.surname = surname;
+        
+        if(this.surname == null || this.surname.length() == 0) {
+            this.surname = loginSurname.substring(0, 1).toUpperCase() + loginSurname.substring(1);
+        }
+
         this.nickname = nickname;
+        
+        if(this.nickname == null || this.nickname.length() == 0) {
+            this.nickname = loginName;
+        }
+        
         this.email = email;
     }
     
