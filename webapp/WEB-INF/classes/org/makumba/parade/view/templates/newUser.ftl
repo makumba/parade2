@@ -10,7 +10,7 @@
 
 <h2>User account creation</h2>
 Hi ${niceUserName}! It looks like ParaDe doesn't know you that well yet.<br>
-Please provide some more information about yourself!<br>
+In the future, ParaDe will have features that allow better work (development, testing), so we need you to feed it with some data about yourself!<br>
 <font style="font-size: smaller;">(note that this information will be connected to your login <i>${login}</i>)</font><br>
 <br>
 <form action="/User.do?op=newUser" method="POST">
