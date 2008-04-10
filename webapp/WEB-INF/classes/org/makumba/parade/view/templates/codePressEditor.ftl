@@ -9,7 +9,7 @@
 
 <form name="sourceEdit" method="post" action="/File.do?op=saveFile&context=${rowName}&path=${path}&file=${fileName}&editor=codepress" style="margin:0px;">
 
-<input type="submit" name="Submit" value="(S)ave!" ACCESSKEY="S" onclick="myCpWindow.toggleEditor();">
+<input type="submit" name="Submit" value="(S)ave!" ACCESSKEY="S" onclick="getEditorCode();">
 <a href="browse.jsp?context=${rowName}" target="_top" title="${rowName}">${rowName}</a>:<a href="/servlet/browse?display=file&context=${rowName}&path=${path}">${path}</a>/<b>${fileName}</b>
 | <a href="/File.do?op=editFile&context=${rowName}&path=${path}&file=${fileName}&editor=codepress" title="get the file from disk again, undo all changes since last save">Revert</a>
 <br>
@@ -22,9 +22,16 @@
 	<button onclick="myCpWindow.edit('myCpWindow','css')">CSS</button>
 </div>
 
-<textarea id="myCpWindow" class="codepress java" name="source" style="width:100%;height:92%" cols="90" rows="23" wrap="virtual" STYLE="font-face:Lucida Console; font-size:8pt">${content}</textarea>
+<textarea id="myCpWindow" class="codepress java" style="width:100%;height:92%" cols="90" rows="23" wrap="virtual" STYLE="font-face:Lucida Console; font-size:8pt">${content}</textarea>
 
+<input name="source" type="hidden"></input>
 
+<script type="text/javascript">
+
+function getEditorCode() {
+      sourceEdit.source.value = (myCpWindow.getCode())
+}
+</script>
 </form>
 
 </body>

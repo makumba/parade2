@@ -64,7 +64,7 @@ public class CodePressFileEditViewManager implements FileEditorView {
         
         // we convert special characters so they are correctly displayed in HTML
         // commented out for now, because it may cause troubles with this editor
-        /*
+        
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < content.length(); i++)
             if (content.charAt(i) == '<')
@@ -74,7 +74,7 @@ public class CodePressFileEditViewManager implements FileEditorView {
             else
                 sb.append(content.charAt(i));
         content = sb.toString();
-        */
+        
         
         /* Constructing the data model */
         SimpleHash root = new SimpleHash();
