@@ -29,6 +29,8 @@ import org.makumba.parade.tools.TriggerFilter;
  * 
  */
 public class AccessServlet extends HttpServlet {
+    private static final String PARADE_USER = "org.makumba.parade.user";
+
     ServletContext context;
 
     static Logger logger = Logger.getLogger(AccessServlet.class.getName());
@@ -53,14 +55,14 @@ public class AccessServlet extends HttpServlet {
             checker = new HttpLogin(auth, authMessage) {
                 public boolean login(ServletRequest req, ServletResponse res) throws java.io.IOException {
                     HttpServletRequest req1 = (HttpServletRequest) req;
-                    String user = (String) req1.getSession(true).getAttribute("org.makumba.parade.user");
+                    String user = (String) req1.getSession(true).getAttribute(PARADE_USER);
                     return user != null || super.login(req, res);
                 }
 
                 protected boolean checkAuth(String user, String pass, HttpServletRequest req) {
                     boolean passes = super.checkAuth(user, pass, req);
                     if (passes)
-                        req.getSession(true).setAttribute("org.makumba.parade.user", user);
+                        req.getSession(true).setAttribute(PARADE_USER, user);
                     return passes;
                 }
             };
@@ -75,13 +77,14 @@ public class AccessServlet extends HttpServlet {
     boolean shouldLogin(ServletRequest req) {
         if (checker == null)
             return false;
-        String[] initkey = req.getParameterValues("initkey");
-        if (initkey != null && initkey[0].equals(context.getAttribute("org.makumba.parade.init")))
+        if (((HttpServletRequest) req).getContextPath().equals("/manager")) {
+            ((HttpServletRequest) req).getSession(true).setAttribute(PARADE_USER, "tomcat-manager");
             return false;
-        if (((HttpServletRequest) req).getContextPath().equals("/manager"))
+        }
+        if (((HttpServletRequest) req).getRequestURI().startsWith("/servlet/cvscommit")) {
+            ((HttpServletRequest) req).getSession(true).setAttribute(PARADE_USER, "cvs-hook");
             return false;
-        if (((HttpServletRequest) req).getRequestURI().startsWith("/servlet/cvscommit"))
-            return false;
+        }
         return true;
     }
 
@@ -91,7 +94,7 @@ public class AccessServlet extends HttpServlet {
             return new HttpServletRequestWrapper((HttpServletRequest) req) {
                 public String getRemoteUser() {
                     return (String) ((HttpServletRequest) getRequest()).getSession(true).getAttribute(
-                            "org.makumba.parade.user");
+                            PARADE_USER);
                 }
             };
         }
@@ -104,7 +107,7 @@ public class AccessServlet extends HttpServlet {
             contextPath = TriggerFilter.actionLog.get().getContext();
         } else
             contextPath = contextPath.substring(1);
-        String nm = (String) req.getSession(true).getAttribute("org.makumba.parade.user");
+        String nm = (String) req.getSession(true).getAttribute(PARADE_USER);
         if (nm == null)
             nm = "(unknown user)";
         
@@ -147,6 +150,5 @@ public class AccessServlet extends HttpServlet {
         } else
             // login failed, we tell the trigger filter not to filter further
             origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
-
     }
 }
