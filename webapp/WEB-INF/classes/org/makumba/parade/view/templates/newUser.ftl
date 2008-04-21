@@ -29,7 +29,7 @@ In the future, ParaDe will have features that allow better work (development, te
 </tr>
 <tr>
   <td>E-mail address</td>
-  <td><input type="text" name="email"> (preferrably Gmail if you have one - maybe we'll have a ParaDe Gtalk bot someday)</td>
+  <td><input type="text" name="email"> (preferably Gmail if you have one - maybe we'll have a ParaDe Gtalk bot someday)</td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2" align="centre"><input type="submit" value="Create my account!"></td></tr>
