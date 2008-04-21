@@ -1,0 +1,8 @@
+baseDir=char[255]
+applications = set parade.Application
+users = set parade.User
+rows = set parade.Row
+JNotifyWatches=set
+JNotifyWatches->rowname=char[255]
+JNotifyWatches->watch=int
+

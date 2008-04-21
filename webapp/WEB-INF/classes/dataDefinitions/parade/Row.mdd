@@ -1,0 +1,7 @@
+rowname=char[255]
+rowpath=char[255]
+description=char[255]
+parade=ptr parade.Parade ;needs to have column id_parade
+application=ptr parade.Application
+#files=set parade.File
+#rowdata=set parade.AbstractRowData ;inheritance...

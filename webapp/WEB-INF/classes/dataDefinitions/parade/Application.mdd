@@ -1,0 +1,6 @@
+name=char[255]
+repository=char[255]
+module=char[255]
+cvsfiles=set
+cvsfiles->filename=char[255]
+cvsfiles->fileversion=not null char[255]
