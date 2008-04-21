@@ -3,3 +3,4 @@ rows.properties
 log4j.properties
 hibernate.cfg.xml
 servletContext.properties
+makumbaGeneratedMappings
