@@ -39,7 +39,7 @@ public class InitServlet extends HttpServlet implements Runnable {
     {
         /* Initializing Hibernate */
         try {
-            cfg = new Configuration().configure();
+            cfg = new Configuration().configure("localhost_mysql_parade.cfg.xml");
             cfg.addResource("org/makumba/parade/model/AbstractFileData.hbm.xml");
             cfg.addResource("org/makumba/parade/model/Parade.hbm.xml");
             cfg.addResource("org/makumba/parade/model/Row.hbm.xml");

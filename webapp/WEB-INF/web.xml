@@ -9,12 +9,20 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
 
-	<!-- Tomcat 5 honours welcome files before any filtering.
-		This is not suitable for the VHostFilter or the UriRewriteFilter (in BEST webpass).
-		(in general, it misses a lot of the servlets' flexibility)
-	-->
 
-	<!-- put your  handler filters and it's mapping -->
+	<!-- Makumba Controller Filter, needed to invoke e.g. form responders! -->
+	<filter>
+		<filter-name>makumba_controller</filter-name>
+		<filter-class>
+			org.makumba.controller.http.ControllerFilter
+		</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>makumba_controller</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	
 
 	<!-- after all redirections are done, the makumba controller is applied -->
 
@@ -61,7 +69,7 @@
 			org.makumba.parade.view.TickerTapeServlet
 		</servlet-class>
 	</servlet>
-	
+
 	<servlet>
 		<servlet-name>cvscommit</servlet-name>
 		<servlet-class>
@@ -90,7 +98,7 @@
 		<servlet-name>ticker</servlet-name>
 		<url-pattern>/ticker</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>cvscommit</servlet-name>
 		<url-pattern>/cvscommit</url-pattern>
@@ -137,9 +145,99 @@
 
 
 
+	<!-- Developer support - MDD & Business logic browser & viewer -->
+	<servlet>
+		<servlet-name>mddLinker</servlet-name>
+		<servlet-class>
+			org.makumba.devel.SourceViewServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>mddLinker</servlet-name>
+		<url-pattern>*.jspx</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>mddLinker</servlet-name>
+		<url-pattern>*.jspxp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>mddLinker</servlet-name>
+		<url-pattern>/dataDefinitions/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>mddLinker</servlet-name>
+		<url-pattern>/classes/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>mddLinker</servlet-name>
+		<url-pattern>/logic/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>mddLinker</servlet-name>
+		<url-pattern>/codeGenerator/*</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- Developer support - single data object viewer. Should be not used / protected in production! -->
+	<servlet>
+		<servlet-name>dataViewer</servlet-name>
+		<servlet-class>
+			org.makumba.devel.DataObjectViewerServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dataViewer</servlet-name>
+		<url-pattern>/dataView/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- Developer support - data lister. Should be not used / protected in production! -->
+	<servlet>
+		<servlet-name>dataLister</servlet-name>
+		<servlet-class>
+			org.makumba.devel.DataTypeListerServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dataLister</servlet-name>
+		<url-pattern>/dataList/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- Developer support - pointer value converter. Should be not used / protected in production! -->
+	<servlet>
+		<servlet-name>dataValueConverter</servlet-name>
+		<servlet-class>
+			org.makumba.devel.DataPointerValueConverter
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dataValueConverter</servlet-name>
+		<url-pattern>/valueConverter/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- Developer support - query tool. Should be not used / protected in production! -->
+	<servlet>
+		<servlet-name>dataQuery</servlet-name>
+		<servlet-class>
+			org.makumba.devel.DataQueryServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dataQuery</servlet-name>
+		<url-pattern>/dataQuery/*</url-pattern>
+	</servlet-mapping>
+
+
+<!-- 
 	<error-page>
 		<error-code>500</error-code>
 		<location>/error.jsp</location>
 	</error-page>
+ -->
 
 </web-app>
