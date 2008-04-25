@@ -63,9 +63,9 @@ public class ApplicationProperties {
                 state.store(new FileOutputStream(new java.io.File(ParadeProperties.getClassesPath() + java.io.File.separator + "applications.properties")), 
                         "applications\n"
                         + "# example:\n"
-                        + "# <name_appl>=<repository, e.g. pserver:parade@cvs.best.eu.org:/usr/local/cvsroot>\n"
-                        + "# appdata.<name_appl>.obs=<space for notes>\n"
-                        + "# appdata.<name_appl>.moduke=<CVS module, e.g. karamba>\n"
+                        + "#karamba=pserver:manu@cvs.best.eu.org:/usr/local/cvsroot"
+                        + "appdata.karamba.obs = Karamba CVS"
+                        + "appdata.karamba.module = karamba"
                         );
             } catch (FileNotFoundException e1) {
                 // TODO Auto-generated catch block
