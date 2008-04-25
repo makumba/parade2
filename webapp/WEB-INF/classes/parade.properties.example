@@ -29,5 +29,3 @@ ant.displayedOps=compile, clean, getTaglibs, getMakumba, getLocalMakumba, copyLo
 
 makumba.site=http://download.makumba.org/makumba/download/
 cvs.site=http://cvs.makumba.org/cgi-bin/cvsweb.cgi/
-
-parade.applications.default=karamba

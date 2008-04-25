@@ -52,6 +52,8 @@ public class Parade {
     private Map<String, Integer> JNotifyWatches = new HashMap<String, Integer>();
 
     // ParaDe managers
+    
+    public ApplicationManager applMgr = new ApplicationManager();
 
     public FileManager fileMgr = new FileManager();
 
@@ -80,11 +82,6 @@ public class Parade {
         logger.info("Starting ParaDe-wide refresh...");
 
         this.baseDir = ParadeProperties.getParadeBase();
-
-        // we read the configured applications in parade.properties and ask the ApplicationManager to handle their
-        // creation
-        ApplicationManager applMgr = new ApplicationManager();
-        applMgr.paradeRefresh(this);
 
         // we read the row definitions and perform update/creation
         Map<String, Map<String, String>> rowstore = rowproperties.getRowDefinitions();
@@ -178,21 +175,7 @@ public class Parade {
         }
         r.setRowpath(canonicalPath);
         r.setDescription(rowDefinition.get("desc"));
-        String appName = rowDefinition.get("application");
-        if (r.getRowpath().equals(this.baseDir))
-            appName = "parade";
         
-        if(appName.length() == 0) {
-            appName = ParadeProperties.getProperty("parade.applications.default");
-        }
-        
-        Application a = this.getApplications().get(appName);
-        if (a == null) {
-            logger.error("Application " + appName + " of row " + r.getRowname()
-                    + " is not configured. Check your applications.properties file.");
-        }
-        r.setApplication(a);
-
         return registerRow(r, rowDefinition);
     }
 
@@ -229,25 +212,6 @@ public class Parade {
             logger.warn("The description of row " + rowname + " was updated to " + rowDefinition.get("desc"));
         }
 
-        // the application is modified
-        String application = rowDefinition.get("application").trim();
-        if (storedRow.getApplication() != null && !application.equals(storedRow.getApplication().getName())) {
-            
-            String appName = rowDefinition.get("application");
-            
-            if(appName.length() == 0) {
-                appName = ParadeProperties.getProperty("parade.applications.default");
-            }
-
-            
-            Application a = this.getApplications().get(appName);
-            if (a == null) {
-                logger.error("Application " + application + " is not configured. Check your parade.properties file.");
-            }
-            storedRow.setApplication(a);
-            logger.warn("The application of row " + rowname + " was updated to " + application);
-        }
-
         // updating the specific row data
         return registerRow(storedRow, rowDefinition);
     }
@@ -265,6 +229,7 @@ public class Parade {
         r.setParade(this);
         rows.put(r.getRowname(), r);
 
+        applMgr.newRow(r.getRowname(), r, rowDefinition);
         fileMgr.newRow(r.getRowname(), r, rowDefinition);
         CVSMgr.newRow(r.getRowname(), r, rowDefinition);
         antMgr.newRow(r.getRowname(), r, rowDefinition);

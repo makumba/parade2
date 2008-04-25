@@ -107,43 +107,79 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
     private void readUserAndModule(Row row, RowCVS data) {
 
         String path = (String) row.getRowpath();
+        data.setUser(getCVSUser(path));
+        data.setModule(getCVSModule(path));
+        data.setBranch(getCVSBranch(path));
+
+    }
+    
+    public static String getCVSUser(String path) {
         String s = null;
         try {
             s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS" + java.io.File.separator
                     + "Root")).readLine();
         } catch (FileNotFoundException e) {
-            return;
+            return null;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe.getMessage());
         }
+        
+        String user = "";
 
         if (s.startsWith(":pserver")) {
             s = s.substring(":pserver:".length());
-            data.setUser(s.substring(0, s.indexOf("@")));
+            user = s.substring(0, s.indexOf("@"));
         } else if (s.startsWith(":extssh:")) {
             s = s.substring(":extssh:".length());
-            data.setUser(s.substring(0, s.indexOf("@")));
-        } else
-            data.setUser("non :pserver");
-
+            user = s.substring(0, s.indexOf("@"));
+        } else {
+            user = ("non :pserver");
+        }
+        
+        return user;
+    }
+    
+    public static String getCVSModule(String path) {
+        String s = null;
         try {
             s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS" + java.io.File.separator
                     + "Repository")).readLine();
+        } catch (FileNotFoundException e) {
+            return null;
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
-        data.setModule(s.substring(s.lastIndexOf('/') + 1));
-
+        
+        return s.substring(s.lastIndexOf('/') + 1);
+    }
+    
+    public static String getCVSRepository(String path) {
+        String s = null;
+        try {
+            s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS" + java.io.File.separator
+                    + "Root")).readLine();
+        } catch (FileNotFoundException e) {
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    
+        return s;
+    }
+    
+    public static String getCVSBranch(String path) {
+        String s = null;
         try {
             s = "TMAIN";
             s = new BufferedReader(new FileReader(path + java.io.File.separator + "CVS" + java.io.File.separator
                     + "Tag")).readLine();
         } catch (FileNotFoundException e) {
+            return null;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe.getMessage());
         }
-        data.setBranch(s.substring(1));
-
+        
+        return s.substring(1);
     }
 
     private void readFiles(Row r, File f) {

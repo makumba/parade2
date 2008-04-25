@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,8 +94,8 @@ public class RowProperties {
                 state.store(new FileOutputStream(new java.io.File(ParadeProperties.getClassesPath()
                         + java.io.File.separator + "rows.properties")), "rows\n" + "# example:\n"
                         + "# <name_appl>=<path, e.g. ..\\iplabWeb>\n" + "# rowdata.<name_appl>.obs=<space for notes>\n"
-                        + "# rowdata.<name_appl>.webapp=<relative path to the context, e.g. 'public_html'>\n"
-                        + "# rowdata.<name_appl>.appliaction=<name of the application, e.g. 'karamba'>\n");
+                        + "# rowdata.<name_appl>.webapp=<relative path to the context, e.g. 'public_html'>\n");
+
             } catch (FileNotFoundException e1) {
                 e1.printStackTrace();
             } catch (IOException e1) {

@@ -8,12 +8,8 @@ public class Application {
     
     private String name;
     
-    private String description;
-    
     private String repository;
-    
-    private String module;
-    
+
     private Map<String, String> cvsfiles;
 
     public String getName() {
@@ -44,11 +40,9 @@ public class Application {
         
     }
     
-    public Application(String name, String repository, String description, String module) {
+    public Application(String name, String repository) {
         this.name = name;
         this.repository = repository;
-        this.description = description;
-        this.module = module;
     }
 
     public long getId() {
@@ -57,22 +51,6 @@ public class Application {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
     }
 
 }
