@@ -12,8 +12,11 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.makumba.parade.init.ParadeProperties;
+import org.makumba.parade.tools.Base64;
 
+import com.novell.ldap.LDAPAttributeSet;
 import com.novell.ldap.LDAPConnection;
+import com.novell.ldap.LDAPEntry;
 import com.novell.ldap.LDAPException;
 import com.novell.security.sasl.RealmCallback;
 import com.novell.security.sasl.RealmChoiceCallback;
@@ -61,7 +64,25 @@ public class LDAPAuthorizer implements Authorizer {
             encryption = new String[0];
         }
     }
-
+    
+    
+    /** LDAP attributes */
+    
+    private String displayName;
+    
+    private String givenName;
+    
+    private String employeeType;
+    
+    private String sn;
+    
+    private String mail;
+    
+    private String cn;
+    
+    private byte[] jpegPhoto;
+    
+    
     public boolean auth(String username, String password) {
         
         if(username.equals(""))
@@ -95,7 +116,28 @@ public class LDAPAuthorizer implements Authorizer {
             } else {
                 lc.bind(ldapVersion, loginDN, password.getBytes("UTF8"));
             }
+            
+            String returnAttrs[] = {"displayName", "givenName", "employeeType", "sn", "mail", "cn", "jpegPhoto" };
+            
+            LDAPEntry entry = lc.read( loginDN, returnAttrs );
 
+            LDAPAttributeSet attributeSet = entry.getAttributeSet();
+
+            displayName = attributeSet.getAttribute("displayName").getStringValue();
+            givenName = attributeSet.getAttribute("givenName").getStringValue();
+            employeeType = attributeSet.getAttribute("sn").getStringValue();
+            mail = attributeSet.getAttribute("mail").getStringValue();
+            sn = attributeSet.getAttribute("sn").getStringValue();
+            
+            String[] cns = attributeSet.getAttribute("cn").getStringValueArray();
+            if(cns.length > 1) {
+                // take the shortname
+                cn = cns[1];
+            } else {
+                cn = attributeSet.getAttribute("cn").getStringValue();
+            }
+            jpegPhoto = attributeSet.getAttribute("jpegPhoto").getByteValue();
+            
             // in the end we disconnect
             lc.disconnect();
             return true;
@@ -109,6 +151,41 @@ public class LDAPAuthorizer implements Authorizer {
             return false;
         }
 
+    }
+
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+
+    public String getEmployeeType() {
+        return employeeType;
+    }
+
+
+    public String getSn() {
+        return sn;
+    }
+
+
+    public String getMail() {
+        return mail;
+    }
+
+
+    public String getCn() {
+        return cn;
+    }
+
+
+    public byte[] getJpegPhoto() {
+        return jpegPhoto;
     }
 
 }

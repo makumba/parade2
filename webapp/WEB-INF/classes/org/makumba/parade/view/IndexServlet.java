@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.makumba.parade.access.AccessServlet;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.listeners.ParadeSessionListener;
 import org.makumba.parade.model.Parade;
@@ -105,6 +106,7 @@ public class IndexServlet extends HttpServlet {
         if(userObject != null) {
             return (User) userObject;
         }
+        Object ldapUserObject = ((HttpServletRequest)req).getSession(true).getAttribute(AccessServlet.PARADE_LDAP_USER);
         
         // let's check if we know this user
         Transaction tx = s.getTransaction();
@@ -121,15 +123,30 @@ public class IndexServlet extends HttpServlet {
         } else if(results.size() == 1) {
             // we know the guy, let's put more stuff in the session
             u = results.get(0);
-            ((HttpServletRequest)req).getSession().setAttribute("org.makumba.parade.userObject", u);
-            ((HttpServletRequest)req).getSession().setAttribute("user.name", u.getName());
-            ((HttpServletRequest)req).getSession().setAttribute("user.surname", u.getSurname());
-            ((HttpServletRequest)req).getSession().setAttribute("user.nickname", u.getNickname());
-            ((HttpServletRequest)req).getSession().setAttribute("user.email", u.getEmail());
+            setUserAttributes(req, u);
+        } else if(results.size() == 0) {
+            //maybe we can get the guy from LDAP
+            if(ldapUserObject != null) {
+                u = (User)ldapUserObject;
+
+                // let's write him to the db first
+                s.save(u);
+
+                setUserAttributes(req, u);
+            }
         }
         
         return u;
         
+    }
+
+    private void setUserAttributes(ServletRequest req, User u) {
+        ((HttpServletRequest)req).getSession().setAttribute("org.makumba.parade.userObject", u);
+        ((HttpServletRequest)req).getSession().setAttribute("user_login", u.getLogin());
+        ((HttpServletRequest)req).getSession().setAttribute("user_name", u.getName());
+        ((HttpServletRequest)req).getSession().setAttribute("user_surname", u.getSurname());
+        ((HttpServletRequest)req).getSession().setAttribute("user_nickname", u.getNickname());
+        ((HttpServletRequest)req).getSession().setAttribute("user_email", u.getEmail());
     }
     
     public String getView(Parade p, String context, String opResult, boolean success, boolean displaySuccess, User user) {
@@ -175,7 +192,7 @@ public class IndexServlet extends HttpServlet {
         
         root.put("headers", headers);
         
-        root.put("onlineUsers", ParadeSessionListener.getActiveSessionNicknames());
+        root.put("onlineUsers", ParadeSessionListener.getActiveSessionUsers());
         
         // Iteration over the rows
         

@@ -12,10 +12,10 @@
 <table width="100%" cellpadding="0" cellspacing="0" >
 <tr>
 <td align="left">
-<strong>Currently online:</strong> <#list onlineUsers as user>${user}&nbsp;&nbsp;</#list>
+<strong>Currently online:</strong> <#list onlineUsers as user><a href='userView.jsp?user=${user[0]}'>${user[1]}</a>&nbsp;&nbsp;</#list>
 </td>
 <td align="right">
-<a href="logout.jsp">Logout</a>
+<a href="userView.jsp">My profile</a>&nbsp;&nbsp;<a href="logout.jsp">Logout</a>
 </td>
 </tr>
 </table>

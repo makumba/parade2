@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.makumba.parade.auth.Authorizer;
 import org.makumba.parade.auth.DatabaseAuthorizer;
+import org.makumba.parade.auth.LDAPAuthorizer;
 import org.makumba.parade.init.ParadeProperties;
+import org.makumba.parade.model.User;
 import org.makumba.parade.tools.HttpLogin;
 import org.makumba.parade.tools.PerThreadPrintStream;
 import org.makumba.parade.tools.TriggerFilter;
@@ -31,6 +33,9 @@ import org.makumba.parade.tools.TriggerFilter;
 public class AccessServlet extends HttpServlet {
     private static final String PARADE_USER = "org.makumba.parade.user";
 
+    public static final String PARADE_LDAP_USER = "org.makumba.parade.ldapUser";
+
+    
     ServletContext context;
 
     static Logger logger = Logger.getLogger(AccessServlet.class.getName());
@@ -48,8 +53,9 @@ public class AccessServlet extends HttpServlet {
         if (authClass == null)
             return;
         String db = (String) ParadeProperties.getProperty("parade.authorizationDB");
+        Authorizer auth = null;
         try {
-            Authorizer auth = (Authorizer) getClass().getClassLoader().loadClass(authClass).newInstance();
+            auth = (Authorizer) getClass().getClassLoader().loadClass(authClass).newInstance();
             if (db != null && (auth instanceof DatabaseAuthorizer))
                 ((DatabaseAuthorizer) auth).setDatabase(db);
             checker = new HttpLogin(auth, authMessage) {
@@ -61,8 +67,16 @@ public class AccessServlet extends HttpServlet {
 
                 protected boolean checkAuth(String user, String pass, HttpServletRequest req) {
                     boolean passes = super.checkAuth(user, pass, req);
-                    if (passes)
+                    if (passes) {
                         req.getSession(true).setAttribute(PARADE_USER, user);
+                        
+                        if(a instanceof LDAPAuthorizer) {
+                            LDAPAuthorizer auth = (LDAPAuthorizer)a;
+                            User u = new User(user, auth.getGivenName(), auth.getSn(), auth.getCn(), auth.getMail());
+                            u.setJpegPhoto(auth.getJpegPhoto());
+                            req.getSession(true).setAttribute(PARADE_LDAP_USER, u);
+                        }
+                    }
                     return passes;
                 }
             };

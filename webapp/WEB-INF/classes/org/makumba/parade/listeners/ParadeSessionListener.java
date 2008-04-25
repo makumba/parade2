@@ -63,19 +63,20 @@ public class ParadeSessionListener implements HttpSessionListener {
         return sessions;
     }
 
-    public static List<String> getActiveSessionNicknames() {
-        List<String> onlineUsers = new LinkedList<String>();
+    public static List<String[]> getActiveSessionUsers() {
+        List<String[]> onlineUsers = new LinkedList<String[]>();
 
         // hashset for filtering expired sessions
-        Set<String> online = new HashSet<String>();
+        Set<String[]> online = new HashSet<String[]>();
 
         Iterator<String> it = activeSessions.keySet().iterator();
         while (it.hasNext()) {
             HttpSession s = activeSessions.get(it.next());
             try {
-                String nickName = (String) s.getAttribute("user.nickname");
-                if (nickName != null && nickName.length() > 0) {
-                    online.add(nickName);
+                String login = (String) s.getAttribute("user_login");
+                String nickName = (String) s.getAttribute("user_nickname");
+                if (login != null && login.length() > 0) {
+                    online.add(new String[] {login, nickName});
                 }
             } catch (java.lang.IllegalStateException e) {
                 // this session is invalidated, we need to remove it
@@ -83,7 +84,7 @@ public class ParadeSessionListener implements HttpSessionListener {
             }
         }
 
-        Iterator<String> it2 = online.iterator();
+        Iterator<String[]> it2 = online.iterator();
         while (it2.hasNext()) {
             onlineUsers.add(it2.next());
         }
