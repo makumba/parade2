@@ -5,3 +5,4 @@ hibernate.cfg.xml
 servletContext.properties
 makumbaGeneratedMappings
 servletcontext.properties
+applications.properties
