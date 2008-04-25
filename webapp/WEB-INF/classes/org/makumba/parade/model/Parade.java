@@ -400,20 +400,24 @@ public class Parade {
         // we also want to know what happens in the subdirectories
         boolean watchSubtree = true;
 
-        int watchID = 0;
+        int watchID = -1;
 
         // now we start watching
         try {
             logger.info("Adding filesystem watch to row " + r.getRowname());
             watchID = JNotify.addWatch(path, mask, watchSubtree, new ParadeJNotifyListener());
-            JNotifyWatches.put(r.getRowname(), watchID);
-            if (watchID == 0) {
+            
+            if(watchID == -1) {
                 throw new ParadeException("Row " + r.getRowname()
                         + " not properly watched by JNotify! Are you having two rows that use the same directory?");
             }
+            
+            JNotifyWatches.put(r.getRowname(), watchID);
 
         } catch (JNotifyException e) {
             e.printStackTrace();
+            throw new ParadeException("Row " + r.getRowname()
+                    + " not properly watched by JNotify! Are you having two rows that use the same directory?");
         } catch (NullPointerException npe) {
             // do nothing. JNotify returns plenty of those.
         }
