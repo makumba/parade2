@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/freemarker.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/log4j-1.2.14.jar" sourcepath="lib/logging-log4j-1.2.14.zip"/>
 	<classpathentry kind="lib" path="lib/ldap.jar" sourcepath="/jldap/com/novell/ldap"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/makumba.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
