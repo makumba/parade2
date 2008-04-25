@@ -32,8 +32,11 @@
 	-->
 	<path id="generic.class.path">
 		<fileset dir="${webapp.path}/WEB-INF/lib">
-			<include name="*.jar" />
-			<include name="*.zip" />
+			<include name="log4j-1.2.14.jar" />
+			<include name="makumba.jar" />
+			<include name="freemarker.jar" />
+			<include name="hibernate3.jar" />
+			<include name="struts.jar" />
 		</fileset>
 		<fileset dir="lib">
 			<include name="*.jar" />
