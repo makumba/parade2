@@ -12,9 +12,9 @@ import org.makumba.parade.auth.Authorizer;
  * this class provides http login on a servlet according to a given authorization policy
  */
 public class HttpLogin {
-    Authorizer a;
+    protected Authorizer a;
 
-    String realm;
+    protected String realm;
 
     public HttpLogin(Authorizer a, String realm) {
         this.a = a;
