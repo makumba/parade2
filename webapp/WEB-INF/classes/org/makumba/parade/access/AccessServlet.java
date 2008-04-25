@@ -1,5 +1,7 @@
 package org.makumba.parade.access;
 
+import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -10,21 +12,26 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.makumba.parade.auth.Authorizer;
 import org.makumba.parade.auth.DatabaseAuthorizer;
 import org.makumba.parade.auth.LDAPAuthorizer;
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.User;
 import org.makumba.parade.tools.HttpLogin;
+import org.makumba.parade.tools.MultipleUsersException;
 import org.makumba.parade.tools.PerThreadPrintStream;
 import org.makumba.parade.tools.TriggerFilter;
 
 /**
- * The servlet called at the begining of each parade access, in all servlet contexts.
- * It performs login and passes the username to an {@link ActionLogDTO} that comes from the {@link TriggerFilter}.
+ * The servlet called at the begining of each parade access, in all servlet contexts. It performs login and passes the
+ * username to an {@link ActionLogDTO} that comes from the {@link TriggerFilter}.
  * 
- * TODO: implement an equivalent of the previous Config.reloadLoggingConfig()
- * TODO: refactoring: there's some useless code in here, from the time in which ParaDe used Makumba
+ * TODO: implement an equivalent of the previous Config.reloadLoggingConfig() TODO: refactoring: there's some useless
+ * code in here, from the time in which ParaDe used Makumba
  * 
  * @author Cristian Bogdan
  * @author Manuel Gay
@@ -35,7 +42,6 @@ public class AccessServlet extends HttpServlet {
 
     public static final String PARADE_LDAP_USER = "org.makumba.parade.ldapUser";
 
-    
     ServletContext context;
 
     static Logger logger = Logger.getLogger(AccessServlet.class.getName());
@@ -69,13 +75,45 @@ public class AccessServlet extends HttpServlet {
                     boolean passes = super.checkAuth(user, pass, req);
                     if (passes) {
                         req.getSession(true).setAttribute(PARADE_USER, user);
-                        
-                        if(a instanceof LDAPAuthorizer) {
-                            LDAPAuthorizer auth = (LDAPAuthorizer)a;
-                            User u = new User(user, auth.getGivenName(), auth.getSn(), auth.getCn(), auth.getMail());
-                            u.setJpegPhoto(auth.getJpegPhoto());
-                            req.getSession(true).setAttribute(PARADE_LDAP_USER, u);
+
+                        // let's check if we know this user
+                        Session s = null;
+                        Transaction tx = null;
+                        try {
+                            s = InitServlet.getSessionFactory().openSession();
+                            tx = s.beginTransaction();
+                            
+                            Query q;
+                            q = s.createQuery("from User u where u.login = ?");
+                            q.setString(0, user);
+
+                            List<User> results = q.list();
+                            User u = null;
+
+                            if (results.size() > 1) {
+                                logger
+                                        .error("Multiple possibilities for user " + user
+                                                + ". Please contact developers.");
+                            } else if (results.size() == 1) {
+                                // we know the guy, let's put more stuff in the session
+                                u = results.get(0);
+                                setUserAttributes(req, u);
+                            } else if (results.size() == 0) {
+                                // maybe we can get the guy from LDAP
+                                if (a instanceof LDAPAuthorizer) {
+                                    LDAPAuthorizer auth = (LDAPAuthorizer) a;
+                                    u = new User(user, auth.getGivenName(), auth.getSn(), auth.getCn(), auth.getMail());
+                                    u.setJpegPhoto(auth.getJpegPhoto());
+                                    s.save(u);
+                                }
+                                setUserAttributes(req, u);
+                            }
+
+                        } finally {
+                            tx.commit();
+                            s.close();
                         }
+
                     }
                     return passes;
                 }
@@ -103,12 +141,11 @@ public class AccessServlet extends HttpServlet {
     }
 
     HttpServletRequest checkLogin(ServletRequest req, ServletResponse resp) throws java.io.IOException {
-        
+
         if (checker.login(req, (HttpServletResponse) req.getAttribute("org.eu.best.tools.TriggerFilter.response"))) {
             return new HttpServletRequestWrapper((HttpServletRequest) req) {
                 public String getRemoteUser() {
-                    return (String) ((HttpServletRequest) getRequest()).getSession(true).getAttribute(
-                            PARADE_USER);
+                    return (String) ((HttpServletRequest) getRequest()).getSession(true).getAttribute(PARADE_USER);
                 }
             };
         }
@@ -124,7 +161,7 @@ public class AccessServlet extends HttpServlet {
         String nm = (String) req.getSession(true).getAttribute(PARADE_USER);
         if (nm == null)
             nm = "(unknown user)";
-        
+
         ServletContext ctx = (ServletContext) req.getAttribute("org.eu.best.tools.TriggerFilter.context");
 
         try {
@@ -139,7 +176,7 @@ public class AccessServlet extends HttpServlet {
         } catch (Throwable t) {
             t.printStackTrace();
         }
-        
+
         return nm;
     }
 
@@ -147,7 +184,7 @@ public class AccessServlet extends HttpServlet {
 
         HttpServletRequest origReq = (HttpServletRequest) req;
         req = (HttpServletRequest) req.getAttribute("org.eu.best.tools.TriggerFilter.request");
-        
+
         // Config.reloadLoggingConfig();
         // TODO implement equivalent of reloadLoggingConfig()
         setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
@@ -155,14 +192,65 @@ public class AccessServlet extends HttpServlet {
         if (!shouldLogin(req) || (req1 = checkLogin(req, resp)) != null) {
             // we set the output prefix again, now that we know the user
             String user = setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
-            
+
             // let's also put the user in the actionlog
             ActionLogDTO log = (ActionLogDTO) req.getAttribute("org.eu.best.tools.TriggerFilter.actionlog");
             log.setUser(user);
             origReq.setAttribute("org.eu.best.tools.TriggerFilter.request", req1);
-            
+
         } else
             // login failed, we tell the trigger filter not to filter further
             origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
     }
+
+    private User detectUser(ServletRequest req, Session s) throws MultipleUsersException {
+        String user = (String) ((HttpServletRequest) req).getSession(true).getAttribute("org.makumba.parade.user");
+        Object userObject = ((HttpServletRequest) req).getSession(true).getAttribute("org.makumba.parade.userObject");
+        if (userObject != null) {
+            return (User) userObject;
+        }
+        Object ldapUserObject = ((HttpServletRequest) req).getSession(true)
+                .getAttribute(AccessServlet.PARADE_LDAP_USER);
+
+        // let's check if we know this user
+        Transaction tx = s.getTransaction();
+
+        Query q;
+        q = s.createQuery("from User u where u.login = ?");
+        q.setString(0, user);
+
+        List<User> results = q.list();
+        User u = null;
+
+        if (results.size() > 1) {
+            logger.error("Multiple possibilities for user " + user + ". Please contact developers.");
+        } else if (results.size() == 1) {
+            // we know the guy, let's put more stuff in the session
+            u = results.get(0);
+            setUserAttributes(req, u);
+        } else if (results.size() == 0) {
+            // maybe we can get the guy from LDAP
+            if (ldapUserObject != null) {
+                u = (User) ldapUserObject;
+
+                // let's write him to the db first
+                s.save(u);
+
+                setUserAttributes(req, u);
+            }
+        }
+
+        return u;
+
+    }
+
+    private void setUserAttributes(ServletRequest req, User u) {
+        ((HttpServletRequest) req).getSession().setAttribute("org.makumba.parade.userObject", u);
+        ((HttpServletRequest) req).getSession().setAttribute("user_login", u.getLogin());
+        ((HttpServletRequest) req).getSession().setAttribute("user_name", u.getName());
+        ((HttpServletRequest) req).getSession().setAttribute("user_surname", u.getSurname());
+        ((HttpServletRequest) req).getSession().setAttribute("user_nickname", u.getNickname());
+        ((HttpServletRequest) req).getSession().setAttribute("user_email", u.getEmail());
+    }
+
 }

@@ -55,6 +55,8 @@ public class IndexServlet extends HttpServlet {
         if (context == null)
             context = (String) req.getAttribute("display");
         
+        User u = (User)((HttpServletRequest)req).getSession(true).getAttribute("org.makumba.parade.userObject");
+        
         String opResult = (String) req.getAttribute("result");
         Boolean successAttr = (Boolean) req.getAttribute("success");
         boolean success = true;
@@ -67,14 +69,11 @@ public class IndexServlet extends HttpServlet {
 
         Session s = null;
         Transaction tx = null;
-        User u = null;
         Parade p = null;
         try {
             s = InitServlet.getSessionFactory().openSession();
             tx = s.beginTransaction();
             p = (Parade) s.get(Parade.class, new Long(1));
-    
-            u = detectUser(req, s);
             
             if(u == null) {
                 RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/user");
@@ -86,67 +85,10 @@ public class IndexServlet extends HttpServlet {
                 }
                 out.print(getView(p, context, opResult, success, !(successAttr == null), u));
             }
-        } catch(MultipleUsersException mue) {
-            u = User.getUnknownUser();
-            if (context != null && !display.equals("index")) {
-                RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/browse");
-                dispatcher.forward(req, resp);
-            }
-            out.print(getView(p, context, opResult, success, !(successAttr == null), u));
-            
         } finally {
             tx.commit();
             s.close();
         }
-    }
-
-    private User detectUser(ServletRequest req, Session s) throws MultipleUsersException {
-        String user = (String) ((HttpServletRequest)req).getSession(true).getAttribute("org.makumba.parade.user");
-        Object userObject = ((HttpServletRequest)req).getSession(true).getAttribute("org.makumba.parade.userObject");
-        if(userObject != null) {
-            return (User) userObject;
-        }
-        Object ldapUserObject = ((HttpServletRequest)req).getSession(true).getAttribute(AccessServlet.PARADE_LDAP_USER);
-        
-        // let's check if we know this user
-        Transaction tx = s.getTransaction();
-        
-        Query q;
-        q = s.createQuery("from User u where u.login = ?");
-        q.setString(0, user);
-        
-        List<User> results = q.list();
-        User u = null;
-        
-        if(results.size() > 1) {
-            logger.error("Multiple possibilities for user "+user+". Please contact developers.");
-        } else if(results.size() == 1) {
-            // we know the guy, let's put more stuff in the session
-            u = results.get(0);
-            setUserAttributes(req, u);
-        } else if(results.size() == 0) {
-            //maybe we can get the guy from LDAP
-            if(ldapUserObject != null) {
-                u = (User)ldapUserObject;
-
-                // let's write him to the db first
-                s.save(u);
-
-                setUserAttributes(req, u);
-            }
-        }
-        
-        return u;
-        
-    }
-
-    private void setUserAttributes(ServletRequest req, User u) {
-        ((HttpServletRequest)req).getSession().setAttribute("org.makumba.parade.userObject", u);
-        ((HttpServletRequest)req).getSession().setAttribute("user_login", u.getLogin());
-        ((HttpServletRequest)req).getSession().setAttribute("user_name", u.getName());
-        ((HttpServletRequest)req).getSession().setAttribute("user_surname", u.getSurname());
-        ((HttpServletRequest)req).getSession().setAttribute("user_nickname", u.getNickname());
-        ((HttpServletRequest)req).getSession().setAttribute("user_email", u.getEmail());
     }
     
     public String getView(Parade p, String context, String opResult, boolean success, boolean displaySuccess, User user) {
