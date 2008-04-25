@@ -14,6 +14,8 @@ public class User {
     
     private String email;
     
+    private byte[] jpegPhoto;
+    
     private Row row;
 
     private Parade parade;
@@ -119,6 +121,14 @@ public class User {
 
     public void setParade(Parade parade) {
         this.parade = parade;
+    }
+
+    public byte[] getJpegPhoto() {
+        return jpegPhoto;
+    }
+
+    public void setJpegPhoto(byte[] jpegPhoto) {
+        this.jpegPhoto = jpegPhoto;
     }
     
 }

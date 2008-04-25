@@ -8,7 +8,7 @@
 	
 		<cache usage="read-write" />
 	
-		<id name="id" unsaved-value="undefined">
+		<id name="id" unsaved-value="undefined" column="user">
 			<generator class="native" />
 		</id>
 		
@@ -17,6 +17,9 @@
 		<property name="surname" />
 		<property name="nickname" />
 		<property name="email" />
+		<property name="jpegPhoto">
+		<column name="jpegPhoto" sql-type="blob"/>
+		</property>
 		
 		<one-to-one name="row" class="Row" />
 		

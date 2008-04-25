@@ -3,5 +3,6 @@ name=char[255]
 surname=char[255]
 nickname=char[255]
 email=char[255]
+jpegPhoto=binary
 row=ptr parade.Row
 parade=ptr parade.Parade
