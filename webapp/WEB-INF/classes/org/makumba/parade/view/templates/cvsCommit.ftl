@@ -3,7 +3,7 @@
 <link rel="StyleSheet" href="/style/command.css" type="text/css">
 </HEAD><BODY class="command">
 <table border="0"><tr><td>
-<form style="display: inline;" target="command" action="/Cvs.do" method="POST">
+<form style="display: inline;" target="command" action="/Cvs.do" method="GET">
 <input type=hidden value="${rowName}" name="context">
 <input type=hidden value="commit" name="op">
 <input type=hidden value="${path}" name="params">
