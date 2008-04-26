@@ -16,9 +16,9 @@ public class User {
     
     private byte[] jpegPhoto;
     
-    private Row row;
-
     private Parade parade;
+    
+    private String cvsuser;
     
     public String getName() {
         return name;
@@ -50,14 +50,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Row getRow() {
-        return row;
-    }
-
-    public void setRow(Row row) {
-        this.row = row;
     }
 
     public long getId() {
@@ -129,6 +121,14 @@ public class User {
 
     public void setJpegPhoto(byte[] jpegPhoto) {
         this.jpegPhoto = jpegPhoto;
+    }
+
+    public String getCvsuser() {
+        return cvsuser;
+    }
+
+    public void setCvsuser(String cvsuser) {
+        this.cvsuser = cvsuser;
     }
     
 }

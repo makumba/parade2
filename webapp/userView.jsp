@@ -49,6 +49,10 @@ Here's the information ParaDe knows about you.
 					<td style="font-weight: bold;">E-mail</td>
 					<td><mak:value expr="u.email" /></td>
 				</tr>
+				<tr>
+					<td style="font-weight: bold;">CVS user</td>
+					<td><mak:value expr="u.cvsuser" /></td>
+				</tr>
 			</table>
 
 			</td>

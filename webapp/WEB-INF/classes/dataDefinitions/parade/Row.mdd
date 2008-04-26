@@ -3,5 +3,6 @@ rowpath=char[255]
 description=char[255]
 parade=ptr parade.Parade ;needs to have column id_parade
 application=ptr parade.Application
+user=ptr parade.User
 #files=set parade.File
 #rowdata=set parade.AbstractRowData ;inheritance...

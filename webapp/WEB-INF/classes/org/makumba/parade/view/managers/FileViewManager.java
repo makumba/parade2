@@ -168,7 +168,7 @@ public class FileViewManager implements FileView, TreeView {
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
         
-        Query q = s.createSQLQuery("SELECT * FROM File f JOIN Row r WHERE f.ID_ROW = r.ID AND f.isDir = '1' AND r.rowname = ? ORDER BY f.path ASC").addScalar("PATH", Hibernate.STRING).addScalar("NAME", Hibernate.STRING);
+        Query q = s.createSQLQuery("SELECT * FROM File f JOIN Row r WHERE f.ID_ROW = r.row AND f.isDir = '1' AND r.rowname = ? ORDER BY f.path ASC").addScalar("PATH", Hibernate.STRING).addScalar("NAME", Hibernate.STRING);
         q.setString(0, r.getRowname());
         
         List l =q.list();

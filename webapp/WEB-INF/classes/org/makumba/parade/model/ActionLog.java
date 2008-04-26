@@ -24,6 +24,8 @@ public class ActionLog {
     
     private String paradecontext;
     
+    private String file;
+    
     public String getAction() {
         return action;
     }
@@ -102,6 +104,14 @@ public class ActionLog {
 
     public void setParadecontext(String paradecontext) {
         this.paradecontext = paradecontext;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
     }
     
 }

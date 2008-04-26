@@ -28,6 +28,10 @@ Here you can edit your user information.<br><br>
   <td><mak:input field="email"/></td>
 </tr>
 <tr>
+  <td>CVS user</td>
+  <td><mak:input field="cvsuser"/></td>
+</tr>
+<tr>
   <td colspan="2"><input type="submit" value="Save">&nbsp; &nbsp; <input type="button" onClick="javascript:back();" value="Cancel"></td>
 </tr>
 </table>

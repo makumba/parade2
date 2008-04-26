@@ -33,6 +33,9 @@ public class ActionLogDTO {
     private String origin;
 
     private String paradecontext;
+    
+    private String file;
+
 
     public String getParadecontext() {
         return paradecontext;
@@ -114,6 +117,15 @@ public class ActionLogDTO {
         this.id = id;
     }
 
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+
     /**
      * Populates an ActionLog
      * @param log the ActionLog to be populated by this DTO
@@ -129,6 +141,7 @@ public class ActionLogDTO {
         log.setAction(action);
         log.setOrigin(origin);
         log.setParadecontext(paradecontext);
+        log.setFile(file);
     }
 
     public ActionLogDTO(ActionLog log) {
@@ -142,6 +155,7 @@ public class ActionLogDTO {
         this.action = log.getAction();
         this.origin = log.getOrigin();
         this.paradecontext = log.getParadecontext();
+        this.file = log.getFile();
     }
 
     public ActionLogDTO() { // empty constructor for TriggerFilter

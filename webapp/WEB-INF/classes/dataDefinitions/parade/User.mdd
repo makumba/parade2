@@ -4,5 +4,5 @@ surname=char[255]
 nickname=char[255]
 email=char[255]
 jpegPhoto=binary
-row=ptr parade.Row
+cvsuser=char[255]
 parade=ptr parade.Parade

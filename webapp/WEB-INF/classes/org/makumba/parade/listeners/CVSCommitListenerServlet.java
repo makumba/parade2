@@ -1,6 +1,7 @@
 package org.makumba.parade.listeners;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -10,6 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
+import org.makumba.parade.access.ActionLogDTO;
+import org.makumba.parade.tools.TriggerFilter;
 
 /**
  * This servlet listens to requests sent by the CVS hook and which notify about newly commited files
@@ -54,9 +57,21 @@ public class CVSCommitListenerServlet extends HttpServlet {
             
             commitLog += name + " from version "+old_version+" to version "+new_version+"\n"; 
             commitChanges.put(name, new_version);
+            logCommit(name, user);
         }
         
         logger.info(commitLog);
+        
+    }
+    
+    private void logCommit(String file, String user) {
+        ActionLogDTO log = new ActionLogDTO();
+        log.setAction("cvsCommitRepository");
+        log.setDate(new Date());
+        log.setUser(user);
+        log.setFile(file);
+        
+        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
     }
     
 }

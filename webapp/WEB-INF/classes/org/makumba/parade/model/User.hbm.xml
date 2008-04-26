@@ -18,10 +18,10 @@
 		<property name="nickname" />
 		<property name="email" />
 		<property name="jpegPhoto">
-		<column name="jpegPhoto" sql-type="blob"/>
+			<column name="jpegPhoto" sql-type="blob"/>
 		</property>
+		<property name="cvsuser"/>
 		
-		<one-to-one name="row" class="Row" />
 		
 		<many-to-one name="parade" class="Parade" />
 		

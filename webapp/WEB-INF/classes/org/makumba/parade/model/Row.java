@@ -21,6 +21,8 @@ public class Row {
     
     private Application application;
 
+    private User user;
+    
     public Application getApplication() {
         return application;
     }
@@ -99,6 +101,14 @@ public class Row {
 
     public void setRowdata(Map rowdata) {
         this.rowdata = rowdata;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }
