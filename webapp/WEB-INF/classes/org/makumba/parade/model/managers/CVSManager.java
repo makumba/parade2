@@ -223,7 +223,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     java.io.File currFile = new java.io.File(absoluteFilePath);
 
                     
-                    // we add this file entry to the other entries, for further checking agains the cache
+                    // we add this file entry to the other entries, for further checking against the cache
                     cvsFiles.add(absoluteFilePath);
                     
                     // checking if the file we are looking for is mapped
@@ -281,7 +281,6 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         cvsdata.setStatus(NEEDS_CHECKOUT);
                         continue;
                     }
-                        
                     
                     line = line.substring(n + 1);
                     n = line.indexOf('/');
@@ -299,6 +298,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
                     if (fl == null && !revision.startsWith("-")) {
                         cvsdata.setStatus(NEEDS_CHECKOUT);
+                        cvsfile.setCvsURI(null);
                         continue;
                     }
 
@@ -306,16 +306,19 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
                     if (date.equals("Result of merge")) {
                         cvsdata.setStatus(LOCALLY_MODIFIED);
+                        cvsfile.setCvsURI(null);
                         continue;
                     }
 
                     if (date.startsWith("Result of merge+")) {
                         cvsdata.setStatus(CONFLICT);
+                        cvsfile.setCvsURI(null);
                         continue;
                     }
 
                     if (date.equals("dummy timestamp")) {
                         cvsdata.setStatus(revision.startsWith("-") ? DELETED : ADDED);
+                        cvsfile.setCvsURI(null);
                         continue;
                     }
 
@@ -337,10 +340,15 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                             // saving
                             || Math.abs(Math.abs(l) - 3600000) < 1000) {
                         cvsdata.setStatus(UP_TO_DATE);
+                        
+                        // if the file is the same as on the repository, we can set a cvs uri
+                        cvsfile.setCvsURI("cvs://"+getCVSModule(r.getRowpath())+"/"+name);
+                        
                         continue;
                     }
 
                     cvsdata.setStatus(l > 0 ? LOCALLY_MODIFIED : NEEDS_UPDATE);
+                    cvsfile.setCvsURI(null);
                     continue;
 
                     // if the entry is a dir
@@ -399,7 +407,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
             
             
         } catch (Throwable t) {
-            logger.error("Error while trying to set CVS information for file " + file.getName() + "at path "+file.getPath(), t);
+            logger.error("Error while trying to set CVS information for file " + file.getName() + " at path "+file.getPath(), t);
         }
     }
 
