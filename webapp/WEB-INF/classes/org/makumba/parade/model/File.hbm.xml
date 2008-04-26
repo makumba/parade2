@@ -19,6 +19,7 @@
 		<property name="parentPath" />
 		<property name="isDir" />
 		<property name="onDisk" />
+		<property name="cvsURI" />
 		
 		<many-to-one name="row" column="id_row" not-null="true" outer-join="false"/>
 		

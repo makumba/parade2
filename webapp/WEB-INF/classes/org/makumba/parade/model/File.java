@@ -36,6 +36,8 @@ public class File {
     private String path;
 
     private String parentPath;
+    
+    private String cvsURI;
 
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
@@ -143,6 +145,18 @@ public class File {
         this.onDisk = onDisk;
     }
 
+    public String getCvsURI() {
+        return cvsURI;
+    }
+
+    public void setCvsURI(String cvsURI) {
+        this.cvsURI = cvsURI;
+    }
+    
+    public String getFileURI() {
+        return "file://"+path.replace(java.io.File.separator, "/");
+    }
+
     /* returns a List of the direct children (files, dirs) of a given Path */
     public List<File> getChildren(String orderBy) {
         
@@ -211,5 +225,6 @@ public class File {
 
         return children;
     }
+
     
 }
