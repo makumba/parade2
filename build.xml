@@ -63,9 +63,6 @@
 			<include name="ant-1.6.5.jar" />
 			<include name="ant-launcher.jar" />
 		</fileset>
-		<fileset dir="${webapp.path}/WEB-INF/lib">
-			<include name="jnotify-0.9.1.jar" />
-		</fileset>
 		<pathelement path="globalClasses/" />
 	</path>
 
