@@ -16,13 +16,6 @@
    <property name="dataType" />
    <many-to-one name="file" column="id_file" not-null="true" outer-join="true"/>
     
-    <joined-subclass name="FileCVS" table="FILE_CVS" lazy="false">
-        <key column="FILEDATA_ID"/>
-        <property name="status" />
-        <property name="revision" />
-        <property name="date" />
-    </joined-subclass>
-    
     <joined-subclass name="FileTracker" table="FILE_TRACKER" lazy="false">
         <key column="FILEDATA_ID"/>
         <property name="tracked" />
