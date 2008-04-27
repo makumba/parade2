@@ -1,10 +1,8 @@
 package org.makumba.parade.view.managers;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -22,55 +20,53 @@ import freemarker.template.TemplateException;
 
 public class FileEditViewManager implements FileEditorView {
 
-	static Logger logger = Logger.getLogger(FileEditViewManager.class.getName());
-	    
-	public String getFileEditorView(Row r, String path, File file, String[] source) {
-		StringWriter result = new StringWriter();
-		PrintWriter out = new PrintWriter(result);
-		
-		java.io.File f= new java.io.File(file.getPath());
-		String content="";
-		
-		if (source != null) {
-			content = source[0];
-		}
-		else {
-			// we read the file
-			if (f.exists()) {
-				Reader rd;
-				try {
-					rd = new BufferedReader(new FileReader(f));
-					int c;
-					StringBuffer sb = new StringBuffer();
-					while ((c = rd.read()) != -1) {
-						sb.append((char) c);
-					}
-					content = sb.toString();
-				} catch (FileNotFoundException e) {
-					logger.error(e);
-				} catch (IOException e) {
-					logger.error(e);
-				}
-			}
-		}
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < content.length(); i++)
-			if (content.charAt(i) == '<')
-				sb.append("&lt;");
-			else if (content.charAt(i) == '&')
-				sb.append("&amp;");
-			else
-				sb.append(content.charAt(i));
-		content = sb.toString();
-        
+    static Logger logger = Logger.getLogger(FileEditViewManager.class.getName());
+
+    public String getFileEditorView(Row r, String path, File file, String[] source) {
+        StringWriter result = new StringWriter();
+        PrintWriter out = new PrintWriter(result);
+
+        java.io.File f = new java.io.File(file.getPath());
+        String content = "";
+
+        if (source != null) {
+            content = source[0];
+        } else {
+            // we read the file
+            if (f.exists()) {
+                Reader rd;
+                try {
+                    rd = new BufferedReader(new FileReader(f));
+                    int c;
+                    StringBuffer sb = new StringBuffer();
+                    while ((c = rd.read()) != -1) {
+                        sb.append((char) c);
+                    }
+                    content = sb.toString();
+                } catch (FileNotFoundException e) {
+                    logger.error(e);
+                } catch (IOException e) {
+                    logger.error(e);
+                }
+            }
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < content.length(); i++)
+            if (content.charAt(i) == '<')
+                sb.append("&lt;");
+            else if (content.charAt(i) == '&')
+                sb.append("&amp;");
+            else
+                sb.append(content.charAt(i));
+        content = sb.toString();
+
         /* Constructing the data model */
         SimpleHash root = new SimpleHash();
         root.put("fileName", file.getName());
         root.put("rowName", r.getRowname());
         root.put("path", path);
         root.put("content", content);
-        
-        
+
         Template temp = null;
         try {
             temp = InitServlet.getFreemarkerCfg().getTemplate("fileEditor.ftl");
@@ -78,7 +74,7 @@ public class FileEditViewManager implements FileEditorView {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         /* Merge data model with template */
         try {
             temp.process(root, out);
@@ -89,11 +85,9 @@ public class FileEditViewManager implements FileEditorView {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        
-		return result.toString();
-        
-        
-	}
-	
+
+        return result.toString();
+
+    }
+
 }

@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Application;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.tools.Execute;
 
@@ -139,17 +139,17 @@ public class ApplicationManager implements ParadeManager {
         return result.toString();
     }
 
-    public void newRow(String name, Row r, Map m) {
+    public void newRow(String name, Row r, Map<String, String> m) {
 
         // let's fetch the CVS module of this row
         String module = CVSManager.getCVSModule(r.getRowpath());
 
         if (module == null) {
             logger.warn("No module for row " + r.getRowname() + ". This means no application is set for it.");
-        } else if(module.indexOf("parade") == -1) {
+        } else if (module.indexOf("parade") == -1) {
             Application a = r.getParade().getApplications().get(module);
             if (a == null) {
-                logger.info("Registering new application "+module+" used by row "+r.getRowname());
+                logger.info("Registering new application " + module + " used by row " + r.getRowname());
                 a = new Application(module, CVSManager.getCVSRepository(r.getRowpath()));
                 buildCVSlist(a);
                 r.getParade().getApplications().put(a.getName(), a);

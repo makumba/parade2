@@ -76,7 +76,7 @@ public class ParadeSessionListener implements HttpSessionListener {
                 String login = (String) s.getAttribute("user_login");
                 String nickName = (String) s.getAttribute("user_nickname");
                 if (login != null && login.length() > 0) {
-                    online.add(new String[] {login, nickName});
+                    online.add(new String[] { login, nickName });
                 }
             } catch (java.lang.IllegalStateException e) {
                 // this session is invalidated, we need to remove it

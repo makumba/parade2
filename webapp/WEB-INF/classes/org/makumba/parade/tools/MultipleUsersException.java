@@ -9,6 +9,11 @@ package org.makumba.parade.tools;
  */
 public class MultipleUsersException extends ParadeException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public MultipleUsersException(String msg) {
         super(msg);
     }

@@ -8,7 +8,7 @@ import freemarker.template.SimpleHash;
 
 public interface ParadeView {
 
-    public void setParadeViewHeader(List headers);
+    public void setParadeViewHeader(List<String> headers);
 
     public void setParadeView(SimpleHash rowInformation, Row r);
 

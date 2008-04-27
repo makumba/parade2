@@ -1,6 +1,5 @@
 package org.makumba.parade.controller;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,11 +17,11 @@ public class CommandAction extends DispatchAction {
         String op = request.getParameter("op");
         String[] params = request.getParameterValues("params");
         String path = params[1];
-            
+
         if (op != null && op.startsWith("newFile")) {
             Object[] result = CommandController.onNewFile(context, params);
-            request.setAttribute("result", (String) result[0]);
-            request.setAttribute("success", (Boolean) result[1]);
+            request.setAttribute("result", result[0]);
+            request.setAttribute("success", result[1]);
             request.setAttribute("context", context);
             request.setAttribute("path", path);
             request.setAttribute("display", "file");
@@ -43,8 +42,8 @@ public class CommandAction extends DispatchAction {
 
         if (op != null && op.startsWith("newDir")) {
             Object[] result = CommandController.onNewDir(context, params);
-            request.setAttribute("result", (String) result[0]);
-            request.setAttribute("success", (Boolean) result[1]);
+            request.setAttribute("result", result[0]);
+            request.setAttribute("success", result[1]);
             request.setAttribute("context", context);
             request.setAttribute("path", path);
             request.setAttribute("display", "file");

@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -27,11 +26,11 @@ import freemarker.template.TemplateException;
 public class FileDisplay {
 
     static Logger logger = Logger.getLogger(FileDisplay.class.getName());
-    
+
     // TODO move this somewhere else
     public static String creationFileOK(String rowname, String path, String filename) {
         return "New file " + filename + " created. " + "<a href='/File.do?op=editFile&context=" + rowname + "&path="
-                + path + "&file=" + filename+"&editor=codepress'>Edit</a></b>";
+                + path + "&file=" + filename + "&editor=codepress'>Edit</a></b>";
     }
 
     public static String creationDirOK(String filename) {
@@ -47,25 +46,26 @@ public class FileDisplay {
         PrintWriter out = new PrintWriter(result);
 
         // if this is the root of the row
-        if (path == null || path.equals("null")) path = "/";
-        
+        if (path == null || path.equals("null"))
+            path = "/";
+
         path = path.replace(java.io.File.separatorChar, '/');
-        
+
         if (opResult == null)
             opResult = "";
-                
+
         String pathEncoded = "";
-        
+
         try {
             pathEncoded = URLEncoder.encode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         FileViewManager fileV = new FileViewManager();
         CVSViewManager cvsV = new CVSViewManager();
-        
+
         Template temp = null;
         try {
             temp = InitServlet.getFreemarkerCfg().getTemplate("fileBrowser.ftl");
@@ -73,62 +73,64 @@ public class FileDisplay {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         /* Creating data model */
         SimpleHash root = new SimpleHash();
         root.put("rowName", r.getRowname());
         root.put("success", success);
         root.put("opResult", opResult);
         root.put("path", path);
-        root.put("pathOnDisk", r.getRowpath() + (path.length()>1?java.io.File.separator + path.replace('/', java.io.File.separatorChar):""));
+        root.put("pathOnDisk", r.getRowpath()
+                + (path.length() > 1 ? java.io.File.separator + path.replace('/', java.io.File.separatorChar) : ""));
         root.put("pathEncoded", pathEncoded);
         root.put("parentDirs", getParentDir(r, path));
-        
+
         // computing file model data
         String absolutePath = "";
-        if(path.equals("/")) absolutePath = r.getRowpath();
-        else absolutePath = r.getRowpath() + java.io.File.separator + path.replace('/', java.io.File.separatorChar);
-        if(absolutePath.endsWith(java.io.File.separator)) absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
-        File file = (File) r.getFiles().get(absolutePath);
-        
-        // if this file does not exist, e.g. we come from a row where this folder does not exist, take the root file
-        if(file == null) {
+        if (path.equals("/"))
             absolutePath = r.getRowpath();
-            file = (File) r.getFiles().get(absolutePath);
+        else
+            absolutePath = r.getRowpath() + java.io.File.separator + path.replace('/', java.io.File.separatorChar);
+        if (absolutePath.endsWith(java.io.File.separator))
+            absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
+        File file = r.getFiles().get(absolutePath);
+
+        // if this file does not exist, e.g. we come from a row where this folder does not exist, take the root file
+        if (file == null) {
+            absolutePath = r.getRowpath();
+            file = r.getFiles().get(absolutePath);
         }
-        
-            
+
         List<File> files = file.getChildren(orderBy);
         Collections.sort(files, new DirectorySorter());
-        
-            
-        List fileViews = new LinkedList();
+
+        List<SimpleHash> fileViews = new LinkedList<SimpleHash>();
 
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
-                
-        for (Iterator j = files.iterator(); j.hasNext();) {
-            File currentFile = (File) j.next();
-            
+
+        for (Object element : files) {
+            File currentFile = (File) element;
+
             // if this is a symbolic link
-            if(currentFile.getPath().length() < r.getRowpath().length() + 1) {
-                logger.warn("Symbolic link detected:" + currentFile.getName() +" redirects to "+currentFile.getPath());
+            if (currentFile.getPath().length() < r.getRowpath().length() + 1) {
+                logger.warn("Symbolic link detected:" + currentFile.getName() + " redirects to "
+                        + currentFile.getPath());
                 continue;
             }
-                
-            
+
             SimpleHash fileView = new SimpleHash();
             fileV.setFileView(fileView, r, path, currentFile);
             cvsV.setFileView(fileView, r, path, currentFile);
-            
+
             fileViews.add(fileView);
         }
-        
+
         tx.commit();
         s.close();
-        
+
         root.put("fileViews", fileViews);
-        
+
         /* Merge data model with template */
         try {
             temp.process(root, out);
@@ -139,28 +141,29 @@ public class FileDisplay {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         return result.toString();
     }
-    
-    private List getParentDir(Row r, String path) {
+
+    private List<SimpleHash> getParentDir(Row r, String path) {
 
         if (path == null)
             path = "/";
-        
-        //String relativePath = path.substring(r.getRowpath().length(), path.length());
-        
-        List parentDirs = new LinkedList();
-        //String currentPath = path.substring(0, r.getRowpath().length());
+
+        // String relativePath = path.substring(r.getRowpath().length(), path.length());
+
+        List<SimpleHash> parentDirs = new LinkedList<SimpleHash>();
+        // String currentPath = path.substring(0, r.getRowpath().length());
         String currentPath = "";
 
         StringTokenizer st = new StringTokenizer(path, "/");
         while (st.hasMoreTokens()) {
             SimpleHash parentDir = new SimpleHash();
-            
+
             String thisDir = st.nextToken();
-            currentPath +=  thisDir;
-            if(st.hasMoreElements()) currentPath += "/";
+            currentPath += thisDir;
+            if (st.hasMoreElements())
+                currentPath += "/";
             parentDir.put("path", currentPath);
             parentDir.put("directoryName", thisDir);
             parentDirs.add(parentDir);
@@ -170,14 +173,14 @@ public class FileDisplay {
 
 }
 
-class DirectorySorter implements Comparator {
-    public int compare(Object element1, Object element2) {
-        if(!((File)element1).getIsDir() || !((File)element2).getIsDir())
+class DirectorySorter implements Comparator<File> {
+    public int compare(File element1, File element2) {
+        if (!element1.getIsDir() || !element2.getIsDir())
             return 0;
-        
-        String s1 = ((File)element1).getName();
-        String s2 = ((File)element2).getName();
-        
+
+        String s1 = element1.getName();
+        String s2 = element2.getName();
+
         return s1.compareTo(s2);
     }
 }

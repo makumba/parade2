@@ -12,7 +12,7 @@ import freemarker.template.SimpleHash;
 
 public class WebappViewManager implements HeaderView, ParadeView {
 
-    public void setParadeViewHeader(List headers) {
+    public void setParadeViewHeader(List<String> headers) {
         headers.add("Webapp path");
         headers.add("Webapp status");
     }
@@ -21,7 +21,7 @@ public class WebappViewManager implements HeaderView, ParadeView {
         SimpleHash webappModel = setCommands(r, "");
         rowInformation.put("webapp", webappModel);
     }
-    
+
     public void setHeaderView(SimpleHash root, Row r, String path) {
         SimpleHash webapp = setCommands(r, path);
         root.put("webapp", webapp);
@@ -32,16 +32,16 @@ public class WebappViewManager implements HeaderView, ParadeView {
         RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
 
         int status = data.getStatus().intValue();
-        
-        if( r.getRowpath().equals(r.getParade().getBaseDir())) {
+
+        if (r.getRowpath().equals(r.getParade().getBaseDir())) {
             data.setStatus(new Integer(ServletContainer.RUNNING));
             status = ServletContainer.RUNNING;
         }
-        
+
         webappModel.put("webappPath", data.getWebappPath());
         webappModel.put("status", new Integer(status));
-        webappModel.put("path", path==null?"":path);
-                    
+        webappModel.put("path", path == null ? "" : path);
+
         // TODO - consider the case WEBINF isn't found, ie get server name, port from some request
         if (data.getWebappPath().equals("NO WEBINF")) {
             /*

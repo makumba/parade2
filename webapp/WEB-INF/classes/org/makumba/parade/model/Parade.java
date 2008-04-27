@@ -10,7 +10,6 @@ import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 
 import org.apache.log4j.Logger;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -52,7 +51,7 @@ public class Parade {
     private Map<String, Integer> JNotifyWatches = new HashMap<String, Integer>();
 
     // ParaDe managers
-    
+
     public ApplicationManager applMgr = new ApplicationManager();
 
     public FileManager fileMgr = new FileManager();
@@ -94,7 +93,7 @@ public class Parade {
         Iterator<String> i = rows.keySet().iterator();
         while (i.hasNext()) {
 
-            Row r = (Row) rows.get(i.next());
+            Row r = rows.get(i.next());
             refreshRow(r);
         }
 
@@ -175,7 +174,7 @@ public class Parade {
         }
         r.setRowpath(canonicalPath);
         r.setDescription(rowDefinition.get("desc"));
-        
+
         return registerRow(r, rowDefinition);
     }
 
@@ -371,12 +370,12 @@ public class Parade {
         try {
             logger.info("Adding filesystem watch to row " + r.getRowname());
             watchID = JNotify.addWatch(path, mask, watchSubtree, new ParadeJNotifyListener());
-            
-            if(watchID == -1) {
+
+            if (watchID == -1) {
                 throw new ParadeException("Row " + r.getRowname()
                         + " not properly watched by JNotify! Are you having two rows that use the same directory?");
             }
-            
+
             JNotifyWatches.put(r.getRowname(), watchID);
 
         } catch (JNotifyException e) {

@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 
 public class ParadeProperties {
 
-    
     static String DEFAULT_PROPERTYFILE = "/parade.properties";
 
     private static Properties config;
@@ -26,7 +25,10 @@ public class ParadeProperties {
             config = new Properties();
             config.load(ParadeProperties.class.getResourceAsStream(DEFAULT_PROPERTYFILE));
         } catch (Throwable t) {
-            logger.error("Error while loading parade.properties. Make sure you have configured a parade.properties in webapp/WEB-INF/classes (you can copy the example file)", t);
+            logger
+                    .error(
+                            "Error while loading parade.properties. Make sure you have configured a parade.properties in webapp/WEB-INF/classes (you can copy the example file)",
+                            t);
         }
     }
 
@@ -34,22 +36,22 @@ public class ParadeProperties {
         return config.getProperty(configProperty);
     }
 
-    public static List getElements(String configProperty) {
-        List l = new LinkedList();
+    public static List<String> getElements(String configProperty) {
+        List<String> l = new LinkedList<String>();
 
         String s = getProperty(configProperty);
         if (s == null)
             return null;
         StringTokenizer st = new StringTokenizer(s, ",");
         while (st.hasMoreElements()) {
-            l.add(((String) st.nextToken()).trim());
+            l.add((st.nextToken()).trim());
         }
         return l;
     }
-    
+
     public static String getParadeBase() {
-        
-        String paradeBase=".\\";
+
+        String paradeBase = ".\\";
         try {
             paradeBase = new java.io.File("." + java.io.File.separator).getCanonicalPath();
         } catch (IOException e) {
@@ -58,7 +60,7 @@ public class ParadeProperties {
         }
         return paradeBase;
     }
-    
+
     public static String getClassesPath() {
         return new java.io.File(RowProperties.class.getResource(DEFAULT_PROPERTYFILE).getPath()).getParent();
     }

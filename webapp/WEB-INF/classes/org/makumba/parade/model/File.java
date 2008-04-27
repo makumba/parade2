@@ -36,9 +36,9 @@ public class File {
     private String path;
 
     private String parentPath;
-    
+
     private String cvsURI;
-    
+
     private Integer cvsStatus;
 
     private String cvsRevision;
@@ -158,7 +158,7 @@ public class File {
     public void setCvsURI(String cvsURI) {
         this.cvsURI = cvsURI;
     }
-    
+
     public Integer getCvsStatus() {
         return cvsStatus;
     }
@@ -182,11 +182,11 @@ public class File {
     public void setCvsDate(Date cvsDate) {
         this.cvsDate = cvsDate;
     }
-    
+
     public String getFileURI() {
-        return "file://"+path.replace(java.io.File.separator, "/");
+        return "file://" + path.replace(java.io.File.separator, "/");
     }
-    
+
     public void emptyCvsData() {
         setCvsDate(null);
         setCvsRevision(null);
@@ -196,17 +196,17 @@ public class File {
 
     /* returns a List of the direct children (files, dirs) of a given Path */
     public List<File> getChildren(String orderBy) {
-        
-        if(orderBy == null) {
+
+        if (orderBy == null) {
             orderBy = new String("f.isDir desc, f.name asc");
-        } else if(orderBy.equals("name")) {
+        } else if (orderBy.equals("name")) {
             orderBy = "f.isDir desc, f.name asc";
-        } else if(orderBy.equals("age")) {
+        } else if (orderBy.equals("age")) {
             orderBy = "f.isDir desc, f.date asc";
-        } else if(orderBy.equals("size")) {
+        } else if (orderBy.equals("size")) {
             orderBy = "f.isDir desc, f.size asc";
         }
-        
+
         String keyPath = this.getPath().replace(java.io.File.separatorChar, '/');
 
         String absoulteRowPath = (new java.io.File(row.getRowpath()).getAbsolutePath());
@@ -218,17 +218,18 @@ public class File {
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
-        Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.row.rowname = :rowname order by "+orderBy);
+        Query q = s.createQuery("from File f where f.parentPath = :keyPath and f.row.rowname = :rowname order by "
+                + orderBy);
         q.setCacheable(true);
         q.setString("keyPath", keyPath);
         q.setString("rowname", row.getRowname());
-        
+
         children = q.list();
 
         // we need to initialise the file data of this file
-        Iterator i = q.iterate();
+        Iterator<File> i = q.iterate();
         while (i.hasNext()) {
-            Hibernate.initialize(((File) i.next()).getFiledata());
+            Hibernate.initialize(i.next().getFiledata());
         }
 
         tx.commit();
@@ -236,7 +237,7 @@ public class File {
 
         return children;
     }
-    
+
     /* returns a List of the direct children (files, dirs) of a given Path */
     public List<String> getChildrenPaths() {
         String keyPath = this.getPath().replace(java.io.File.separatorChar, '/');
@@ -250,11 +251,14 @@ public class File {
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
-        Query q = s.createSQLQuery("SELECT path FROM File f JOIN Row r WHERE f.ID_ROW = r.ID AND f.parentPath = ? AND r.rowname = ? ORDER BY f.isDir DESC, f.path ASC").addScalar("path", Hibernate.STRING);
+        Query q = s
+                .createSQLQuery(
+                        "SELECT path FROM File f JOIN Row r WHERE f.ID_ROW = r.ID AND f.parentPath = ? AND r.rowname = ? ORDER BY f.isDir DESC, f.path ASC")
+                .addScalar("path", Hibernate.STRING);
         q.setCacheable(true);
         q.setString(0, keyPath);
         q.setString(1, row.getRowname());
-        
+
         children = q.list();
 
         tx.commit();
@@ -262,5 +266,5 @@ public class File {
 
         return children;
     }
-    
+
 }

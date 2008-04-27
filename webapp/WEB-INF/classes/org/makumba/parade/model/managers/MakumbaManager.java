@@ -57,9 +57,9 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                     logger.error("No WEB-INF/lib directory found for row " + r.getRowname()
                             + ". Cannot detected Makumba version.");
                 } else {
-                    for (int i = 0; i < libs.length; i++) {
-                        if (libs[i].indexOf("makumba") > -1 && libs[i].indexOf(".jar") > 0) {
-                            mak.add(libs[i]);
+                    for (String element : libs) {
+                        if (element.indexOf("makumba") > -1 && element.indexOf(".jar") > 0) {
+                            mak.add(element);
                         }
                     }
                 }
@@ -107,7 +107,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         return "Default database: " + (String) p.get("default");
     }
 
-    public void newRow(String name, Row r, Map m) {
+    public void newRow(String name, Row r, Map<String, String> m) {
         // TODO Auto-generated method stub
 
     }

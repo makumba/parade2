@@ -12,8 +12,8 @@ public class FileController {
     static Logger logger = Logger.getLogger(FileController.class.getName());
 
     public static void saveFile(String absoluteFilePath, String[] source) {
-        
-        java.io.File f= new java.io.File(absoluteFilePath);
+
+        java.io.File f = new java.io.File(absoluteFilePath);
         java.io.File d;
         String content = source[0];
 
@@ -24,7 +24,7 @@ public class FileController {
         }
         try {
             f.createNewFile();
-            
+
             // FIXME fishy windows line-break code. see if that doesn't cause trouble
             boolean windows = System.getProperty("line.separator").length() > 1;
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(f)));
@@ -34,9 +34,9 @@ public class FileController {
             }
             pw.close();
         } catch (IOException e) {
-            logger.error("Error while creating file ",e);
+            logger.error("Error while creating file ", e);
         }
-        
+
     }
-    
+
 }

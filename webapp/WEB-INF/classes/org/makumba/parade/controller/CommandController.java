@@ -41,45 +41,49 @@ public class CommandController {
         String result = new String();
         String filename = params[0];
         String relativePath = params[1];
-        
+
         FileManager fileMgr = new FileManager();
 
         Session s = null;
         Transaction tx = null;
         boolean success = false;
         Row row = null;
-        
+
         try {
             s = InitServlet.getSessionFactory().openSession();
             tx = s.beginTransaction();
 
             Parade p = (Parade) s.get(Parade.class, new Long(1));
 
-            row = (Row) p.getRows().get(context);
+            row = p.getRows().get(context);
             if (row == null) {
                 tx.commit();
                 s.close();
                 return res("Unknown context " + context, false);
             }
-            
+
             String path = new String();
             String absolutePath = row.getRowpath();
-            
-            if (relativePath == null || relativePath == "") path = absolutePath;
-            if (relativePath.equals("/")) path = absolutePath;
-            if (relativePath.endsWith("/")) relativePath = relativePath.substring(0, relativePath.length() - 1);
-            
-            if(relativePath.length() > 0) {
+
+            if (relativePath == null || relativePath == "")
+                path = absolutePath;
+            if (relativePath.equals("/"))
+                path = absolutePath;
+            if (relativePath.endsWith("/"))
+                relativePath = relativePath.substring(0, relativePath.length() - 1);
+
+            if (relativePath.length() > 0) {
                 path = absolutePath + java.io.File.separator + relativePath.replace('/', java.io.File.separatorChar);
             } else {
                 path = absolutePath;
             }
-            
+
             ParadeJNotifyListener.createFileLock(path + java.io.File.separator + filename);
-            
+
             // security check - if the path of the file is outisde the path of the row, we deny any action
             try {
-                if((new java.io.File(path).getCanonicalPath().length() < new java.io.File(absolutePath).getCanonicalPath().length())) {
+                if ((new java.io.File(path).getCanonicalPath().length() < new java.io.File(absolutePath)
+                        .getCanonicalPath().length())) {
                     result = "Error: you can't access files outside of the row";
                 } else if (action.equals("newFile"))
                     result = fileMgr.newFile(row, path, filename);
@@ -93,7 +97,7 @@ public class CommandController {
             }
 
             success = result.startsWith("OK");
-            if(success) {
+            if (success) {
                 // updates the caches
                 // TODO add other caches (e.g. tracker) here
                 FileManager.updateSimpleFileCache(context, path, filename);
@@ -106,8 +110,7 @@ public class CommandController {
             tx.commit();
             s.close();
         }
-        
-        
+
         if (success) {
             if (action.equals("newFile"))
                 return res(FileDisplay.creationFileOK(row.getRowname(), relativePath, filename), success);
@@ -134,11 +137,12 @@ public class CommandController {
         return obj;
     }
 
-    public static Object[] uploadFile(String context, String path, String fileName, String contentType, int fileSize, byte[] fileData) {
-        
+    public static Object[] uploadFile(String context, String path, String fileName, String contentType, int fileSize,
+            byte[] fileData) {
+
         boolean success = true;
         String result = new String();
-        
+
         String saveFilePath = Parade.constructAbsolutePath(context, path) + File.separator + fileName;
 
         FileOutputStream fileOut;
@@ -155,17 +159,18 @@ public class CommandController {
             success = false;
             result = ("Error writing file: " + e);
         }
-        
+
         if (success) {
-            
+
             // generating result view
-            result = CommandViewManager.getUploadResponseView(context, path, fileName, contentType, fileSize, saveFilePath);
+            result = CommandViewManager.getUploadResponseView(context, path, fileName, contentType, fileSize,
+                    saveFilePath);
         }
-        
+
         Object obj[] = new Object[2];
         obj[0] = result;
         obj[1] = new Boolean(success);
-        
+
         return obj;
     }
 

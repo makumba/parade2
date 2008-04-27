@@ -2,6 +2,7 @@ package org.makumba.parade.tools;
 
 /**
  * This class provides utility methods to display numeric values in a nicer way to the user.
+ * 
  * @author Cristian Bogdan
  * @author Manuel Gay
  * @version $id

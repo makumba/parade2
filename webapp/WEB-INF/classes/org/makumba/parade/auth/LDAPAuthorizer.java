@@ -12,7 +12,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.makumba.parade.init.ParadeProperties;
-import org.makumba.parade.tools.Base64;
 
 import com.novell.ldap.LDAPAttributeSet;
 import com.novell.ldap.LDAPConnection;
@@ -64,28 +63,26 @@ public class LDAPAuthorizer implements Authorizer {
             encryption = new String[0];
         }
     }
-    
-    
+
     /** LDAP attributes */
-    
+
     private String displayName;
-    
+
     private String givenName;
-    
+
     private String employeeType;
-    
+
     private String sn;
-    
+
     private String mail;
-    
+
     private String cn;
-    
+
     private byte[] jpegPhoto;
-    
-    
+
     public boolean auth(String username, String password) {
-        
-        if(username.equals(""))
+
+        if (username.equals(""))
             return false;
 
         int ldapPort = LDAPConnection.DEFAULT_PORT;
@@ -116,10 +113,10 @@ public class LDAPAuthorizer implements Authorizer {
             } else {
                 lc.bind(ldapVersion, loginDN, password.getBytes("UTF8"));
             }
-            
-            String returnAttrs[] = {"displayName", "givenName", "employeeType", "sn", "mail", "cn", "jpegPhoto" };
-            
-            LDAPEntry entry = lc.read( loginDN, returnAttrs );
+
+            String returnAttrs[] = { "displayName", "givenName", "employeeType", "sn", "mail", "cn", "jpegPhoto" };
+
+            LDAPEntry entry = lc.read(loginDN, returnAttrs);
 
             LDAPAttributeSet attributeSet = entry.getAttributeSet();
 
@@ -128,22 +125,22 @@ public class LDAPAuthorizer implements Authorizer {
             employeeType = attributeSet.getAttribute("sn").getStringValue();
             mail = attributeSet.getAttribute("mail").getStringValue();
             sn = attributeSet.getAttribute("sn").getStringValue();
-            
+
             String[] cns = attributeSet.getAttribute("cn").getStringValueArray();
-            if(cns.length > 1) {
+            if (cns.length > 1) {
                 // take the shortname
                 cn = cns[1];
             } else {
                 cn = attributeSet.getAttribute("cn").getStringValue();
             }
             jpegPhoto = attributeSet.getAttribute("jpegPhoto").getByteValue();
-            
+
             // in the end we disconnect
             lc.disconnect();
             return true;
 
         } catch (LDAPException e) {
-            System.err.println("LDAP AUTHORIZER ERROR: login failed for user "+username+", loginDN "+loginDN);
+            System.err.println("LDAP AUTHORIZER ERROR: login failed for user " + username + ", loginDN " + loginDN);
             return false;
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
@@ -153,36 +150,29 @@ public class LDAPAuthorizer implements Authorizer {
 
     }
 
-
     public String getDisplayName() {
         return displayName;
     }
-
 
     public String getGivenName() {
         return givenName;
     }
 
-
     public String getEmployeeType() {
         return employeeType;
     }
-
 
     public String getSn() {
         return sn;
     }
 
-
     public String getMail() {
         return mail;
     }
 
-
     public String getCn() {
         return cn;
     }
-
 
     public byte[] getJpegPhoto() {
         return jpegPhoto;
@@ -201,16 +191,16 @@ class BindCallbackHandler implements CallbackHandler {
 
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 
-        for (int i = 0; i < callbacks.length; i++) {
+        for (Callback element : callbacks) {
 
-            if (callbacks[i] instanceof PasswordCallback) {
-                ((PasswordCallback) callbacks[i]).setPassword(m_password);
-            } else if (callbacks[i] instanceof NameCallback) {
-                ((NameCallback) callbacks[i]).setName(((NameCallback) callbacks[i]).getDefaultName());
-            } else if (callbacks[i] instanceof RealmCallback) {
-                ((RealmCallback) callbacks[i]).setText(((RealmCallback) callbacks[i]).getDefaultText());
-            } else if (callbacks[i] instanceof RealmChoiceCallback) {
-                ((RealmChoiceCallback) callbacks[i]).setSelectedIndex(0);
+            if (element instanceof PasswordCallback) {
+                ((PasswordCallback) element).setPassword(m_password);
+            } else if (element instanceof NameCallback) {
+                ((NameCallback) element).setName(((NameCallback) element).getDefaultName());
+            } else if (element instanceof RealmCallback) {
+                ((RealmCallback) element).setText(((RealmCallback) element).getDefaultText());
+            } else if (element instanceof RealmChoiceCallback) {
+                ((RealmChoiceCallback) element).setSelectedIndex(0);
             }
         }
     }

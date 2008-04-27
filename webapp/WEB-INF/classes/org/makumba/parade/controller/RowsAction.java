@@ -15,78 +15,79 @@ import org.makumba.parade.model.Row;
 
 public class RowsAction extends Action {
 
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
         String op = request.getParameter("op");
-                
+
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        
-        if(op != null && op.equals("row")) {
+
+        if (op != null && op.equals("row")) {
             String context = request.getParameter("context");
-            if(context == null) {
+            if (context == null) {
                 s.close();
                 request.setAttribute("result", "Error: no context given");
                 request.setAttribute("success", new Boolean(false));
-                return mapping.findForward("index"); 
+                return mapping.findForward("index");
             }
-            
+
             Row r = p.getRows().get(context);
-            if(r == null) {
+            if (r == null) {
                 s.close();
-                request.setAttribute("result", "Error: no row corresponding to context "+context);
+                request.setAttribute("result", "Error: no row corresponding to context " + context);
                 request.setAttribute("success", new Boolean(false));
-                return mapping.findForward("index"); 
+                return mapping.findForward("index");
             }
-            
+
             p.rebuildRowCache(r);
-            
+
             tx.commit();
             s.close();
-            
-            request.setAttribute("result", "Row "+context+" refreshed !");
+
+            request.setAttribute("result", "Row " + context + " refreshed !");
             request.setAttribute("success", new Boolean(true));
-            
+
             return mapping.findForward("index");
-            
-        } else if(op != null && op.equals("parade")) {
+
+        } else if (op != null && op.equals("parade")) {
             p.refresh();
-            try{
+            try {
                 p.addJNotifyListeners();
-            }catch(Throwable e){
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
-            
+
             tx.commit();
             s.close();
-            
+
             request.setAttribute("result", "ParaDe refreshed !");
             request.setAttribute("success", new Boolean(true));
-            
-            return mapping.findForward("index"); 
-            
-        } else if(op != null && op.equals("newRow")) {
-            
+
+            return mapping.findForward("index");
+
+        } else if (op != null && op.equals("newRow")) {
+
             p.createNewRows();
-            
+
             tx.commit();
             s.close();
-            
+
             request.setAttribute("result", "New rows added!");
             request.setAttribute("success", new Boolean(true));
-            
+
             return mapping.findForward("index");
-            
+
         } else {
 
             request.setAttribute("result", "Error: wrong op parameter");
             request.setAttribute("success", new Boolean(false));
-            return mapping.findForward("index"); 
+            return mapping.findForward("index");
 
-        } 
-        
+        }
+
     }
 }

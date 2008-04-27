@@ -21,8 +21,8 @@ import freemarker.template.TemplateException;
 /**
  * This class is handling the display for the editor working with CodePress.
  * 
- * TODO it seems that CodePress makes it not possible to save the file the way it was working before,
- * so this needs to be investigated
+ * TODO it seems that CodePress makes it not possible to save the file the way it was working before, so this needs to
+ * be investigated
  * 
  * @author Manuel Gay
  * @version $id
@@ -31,18 +31,17 @@ import freemarker.template.TemplateException;
 public class CodePressFileEditViewManager implements FileEditorView {
 
     static Logger logger = Logger.getLogger(CodePressFileEditViewManager.class.getName());
-        
+
     public String getFileEditorView(Row r, String path, File file, String[] source) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
-        
-        java.io.File f= new java.io.File(file.getPath());
-        String content="";
-        
+
+        java.io.File f = new java.io.File(file.getPath());
+        String content = "";
+
         if (source != null) {
             content = source[0];
-        }
-        else {
+        } else {
             // we read the file
             if (f.exists()) {
                 Reader rd;
@@ -61,10 +60,10 @@ public class CodePressFileEditViewManager implements FileEditorView {
                 }
             }
         }
-        
+
         // we convert special characters so they are correctly displayed in HTML
         // commented out for now, because it may cause troubles with this editor
-        
+
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < content.length(); i++)
             if (content.charAt(i) == '<')
@@ -74,15 +73,14 @@ public class CodePressFileEditViewManager implements FileEditorView {
             else
                 sb.append(content.charAt(i));
         content = sb.toString();
-        
-        
+
         /* Constructing the data model */
         SimpleHash root = new SimpleHash();
         root.put("fileName", file.getName());
         root.put("rowName", r.getRowname());
         root.put("path", path);
         root.put("content", content);
-        
+
         Template temp = null;
         try {
             temp = InitServlet.getFreemarkerCfg().getTemplate("codePressEditor.ftl");
@@ -90,7 +88,7 @@ public class CodePressFileEditViewManager implements FileEditorView {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         /* Merge data model with template */
         try {
             temp.process(root, out);
@@ -101,10 +99,9 @@ public class CodePressFileEditViewManager implements FileEditorView {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        
+
         return result.toString();
-        
+
     }
-    
+
 }

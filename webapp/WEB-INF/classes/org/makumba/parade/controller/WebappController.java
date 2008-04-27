@@ -8,20 +8,20 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.WebappManager;
 
 public class WebappController {
-    
+
     public Object[] onWebappAction(String context, String op) {
-        
+
         WebappManager webappMgr = new WebappManager();
-        
+
         String opResult = "";
-        
+
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        
+
         Row entryRow = null;
-        
+
         if (context != null)
             entryRow = Row.getRow(p, context);
 
@@ -40,15 +40,13 @@ public class WebappController {
         if (op.equals("servletContextInstall")) {
             opResult = webappMgr.servletContextInstallRow(entryRow);
         }
-        
+
         tx.commit();
         s.close();
-        
-        Object[] res = {opResult, !opResult.startsWith("Error")};
-        
+
+        Object[] res = { opResult, !opResult.startsWith("Error") };
+
         return res;
     }
-    
-    
 
 }

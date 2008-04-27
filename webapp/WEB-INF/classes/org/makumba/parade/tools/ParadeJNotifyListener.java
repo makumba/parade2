@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
 
+import net.contentobjects.jnotify.JNotify;
+import net.contentobjects.jnotify.JNotifyListener;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -12,9 +15,6 @@ import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.MakumbaManager;
-
-import net.contentobjects.jnotify.JNotify;
-import net.contentobjects.jnotify.JNotifyListener;
 
 /**
  * Implementation of a JNotifyListener for ParaDe. See {@link http://jnotify.sourceforge.net/} for more information
@@ -205,12 +205,12 @@ public class ParadeJNotifyListener implements JNotifyListener {
     }
 
     private Row findRowFromContext(String rowPath, Parade p) {
-        Iterator i = p.getRows().keySet().iterator();
+        Iterator<String> i = p.getRows().keySet().iterator();
 
         boolean row_found = false;
         Row contextRow = null;
         while (i.hasNext() && !row_found) {
-            contextRow = (Row) p.getRows().get(i.next());
+            contextRow = p.getRows().get(i.next());
             row_found = rowPath.startsWith(contextRow.getRowpath());
         }
         return contextRow;

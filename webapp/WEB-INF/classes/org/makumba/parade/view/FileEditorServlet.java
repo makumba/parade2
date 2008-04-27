@@ -16,60 +16,64 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.view.managers.CodePressFileEditViewManager;
 import org.makumba.parade.view.managers.FileEditViewManager;
 
-
 public class FileEditorServlet extends HttpServlet {
 
-	public void init() {}
-	
-	public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
-		PrintWriter out = resp.getWriter();
-		
-		Session s = InitServlet.getSessionFactory().openSession();
-		Transaction tx = s.beginTransaction();
-        /* context - the context / rowname
-         * fileName - the name of the file to be edited
-         * path - the relative path (displayed to the user)
-         * source - the source (content of the file)
-         * editor - the kind of editor
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
+        PrintWriter out = resp.getWriter();
+
+        Session s = InitServlet.getSessionFactory().openSession();
+        Transaction tx = s.beginTransaction();
+        /*
+         * context - the context / rowname fileName - the name of the file to be edited path - the relative path
+         * (displayed to the user) source - the source (content of the file) editor - the kind of editor
          */
-		
-		Parade p = (Parade) s.get(Parade.class, new Long(1));
-		String context = (String)req.getParameter("context");
-		String fileName = (String)req.getParameter("file");
-		String path = (String)req.getParameter("path");
-        String[] source =  req.getParameterValues("source");
+
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        String context = req.getParameter("context");
+        String fileName = req.getParameter("file");
+        String path = req.getParameter("path");
+        String[] source = req.getParameterValues("source");
         String editor = req.getParameter("editor");
-		
-		
-		Row r = (Row)p.getRows().get(context);
-		if(r == null) {
-			out.println("Unknown context "+context);
-		} else {
-            
+
+        Row r = p.getRows().get(context);
+        if (r == null) {
+            out.println("Unknown context " + context);
+        } else {
+
             // we need to build the absolute Path to the file
             String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + fileName;
-            
-			File file = (File) r.getFiles().get(absoluteFilePath);
-			if(file == null) {
-				out.println("Internal ParaDe error: cannot access file "+absoluteFilePath);
-			} else {
+
+            File file = r.getFiles().get(absoluteFilePath);
+            if (file == null) {
+                out.println("Internal ParaDe error: cannot access file " + absoluteFilePath);
+            } else {
                 resp.setContentType("text/html");
-				resp.setCharacterEncoding("UTF-8");
-				
+                resp.setCharacterEncoding("UTF-8");
+
                 FileEditViewManager oldFileEditV = new FileEditViewManager();
-				CodePressFileEditViewManager codepressFileEditV = new CodePressFileEditViewManager();
-                
-                if(editor.equals("codepress")) {
+                CodePressFileEditViewManager codepressFileEditV = new CodePressFileEditViewManager();
+
+                if (editor.equals("codepress")) {
                     out.println(codepressFileEditV.getFileEditorView(r, path, file, source));
                 } else {
                     out.println(oldFileEditV.getFileEditorView(r, path, file, source));
                 }
-			}
-		}
-		
-		tx.commit();
-		
-		s.close();
-	
-	}
+            }
+        }
+
+        tx.commit();
+
+        s.close();
+
+    }
 }

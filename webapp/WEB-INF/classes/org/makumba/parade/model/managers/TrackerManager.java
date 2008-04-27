@@ -2,6 +2,7 @@ package org.makumba.parade.model.managers;
 
 import java.util.Map;
 
+import org.makumba.parade.model.AbstractFileData;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileTracker;
 import org.makumba.parade.model.Row;
@@ -28,11 +29,11 @@ public class TrackerManager implements CacheRefresher, ParadeManager {
 
     public void directoryRefresh(Row row, String path, boolean local) {
 
-        File currFile = (File) row.getFiles().get(path);
+        File currFile = row.getFiles().get(path);
 
         if (!(currFile == null)) {
 
-            Map filedata = currFile.getFiledata();
+            Map<String, AbstractFileData> filedata = currFile.getFiledata();
             FileTracker filetrackerdata = (FileTracker) filedata.get("tracker");
             if (filetrackerdata == null) {
                 filetrackerdata = new FileTracker();
@@ -45,16 +46,15 @@ public class TrackerManager implements CacheRefresher, ParadeManager {
             currFile.setFiledata(filedata);
         }
     }
-    
+
     public void fileRefresh(Row row, String path) {
         // TODO Auto-generated method stub
-        
+
     }
 
-    public void newRow(String name, Row r, Map m) {
+    public void newRow(String name, Row r, Map<String, String> m) {
         // TODO Auto-generated method stub
 
     }
-
 
 }

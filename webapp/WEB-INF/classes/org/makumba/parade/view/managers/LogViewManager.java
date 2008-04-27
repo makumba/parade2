@@ -5,8 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,14 +22,16 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 public class LogViewManager {
-    
-    private static final String LAST_HOUR = "hour";
-    private static final String LAST_RESTART = "restart";
-    private static final String LAST_DAY = "day";
-    private static final String LAST_WEEK = "week";
-    
-        
 
+    private static final String LAST_HOUR = "hour";
+
+    private static final String LAST_RESTART = "restart";
+
+    private static final String LAST_DAY = "day";
+
+    private static final String LAST_WEEK = "week";
+
+    @SuppressWarnings("unchecked")
     public String getLogView(Session s, String context, String filter, Integer years, Integer months, Integer days) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
@@ -48,87 +48,89 @@ public class LogViewManager {
         SimpleHash root = new SimpleHash();
         root.put("context", context);
         root.put("year", years.toString());
-        root.put("month", ""+(months.intValue()+1));
+        root.put("month", "" + (months.intValue() + 1));
         root.put("day", days.toString());
-        
-        Calendar cal = GregorianCalendar.getInstance();
+
+        Calendar cal = Calendar.getInstance();
         cal.clear();
-        
+
         // here we have several filtering possibilities
         // either by date, with day, month, year
         // then depending on the context, either a specific one, or the root one (parade), or all
         // then also by quick filter
-        
+
         String contextQuery = "al.context = :context";
-        
-        if(context.equals("all"))
+
+        if (context.equals("all"))
             contextQuery = "";
-        if(context.equals("(root)"))
+        if (context.equals("(root)"))
             contextQuery = "(al.context is null or al.context = 'parade2')";
-        
+
         String dateQuery = "l.date > :myDate";
-        
-        boolean c = contextQuery.length()==0;
-        //FIXME the server restart should be detected solely as ActionLog (and generated as such in TriggerFilter), but here we list ActionLog-Log couples
-        String query = "from Log l, ActionLog al where l.actionLog = al and ("+contextQuery+ " or (al.origin = 'tomcat' and al.action='start' and l.origin='TriggerFilter'))"+(c?"":" and ")+dateQuery;
-        
+
+        boolean c = contextQuery.length() == 0;
+        // FIXME the server restart should be detected solely as ActionLog (and generated as such in TriggerFilter), but
+        // here we list ActionLog-Log couples
+        String query = "from Log l, ActionLog al where l.actionLog = al and (" + contextQuery
+                + " or (al.origin = 'tomcat' and al.action='start' and l.origin='TriggerFilter'))" + (c ? "" : " and ")
+                + dateQuery;
+
         Query q = s.createQuery(query);
         q.setCacheable(false);
-        
-        if(!context.equals("all") && !context.equals("(root)"))
-          q.setString("context", context);
-        
-        if(!filter.equals("none")) {
+
+        if (!context.equals("all") && !context.equals("(root)"))
+            q.setString("context", context);
+
+        if (!filter.equals("none")) {
             cal.setTime(new Date());
-            
-            if(filter.equals(LAST_HOUR)) {
+
+            if (filter.equals(LAST_HOUR)) {
                 cal.add(Calendar.HOUR_OF_DAY, -1);
             }
-            if(filter.equals(LAST_DAY)) {
+            if (filter.equals(LAST_DAY)) {
                 cal.add(Calendar.DAY_OF_MONTH, -1);
             }
-            if(filter.equals(LAST_WEEK)) {
+            if (filter.equals(LAST_WEEK)) {
                 cal.add(Calendar.WEEK_OF_MONTH, -1);
             }
-            if(filter.equals(LAST_RESTART)) {
-                //FIXME there's probably more performant way to do this
-                //FIXME like, using a report query
+            if (filter.equals(LAST_RESTART)) {
+                // FIXME there's probably more performant way to do this
+                // FIXME like, using a report query
                 Query q1 = s.createQuery("from Log l where l.message = 'Server restart' order by l.date DESC");
                 Date d = null;
-                if(q1.list().size() > 0) {
+                if (q1.list().size() > 0) {
                     d = ((Log) q1.list().get(0)).getDate();
                 }
-                if(d != null)
+                if (d != null)
                     cal.setTime(d);
             }
         } else {
             cal.set(years.intValue(), months.intValue(), days.intValue());
         }
-        
+
         q.setTimestamp("myDate", cal.getTime());
-        
-        
+
         List<Object[]> entries = q.list();
-        List viewEntries = new LinkedList();
-        for(int i=0; i<entries.size(); i++) {
+        List<SimpleHash> viewEntries = new LinkedList<SimpleHash>();
+        for (int i = 0; i < entries.size(); i++) {
             Object[] res = entries.get(i);
-            Log log = (Log)res[0];
-            ActionLog actionLog = (ActionLog)res[1];
-            
+            Log log = (Log) res[0];
+            ActionLog actionLog = (ActionLog) res[1];
+
             SimpleHash entry = new SimpleHash();
-            
-            if(log.getMessage().trim().length() == 0) //skip blank lines
+
+            if (log.getMessage().trim().length() == 0) // skip blank lines
                 continue;
             populateLogEntry(entry, log);
-            
-            entry.put("user", (actionLog.getUser() == null)?"system":actionLog.getUser());
-            entry.put("context", (actionLog.getContext() == null)?"parade2":actionLog.getContext());
-            
+
+            entry.put("user", (actionLog.getUser() == null) ? "system" : actionLog.getUser());
+            entry.put("context", (actionLog.getContext() == null) ? "parade2" : actionLog.getContext());
+
             viewEntries.add(entry);
         }
-        
+
         root.put("entries", viewEntries);
-        
+
         /* Merge data model with template */
         try {
             temp.process(root, out);
@@ -139,22 +141,23 @@ public class LogViewManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         return result.toString();
-        
+
     }
 
     private void populateLogEntry(SimpleHash entry, Log log) {
-        if(log.getMessage().equals("Server restart"))
+        if (log.getMessage().equals("Server restart"))
             entry.put("serverRestart", true);
         else
             entry.put("serverRestart", false);
         entry.put("message", HtmlUtils.string2html(log.getMessage()));
         entry.put("date", log.getDate().toString());
         entry.put("level", log.getLevel());
-        
+
     }
-    
+
+    @SuppressWarnings("unchecked")
     public String getActionLogView(Session s, String context) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
@@ -170,19 +173,19 @@ public class LogViewManager {
         // Creating the data model
         SimpleHash root = new SimpleHash();
         root.put("context", context);
-        
-        List viewEntries = new LinkedList();
-        
+
+        List<SimpleHash> viewEntries = new LinkedList<SimpleHash>();
+
         Query q = s.createQuery("from ActionLog al order by al.date DESC");
         List<ActionLog> res = q.list();
-        for(int i=0; i<res.size(); i++) {
+        for (int i = 0; i < res.size(); i++) {
             SimpleHash actionLogEntry = new SimpleHash();
-            List logEntries = new LinkedList();
+            List<SimpleHash> logEntries = new LinkedList<SimpleHash>();
             ActionLog actionLog = res.get(i);
             Query q1 = s.createQuery("from Log l where l.actionLog = :actionLog order by l.date DESC");
             q1.setParameter("actionLog", actionLog);
             List<Log> res1 = q1.list();
-            for(int j=0; j<res1.size();j++) {
+            for (int j = 0; j < res1.size(); j++) {
                 SimpleHash entry = new SimpleHash();
                 Log log = res1.get(j);
                 populateLogEntry(entry, log);
@@ -190,16 +193,16 @@ public class LogViewManager {
             }
             actionLogEntry.put("logEntries", logEntries);
             actionLogEntry.put("date", actionLog.getDate());
-            actionLogEntry.put("url", actionLog.getUrl()==null?"":actionLog.getUrl());
-            actionLogEntry.put("context", actionLog.getContext()==null?"tomcat":actionLog.getContext());
-            actionLogEntry.put("user", actionLog.getUser()==null?"(unknown user)":actionLog.getUser());
-            actionLogEntry.put("queryString", actionLog.getQueryString()==null?"":actionLog.getQueryString());
-            
+            actionLogEntry.put("url", actionLog.getUrl() == null ? "" : actionLog.getUrl());
+            actionLogEntry.put("context", actionLog.getContext() == null ? "tomcat" : actionLog.getContext());
+            actionLogEntry.put("user", actionLog.getUser() == null ? "(unknown user)" : actionLog.getUser());
+            actionLogEntry.put("queryString", actionLog.getQueryString() == null ? "" : actionLog.getQueryString());
+
             viewEntries.add(actionLogEntry);
         }
-        
+
         root.put("entries", viewEntries);
-        
+
         /* Merge data model with template */
         try {
             temp.process(root, out);
@@ -210,10 +213,10 @@ public class LogViewManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         return result.toString();
     }
-    
+
     public String getLogMenuView(Session s, String context, String filter, Integer years, Integer months, Integer days) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
@@ -230,25 +233,25 @@ public class LogViewManager {
         SimpleHash root = new SimpleHash();
         root.put("context", context);
         root.put("year", years.toString());
-        root.put("month", ""+(months.intValue()+1));
+        root.put("month", "" + (months.intValue() + 1));
         root.put("day", days.toString());
         root.put("filter", filter);
-        
-        List rows = new LinkedList();
-        
+
+        List<String> rows = new LinkedList<String>();
+
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        
-        for (Iterator i = p.getRows().keySet().iterator(); i.hasNext();) {
-            Row currentRow = (Row) p.getRows().get(i.next());
+
+        for (Object element : p.getRows().keySet()) {
+            Row currentRow = p.getRows().get(element);
             String displayName = currentRow.getRowname();
             if (currentRow.getRowname() == "")
                 displayName = "(root)";
-            
+
             rows.add(displayName);
         }
-        
+
         root.put("rows", rows);
-        
+
         /* Merge data model with template */
         try {
             temp.process(root, out);
@@ -259,8 +262,8 @@ public class LogViewManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         return result.toString();
-        
+
     }
 }

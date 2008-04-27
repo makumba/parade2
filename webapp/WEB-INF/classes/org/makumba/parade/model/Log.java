@@ -3,16 +3,21 @@ package org.makumba.parade.model;
 import java.util.Date;
 
 public class Log {
-    
+
     private Long id;
-    
+
     private Date date;
+
     private String level;
+
     private String message;
+
     private Throwable throwable;
+
     private String origin;
+
     private ActionLog actionLog;
-    
+
     public String getLevel() {
         return level;
     }
@@ -28,7 +33,7 @@ public class Log {
     public void setId(Long id) {
         this.id = id;
     }
-        
+
     public String getMessage() {
         return message;
     }
@@ -68,7 +73,5 @@ public class Log {
     public void setActionLog(ActionLog actionLog) {
         this.actionLog = actionLog;
     }
-    
-    
 
 }

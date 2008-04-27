@@ -1,13 +1,13 @@
 package org.makumba.parade.view;
 
 public class TickerTapeData {
-    
+
     private String linkText;
-    
+
     private String url;
-    
+
     private String title;
-    
+
     public TickerTapeData(String linkText, String url, String title) {
         this.linkText = linkText;
         this.url = url;
@@ -37,5 +37,5 @@ public class TickerTapeData {
     public void setUrl(String url) {
         this.url = url;
     }
-    
+
 }

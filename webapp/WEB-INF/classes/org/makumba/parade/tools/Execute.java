@@ -9,12 +9,12 @@ import java.util.Date;
 import java.util.Vector;
 
 public class Execute {
-    
-    public static int exec(Vector v, File dir, PrintWriter ps) {
+
+    public static int exec(Vector<String> v, File dir, PrintWriter ps) {
         String command = "";
         String[] cmd = new String[v.size()];
         String sep = "";
-        //scans the arguements for spaces, surrounds with "" if some found (Windows)
+        // scans the arguements for spaces, surrounds with "" if some found (Windows)
         for (int i = 0; i < cmd.length; i++) {
             cmd[i] = (String) v.elementAt(i);
             command += sep;
@@ -40,13 +40,11 @@ public class Execute {
         final PrintWriter ps1 = ps;
         new Thread(new Runnable() {
             public void run() {
-                flushTo(new BufferedReader(new InputStreamReader(p
-                        .getErrorStream()), 81960), ps1);
+                flushTo(new BufferedReader(new InputStreamReader(p.getErrorStream()), 81960), ps1);
             }
         }).start();
 
-        flushTo(new BufferedReader(new InputStreamReader(p.getInputStream()),
-                81960), ps);
+        flushTo(new BufferedReader(new InputStreamReader(p.getInputStream()), 81960), ps);
 
         try {
             p.waitFor();
@@ -55,8 +53,7 @@ public class Execute {
         }
         int ret = p.exitValue();
         ps.println("exec: exit value: " + ret);
-        ps.println("exec: elapsed time: "
-                + (new Date().getTime() - start.getTime()) + " ms");
+        ps.println("exec: elapsed time: " + (new Date().getTime() - start.getTime()) + " ms");
         return ret;
     }
 

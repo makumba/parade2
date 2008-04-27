@@ -22,8 +22,6 @@ import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.User;
 import org.makumba.parade.tools.HttpLogin;
-import org.makumba.parade.tools.MultipleUsersException;
-import org.makumba.parade.tools.PerThreadPrintStream;
 import org.makumba.parade.tools.TriggerFilter;
 
 /**
@@ -38,6 +36,11 @@ import org.makumba.parade.tools.TriggerFilter;
  * 
  */
 public class AccessServlet extends HttpServlet {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private static final String PARADE_USER = "org.makumba.parade.user";
 
     public static final String PARADE_LDAP_USER = "org.makumba.parade.ldapUser";
@@ -50,27 +53,29 @@ public class AccessServlet extends HttpServlet {
 
     boolean isMakumbaContext;
 
+    @Override
     public void init() {
-        Object o = PerThreadPrintStream.class;
         context = getServletConfig().getServletContext();
 
-        String authClass = (String) ParadeProperties.getProperty("parade.authorizerClass");
-        String authMessage = (String) ParadeProperties.getProperty("parade.authorizationMessage");
+        String authClass = ParadeProperties.getProperty("parade.authorizerClass");
+        String authMessage = ParadeProperties.getProperty("parade.authorizationMessage");
         if (authClass == null)
             return;
-        String db = (String) ParadeProperties.getProperty("parade.authorizationDB");
+        String db = ParadeProperties.getProperty("parade.authorizationDB");
         Authorizer auth = null;
         try {
             auth = (Authorizer) getClass().getClassLoader().loadClass(authClass).newInstance();
             if (db != null && (auth instanceof DatabaseAuthorizer))
                 ((DatabaseAuthorizer) auth).setDatabase(db);
             checker = new HttpLogin(auth, authMessage) {
+                @Override
                 public boolean login(ServletRequest req, ServletResponse res) throws java.io.IOException {
                     HttpServletRequest req1 = (HttpServletRequest) req;
                     String user = (String) req1.getSession(true).getAttribute(PARADE_USER);
                     return user != null || super.login(req, res);
                 }
 
+                @Override
                 protected boolean checkAuth(String user, String pass, HttpServletRequest req) {
                     boolean passes = super.checkAuth(user, pass, req);
                     if (passes) {
@@ -82,7 +87,7 @@ public class AccessServlet extends HttpServlet {
                         try {
                             s = InitServlet.getSessionFactory().openSession();
                             tx = s.beginTransaction();
-                            
+
                             Query q;
                             q = s.createQuery("from User u where u.login = ?");
                             q.setString(0, user);
@@ -123,6 +128,7 @@ public class AccessServlet extends HttpServlet {
         }
     }
 
+    @Override
     public void destroy() {
     }
 
@@ -144,6 +150,7 @@ public class AccessServlet extends HttpServlet {
 
         if (checker.login(req, (HttpServletResponse) req.getAttribute("org.eu.best.tools.TriggerFilter.response"))) {
             return new HttpServletRequestWrapper((HttpServletRequest) req) {
+                @Override
                 public String getRemoteUser() {
                     return (String) ((HttpServletRequest) getRequest()).getSession(true).getAttribute(PARADE_USER);
                 }
@@ -180,6 +187,7 @@ public class AccessServlet extends HttpServlet {
         return nm;
     }
 
+    @Override
     public void service(ServletRequest req, ServletResponse resp) throws java.io.IOException, ServletException {
 
         HttpServletRequest origReq = (HttpServletRequest) req;
@@ -201,47 +209,6 @@ public class AccessServlet extends HttpServlet {
         } else
             // login failed, we tell the trigger filter not to filter further
             origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
-    }
-
-    private User detectUser(ServletRequest req, Session s) throws MultipleUsersException {
-        String user = (String) ((HttpServletRequest) req).getSession(true).getAttribute("org.makumba.parade.user");
-        Object userObject = ((HttpServletRequest) req).getSession(true).getAttribute("org.makumba.parade.userObject");
-        if (userObject != null) {
-            return (User) userObject;
-        }
-        Object ldapUserObject = ((HttpServletRequest) req).getSession(true)
-                .getAttribute(AccessServlet.PARADE_LDAP_USER);
-
-        // let's check if we know this user
-        Transaction tx = s.getTransaction();
-
-        Query q;
-        q = s.createQuery("from User u where u.login = ?");
-        q.setString(0, user);
-
-        List<User> results = q.list();
-        User u = null;
-
-        if (results.size() > 1) {
-            logger.error("Multiple possibilities for user " + user + ". Please contact developers.");
-        } else if (results.size() == 1) {
-            // we know the guy, let's put more stuff in the session
-            u = results.get(0);
-            setUserAttributes(req, u);
-        } else if (results.size() == 0) {
-            // maybe we can get the guy from LDAP
-            if (ldapUserObject != null) {
-                u = (User) ldapUserObject;
-
-                // let's write him to the db first
-                s.save(u);
-
-                setUserAttributes(req, u);
-            }
-        }
-
-        return u;
-
     }
 
     private void setUserAttributes(ServletRequest req, User u) {

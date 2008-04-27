@@ -1,28 +1,22 @@
 package org.makumba.parade.model.managers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 
 public class WebappManager implements RowRefresher, ParadeManager {
 
-    static String reloadLog = ParadeProperties.getParadeBase() + java.io.File.separator + "tomcat" + java.io.File.separator
-            + "logs" + java.io.File.separator + "paradeReloadResult.txt";
+    static String reloadLog = ParadeProperties.getParadeBase() + java.io.File.separator + "tomcat"
+            + java.io.File.separator + "logs" + java.io.File.separator + "paradeReloadResult.txt";
 
     ServletContainer container;
 
@@ -36,7 +30,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
         loadConfig();
     }
 
-    public void newRow(String name, Row r, Map m) {
+    public void newRow(String name, Row r, Map<String, String> m) {
 
         RowWebapp webappdata = new RowWebapp();
         webappdata.setDataType("webapp");
@@ -45,7 +39,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
     }
 
     public void rowRefresh(Row row) {
-        logger.debug("Refreshing row information for row "+row.getRowname());
+        logger.debug("Refreshing row information for row " + row.getRowname());
 
         RowWebapp webappdata = (RowWebapp) row.getRowdata().get("webapp");
 
@@ -71,7 +65,8 @@ public class WebappManager implements RowRefresher, ParadeManager {
                 config.put("parade.servletContext.paradeContext", new File(ParadeProperties.getParadeBase())
                         .getCanonicalPath());
                 container.makeConfig(config);
-                config.store(new FileOutputStream(ParadeProperties.getClassesPath() + java.io.File.separator + "servletcontext.properties"), "Parade servlet context config");
+                config.store(new FileOutputStream(ParadeProperties.getClassesPath() + java.io.File.separator
+                        + "servletcontext.properties"), "Parade servlet context config");
                 container.init(config);
             } catch (Throwable t) {
                 logger.error("Error getting servlet container", t);
@@ -88,13 +83,14 @@ public class WebappManager implements RowRefresher, ParadeManager {
                 + java.io.File.separator + "WEB-INF";
 
         if (!new java.io.File(webinfDir).isDirectory()) {
-            logger.warn("No WEB-INF directory found for row "+row.getRowname()+": directory "+webinfDir+" does not exist");
+            logger.warn("No WEB-INF directory found for row " + row.getRowname() + ": directory " + webinfDir
+                    + " does not exist");
             webinfDir = "NO WEBINF";
             webappdata.setWebappPath("NO WEBINF");
             webappdata.setStatus(new Integer(ServletContainer.NOT_INSTALLED));
         }
         if (!webinfDir.equals("NO WEBINF")) {
-            if(row.getRowname().equals("(root)")) {
+            if (row.getRowname().equals("(root)")) {
                 webappdata.setContextname("/");
             } else {
                 webappdata.setContextname("/" + row.getRowname());
@@ -140,12 +136,14 @@ public class WebappManager implements RowRefresher, ParadeManager {
                 String antCommand = "ant";
 
                 File f = new File(reloadLog);
-                Runtime.getRuntime().exec(antCommand + " -buildfile " + ParadeProperties.getParadeBase() + java.io.File.separator + "build.xml reload");
+                Runtime.getRuntime().exec(
+                        antCommand + " -buildfile " + ParadeProperties.getParadeBase() + java.io.File.separator
+                                + "build.xml reload");
                 f.delete();
-                
+
                 while (!f.exists()) {
                     try {
-                        Thread.currentThread().sleep(100);
+                        Thread.sleep(100);
                     } catch (Throwable t) {
                         logger.warn("Context reload thread sleep failed");
                     }

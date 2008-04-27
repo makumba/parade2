@@ -22,7 +22,7 @@ public class TomcatManager implements ServletContainer {
 
     String user, pass;
 
-    Map servletContextCache = new HashMap();
+    Map<String, Integer> servletContextCache = new HashMap<String, Integer>();
 
     static Logger logger = Logger.getLogger(TomcatManager.class.getName());
 
@@ -72,14 +72,14 @@ public class TomcatManager implements ServletContainer {
         if (servletContextCache.isEmpty())
             readContextStatus();
 
-        Integer stt = (Integer) servletContextCache.get(contextName);
+        Integer stt = servletContextCache.get(contextName);
         if (stt == null)
             return NOT_INSTALLED;
         return stt.intValue();
     }
 
     void readContextStatus() {
-        servletContextCache = new HashMap();
+        servletContextCache = new HashMap<String, Integer>();
         StringTokenizer st = new StringTokenizer(makeAccess("list"), "\n");
         while (st.hasMoreTokens()) {
             String s = st.nextToken();
@@ -123,7 +123,7 @@ public class TomcatManager implements ServletContainer {
             out.write("<Context path=\"");
             out.write(contextName);
             out.write("\" docBase=\"");
-            //out.write(ParadeProperties.paradeBaseRelativeToTomcatWebapps);
+            // out.write(ParadeProperties.paradeBaseRelativeToTomcatWebapps);
             out.write(File.separator);
             out.write((new java.io.File(dir)).getCanonicalPath());
             out.write(File.separator);

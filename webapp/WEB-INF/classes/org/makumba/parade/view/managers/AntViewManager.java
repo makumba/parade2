@@ -1,22 +1,17 @@
 package org.makumba.parade.view.managers;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowAnt;
-import org.makumba.parade.view.interfaces.ParadeView;
 import org.makumba.parade.view.interfaces.HeaderView;
+import org.makumba.parade.view.interfaces.ParadeView;
 
 import freemarker.template.SimpleHash;
 
 public class AntViewManager implements ParadeView, HeaderView {
 
-    public void setParadeViewHeader(List headers) {
+    public void setParadeViewHeader(List<String> headers) {
         headers.add("Ant buildfile");
     }
 
@@ -29,7 +24,7 @@ public class AntViewManager implements ParadeView, HeaderView {
     }
 
     public void setHeaderView(SimpleHash root, Row r, String path) {
-        List allowedOps = ((RowAnt) r.getRowdata().get("ant")).getAllowedOperations();
+        List<String> allowedOps = ((RowAnt) r.getRowdata().get("ant")).getAllowedOperations();
         root.put("antTargets", allowedOps);
     }
 

@@ -9,20 +9,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The servlet called at the end of each parade access, in all servlet contexts.
- * It just logs the access that was made.
+ * The servlet called at the end of each parade access, in all servlet contexts. It just logs the access that was made.
  * 
  * TODO remove this
  * 
  * @author Cristian Bogdan
  */
 public class EndAccessServlet extends HttpServlet {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     ServletContext context;
 
+    @Override
     public void init(ServletConfig conf) {
         context = conf.getServletContext();
     }
 
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse resp) {
         final ServletRequest req1 = req;
         final ServletResponse resp1 = resp;
@@ -33,8 +39,8 @@ public class EndAccessServlet extends HttpServlet {
          * 
          * public ServletResponse getResponse() { return resp1; }
          * 
-         * public ServletContext getServletContext() { return context; } });
-         *  } catch (ParadeException e) { throw new RuntimeException("got parade exception " + e); }
+         * public ServletContext getServletContext() { return context; } }); } catch (ParadeException e) { throw new
+         * RuntimeException("got parade exception " + e); }
          */
     }
 }

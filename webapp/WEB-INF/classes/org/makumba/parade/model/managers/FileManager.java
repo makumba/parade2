@@ -31,7 +31,7 @@ import org.makumba.parade.tools.SimpleFileFilter;
  * TODO clean it up and document
  * 
  * @author Manuel Gay
- *
+ * 
  */
 public class FileManager implements RowRefresher, CacheRefresher, ParadeManager {
 
@@ -54,7 +54,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             root.setParentPath("");
             root.setRow(row);
             root.setDate(new Long(new java.util.Date().getTime()));
-            root.setFiledata(new HashMap());
+            root.setFiledata(new HashMap<String, AbstractFileData>());
             root.setSize(new Long(0));
             root.setOnDisk(false);
             row.getFiles().clear();
@@ -85,30 +85,30 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         java.io.File currDir = new java.io.File(path);
 
         if (currDir.isDirectory()) {
-            
+
             java.io.File[] dir = currDir.listFiles();
-            
-            Set dirContent = new HashSet();
-            for(int i = 0; i < dir.length; i++) {
-                dirContent.add(dir[i].getAbsolutePath());
+
+            Set<String> dirContent = new HashSet<String>();
+            for (java.io.File element : dir) {
+                dirContent.add(element.getAbsolutePath());
             }
-            
+
             // clear the cache of the entries of this directory
-            File fileInCache = (File) row.getFiles().get(path);
-            if(fileInCache != null) {
-                List children = fileInCache.getChildren(null);
-                for(int i = 0; i<children.size(); i++) {
-                    File child = (File) children.get(i);
+            File fileInCache = row.getFiles().get(path);
+            if (fileInCache != null) {
+                List<File> children = fileInCache.getChildren(null);
+                for (int i = 0; i < children.size(); i++) {
+                    File child = children.get(i);
 
                     // if we do a local update only, we keep the subdirectories
                     if (local && child.getIsDir() && dirContent.contains(child.getPath()))
                         continue;
-                    
+
                     // otherwise, we trash
                     row.getFiles().remove(child.getPath());
                 }
             }
-            
+
             for (int i = 0; i < dir.length; i++) {
                 if (filter.accept(dir[i]) && !(dir[i].getName() == null)) {
 
@@ -119,70 +119,47 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             }
         }
     }
-    
+
     /**
-    
-    public synchronized void directoryRefresh(Row row, String path, boolean local) {
-        java.io.File currDir = new java.io.File(path);
-
-        if (currDir.isDirectory()) {
-
-            java.io.File[] dir = currDir.listFiles();
-
-            Set dirContent = new HashSet();
-            for (int i = 0; i < dir.length; i++) {
-                dirContent.add(dir[i].getAbsolutePath());
-            }
-            
-            HashSet<String> cachedFiles = new HashSet<String>();
-            
-            
-            logger.debug("Starting to populate cache entries of directory " + path + " of row " + row.getRowname());
-            for (int i = 0; i < dir.length; i++) {
-                if (filter.accept(dir[i]) && !(dir[i].getName() == null)) {
-
-                    java.io.File file = dir[i];
-
-                    cacheFile(row, file, local, cachedFiles);
-                }
-            }
-            logger.debug("Finished updating cache");
-
-            // clear the cache of the entries of this directory
-            logger.debug("Starting to clear the invalid cache entries of directory " + path + " of row " + row.getRowname());
-            File fileInCache = (File) row.getFiles().get(path);
-            if (fileInCache != null) {
-                List<String> children = fileInCache.getChildrenPaths();
-                for (int i = 0; i < children.size(); i++) {
-                    String childPath = children.get(i);
-                    
-                    if(!cachedFiles.contains(childPath)) {
-                        // if we do a local update only, we keep the subdirectories
-                        if (local && (new java.io.File(childPath).isDirectory() && dirContent.contains(childPath)))
-                            continue;
-                        
-                        // otherwise, we trash
-                        else
-                            row.getFiles().remove(childPath);
-                    }
-                }
-            }
-            logger.debug("Finished clearing cache");
-        }
-    }
-    **/
-
+     * 
+     * public synchronized void directoryRefresh(Row row, String path, boolean local) { java.io.File currDir = new
+     * java.io.File(path);
+     * 
+     * if (currDir.isDirectory()) {
+     * 
+     * java.io.File[] dir = currDir.listFiles();
+     * 
+     * Set dirContent = new HashSet(); for (int i = 0; i < dir.length; i++) { dirContent.add(dir[i].getAbsolutePath()); }
+     * 
+     * HashSet<String> cachedFiles = new HashSet<String>();
+     * 
+     * 
+     * logger.debug("Starting to populate cache entries of directory " + path + " of row " + row.getRowname()); for (int
+     * i = 0; i < dir.length; i++) { if (filter.accept(dir[i]) && !(dir[i].getName() == null)) {
+     * 
+     * java.io.File file = dir[i];
+     * 
+     * cacheFile(row, file, local, cachedFiles); } } logger.debug("Finished updating cache");
+     *  // clear the cache of the entries of this directory logger.debug("Starting to clear the invalid cache entries of
+     * directory " + path + " of row " + row.getRowname()); File fileInCache = (File) row.getFiles().get(path); if
+     * (fileInCache != null) { List<String> children = fileInCache.getChildrenPaths(); for (int i = 0; i <
+     * children.size(); i++) { String childPath = children.get(i);
+     * 
+     * if(!cachedFiles.contains(childPath)) { // if we do a local update only, we keep the subdirectories if (local &&
+     * (new java.io.File(childPath).isDirectory() && dirContent.contains(childPath))) continue;
+     *  // otherwise, we trash else row.getFiles().remove(childPath); } } } logger.debug("Finished clearing cache"); } }
+     */
 
     public void cacheFile(Row row, java.io.File file, boolean local) {
-        if(!file.exists() || file == null) {
+        if (!file.exists() || file == null) {
             logger.warn("Trying to add non-existing/null file");
             return;
         }
-        if(row == null) {
-            logger.error("Row was null while trying to add file with path "+file.getAbsolutePath());
+        if (row == null) {
+            logger.error("Row was null while trying to add file with path " + file.getAbsolutePath());
             return;
         }
-        
+
         if (file.isDirectory()) {
             File dirData = setFileData(row, file, true);
             addFile(row, dirData);
@@ -200,7 +177,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
     private void addFile(Row row, File fileData) {
 
         row.getFiles().put(fileData.getPath(), fileData);
-        
+
         // logger.warn("Added file: "+fileData.getName());
     }
 
@@ -214,14 +191,14 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         // if we already had a file in cache we simple update it
-        if((fileData = row.getFiles().get(path)) != null) {
+        if ((fileData = row.getFiles().get(path)) != null) {
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
             fileData.setOnDisk(true);
-        
-        // otherwise we make a new file
+
+            // otherwise we make a new file
         } else {
             fileData = new File();
             fileData.setIsDir(isDir);
@@ -255,7 +232,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         return cvsfile;
     }
 
-    public void newRow(String name, Row r, Map m) {
+    public void newRow(String name, Row r, Map<String, String> m) {
         // TODO Auto-generated method stub
 
     }
@@ -312,32 +289,32 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             // file was deleted but cache still exists
             removeFileCache(cacheFile);
             return;
-        } else if(!f.exists() && row.getFiles().get(path) == null) {
+        } else if (!f.exists() && row.getFiles().get(path) == null) {
             return;
         }
         cacheFile(row, f, false);
 
     }
-    
+
     public void removeFileCache(Row r, String path, String entry) {
-        File cacheFile = (File) r.getFiles().get(path + java.io.File.separator + entry);
-        if(cacheFile == null)
+        File cacheFile = r.getFiles().get(path + java.io.File.separator + entry);
+        if (cacheFile == null)
             return;
-        
+
         removeFileCache(cacheFile);
     }
-    
+
     public void removeFileCache(File file) {
-        
+
         // if there is CVS data for this file we keep it and set is as virtual
         if (file.getCvsStatus() != null) {
             file.setOnDisk(false);
         } else
             file.getRow().getFiles().remove(file.getPath());
     }
-    
+
     public static void updateSimpleFileCache(String context, String path, String filename) {
-        logger.debug("Refreshing file cache for file "+filename+" in path "+path+" of row "+context);
+        logger.debug("Refreshing file cache for file " + filename + " in path " + path + " of row " + context);
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         Row r = Row.getRow(p, context);
@@ -346,7 +323,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         fileMgr.fileRefresh(r, path + java.io.File.separator + filename);
         tx.commit();
         s.close();
-        logger.debug("Finished refreshing file cache for file "+filename+" in path "+path+" of row "+context);
+        logger.debug("Finished refreshing file cache for file " + filename + " in path " + path + " of row " + context);
     }
 
     /* updates the File cache of a directory */
@@ -377,10 +354,10 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         Transaction tx = s.beginTransaction();
 
         java.io.File f = new java.io.File(absoluteFilePath);
-        if(!f.exists()) {
-            File cachedFile = (File) r.getFiles().get(absoluteFilePath);
-            if(cachedFile != null) {
-                if(cachedFile.getCvsStatus() != null && cachedFile.getCvsStatus().equals(CVSManager.DELETED)) {
+        if (!f.exists()) {
+            File cachedFile = r.getFiles().get(absoluteFilePath);
+            if (cachedFile != null) {
+                if (cachedFile.getCvsStatus() != null && cachedFile.getCvsStatus().equals(CVSManager.DELETED)) {
                     r.getFiles().remove(absoluteFilePath);
                 }
             }
@@ -388,7 +365,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
         tx.commit();
         s.close();
-        
+
     }
 
 }

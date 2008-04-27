@@ -83,9 +83,10 @@ public class RowProperties {
 
         state = new Properties();
         try {
-            java.io.File rowProperties = new java.io.File(ParadeProperties.getParadeBase()+java.io.File.separator+"webapp/WEB-INF/classes/"+DEFAULT_ROWSFILE);
+            java.io.File rowProperties = new java.io.File(ParadeProperties.getParadeBase() + java.io.File.separator
+                    + "webapp/WEB-INF/classes/" + DEFAULT_ROWSFILE);
             state.load(new FileInputStream(rowProperties));
-            
+
         } catch (Exception e) {
             // if there's no row definition file, we create one
             logger.warn("No rows.properties file found, attempting to generate one");
@@ -114,7 +115,8 @@ public class RowProperties {
                 if (f.exists()) {
                     extractRowDefinitions(rowName);
                 } else {
-                    logger.error("Error in rows.properties: could not access the path "+rowPath+" for row " + rowName + ". Please check if it is correct.");
+                    logger.error("Error in rows.properties: could not access the path " + rowPath + " for row "
+                            + rowName + ". Please check if it is correct.");
                 }
             }
         }

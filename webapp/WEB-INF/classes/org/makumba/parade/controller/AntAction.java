@@ -10,6 +10,7 @@ import org.apache.struts.action.ActionMapping;
 
 public class AntAction extends Action {
 
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
@@ -17,22 +18,22 @@ public class AntAction extends Action {
         String op = request.getParameter("op");
         String display = request.getParameter("display");
         String path = request.getParameter("path");
-        if(path == null)
+        if (path == null)
             path = (String) request.getAttribute("path");
-        if(path == null)
-            path ="";
-        
+        if (path == null)
+            path = "";
+
         AntController antCtrl = new AntController();
         Object result[] = antCtrl.onAntAction(context, op);
-        
-        request.setAttribute("result", (String) result[0]);
-        request.setAttribute("success", (Boolean) result[1]);
+
+        request.setAttribute("result", result[0]);
+        request.setAttribute("success", result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
         request.setAttribute("display", display);
         request.setAttribute("view", "commandOutput");
-        
-        return mapping.findForward(display); 
-        
+
+        return mapping.findForward(display);
+
     }
 }

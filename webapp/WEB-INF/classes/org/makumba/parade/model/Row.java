@@ -15,14 +15,14 @@ public class Row {
 
     private Map<String, File> files = new HashMap<String, File>();
 
-    private Map rowdata = new HashMap();
+    private Map<String, RowData> rowdata = new HashMap<String, RowData>();
 
     private Parade parade;
-    
+
     private Application application;
 
     private User user;
-    
+
     public Application getApplication() {
         return application;
     }
@@ -36,16 +36,15 @@ public class Row {
         data.setRow(this);
         getRowdata().put(data.getDataType(), data);
     }
-    
+
     public static Row getRow(Parade p, String context) {
-        
-        Row r = (Row) p.getRows().get(context);
+
+        Row r = p.getRows().get(context);
         if (r == null)
             return null;
         else
             return r;
     }
-    
 
     public String getDescription() {
         return description;
@@ -62,7 +61,7 @@ public class Row {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Map<String, File> getFiles() {
         return this.files;
     }
@@ -95,11 +94,11 @@ public class Row {
         this.parade = parade;
     }
 
-    public Map getRowdata() {
+    public Map<String, RowData> getRowdata() {
         return rowdata;
     }
 
-    public void setRowdata(Map rowdata) {
+    public void setRowdata(Map<String, RowData> rowdata) {
         this.rowdata = rowdata;
     }
 

@@ -14,7 +14,7 @@ public class RowAnt extends AbstractRowData implements RowData {
 
     private String buildfile = "";
 
-    private List targets = new LinkedList();
+    private List<String> targets = new LinkedList<String>();
 
     public String getBuildfile() {
         return buildfile;
@@ -24,10 +24,12 @@ public class RowAnt extends AbstractRowData implements RowData {
         this.buildfile = buildfile;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -40,21 +42,21 @@ public class RowAnt extends AbstractRowData implements RowData {
         this.lastmodified = lastmodified;
     }
 
-    public List getTargets() {
+    public List<String> getTargets() {
         return targets;
     }
 
-    public void setTargets(List targets) {
+    public void setTargets(List<String> targets) {
         this.targets = targets;
     }
-    
-    public List getAllowedOperations() {
-        List allowedTargets = new LinkedList();
-        
-        for (Iterator i = ParadeProperties.getElements("ant.displayedOps").iterator(); i.hasNext();) {
-            String allowed = (String) i.next();
-            for (Iterator j = getTargets().iterator(); j.hasNext();) {
-                String target = (String) j.next();
+
+    public List<String> getAllowedOperations() {
+        List<String> allowedTargets = new LinkedList<String>();
+
+        for (Iterator<String> i = ParadeProperties.getElements("ant.displayedOps").iterator(); i.hasNext();) {
+            String allowed = i.next();
+            for (Iterator<String> j = getTargets().iterator(); j.hasNext();) {
+                String target = j.next();
                 if (target.startsWith("#"))
                     target = target.substring(1);
                 if (!target.equals(allowed))

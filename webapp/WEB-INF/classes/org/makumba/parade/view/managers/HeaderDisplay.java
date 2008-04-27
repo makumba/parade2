@@ -3,7 +3,6 @@ package org.makumba.parade.view.managers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class HeaderDisplay {
     public String getHeaderView(Row r, String path) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
-        
+
         Template temp = null;
         try {
             temp = InitServlet.getFreemarkerCfg().getTemplate("header.ftl");
@@ -32,26 +31,26 @@ public class HeaderDisplay {
         // Creating the data model
         SimpleHash root = new SimpleHash();
         root.put("rowName", r.getRowname());
-        
-        List rows = new LinkedList();
-        
-        for (Iterator i = r.getParade().getRows().keySet().iterator(); i.hasNext();) {
-            Row currentRow = (Row) r.getParade().getRows().get(i.next());
+
+        List<String> rows = new LinkedList<String>();
+
+        for (Object element : r.getParade().getRows().keySet()) {
+            Row currentRow = r.getParade().getRows().get(element);
             String displayName = currentRow.getRowname();
             if (currentRow.getRowname() == "")
                 displayName = "(root)";
-            
+
             rows.add(displayName);
         }
-        
+
         root.put("rows", rows);
 
         AntViewManager antV = new AntViewManager();
         WebappViewManager webappV = new WebappViewManager();
-        
+
         antV.setHeaderView(root, r, path);
         webappV.setHeaderView(root, r, path);
-        
+
         /* Merge data model with template */
         try {
             temp.process(root, out);
@@ -62,9 +61,9 @@ public class HeaderDisplay {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         out.flush();
-        
+
         return result.toString();
     }
 

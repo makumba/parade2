@@ -12,7 +12,7 @@ import org.makumba.parade.tools.Base64;
  * @author Cristian Bogdan
  */
 public class ForeignHttpAuthorizer implements Authorizer {
-    
+
     String url;
 
     public static HttpURLConnection sendAuth(URL u, String username, String password) throws java.io.IOException {

@@ -33,9 +33,8 @@ public class ActionLogDTO {
     private String origin;
 
     private String paradecontext;
-    
-    private String file;
 
+    private String file;
 
     public String getParadecontext() {
         return paradecontext;
@@ -125,10 +124,11 @@ public class ActionLogDTO {
         this.file = file;
     }
 
-
     /**
      * Populates an ActionLog
-     * @param log the ActionLog to be populated by this DTO
+     * 
+     * @param log
+     *            the ActionLog to be populated by this DTO
      */
     public void populate(ActionLog log) {
         log.setId(id);

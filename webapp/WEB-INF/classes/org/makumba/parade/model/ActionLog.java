@@ -3,29 +3,29 @@ package org.makumba.parade.model;
 import java.util.Date;
 
 public class ActionLog {
-    
+
     private Long id;
 
     private Date date;
-    
+
     private String user;
-    
+
     private String context;
-    
+
     private String url;
-    
+
     private String queryString;
-    
+
     private String post;
-    
+
     private String action;
-    
+
     private String origin;
-    
+
     private String paradecontext;
-    
+
     private String file;
-    
+
     public String getAction() {
         return action;
     }
@@ -113,5 +113,5 @@ public class ActionLog {
     public void setFile(String file) {
         this.file = file;
     }
-    
+
 }

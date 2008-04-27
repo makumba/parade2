@@ -7,16 +7,17 @@ import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
 public class ParadeLogFormatter extends SimpleFormatter {
-    
+
     static final String TOMCAT_PREFIX = "[Tomcat]";
+
     static final String PARADE_PREFIX = "[ParaDe]";
 
     @Override
     public synchronized String format(LogRecord record) {
         String formatted = super.format(record);
-        if(formatted.indexOf(PARADE_PREFIX) != -1)
+        if (formatted.indexOf(PARADE_PREFIX) != -1)
             formatted = formatted.substring(formatted.indexOf(PARADE_PREFIX));
-        String prefix = TriggerFilter.prefix.get();//(String) record.getParameters()[0];
+        String prefix = TriggerFilter.prefix.get();// (String) record.getParameters()[0];
 
         // if the prefix is null, this was tomcat
         if (prefix == null)
@@ -26,7 +27,7 @@ public class ParadeLogFormatter extends SimpleFormatter {
 
         StringBuffer sb = new StringBuffer();
         BufferedReader b = new BufferedReader(new StringReader(record.getMessage()));
-        
+
         String line = new String();
 
         try {

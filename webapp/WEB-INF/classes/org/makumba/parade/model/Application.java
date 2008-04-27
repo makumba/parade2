@@ -5,9 +5,9 @@ import java.util.Map;
 public class Application {
 
     private long id;
-    
+
     private String name;
-    
+
     private String repository;
 
     private Map<String, String> cvsfiles;
@@ -35,11 +35,11 @@ public class Application {
     public void setCvsfiles(Map<String, String> cvsfiles) {
         this.cvsfiles = cvsfiles;
     }
-    
+
     public Application() {
-        
+
     }
-    
+
     public Application(String name, String repository) {
         this.name = name;
         this.repository = repository;

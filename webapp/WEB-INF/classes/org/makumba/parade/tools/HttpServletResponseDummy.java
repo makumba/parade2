@@ -8,26 +8,26 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-public class HttpServletResponseDummy implements HttpServletResponse{
+public class HttpServletResponseDummy implements HttpServletResponse {
 
     public void addCookie(Cookie arg0) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void addDateHeader(String arg0, long arg1) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void addHeader(String arg0, String arg1) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void addIntHeader(String arg0, int arg1) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public boolean containsHeader(String arg0) {
@@ -57,47 +57,47 @@ public class HttpServletResponseDummy implements HttpServletResponse{
 
     public void sendError(int arg0) throws IOException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void sendError(int arg0, String arg1) throws IOException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void sendRedirect(String arg0) throws IOException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setDateHeader(String arg0, long arg1) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setHeader(String arg0, String arg1) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setIntHeader(String arg0, int arg1) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setStatus(int arg0) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setStatus(int arg0, String arg1) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void flushBuffer() throws IOException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public int getBufferSize() {
@@ -137,37 +137,37 @@ public class HttpServletResponseDummy implements HttpServletResponse{
 
     public void reset() {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void resetBuffer() {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setBufferSize(int arg0) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setCharacterEncoding(String arg0) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setContentLength(int arg0) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setContentType(String arg0) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setLocale(Locale arg0) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

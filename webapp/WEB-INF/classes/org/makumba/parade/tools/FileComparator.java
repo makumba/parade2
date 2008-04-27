@@ -4,15 +4,12 @@ import java.util.Comparator;
 
 import org.makumba.parade.model.File;
 
-public class FileComparator implements Comparator {
+public class FileComparator implements Comparator<File> {
 
     public FileComparator() {
     }
 
-    public int compare(Object d1, Object d2) {
-
-        File f1 = (File) d1;
-        File f2 = (File) d2;
+    public int compare(File f1, File f2) {
 
         if (f1.getIsDir() && !f2.getIsDir())
             return -1;

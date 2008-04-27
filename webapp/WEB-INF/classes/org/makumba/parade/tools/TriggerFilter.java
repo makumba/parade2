@@ -21,7 +21,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.makumba.parade.access.ActionLogDTO;
-import org.makumba.parade.tools.HttpServletRequestDummy;
 
 /**
  * This filter invokes a servlet before and another servlet after each access to a servlet context or an entire servlet
@@ -68,17 +67,19 @@ public class TriggerFilter implements Filter {
     public static ThreadLocal<ActionLogDTO> actionLog = new ThreadLocal<ActionLogDTO>();
 
     private static ThreadLocal<ActionLogDTO> tomcatActionLog = new ThreadLocal<ActionLogDTO>();
-    
+
     public static ThreadLocal<String> prefix = new ThreadLocal<String>();
 
     // guard that makes sure that we don't enter in an infinite logging loop
     private static ThreadLocal guard = new ThreadLocal() {
+        @Override
         public Object initialValue() {
             return false;
         }
     };
-    
+
     public static ThreadLocal<Boolean> shutDown = new ThreadLocal<Boolean>() {
+        @Override
         public Boolean initialValue() {
             return new Boolean(false);
         }
@@ -249,13 +250,12 @@ public class TriggerFilter implements Filter {
             guard.set(true);
 
             ActionLogDTO l = actionLog.get();
-            
+
             // if we're shutting down tomcat, we stop logging, or tomcat can't shutdown anymore
-            if(shutDown.get()) {
+            if (shutDown.get()) {
                 return;
             }
-            
-            
+
             ActionLogDTO log = computeHeuristicContextInformation(attributeValue);
             TriggerFilter.setPrefix();
 
@@ -281,8 +281,6 @@ public class TriggerFilter implements Filter {
             computeStaticRoot(data);
         }
     }
-
-    private static final String TOMCAT_CLASSLOADER = "org.apache.catalina.loader.StandardClassLoader";
 
     private static final String WEBAPP_CLASSLOADER = "WebappClassLoader";
 
@@ -351,8 +349,8 @@ public class TriggerFilter implements Filter {
                 new Throwable().printStackTrace(new PrintWriter(s));
 
                 if (s.toString().indexOf(TOMCAT_SHUTDOWN) > -1) {
-                    
-                    PerThreadPrintStream.oldSystemOut.println("debug tomcat shutdown:\n"+s.toString());
+
+                    PerThreadPrintStream.oldSystemOut.println("debug tomcat shutdown:\n" + s.toString());
 
                     // tomcat shutting down, we want to register that
 

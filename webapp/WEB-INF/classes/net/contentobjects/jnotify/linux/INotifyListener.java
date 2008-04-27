@@ -31,7 +31,6 @@
 
 package net.contentobjects.jnotify.linux;
 
-public interface INotifyListener
-{
-	public void notify(String name, int wd, int mask, int cookie);
+public interface INotifyListener {
+    public void notify(String name, int wd, int mask, int cookie);
 }

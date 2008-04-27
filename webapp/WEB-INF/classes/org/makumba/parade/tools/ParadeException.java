@@ -4,7 +4,7 @@ package org.makumba.parade.tools;
  * A simple ParaDe exception, used to display errors to the user
  * 
  * @author Manuel Gay
- *
+ * 
  */
 public class ParadeException extends RuntimeException {
 

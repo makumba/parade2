@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class PerThreadPrintStreamLogRecord {
     private Date date;
-    
+
     private String message;
 
     public Date getDate() {

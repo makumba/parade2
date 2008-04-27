@@ -17,7 +17,6 @@ import org.makumba.parade.model.Parade;
 
 import freemarker.template.DefaultObjectWrapper;
 
-
 public class InitServlet extends HttpServlet implements Runnable {
 
     private static final long serialVersionUID = 1L;
@@ -33,7 +32,7 @@ public class InitServlet extends HttpServlet implements Runnable {
     private Session session = null;
 
     private Parade p = null;
-    
+
     private static freemarker.template.Configuration freemarkerCfg;
 
     {
@@ -49,27 +48,27 @@ public class InitServlet extends HttpServlet implements Runnable {
             cfg.addResource("org/makumba/parade/model/ActionLog.hbm.xml");
             cfg.addResource("org/makumba/parade/model/Application.hbm.xml");
             cfg.addResource("org/makumba/parade/model/User.hbm.xml");
-            
-            
+
             SessionFactory sf = cfg.buildSessionFactory();
 
             SchemaUpdate schemaUpdate = new SchemaUpdate(cfg);
             schemaUpdate.execute(true, true);
 
             // now it's ready to be available for other classes
-            sessionFactory=sf;
+            sessionFactory = sf;
         } catch (Throwable t) {
             logger.error(t);
             t.printStackTrace();
         }
-        
+
         /* Initalising Freemarker */
         try {
-            
+
             freemarkerCfg = new freemarker.template.Configuration();
-            
-            String templatesPath = new java.io.File(ParadeProperties.getClassesPath() + "/org/makumba/parade/view/templates").getPath();
-            
+
+            String templatesPath = new java.io.File(ParadeProperties.getClassesPath()
+                    + "/org/makumba/parade/view/templates").getPath();
+
             freemarkerCfg.setDirectoryForTemplateLoading(new File(templatesPath));
 
             freemarkerCfg.setObjectWrapper(new DefaultObjectWrapper());
@@ -78,9 +77,10 @@ public class InitServlet extends HttpServlet implements Runnable {
             logger.error(t);
             t.printStackTrace();
         }
-        
+
     }
 
+    @Override
     public void init(ServletConfig conf) throws ServletException {
         new Thread(this).start();
     }
@@ -109,23 +109,23 @@ public class InitServlet extends HttpServlet implements Runnable {
             p.refresh();
             session.save(p);
         }
-        try{
+        try {
             p.addJNotifyListeners();
-        }catch(Throwable e){
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         Hibernate.initialize(p.getRows());
-        
+
         tx.commit();
 
         session.close();
-        
+
         logger.info("INIT: Launching ParaDe finished at " + new java.util.Date());
         long end = System.currentTimeMillis();
 
         long refresh = end - start;
         logger.info("INIT: Initialisation took " + refresh + " ms");
-        
+
     }
 
     public static SessionFactory getSessionFactory() {

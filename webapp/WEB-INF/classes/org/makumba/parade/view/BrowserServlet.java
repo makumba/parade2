@@ -22,14 +22,21 @@ import org.makumba.parade.view.managers.HeaderDisplay;
 
 public class BrowserServlet extends HttpServlet {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    @Override
     public void init() {
     }
 
+    @Override
     public synchronized void service(ServletRequest req, ServletResponse resp) throws java.io.IOException,
             ServletException {
         resp.setContentType("text/html");
         resp.setCharacterEncoding("UTF-8");
-        
+
         // fetching parameters
         String display = req.getParameter("display");
         if (display == null)
@@ -42,7 +49,7 @@ public class BrowserServlet extends HttpServlet {
         String view = req.getParameter("view");
         if (view == null)
             view = (String) req.getAttribute("view");
-        
+
         String order = req.getParameter("order");
         if (view == null)
             view = (String) req.getAttribute("order");
@@ -52,18 +59,19 @@ public class BrowserServlet extends HttpServlet {
             file = (String) req.getAttribute("file");
 
         String path = null;
-        
+
         String getPathFromSession = req.getParameter("getPathFromSession");
-        if(getPathFromSession != null) {
-            path = (String) ((HttpServletRequest)req).getSession().getAttribute("path");
+        if (getPathFromSession != null) {
+            path = (String) ((HttpServletRequest) req).getSession().getAttribute("path");
         } else {
             path = req.getParameter("path");
         }
         if (path == null)
             path = (String) req.getAttribute("path");
-        
-        if(path != null && path != "") ((HttpServletRequest)req).getSession().setAttribute("path", path);
-        
+
+        if (path != null && path != "")
+            ((HttpServletRequest) req).getSession().setAttribute("path", path);
+
         String opResult = (String) req.getAttribute("result");
         Boolean successAttr = (Boolean) req.getAttribute("success");
         boolean success = true;
@@ -78,15 +86,15 @@ public class BrowserServlet extends HttpServlet {
         Transaction tx = s.beginTransaction();
 
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        
-        Row r = (Row) p.getRows().get(context);
+
+        Row r = p.getRows().get(context);
         if (r == null) {
             out.println("Unknown context " + context);
         } else {
-            
-            //fetching data from the persistent store
-            //this is needed for lazy connections
-            //r.getFiles().size();
+
+            // fetching data from the persistent store
+            // this is needed for lazy connections
+            // r.getFiles().size();
             Hibernate.initialize(r.getFiles());
 
             // initialising the displays

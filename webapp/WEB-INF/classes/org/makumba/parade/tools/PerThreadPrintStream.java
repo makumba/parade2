@@ -17,14 +17,16 @@ public class PerThreadPrintStream extends java.io.PrintStream {
     static Object dummy = "dummy";
 
     public static PrintStream oldSystemOut;
-    
-    static ThreadLocal enable = new ThreadLocal() {
-        public Object initialValue() {
+
+    static ThreadLocal<Boolean> enable = new ThreadLocal<Boolean>() {
+        @Override
+        public Boolean initialValue() {
             return true;
         }
     };
 
     static ThreadLocal lastEnter = new ThreadLocal() {
+        @Override
         public Object initialValue() {
             return dummy;
         }
@@ -32,12 +34,13 @@ public class PerThreadPrintStream extends java.io.PrintStream {
     static {
         OutputStream bos = null;
         try {
-            bos = new FileOutputStream(System.getProperty("catalina.base") + java.io.File.separator + "logs" + java.io.File.separator + "catalina.out");
+            bos = new FileOutputStream(System.getProperty("catalina.base") + java.io.File.separator + "logs"
+                    + java.io.File.separator + "catalina.out");
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         oldSystemOut = System.out;
         java.io.PrintStream singleton = new PerThreadPrintStream(bos);
         System.setOut(singleton);
@@ -58,13 +61,14 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         super(o);
     }
 
+    @Override
     public void write(byte[] buffer, int start, int len) {
-        
+
         try {
 
             if (!(Boolean) enable.get()) {
                 outWrite(buffer, start, len);
-                //super.write(buffer, start, len);
+                // super.write(buffer, start, len);
                 return;
             }
             String msg = new String(buffer, start, len);
