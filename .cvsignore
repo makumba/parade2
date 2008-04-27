@@ -2,3 +2,4 @@ triggerClasses
 loggerClasses
 tomcat.properties
 globalClasses
+.byecycle
