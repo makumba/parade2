@@ -22,8 +22,6 @@ import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.model.Log;
 import org.makumba.parade.model.User;
-import org.makumba.parade.tools.ParadeException;
-import org.makumba.parade.tools.PerThreadPrintStream;
 import org.makumba.parade.tools.PerThreadPrintStreamLogRecord;
 import org.makumba.parade.tools.TriggerFilter;
 import org.makumba.parade.view.TickerTapeData;
@@ -52,9 +50,9 @@ public class DatabaseLogServlet extends HttpServlet {
 
     private RowProperties rp;
 
-    private ActionLogDTO lastCommit = new ActionLogDTO();
+    private ActionLogDTO lastCommit;
 
-    private String lastCommitId = new String();
+    private String lastCommitId;
 
     
     public void init(ServletConfig conf) {
@@ -102,7 +100,7 @@ public class DatabaseLogServlet extends HttpServlet {
             }
 
         } catch (NullPointerException npe) {
-            
+            //throw(npe);
             logger.error("***********************************************************************\n"
                     + "NPE in database log servlet. please tell developers!\n"
                     + "***********************************************************************");
@@ -292,7 +290,7 @@ public class DatabaseLogServlet extends HttpServlet {
         if (log.getAction().equals("cvsCommitRepository")) {
             log.setAction("cvsCommit");
             
-            if (lastCommit != null) {
+            if (lastCommit != null && lastCommit.getFile() != null) {
                 // the user commited through parade
 
                 // we just check if it's the same file that has been commited through parade so we don't log it twice
