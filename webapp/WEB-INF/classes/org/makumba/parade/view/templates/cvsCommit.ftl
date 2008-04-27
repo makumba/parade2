@@ -7,7 +7,7 @@
 <input type=hidden value="${rowName}" name="context">
 <input type=hidden value="commit" name="op">
 <input type=hidden value="${path}" name="params">
-<input type=hidden value="${fileAbsolutePath}" name="params">
+<input type=hidden value="${file}" name="params">
 Committing <strong>${fileName}</strong> with message:<br>
 <textarea rows="3" cols="40" name="params"></textarea><br>
 <input type=submit value=Commit>

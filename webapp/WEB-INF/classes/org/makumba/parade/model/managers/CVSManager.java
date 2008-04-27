@@ -243,7 +243,8 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         // so either it is missing or it was scheduled for deletion
                         FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
                         if(cvsdata != null) {
-                            if(cvsdata.getRevision().startsWith("-")) {
+                            String cvsRevision = line.substring(1 + name.length() + 1);
+                            if(cvsRevision.startsWith("-")) {
                                 missing = false;
                             } else {
                                 // strange.

@@ -67,8 +67,8 @@ public class CommandViewManager implements CommandView {
         
         if(file != null) {
             java.io.File f = new java.io.File(file);
-            root.put("fileAbsolutePath", f.getAbsolutePath());
             root.put("fileName", f.getName());
+            root.put("file", file);
         }
 
         /* Merge data model with template */

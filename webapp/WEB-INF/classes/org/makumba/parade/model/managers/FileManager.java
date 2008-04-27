@@ -384,8 +384,8 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         if(!f.exists()) {
             File cachedFile = (File) r.getFiles().get(absoluteFilePath);
             if(cachedFile != null) {
-                boolean hasCvsData = (cachedFile.getFiledata().get("cvs") != null);
-                if(!hasCvsData) {
+                FileCVS cvsData = (FileCVS) cachedFile.getFiledata().get("cvs");
+                if(cvsData != null && cvsData.getStatus().equals(CVSManager.DELETED)) {
                     r.getFiles().remove(absoluteFilePath);
                 }
             }
