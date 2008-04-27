@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
+import org.apache.tools.ant.types.Path;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -54,6 +55,8 @@ public class DatabaseLogServlet extends HttpServlet {
 
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         
+        try {
+        
         // when we start tomcat we are not ready yet to log
         // we first need a Hibernate SessionFactory to be initalised
         // this happens only after the Initservlet was loaded
@@ -89,6 +92,15 @@ public class DatabaseLogServlet extends HttpServlet {
             // close the session in any case
             s.close();
         }
+        
+        
+        } catch(NullPointerException npe) {
+            logger.error("***********************************************************************\n" +
+                         "NPE in database log servlet. please tell developers!\n" +
+                         npe.getMessage() + 
+                         "***********************************************************************");
+        }
+
     }
 
     private void handleActionLog(HttpServletRequest req, Object record, Session s) {
@@ -159,7 +171,7 @@ public class DatabaseLogServlet extends HttpServlet {
             actionType="browse";
         if(uri.indexOf("File.do") > -1)
             actionType = "file";
-        if(uri.indexOf("File.do?browse") > -1)
+        if(uri.indexOf("File.do") > -1 && queryString.indexOf("browse&") > -1)
             actionType = "fileBrowse";
         if(uri.indexOf("Cvs.do") > -1)
             actionType = "cvs";
@@ -170,17 +182,25 @@ public class DatabaseLogServlet extends HttpServlet {
         path = getParam("path", queryString);
         file = getParam("file", queryString);
         
+        if(op == null)
+            op = "";
+        if(params == null)
+            params = "";
+        if(display == null)
+            display = "";
+        if(path == null)
+            path = "";
+        if(file == null)
+            file = "";
+        
         // browse actions
         if(actionType.equals("browseRow")) {
             log.setAction("browseRow");
+            
         }
-        if(actionType.equals("browse")) {
+        if(actionType.equals("browse") || actionType.equals("fileBrowse")) {
             log.setAction("browseDir");
-            log.setFile(path);
-        }
-        if(actionType.equals("fileBrowse")) {
-            log.setAction("browseDir");
-            log.setFile(path);
+            log.setFile(nicePath(path, ""));
         }
         
         // view actions
@@ -195,23 +215,19 @@ public class DatabaseLogServlet extends HttpServlet {
         // edit (open editor)
         if(actionType.equals("file") && op.equals("editFile")) {
             log.setAction("edit");
-            log.setFile("/" + (path.endsWith("/")?path:path+"/") + file);
+            log.setFile(nicePath(path, file));
         }
         
         // save
         if(actionType.equals("file") && op.equals("saveFile")) {
             log.setAction("save");
-            log.setFile("/" + path + "/" + file);
+            log.setFile(nicePath(path, file));
         }
         
         // delete
         if(actionType.equals("file") && op.equals("deleteFile")) {
             log.setAction("delete");
-            try {
-                log.setFile("/" + URLDecoder.decode(path, "UTF-8") + "/" + URLDecoder.decode(params, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                log.setFile("/" + path + "/" + file);
-            }
+            log.setFile(nicePath(path, params));
         }
         
         // CVS
@@ -232,7 +248,8 @@ public class DatabaseLogServlet extends HttpServlet {
             if(op.equals("commit")) {
                 log.setAction("cvsCommit");
                 String[] commitParams = getParamValues("params", queryString, null, 0);
-                log.setFile("/" + commitParams[0] + "/" + commitParams[1]);
+                
+                log.setFile(nicePath(commitParams[1], ""));
                 lastCommit.set(log);
             }
             if(op.equals("diff")) {
@@ -286,6 +303,19 @@ public class DatabaseLogServlet extends HttpServlet {
         }
     }
     
+    private String nicePath(String path, String file) {
+        try {
+            path = path.indexOf("%") > -1 ? URLDecoder.decode(path, "UTF-8") : path;
+            path = path.startsWith("/")? "" : "/" + (path.endsWith("/") ? path.substring(0, path.length()-1) : path);
+            file = file.indexOf("%") > -1 ? URLDecoder.decode(file, "UTF-8") : file;
+            file = file.startsWith("/") ? file : file.length() == 0 ? "" : "/" + file;
+        } catch (UnsupportedEncodingException e) {
+            // shouldn't happen
+        }
+        
+        return path + file;
+    }
+    
     private String getParam(String paramName, String queryString) {
         int n = queryString.indexOf(paramName+"=");
         String param = null;
@@ -336,9 +366,14 @@ public class DatabaseLogServlet extends HttpServlet {
                 || log.getUrl().equals("/servlet/ticker")
                 || log.getUrl().equals("/servlet/cvscommit")
                 || log.getUrl().equals("/tipOfTheDay.jsp")
+                || log.getUrl().equals("/index.jsp")
+                || log.getUrl().equals("/")
                 || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
                 || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
                 || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
+                || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
+                || log.getUrl().equals("/Command.do")
+                || log.getUrl().startsWith("/scripts/codepress/")
                 )
                 
                 || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))) {
