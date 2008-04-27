@@ -21,5 +21,7 @@
 			<element column = "fileversion" type="string" not-null="true" />
 		</map>
 		
+		<many-to-one name="parade" column="id_parade"/>
+        
 	</class>
 </hibernate-mapping>     

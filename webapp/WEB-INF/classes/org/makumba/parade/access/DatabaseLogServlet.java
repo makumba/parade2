@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.LogRecord;
 
 import javax.servlet.ServletConfig;
@@ -21,6 +22,8 @@ import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.model.Log;
 import org.makumba.parade.model.User;
+import org.makumba.parade.tools.ParadeException;
+import org.makumba.parade.tools.PerThreadPrintStream;
 import org.makumba.parade.tools.PerThreadPrintStreamLogRecord;
 import org.makumba.parade.tools.TriggerFilter;
 import org.makumba.parade.view.TickerTapeData;
@@ -49,11 +52,13 @@ public class DatabaseLogServlet extends HttpServlet {
 
     private RowProperties rp;
 
-    private ThreadLocal<ActionLogDTO> lastCommit = new ThreadLocal<ActionLogDTO>();
+    private ActionLogDTO lastCommit = new ActionLogDTO();
 
+    private String lastCommitId = new String();
+
+    
     public void init(ServletConfig conf) {
         rp = new RowProperties();
-
     }
 
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -97,11 +102,12 @@ public class DatabaseLogServlet extends HttpServlet {
             }
 
         } catch (NullPointerException npe) {
+            
             logger.error("***********************************************************************\n"
-                    + "NPE in database log servlet. please tell developers!\n" + npe.getMessage()
+                    + "NPE in database log servlet. please tell developers!\n"
                     + "***********************************************************************");
-        }
 
+        }
     }
 
     private void handleActionLog(HttpServletRequest req, Object record, Session s) {
@@ -111,7 +117,7 @@ public class DatabaseLogServlet extends HttpServlet {
         filterLog(log, s);
 
         // sometimes we just don't log (like for commits)
-        if (log.getAction().equals("pinkPanda"))
+        if (log.getAction().equals("paradeCvsCommit"))
             return;
 
         // let's see if we have already someone. if not, we create one
@@ -166,7 +172,7 @@ public class DatabaseLogServlet extends HttpServlet {
             log.setAction("");
 
         log.setParadecontext(getParam("context", queryString));
-
+        
         String actionType = "", op = "", params = "", display = "", path = "", file = "";
 
         if (uri.indexOf("browse.jsp") > -1)
@@ -250,11 +256,19 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setFile("/" + params);
             }
             if (op.equals("commit")) {
-                log.setAction("cvsCommit");
+                log.setAction("paradeCvsCommit");
                 String[] commitParams = getParamValues("params", queryString, null, 0);
-
                 log.setFile(nicePath(commitParams[1], ""));
-                lastCommit.set(log);
+                
+                // for some weird reason, commit gets logged twice (maybe because of struts?)
+                // so since we don't want this, we do a check
+                
+                if(lastCommitId != null && lastCommitId.equals(log.getFile() + log.getQueryString())) {
+                    lastCommitId = null;
+                    // we ignore that log
+                } else {
+                    lastCommit = log;
+                }
             }
             if (op.equals("diff")) {
                 log.setAction("cvsDiff");
@@ -277,33 +291,41 @@ public class DatabaseLogServlet extends HttpServlet {
         // CVS commit (hook)
         if (log.getAction().equals("cvsCommitRepository")) {
             log.setAction("cvsCommit");
-
-            if (lastCommit.get() != null) {
+            
+            if (lastCommit != null) {
                 // the user commited through parade
 
-                // we just check if it's the same file that has been commited through parade
-                if (lastCommit.get().getFile().equals(log.getFile())) {
-                    log.setAction("pinkPanda");
-                    lastCommit.set(null);
+                // we just check if it's the same file that has been commited through parade so we don't log it twice
+                // (it will be logged anyway after this)
+                // and we also add other useful info
+                if (lastCommit.getFile().equals(log.getFile())) {
+                    lastCommitId = lastCommit.getFile()+lastCommit.getQueryString();
+                    log.setQueryString(lastCommit.getQueryString() + log.getQueryString());
+                    log.setContext(lastCommit.getContext());
+                    log.setParadecontext(lastCommit.getParadecontext());
+                    log.setUser(lastCommit.getUser());
+                    lastCommit = null;
                 } else {
                     logger.error("***********************************************************************\n"
-                            + "Unrecognised parade commit. please tell developers!\n"
-                            + "***********************************************************************");
+                               + "Unrecognised parade commit. please tell developers!\n"
+                               + "***********************************************************************");
                 }
             } else {
-                // this is an external commit
-                // let's try to lookup who did it
+                // this is an external commit that doesn't come thru parade
+                // let's try to see if we know the user who did the commit
                 Transaction tx = s.beginTransaction();
                 Query q = s.createQuery("from User u where u.cvsuser = ?");
                 q.setString(0, log.getUser());
-                User u = (User) q.list().get(0);
-                if (u != null) {
-                    log.setUser(u.getLogin());
+                List<User> results = q.list();
+                if(results.size() > 0) {
+                    User u = results.get(0);
+                    if (u != null) {
+                        log.setUser(u.getLogin());
+                    }
                 }
                 tx.commit();
-
+        
             }
-
         }
     }
 
@@ -371,7 +393,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().endsWith(".gif")
                         || log.getUrl().endsWith(".js")
                         || log.getUrl().equals("/servlet/ticker")
-                        || log.getUrl().equals("/servlet/cvscommit")
+                        || log.getUrl().equals("/servlet/cvscommit/")
                         || log.getUrl().equals("/tipOfTheDay.jsp")
                         || log.getUrl().equals("/index.jsp")
                         || log.getUrl().equals("/")

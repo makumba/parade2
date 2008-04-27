@@ -23,7 +23,7 @@
 		<property name="cvsuser"/>
 		
 		
-		<many-to-one name="parade" class="Parade" />
+		<many-to-one name="parade" class="Parade" column="id_parade" />
 		
 		        
 	</class>

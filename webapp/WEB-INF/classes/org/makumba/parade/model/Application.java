@@ -11,6 +11,8 @@ public class Application {
     private String repository;
 
     private Map<String, String> cvsfiles;
+    
+    private Parade parade;
 
     public String getName() {
         return name;
@@ -51,6 +53,14 @@ public class Application {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Parade getParade() {
+        return parade;
+    }
+
+    public void setParade(Parade parade) {
+        this.parade = parade;
     }
 
 }

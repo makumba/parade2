@@ -152,6 +152,7 @@ public class ApplicationManager implements ParadeManager {
                 logger.info("Registering new application " + module + " used by row " + r.getRowname());
                 a = new Application(module, CVSManager.getCVSRepository(r.getRowpath()));
                 buildCVSlist(a);
+                a.setParade(r.getParade());
                 r.getParade().getApplications().put(a.getName(), a);
             }
             r.setApplication(a);
