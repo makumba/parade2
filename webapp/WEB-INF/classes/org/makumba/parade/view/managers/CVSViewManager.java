@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.File;
-import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.tools.ParadeException;
@@ -41,7 +40,6 @@ public class CVSViewManager implements ParadeView {
 
     public void setFileView(SimpleHash fileView, Row r, String path, File f) {
         
-        FileCVS cvsdata = (FileCVS) f.getFiledata().get("cvs");
         RowCVS rowcvsdata = (RowCVS) r.getRowdata().get("cvs");        
 
         String cvsweb = ParadeProperties.getProperty("cvs.site");
@@ -50,16 +48,10 @@ public class CVSViewManager implements ParadeView {
         
         // populating model
         fileView.put("cvsWebLink", cvswebLink);
-        fileView.put("cvsIsNull", cvsdata == null);
+        fileView.put("cvsIsNull", f.getCvsStatus() == null);
         fileView.put("isConflictBackup", f.getName().startsWith(".#"));
-        if(cvsdata != null) {
-            fileView.put("cvsRevision", cvsdata.getRevision());
-            fileView.put("cvsStatus", cvsdata.getStatus());
-        } else {
-            fileView.put("cvsRevision", "");
-            fileView.put("cvsStatus", "");
-        }
-        
+        fileView.put("cvsRevision", f.getCvsRevision() == null ? "" : f.getCvsRevision());
+        fileView.put("cvsStatus", f.getCvsStatus() == null ? "" : f.getCvsStatus());
     }
         
 

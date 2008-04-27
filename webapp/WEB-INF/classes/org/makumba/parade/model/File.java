@@ -38,6 +38,12 @@ public class File {
     private String parentPath;
     
     private String cvsURI;
+    
+    private Integer cvsStatus;
+
+    private String cvsRevision;
+
+    private Date cvsDate;
 
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
@@ -153,8 +159,39 @@ public class File {
         this.cvsURI = cvsURI;
     }
     
+    public Integer getCvsStatus() {
+        return cvsStatus;
+    }
+
+    public void setCvsStatus(Integer cvsStatus) {
+        this.cvsStatus = cvsStatus;
+    }
+
+    public String getCvsRevision() {
+        return cvsRevision;
+    }
+
+    public void setCvsRevision(String cvsRevision) {
+        this.cvsRevision = cvsRevision;
+    }
+
+    public Date getCvsDate() {
+        return cvsDate;
+    }
+
+    public void setCvsDate(Date cvsDate) {
+        this.cvsDate = cvsDate;
+    }
+    
     public String getFileURI() {
         return "file://"+path.replace(java.io.File.separator, "/");
+    }
+    
+    public void emptyCvsData() {
+        setCvsDate(null);
+        setCvsRevision(null);
+        setCvsStatus(null);
+        setCvsURI(null);
     }
 
     /* returns a List of the direct children (files, dirs) of a given Path */
@@ -225,6 +262,5 @@ public class File {
 
         return children;
     }
-
     
 }

@@ -21,7 +21,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
-import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
@@ -241,13 +240,12 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     } else if(cvsfile != null && !fileOnDisk && !cvsfile.getOnDisk()) {
                         // this is a virtual file which isn't on disk
                         // so either it is missing or it was scheduled for deletion
-                        FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
-                        if(cvsdata != null) {
+                        if(cvsfile.getCvsRevision() != null) {
                             String cvsRevision = line.substring(1 + name.length() + 1);
                             if(cvsRevision.startsWith("-")) {
                                 missing = false;
                             } else {
-                                // strange.
+                                // file was deleted but is still in repo
                                 missing = true;
                             }
                         } else {
@@ -260,26 +258,18 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         missing = false;
                     }
                         
-                    if (missing) {
+                    if (missing && cvsfile == null) {
                         cvsfile = FileManager.setVirtualFileData(r, file, name, false);
                         r.getFiles().put(absoluteFilePath, cvsfile);
                     }
+                    
                     if(cvsfile == null)
                         continue;
                     
-                    FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
-                    if (cvsdata == null) {
-                        cvsdata = new FileCVS();
-                        cvsdata.setDataType("cvs");
-                        cvsdata.setFile(cvsfile);
-                        
-                        cvsfile.getFiledata().put("cvs", cvsdata);
-                    }
-
                     // setting CVS status
-                    cvsdata.setStatus(UNKNOWN);
+                    cvsfile.setCvsStatus(UNKNOWN);
                     if(missing) {
-                        cvsdata.setStatus(NEEDS_CHECKOUT);
+                        cvsfile.setCvsStatus(NEEDS_CHECKOUT);
                         continue;
                     }
                     
@@ -288,7 +278,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     if (n == -1)
                         continue;
                     String revision = line.substring(0, n);
-                    cvsdata.setRevision(revision);
+                    cvsfile.setCvsRevision(revision);
                     line = line.substring(n + 1);
                     n = line.indexOf('/');
                     if (n == -1)
@@ -298,7 +288,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     java.io.File fl = new java.io.File(cvsfile.getPath());
 
                     if (fl == null && !revision.startsWith("-")) {
-                        cvsdata.setStatus(NEEDS_CHECKOUT);
+                        cvsfile.setCvsStatus(NEEDS_CHECKOUT);
                         cvsfile.setCvsURI(null);
                         continue;
                     }
@@ -306,26 +296,26 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     String date = line.substring(0, n);
 
                     if (date.equals("Result of merge")) {
-                        cvsdata.setStatus(LOCALLY_MODIFIED);
+                        cvsfile.setCvsStatus(LOCALLY_MODIFIED);
                         cvsfile.setCvsURI(null);
                         continue;
                     }
 
                     if (date.startsWith("Result of merge+")) {
-                        cvsdata.setStatus(CONFLICT);
+                        cvsfile.setCvsStatus(CONFLICT);
                         cvsfile.setCvsURI(null);
                         continue;
                     }
 
                     if (date.equals("dummy timestamp")) {
-                        cvsdata.setStatus(revision.startsWith("-") ? DELETED : ADDED);
+                        cvsfile.setCvsStatus(revision.startsWith("-") ? DELETED : ADDED);
                         cvsfile.setCvsURI(null);
                         continue;
                     }
 
                     Date fd = null;
                     try {
-                        cvsdata.setDate(fd = cvsDateFormat.parse(date));
+                        cvsfile.setCvsDate(fd = cvsDateFormat.parse(date));
                     } catch (Throwable t) {
                         logger.error("Couldn't parse date of CVS File " + file.getPath(), t);
                         continue;
@@ -340,7 +330,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                             // the difference seems to have to do with daylight
                             // saving
                             || Math.abs(Math.abs(l) - 3600000) < 1000) {
-                        cvsdata.setStatus(UP_TO_DATE);
+                        cvsfile.setCvsStatus(UP_TO_DATE);
                         
                         // if the file is the same as on the repository, we can set a cvs uri
                         cvsfile.setCvsURI("cvs://"+getCVSModule(r.getRowpath())+"/"+name);
@@ -348,7 +338,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         continue;
                     }
 
-                    cvsdata.setStatus(l > 0 ? LOCALLY_MODIFIED : NEEDS_UPDATE);
+                    cvsfile.setCvsStatus(l > 0 ? LOCALLY_MODIFIED : NEEDS_UPDATE);
                     cvsfile.setCvsURI(null);
                     continue;
 
@@ -374,17 +364,11 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         r.getFiles().put(absoluteDirectoryPath, cvsfile);
                     }
 
-                    FileCVS cvsdata = (FileCVS) cvsfile.getFiledata().get("cvs");
-                    if (cvsdata == null) {
-                        cvsdata = new FileCVS();
-                        cvsdata.setDataType("cvs");
-                        cvsdata.setFile(cvsfile);
-                        cvsdata.setStatus(NEEDS_CHECKOUT);
-                        cvsfile.getFiledata().put("cvs", cvsdata);
-
+                    if (cvsfile.getCvsStatus() == null) {
+                        cvsfile.setCvsStatus(NEEDS_CHECKOUT);
                     } else {
-                        cvsdata.setStatus(UP_TO_DATE);
-                        cvsdata.setRevision("(dir)");
+                        cvsfile.setCvsStatus(UP_TO_DATE);
+                        cvsfile.setCvsRevision("(dir)");
                     }
                 }
                 
@@ -402,7 +386,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                 String filePath = i.next();
                 if(!cvsFiles.contains(filePath)) {
                     // remove zombie entry
-                    r.getFiles().get(filePath).getFiledata().remove("cvs");
+                    r.getFiles().get(filePath).emptyCvsData();
                 }
             }
             
@@ -422,9 +406,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
         if (!f.exists())
             return;
-
-        FileCVS cvsdata = (FileCVS) file.getFiledata().get("cvs");
-
+        
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line = null;
@@ -433,12 +415,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                 File cvsfile = (File) r.getFiles().get(file.getPath() + java.io.File.separator + line);
                 if (cvsfile == null)
                     continue;
-                cvsdata = new FileCVS();
-                cvsdata.setDataType("cvs");
-                cvsdata.setFile(cvsfile);
-                cvsdata.setStatus(IGNORED);
-
-                cvsfile.getFiledata().put("cvs", cvsdata);
+                cvsfile.setCvsStatus(IGNORED);
             }
             br.close();
         } catch (Throwable t) {

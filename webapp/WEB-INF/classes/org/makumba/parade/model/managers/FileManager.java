@@ -18,7 +18,6 @@ import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.AbstractFileData;
 import org.makumba.parade.model.File;
-import org.makumba.parade.model.FileCVS;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.CacheRefresher;
@@ -330,11 +329,8 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
     
     public void removeFileCache(File file) {
         
-        Object cvsData = file.getFiledata().get("cvs");
-
-        // if there is CVS data for this file
-        // TODO do this check for Tracker as well once it will be done
-        if (cvsData != null) {
+        // if there is CVS data for this file we keep it and set is as virtual
+        if (file.getCvsStatus() != null) {
             file.setOnDisk(false);
         } else
             file.getRow().getFiles().remove(file.getPath());
@@ -384,8 +380,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         if(!f.exists()) {
             File cachedFile = (File) r.getFiles().get(absoluteFilePath);
             if(cachedFile != null) {
-                FileCVS cvsData = (FileCVS) cachedFile.getFiledata().get("cvs");
-                if(cvsData != null && cvsData.getStatus().equals(CVSManager.DELETED)) {
+                if(cachedFile.getCvsStatus() != null && cachedFile.getCvsStatus().equals(CVSManager.DELETED)) {
                     r.getFiles().remove(absoluteFilePath);
                 }
             }
