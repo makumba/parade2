@@ -18,7 +18,6 @@ import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Application;
 import org.makumba.parade.model.Parade;
-import org.makumba.parade.tools.PerThreadPrintStream;
 import org.makumba.parade.tools.TriggerFilter;
 
 /**
@@ -43,7 +42,7 @@ public class CVSCommitListenerServlet extends HttpServlet {
 
         Map<String, String> commitChanges = new HashMap<String, String>();
 
-        System.out.println("*******" + ((HttpServletRequest) req).getQueryString());
+        //System.out.println("*******" + ((HttpServletRequest) req).getQueryString());
 
         // normal file commit:
         // user:path:file1:old_version:new_version:file2:old_version:new_version:

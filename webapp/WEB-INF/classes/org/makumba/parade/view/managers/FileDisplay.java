@@ -109,9 +109,8 @@ public class FileDisplay {
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
-        for (Object element : files) {
-            File currentFile = (File) element;
-
+        for (File currentFile : files) {
+            
             // if this is a symbolic link
             if (currentFile.getPath().length() < r.getRowpath().length() + 1) {
                 logger.warn("Symbolic link detected:" + currentFile.getName() + " redirects to "

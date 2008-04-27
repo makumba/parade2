@@ -3,6 +3,7 @@ package org.makumba.parade.view.managers;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
@@ -53,6 +54,32 @@ public class CVSViewManager implements ParadeView {
         fileView.put("isConflictBackup", f.getName().startsWith(".#"));
         fileView.put("cvsRevision", f.getCvsRevision() == null ? "" : f.getCvsRevision());
         fileView.put("cvsStatus", f.getCvsStatus() == null ? "" : f.getCvsStatus());
+
+        // let's see if there's a newer version of this on the repository
+        boolean newerExists = false;
+        Hibernate.initialize(r.getApplication().getCvsfiles());
+        String repositoryRevision = r.getApplication().getCvsfiles().get(f.getCvsPath());
+        String rowRevision = f.getCvsRevision();
+        if (repositoryRevision != null && rowRevision != null) {
+
+            if (repositoryRevision.equals("1.1.1.1")) {
+                repositoryRevision = "1.1";
+            }
+            if (rowRevision.equals("1.1.1.1")) {
+                rowRevision = "1.1";
+            }
+
+            try {
+                Double rowRev = Double.parseDouble(rowRevision);
+                Double repositoryRev = Double.parseDouble(repositoryRevision);
+                newerExists = repositoryRev > rowRev;
+            } catch (NumberFormatException nfe) {
+                logger.warn("Could not parse either the rowRevision " + f.getCvsRevision()
+                        + " or the repositoryRevision " + repositoryRevision + " of file " + f.getFileURI());
+            }
+        }
+
+        fileView.put("cvsNewerExists", newerExists);
     }
 
 }

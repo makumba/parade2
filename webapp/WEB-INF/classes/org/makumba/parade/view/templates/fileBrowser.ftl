@@ -80,6 +80,11 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=addbin' title='CVS add binary/image file'><img src='/images/cvs-add-binary.gif' alt='add binary'></a>
 </#if>
 <#else>
+
+<#if file.cvsNewerExists>
+<img src='/images/error.gif' title='There is a newer file on the repository. Consider updating this one.'>
+</#if>
+
 <#switch file.cvsStatus>
 
 <#case 101>

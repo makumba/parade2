@@ -19,7 +19,7 @@
         
         <many-to-one name="parade" column="id_parade"/>
         
-        <one-to-one name="application" class="Application" />
+        <many-to-one name="application" class="Application"/>
         
         <many-to-one name="user" class="User" column="user" />
         

@@ -82,57 +82,62 @@ public class BrowserServlet extends HttpServlet {
 
         PrintWriter out = resp.getWriter();
 
-        Session s = InitServlet.getSessionFactory().openSession();
-        Transaction tx = s.beginTransaction();
-
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
-
-        Row r = p.getRows().get(context);
-        if (r == null) {
-            out.println("Unknown context " + context);
-        } else {
-
-            // fetching data from the persistent store
-            // this is needed for lazy connections
-            // r.getFiles().size();
-            Hibernate.initialize(r.getFiles());
-
-            // initialising the displays
-            HeaderDisplay hdrV = new HeaderDisplay();
-            CommandViewManager cmdV = new CommandViewManager();
-            FileViewManager fileV = new FileViewManager();
-            FileDisplay filebrowserV = new FileDisplay();
-
-            // switiching to the right display
-            String page = "";
-            if (display.equals("header")) {
-                // FIXME - path in here is null always, but should actually be equal to the currently browsed path
-                page = hdrV.getHeaderView(r, path);
-            }
-            if (display.equals("tree")) {
-                page = fileV.getTreeView(p, r);
-            }
-            if (display.equals("file")) {
-                page = filebrowserV.getFileBrowserView(p, r, path, opResult, order, success);
-            }
-            if (display.equals("command")) {
-                page = cmdV.getCommandView(view, r, path, file, opResult);
-            }
-
-            // checking whether we include a JSP or not
-            if (page.startsWith("jsp:")) {
-                String url = page.substring(page.indexOf(":") + 1);
-                RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher(url);
-                dispatcher.forward(req, resp);
+        Session s = null;
+        Transaction tx = null;
+        
+        try {
+        
+            s = InitServlet.getSessionFactory().openSession();
+        
+            Parade p = (Parade) s.get(Parade.class, new Long(1));
+        
+            Row r = p.getRows().get(context);
+            if (r == null) {
+                out.println("Unknown context " + context);
             } else {
-                out.println(page);
+        
+                // fetching data from the persistent store
+                // this is needed for lazy collections
+                // r.getFiles().size();
+                Hibernate.initialize(r.getFiles());
+                Hibernate.initialize(r.getApplication());
+        
+                // initialising the displays
+                HeaderDisplay hdrV = new HeaderDisplay();
+                CommandViewManager cmdV = new CommandViewManager();
+                FileViewManager fileV = new FileViewManager();
+                FileDisplay filebrowserV = new FileDisplay();
+        
+                // switiching to the right display
+                String page = "";
+                if (display.equals("header")) {
+                    // FIXME - path in here is null always, but should actually be equal to the currently browsed path
+                    page = hdrV.getHeaderView(r, path);
+                }
+                if (display.equals("tree")) {
+                    page = fileV.getTreeView(p, r);
+                }
+                if (display.equals("file")) {
+                    page = filebrowserV.getFileBrowserView(p, r, path, opResult, order, success);
+                }
+                if (display.equals("command")) {
+                    page = cmdV.getCommandView(view, r, path, file, opResult);
+                }
+        
+                // checking whether we include a JSP or not
+                if (page.startsWith("jsp:")) {
+                    String url = page.substring(page.indexOf(":") + 1);
+                    RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher(url);
+                    dispatcher.forward(req, resp);
+                } else {
+                    out.println(page);
+                }
+        
             }
-
+            
+        } finally {
+            s.close();
         }
-
-        tx.commit();
-        s.close();
-
     }
 
 }

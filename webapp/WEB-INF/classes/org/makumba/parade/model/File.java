@@ -184,7 +184,11 @@ public class File {
     }
 
     public String getFileURI() {
-        return "file://" + path.replace(java.io.File.separator, "/");
+        return "file://" + row.getRowname() + path.substring(row.getRowpath().length()).replace(java.io.File.separator, "/");
+    }
+    
+    public String getCvsPath() {
+        return row.getApplication().getName() + path.substring(row.getRowpath().length());
     }
 
     public void emptyCvsData() {
@@ -229,7 +233,9 @@ public class File {
         // we need to initialise the file data of this file
         Iterator<File> i = q.iterate();
         while (i.hasNext()) {
-            Hibernate.initialize(i.next().getFiledata());
+            File f = i.next();
+            Hibernate.initialize(f.getFiledata());
+            Hibernate.initialize(f.getRow().getApplication().getCvsfiles());
         }
 
         tx.commit();
