@@ -9,11 +9,11 @@
 
 		<cache usage="read-write" />
 
-		<id name="id">
+		<id name="id" column="actionlog">
 			<generator class="native" />
 		</id>
 
-		<property name="date" />
+		<property name="logDate" />
 		<property name="user" />
 		<property name="context" />
 		<property name="url" />

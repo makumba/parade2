@@ -192,7 +192,7 @@ public class LogViewManager {
                 logEntries.add(entry);
             }
             actionLogEntry.put("logEntries", logEntries);
-            actionLogEntry.put("date", actionLog.getDate());
+            actionLogEntry.put("date", actionLog.getlogDate());
             actionLogEntry.put("url", actionLog.getUrl() == null ? "" : actionLog.getUrl());
             actionLogEntry.put("context", actionLog.getContext() == null ? "tomcat" : actionLog.getContext());
             actionLogEntry.put("user", actionLog.getUser() == null ? "(unknown user)" : actionLog.getUser());

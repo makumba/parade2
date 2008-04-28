@@ -6,7 +6,7 @@ public class ActionLog {
 
     private Long id;
 
-    private Date date;
+    private Date logDate;
 
     private String user;
 
@@ -50,12 +50,12 @@ public class ActionLog {
         this.context = context;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getlogDate() {
+        return logDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setlogDate(Date date) {
+        this.logDate = date;
     }
 
     public String getPost() {

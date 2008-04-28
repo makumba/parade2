@@ -110,8 +110,9 @@ public class AccessServlet extends HttpServlet {
                                     u = new User(user, auth.getGivenName(), auth.getSn(), auth.getCn(), auth.getMail());
                                     u.setJpegPhoto(auth.getJpegPhoto());
                                     s.save(u);
+                                    
+                                    setUserAttributes(req, u);
                                 }
-                                setUserAttributes(req, u);
                             }
 
                         } finally {

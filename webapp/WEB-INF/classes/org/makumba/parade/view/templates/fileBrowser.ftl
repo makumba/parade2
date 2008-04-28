@@ -82,9 +82,17 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <#else>
 
 <#if file.cvsNewerExists>
-<img src='/images/error.gif' title='There is a newer file on the repository. Consider updating this one.'>
+<#if file.cvsConflictOnUpdate>
+<img src='/images/exclamation.gif' title='There is a newer file on the repository with revision ${file.cvsNewRevision}, and updating will provoke a CVS conflict.'>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile' title='CVS update this file. This will lead to a conflict.'><img src='/images/cvs-update.gif' alt='CVS update this file. This will lead to a conflict.'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=overridefile' title='Override local changes and replace with file from repository'><img src='/images/cvs-override.gif' alt='Override local changes and replace with file from repository'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
+<#else>
+<img src='/images/error.gif' title='There is a newer file on the repository with revision ${file.cvsNewRevision}. Consider updating this file.'>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile' title='CVS update file from repository'><img src='/images/cvs-update.gif' alt='CVS update'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 </#if>
-
+<#else>
 <#switch file.cvsStatus>
 
 <#case 101>
@@ -154,10 +162,12 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <#case 6>
 <a href='${file.cvsWebLink}' title='CVS log'><b><font color='red'>Conflict</font></b></a>
 <a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit to repository'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=overridefile' title='Override local changes and replace with file from repository'><img src='/images/cvs-override.gif' alt='Override local changes and replace with file from repository'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 <#break>
 
 </#switch>
+</#if>
 </#if>
 
 </td>

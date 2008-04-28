@@ -193,6 +193,32 @@ public class CvsAction extends DispatchAction {
 
     }
 
+    public ActionForward overridefile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        String context = request.getParameter("context");
+        String file = request.getParameter("file");
+        String path = request.getParameter("path");
+
+        // we reconstruct the absolute paths (the ones passed as params are relative
+        String absolutePath = Parade.constructAbsolutePath(context, path);
+        String absoluteFilePath = Parade.constructAbsolutePath(context, file);
+        
+        String[] params = { file.substring(path.length() + 1), path };
+        Object[] result = CommandController.onDeleteFile(context, params);
+        result = CvsController.onUpdateFile(context, absolutePath, absoluteFilePath);
+        request.setAttribute("result", (String) result[0]);
+        request.setAttribute("success", (Boolean) result[1]);
+        request.setAttribute("context", context);
+        request.setAttribute("path", path);
+        request.setAttribute("display", "command");
+        request.setAttribute("view", "commandOutput");
+
+        return (mapping.findForward("command"));
+
+    }
+
+    
     public ActionForward deletefile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 

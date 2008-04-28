@@ -1,0 +1,10 @@
+logDate = date
+user = char[255]
+context = char[255]
+url = char[255]
+queryString = char[255]
+post = char[255]
+action = char[255]
+origin = char[255]
+paradecontext = char[255]
+file = char[255]

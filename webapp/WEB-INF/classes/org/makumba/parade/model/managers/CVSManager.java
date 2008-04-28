@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -26,6 +30,7 @@ import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.interfaces.CacheRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
+import org.makumba.parade.tools.Execute;
 
 public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
@@ -481,5 +486,55 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         tx.commit();
         s.close();
         logger.debug("Finished refreshing CVS cache for file " + absolutePath + " of row " + context);
+    }
+    
+    /**
+     * Checks if there will be a cvs conflict if this file is updated
+     * @param f the file to check
+     * @return <code>true</code> if there will be a CVS conflict on update, <code>false</code> otherwise
+     */
+    public static boolean cvsConflictOnUpdate(File f) {
+        boolean cvsConflictOnUpdate = false;
+
+        // we check what are the consequences of an update of this file
+        StringWriter result = new StringWriter();
+        PrintWriter out = new PrintWriter(result);
+
+        // let's get the result
+        Vector<String> cmd = new Vector<String>();
+        cmd.add("cvs");
+        cmd.add("-n");
+        cmd.add("update");
+        cmd.add(f.getName());
+
+        Execute.exec(cmd, new java.io.File(f.getParentPath()), out);
+
+        // first let's see if everything went fine
+        if (result.toString().indexOf("exit value: 1") > -1) {
+            logger.error("Could not retrieve CVS status for file " + f.getName() + ". Result of the operation was:\n"
+                    + result.toString());
+        } else {
+
+            BufferedReader br = new BufferedReader(new StringReader(result.toString()));
+
+            try {
+
+                // we skip the first two lines, that is just displaying the command
+                br.readLine();
+                br.readLine();
+
+                // U personDelete.jsp
+                String line = br.readLine();
+                if (line.startsWith("rcsmerge: warning: conflicts during merge")) {
+                    cvsConflictOnUpdate = true;
+                }
+
+            } catch (IOException ioe) {
+                logger.error("IO Exception while reading CVS output: " + ioe.getMessage());
+                return false;
+            }
+        }
+        
+        return cvsConflictOnUpdate;
     }
 }

@@ -329,6 +329,16 @@ public class Parade {
     }
 
     /**
+     * Refreshes the application cache for each application, i.e. tries to fetch the files and revisions of a module on
+     * it's CVS repository.
+     */
+    public void refreshApplicationsCache() {
+        for (Application a : this.getApplications().values()) {
+            applMgr.buildCVSlist(a);
+        }
+    }
+
+    /**
      * Initialises the file system monitoring using JNotify ({@link http://jnotify.sourceforge.net/})
      */
     public void addJNotifyListeners() {

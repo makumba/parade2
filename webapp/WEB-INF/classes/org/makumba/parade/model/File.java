@@ -44,7 +44,7 @@ public class File {
     private String cvsRevision;
 
     private Date cvsDate;
-
+    
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
         FileManager fileMgr = new FileManager();
@@ -182,7 +182,7 @@ public class File {
     public void setCvsDate(Date cvsDate) {
         this.cvsDate = cvsDate;
     }
-
+    
     public String getFileURI() {
         return "file://" + row.getRowname() + path.substring(row.getRowpath().length()).replace(java.io.File.separator, "/");
     }

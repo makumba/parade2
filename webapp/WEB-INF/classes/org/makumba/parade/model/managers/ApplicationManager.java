@@ -27,7 +27,7 @@ public class ApplicationManager implements ParadeManager {
 
     private static Logger logger = Logger.getLogger(ApplicationManager.class);
 
-    private void buildCVSlist(Application a) {
+    public void buildCVSlist(Application a) {
 
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);

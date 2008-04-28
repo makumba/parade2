@@ -8,6 +8,7 @@ import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
+import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.tools.ParadeException;
 import org.makumba.parade.view.interfaces.ParadeView;
 
@@ -77,9 +78,17 @@ public class CVSViewManager implements ParadeView {
                 logger.warn("Could not parse either the rowRevision " + f.getCvsRevision()
                         + " or the repositoryRevision " + repositoryRevision + " of file " + f.getFileURI());
             }
+        } else {
+            fileView.put("cvsNewerExists", false);
         }
 
         fileView.put("cvsNewerExists", newerExists);
+        
+        if(newerExists) {
+            fileView.put("cvsConflictOnUpdate", CVSManager.cvsConflictOnUpdate(f));
+            fileView.put("cvsNewRevision", repositoryRevision == null ? "" : repositoryRevision);
+        }
+        
     }
 
 }

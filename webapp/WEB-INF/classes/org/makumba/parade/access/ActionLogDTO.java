@@ -133,7 +133,7 @@ public class ActionLogDTO {
     public void populate(ActionLog log) {
         log.setId(id);
         log.setContext(context);
-        log.setDate(date);
+        log.setlogDate(date);
         log.setPost(post);
         log.setQueryString(queryString);
         log.setUrl(url);
@@ -147,7 +147,7 @@ public class ActionLogDTO {
     public ActionLogDTO(ActionLog log) {
         this.id = log.getId();
         this.context = log.getContext();
-        this.date = log.getDate();
+        this.date = log.getlogDate();
         this.post = log.getPost();
         this.queryString = log.getQueryString();
         this.url = log.getUrl();

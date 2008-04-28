@@ -169,7 +169,9 @@ public class DatabaseLogServlet extends HttpServlet {
         if (log.getAction() == null)
             log.setAction("");
 
-        log.setParadecontext(getParam("context", queryString));
+        if(log.getParadecontext() == null) {
+            log.setParadecontext(getParam("context", queryString));
+        }
         
         String actionType = "", op = "", params = "", display = "", path = "", file = "";
 
@@ -278,6 +280,10 @@ public class DatabaseLogServlet extends HttpServlet {
             }
             if (op.equals("updatefile")) {
                 log.setAction("cvsUpdateFile");
+                log.setFile("/" + file);
+            }
+            if (op.equals("overridefile")) {
+                log.setAction("cvsOverrideFile");
                 log.setFile("/" + file);
             }
             if (op.equals("deletefile")) {
@@ -395,6 +401,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().equals("/tipOfTheDay.jsp")
                         || log.getUrl().equals("/index.jsp")
                         || log.getUrl().equals("/")
+                        || log.getUrl().startsWith("playground")
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
