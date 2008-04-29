@@ -101,7 +101,7 @@ public class CVSCommitListenerServlet extends HttpServlet {
             try {
                 s = InitServlet.getSessionFactory().openSession();
                 updateRepositoryCache(module, file, newRevision, s);
-                updateRowFiles(module, file, newRevision, s);
+                updateRowFiles(module, file, newRevision, oldRevision.equals("NONE"), s);
             } finally {
                 s.close();
             }
@@ -140,7 +140,7 @@ public class CVSCommitListenerServlet extends HttpServlet {
 
     }
 
-    private void updateRowFiles(String module, String file, String newRevision, Session s) {
+    private void updateRowFiles(String module, String file, String newRevision, boolean isNew, Session s) {
 
         Transaction tx = s.beginTransaction();
 
@@ -150,44 +150,50 @@ public class CVSCommitListenerServlet extends HttpServlet {
 
             if (r.getApplication() != null && r.getApplication().getName().equals(module)) {
 
-                boolean newerExists = false;
+                if (!isNew) {
 
-                File f = r.getFiles().get(r.getRowpath() + file);
+                    boolean newerExists = false;
 
-                String rowRevision = f.getCvsRevision();
-                if (newRevision != null && rowRevision != null) {
+                    File f = r.getFiles().get(r.getRowpath() + file);
 
-                    if (newRevision.equals("1.1.1.1")) {
-                        newRevision = "1.1";
-                    }
-                    if (rowRevision.equals("1.1.1.1")) {
-                        rowRevision = "1.1";
-                    }
+                    String rowRevision = f.getCvsRevision();
+                    if (newRevision != null && rowRevision != null) {
 
-                    try {
-                        Double rowRev = Double.parseDouble(rowRevision);
-                        Double repositoryRev = Double.parseDouble(newRevision);
-                        newerExists = repositoryRev > rowRev;
-                    } catch (NumberFormatException nfe) {
-                        logger.warn("Could not parse either the rowRevision " + f.getCvsRevision()
-                                + " or the newRevision " + newRevision + " of file " + f.getFileURI());
-                    }
+                        if (newRevision.equals("1.1.1.1")) {
+                            newRevision = "1.1";
+                        }
+                        if (rowRevision.equals("1.1.1.1")) {
+                            rowRevision = "1.1";
+                        }
 
-                    if (newerExists) {
+                        try {
+                            Double rowRev = Double.parseDouble(rowRevision);
+                            Double repositoryRev = Double.parseDouble(newRevision);
+                            newerExists = repositoryRev > rowRev;
+                        } catch (NumberFormatException nfe) {
+                            logger.warn("Could not parse either the rowRevision " + f.getCvsRevision()
+                                    + " or the newRevision " + newRevision + " of file " + f.getFileURI());
+                        }
 
-                        // if we have a simple Update or a Merge on a file that the user didn't touch
-                        // we just do it so the user doesn't have to worry about it
-                        if (!CVSManager.cvsConflictOnUpdate(f) && f.getCvsStatus() == CVSManager.UP_TO_DATE) {
-                            CvsController.onUpdateFile(r.getRowname(), f.getParentPath(), f.getPath());
+                        if (newerExists) {
 
-                            // we also log the action as cvsupdate by user system
-                            logUpdate(r.getRowname(), file);
+                            // if we have a simple Update or a Merge on a file that the user didn't touch
+                            // we just do it so the user doesn't have to worry about it
+                            if (!CVSManager.cvsConflictOnUpdate(f) && f.getCvsStatus() == CVSManager.UP_TO_DATE) {
+                                CvsController.onUpdateFile(r.getRowname(), f.getParentPath(), f.getPath());
 
+                                // we also log the action as cvsupdate by user system
+                                logUpdate(r.getRowname(), file);
+
+                            }
                         }
                     }
+                } else {
+                    // we just try to update this file
+                    CvsController.onUpdateFile(r.getRowname(), r.getRowpath()
+                            + file.substring(0, file.lastIndexOf(java.io.File.separator)), r.getRowpath() + file);
                 }
             }
-
         }
 
         tx.commit();
