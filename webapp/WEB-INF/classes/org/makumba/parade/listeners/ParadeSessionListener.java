@@ -2,6 +2,7 @@ package org.makumba.parade.listeners;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,8 +67,8 @@ public class ParadeSessionListener implements HttpSessionListener {
     public static List<String[]> getActiveSessionUsers() {
         List<String[]> onlineUsers = new LinkedList<String[]>();
 
-        // hashset for filtering expired sessions
-        Set<String[]> online = new HashSet<String[]>();
+        // hashtable for filtering expired sessions
+        Hashtable<String, String> online = new Hashtable<String, String>();
 
         Iterator<String> it = activeSessions.keySet().iterator();
         while (it.hasNext()) {
@@ -76,7 +77,7 @@ public class ParadeSessionListener implements HttpSessionListener {
                 String login = (String) s.getAttribute("user_login");
                 String nickName = (String) s.getAttribute("user_nickname");
                 if (login != null && login.length() > 0) {
-                    online.add(new String[] { login, nickName });
+                    online.put(login, nickName );
                 }
             } catch (java.lang.IllegalStateException e) {
                 // this session is invalidated, we need to remove it
@@ -84,9 +85,8 @@ public class ParadeSessionListener implements HttpSessionListener {
             }
         }
 
-        Iterator<String[]> it2 = online.iterator();
-        while (it2.hasNext()) {
-            onlineUsers.add(it2.next());
+        for (String key : online.keySet()) {
+            onlineUsers.add(new String[] {key, online.get(key)});
         }
 
         return onlineUsers;
