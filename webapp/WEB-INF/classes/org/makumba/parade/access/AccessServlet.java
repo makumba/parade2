@@ -201,6 +201,33 @@ public class AccessServlet extends HttpServlet {
         if (!shouldLogin(req) || (req1 = checkLogin(req, resp)) != null) {
             // we set the output prefix again, now that we know the user
             String user = setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
+            
+            // we also set the userObject again and all the necessary attributes
+            User u = (User) ((HttpServletRequest) req).getSession(true).getAttribute("org.makumba.parade.userObject");
+            if(u == null) {
+                Session sess = null;
+                Transaction tx = null;
+                try {
+                    sess = InitServlet.getSessionFactory().openSession();
+                    tx = sess.beginTransaction();
+
+                    Query q;
+                    q = sess.createQuery("from User u where u.login = ?");
+                    q.setString(0, user);
+
+                    List<User> results = q.list();
+                    
+                    if (results.size() == 1) {
+                        // we know the guy, let's put more stuff in the session
+                        u = results.get(0);
+                        setUserAttributes(req, u);
+                    }
+                    
+                } finally {
+                    tx.commit();    
+                    sess.close();
+                }
+            }
 
             // let's also put the user in the actionlog
             ActionLogDTO log = (ActionLogDTO) req.getAttribute("org.eu.best.tools.TriggerFilter.actionlog");
