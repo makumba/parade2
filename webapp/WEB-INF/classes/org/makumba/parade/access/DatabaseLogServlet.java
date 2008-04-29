@@ -279,7 +279,7 @@ public class DatabaseLogServlet extends HttpServlet {
             }
             if (op.equals("diff")) {
                 log.setAction("cvsDiff");
-                log.setAction("/" + file);
+                log.setFile("/" + file);
             }
             if (op.equals("add") || op.equals("addbin")) {
                 log.setAction("cvsAdd");
