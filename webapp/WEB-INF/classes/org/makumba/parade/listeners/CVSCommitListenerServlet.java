@@ -1,15 +1,10 @@
 package org.makumba.parade.listeners;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -26,7 +21,6 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.CVSManager;
-import org.makumba.parade.tools.Execute;
 import org.makumba.parade.tools.TriggerFilter;
 
 /**
@@ -48,8 +42,6 @@ public class CVSCommitListenerServlet extends HttpServlet {
 
     @Override
     public void service(ServletRequest req, ServletResponse resp) throws IOException {
-
-        Map<String, String> commitChanges = new HashMap<String, String>();
 
         // System.out.println("*******" + ((HttpServletRequest) req).getQueryString());
 
@@ -82,6 +74,8 @@ public class CVSCommitListenerServlet extends HttpServlet {
             return;
         }
 
+        Session s = InitServlet.getSessionFactory().openSession();
+
         String commitLog = user + " commited following files:\n";
 
         StringTokenizer st = new StringTokenizer(commit, ":");
@@ -93,22 +87,19 @@ public class CVSCommitListenerServlet extends HttpServlet {
             commitLog += file + " (module " + module + ") from revision " + oldRevision + " to revision " + newRevision
                     + "\n";
 
-            commitChanges.put(file, newRevision);
-
             logCommit(module, file, user, newRevision);
 
-            Session s = null;
-            try {
-                s = InitServlet.getSessionFactory().openSession();
-                updateRepositoryCache(module, file, newRevision, s);
-                updateRowFiles(module, file, newRevision, oldRevision.equals("NONE"), s);
-            } finally {
-                s.close();
-            }
+            handleFileCommit(module, file, newRevision, oldRevision, s, !st.hasMoreTokens());
         }
 
         logger.info(commitLog);
 
+    }
+
+    private void handleFileCommit(String module, String file, String oldRevision, String newRevision, Session s,
+            boolean closeSession) {
+        CommitHandler ch = new CommitHandler(module, file, newRevision, oldRevision, s, closeSession);
+        ch.start();
     }
 
     private void logCommit(String module, String file, String user, String newRevision) {
@@ -118,102 +109,6 @@ public class CVSCommitListenerServlet extends HttpServlet {
         log.setUser(user);
         log.setFile(file);
         log.setQueryString("&module=" + module + "&newVersion=" + newRevision);
-
-        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
-    }
-
-    private void updateRepositoryCache(String module, String file, String newRevision, Session s) {
-
-        Transaction tx = s.beginTransaction();
-
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
-        Application a = p.getApplications().get(module);
-        if (a != null) {
-            if (newRevision.equals("NONE")) {
-                a.getCvsfiles().remove(module + file);
-            } else {
-                a.getCvsfiles().put(module + file, newRevision);
-            }
-        }
-
-        tx.commit();
-
-    }
-
-    private void updateRowFiles(String module, String file, String newRevision, boolean isNew, Session s) {
-
-        Transaction tx = s.beginTransaction();
-
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
-
-        for (Row r : p.getRows().values()) {
-
-            if (r.getApplication() != null && r.getApplication().getName().equals(module)) {
-
-                if (!isNew) {
-
-                    boolean newerExists = false;
-
-                    File f = r.getFiles().get(r.getRowpath() + file);
-                    
-                    // sometimes a row may just have the files of a given tag
-                    // in that case we ignore it
-                    if(f == null) {
-                        continue;
-                    }
-
-                    String rowRevision = f.getCvsRevision();
-                    if (newRevision != null && rowRevision != null) {
-
-                        if (newRevision.equals("1.1.1.1")) {
-                            newRevision = "1.1";
-                        }
-                        if (rowRevision.equals("1.1.1.1")) {
-                            rowRevision = "1.1";
-                        }
-
-                        try {
-                            Double rowRev = Double.parseDouble(rowRevision);
-                            Double repositoryRev = Double.parseDouble(newRevision);
-                            newerExists = repositoryRev > rowRev;
-                        } catch (NumberFormatException nfe) {
-                            logger.warn("Could not parse either the rowRevision " + f.getCvsRevision()
-                                    + " or the newRevision " + newRevision + " of file " + f.getFileURI());
-                        }
-
-                        if (newerExists) {
-
-                            // if we have a simple Update or a Merge on a file that the user didn't touch
-                            // we just do it so the user doesn't have to worry about it
-                            if (!CVSManager.cvsConflictOnUpdate(f) && f.getCvsStatus() == CVSManager.UP_TO_DATE) {
-                                CvsController.onUpdateFile(r.getRowname(), f.getParentPath(), f.getPath());
-
-                                // we also log the action as cvsupdate by user system
-                                logUpdate(r.getRowname(), file);
-
-                            }
-                        }
-                    }
-                } else {
-                    // we just try to update this file
-                    CvsController.onUpdateFile(r.getRowname(), r.getRowpath()
-                            + file.substring(0, file.lastIndexOf(java.io.File.separator)), r.getRowpath() + file);
-                }
-            }
-        }
-
-        tx.commit();
-
-    }
-
-    private void logUpdate(String paradeContext, String file) {
-        ActionLogDTO log = new ActionLogDTO();
-        log.setAction("cvsUpdateFile");
-        log.setDate(new Date());
-        log.setUser("system");
-        log.setFile(file);
-        log.setParadecontext(paradeContext);
-        log.setContext(paradeContext);
 
         TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
     }
