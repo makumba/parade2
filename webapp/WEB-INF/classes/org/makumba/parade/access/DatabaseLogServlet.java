@@ -1,6 +1,9 @@
 package org.makumba.parade.access;
 
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
@@ -101,8 +104,12 @@ public class DatabaseLogServlet extends HttpServlet {
 
         } catch (NullPointerException npe) {
             //throw(npe);
-            logger.error("***********************************************************************\n"
+            PrintWriter p = new PrintWriter(new StringWriter());
+            npe.printStackTrace(p);
+            logger.error("\n***********************************************************************\n"
                     + "NPE in database log servlet. please tell developers!\n"
+                    + "error message is:\n"
+                    + p.toString()
                     + "***********************************************************************");
 
         }
