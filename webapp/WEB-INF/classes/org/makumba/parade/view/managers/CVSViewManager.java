@@ -9,6 +9,7 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.managers.CVSManager;
+import org.makumba.parade.tools.CVSRevisionComparator;
 import org.makumba.parade.tools.ParadeException;
 import org.makumba.parade.view.interfaces.ParadeView;
 
@@ -17,6 +18,8 @@ import freemarker.template.SimpleHash;
 public class CVSViewManager implements ParadeView {
 
     static Logger logger = Logger.getLogger(CVSViewManager.class.getName());
+    
+    private CVSRevisionComparator c = new CVSRevisionComparator();
 
     public void setParadeViewHeader(List<String> headers) {
         headers.add("CVS user");
@@ -69,15 +72,9 @@ public class CVSViewManager implements ParadeView {
             if (rowRevision.equals("1.1.1.1")) {
                 rowRevision = "1.1";
             }
-
-            try {
-                Double rowRev = Double.parseDouble(rowRevision);
-                Double repositoryRev = Double.parseDouble(repositoryRevision);
-                newerExists = repositoryRev > rowRev;
-            } catch (NumberFormatException nfe) {
-                logger.warn("Could not parse either the rowRevision " + f.getCvsRevision()
-                        + " or the repositoryRevision " + repositoryRevision + " of file " + f.getFileURI());
-            }
+            
+            newerExists = c.compare(repositoryRevision, rowRevision) == 1;
+            
         } else {
             fileView.put("cvsNewerExists", false);
         }
