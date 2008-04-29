@@ -84,11 +84,13 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <#if file.cvsNewerExists>
 <#if file.cvsConflictOnUpdate>
 <img src='/images/exclamation.gif' title='There is a newer file on the repository with revision ${file.cvsNewRevision}, and updating will provoke a CVS conflict.'>
+<a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile' title='CVS update this file. This will lead to a conflict.'><img src='/images/cvs-update.gif' alt='CVS update this file. This will lead to a conflict.'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=overridefile' title='Override local changes and replace with file from repository'><img src='/images/cvs-override.gif' alt='Override local changes and replace with file from repository'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 <#else>
 <img src='/images/error.gif' title='There is a newer file on the repository with revision ${file.cvsNewRevision}. Consider updating this file.'>
+<a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile' title='CVS update file from repository'><img src='/images/cvs-update.gif' alt='CVS update'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 </#if>
