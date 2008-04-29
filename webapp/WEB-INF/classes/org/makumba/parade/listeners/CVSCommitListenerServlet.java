@@ -155,6 +155,12 @@ public class CVSCommitListenerServlet extends HttpServlet {
                     boolean newerExists = false;
 
                     File f = r.getFiles().get(r.getRowpath() + file);
+                    
+                    // sometimes a row may just have the files of a given tag
+                    // in that case we ignore it
+                    if(f == null) {
+                        continue;
+                    }
 
                     String rowRevision = f.getCvsRevision();
                     if (newRevision != null && rowRevision != null) {
