@@ -4,5 +4,6 @@ description=char[255]
 parade=ptr parade.Parade ;needs to have column id_parade
 application=ptr parade.Application
 user=ptr parade.User
+automaticCvsUpdate=int{"No"=10, "Yes"=20}
 #files=set parade.File
 #rowdata=set parade.AbstractRowData ;inheritance...

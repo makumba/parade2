@@ -22,6 +22,10 @@ public class Row {
     private Application application;
 
     private User user;
+    
+    private int automaticCvsUpdate = 10;
+    
+    private boolean watchedByJNotify = false;
 
     public Application getApplication() {
         return application;
@@ -108,6 +112,22 @@ public class Row {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public int getAutomaticCvsUpdate() {
+        return automaticCvsUpdate;
+    }
+
+    public void setAutomaticCvsUpdate(int automaticCvsUpdate) {
+        this.automaticCvsUpdate = automaticCvsUpdate;
+    }
+
+    public boolean getWatchedByJNotify() {
+        return watchedByJNotify;
+    }
+
+    public void setWatchedByJNotify(boolean watchedByJNotify) {
+        this.watchedByJNotify = watchedByJNotify;
     }
 
 }

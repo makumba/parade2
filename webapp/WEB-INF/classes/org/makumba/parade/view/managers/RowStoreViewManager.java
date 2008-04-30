@@ -20,6 +20,7 @@ public class RowStoreViewManager implements ParadeView {
         rowModel.put("rowname", r.getRowname());
         rowModel.put("rowpath", r.getRowpath());
         rowModel.put("rowdescription", r.getDescription());
+        rowModel.put("watchedByJNotify", r.getWatchedByJNotify());
 
         rowInformation.put("rowstore", rowModel);
 

@@ -16,6 +16,13 @@ exactly what you are doing, because otherwise you may harm the system
 and an army of mad developers will come kick your bottom.</div>
 </p>
 
+<h2>User management</h2>
+<p>Here you can manage things in relation to parade users.</p>
+
+<h3>Users and Rows</h3>
+<p>If a user owns a row, parade needs to know this.</p>
+<a href="rowList.jsp">Edit the row-user relations</a><br>
+
 <h2>Cache management</h2>
 <p>Here you can manage ParaDe's cache. For the moment you can't do
 much, but this should change.</p>

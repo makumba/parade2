@@ -2,8 +2,6 @@ package org.makumba.parade.listeners;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletRequest;
@@ -12,15 +10,8 @@ import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.makumba.parade.access.ActionLogDTO;
-import org.makumba.parade.controller.CvsController;
 import org.makumba.parade.init.InitServlet;
-import org.makumba.parade.model.Application;
-import org.makumba.parade.model.File;
-import org.makumba.parade.model.Parade;
-import org.makumba.parade.model.Row;
-import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.tools.TriggerFilter;
 
 /**
@@ -96,7 +87,7 @@ public class CVSCommitListenerServlet extends HttpServlet {
 
     }
 
-    private void handleFileCommit(String module, String file, String oldRevision, String newRevision, Session s,
+    private void handleFileCommit(String module, String file, String newRevision, String oldRevision, Session s,
             boolean closeSession) {
         CommitHandler ch = new CommitHandler(module, file, newRevision, oldRevision, s, closeSession);
         ch.start();

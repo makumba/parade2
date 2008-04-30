@@ -60,6 +60,9 @@ TR.odd {
 TR.even {
     background-color:#f5f5ff;
 }
+TR.notWatched {
+    background-color:#cc3399;
+}
 TR:hover {
     background-color:#ddddff;
 }

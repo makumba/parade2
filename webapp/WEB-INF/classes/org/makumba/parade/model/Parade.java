@@ -351,8 +351,9 @@ public class Parade {
             Row r = getRows().get(i.next());
 
             // we're not interested in the ParaDe row
-            if (r.getRowpath().equals(getBaseDir()))
+            if (r.getRowpath().equals(getBaseDir())) {
                 continue;
+            }
 
             addJNotifyListener(r);
         }
@@ -381,15 +382,12 @@ public class Parade {
             logger.info("Adding filesystem watch to row " + r.getRowname());
             watchID = JNotify.addWatch(path, mask, watchSubtree, new ParadeJNotifyListener());
 
-            if (watchID == -1) {
-                throw new ParadeException("Row " + r.getRowname()
-                        + " not properly watched by JNotify! Are you having two rows that use the same directory?");
-            }
-
             JNotifyWatches.put(r.getRowname(), watchID);
+            r.setWatchedByJNotify(true);
 
         } catch (JNotifyException e) {
             e.printStackTrace();
+            r.setWatchedByJNotify(false);
             throw new ParadeException("Row " + r.getRowname()
                     + " not properly watched by JNotify! Are you having two rows that use the same directory?");
         } catch (NullPointerException npe) {

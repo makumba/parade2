@@ -42,7 +42,7 @@ public class AdminAction extends DispatchAction {
 
     }
 
-    public ActionForward refrshRow(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward refreshRow(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
         Session s = null;

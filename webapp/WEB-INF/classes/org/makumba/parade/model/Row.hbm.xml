@@ -2,42 +2,53 @@
 <!DOCTYPE hibernate-mapping PUBLIC 
       "-//Hibernate/Hibernate Mapping DTD//EN"
       "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-      
+
 <hibernate-mapping package="org.makumba.parade.model">
 	<class name="Row">
-	
+
 		<cache usage="read-write" />
-	
+
 		<id name="id" column="row">
 			<generator class="native" />
 		</id>
 
-		<property name="rowname"/>
-        <property name="rowpath"/>
-        <property name="description"/>
-        
-        
-        <many-to-one name="parade" column="id_parade"/>
-        
-        <many-to-one name="application" class="Application"/>
-        
-        <many-to-one name="user" class="User" column="user" />
-        
-        <map name="files" cascade="all-delete-orphan" inverse="true" access="field" order-by="name" lazy="true" >
-		    <cache usage="read-write" />
-			<key><column name="id_row" not-null="false"/></key>
-			<index column="path" type="string"/>
-			<one-to-many class="File"/>
+		<property name="rowname" />
+		<property name="rowpath" />
+		<property name="description" />
+		<property name="watchedByJNotify">
+			<column name="watchedByJNotify" default="true"/>
+		</property>
+		<property name="automaticCvsUpdate" type="integer" insert="false">
+			<column name="automaticCvsUpdate" default="10"/>
+		</property>
+
+
+		<many-to-one name="parade" column="id_parade" />
+
+		<many-to-one name="application" class="Application" />
+
+		<many-to-one name="user" class="User" column="user" />
+
+		<map name="files" cascade="all-delete-orphan" inverse="true"
+			access="field" order-by="name" lazy="true">
+			<cache usage="read-write" />
+			<key>
+				<column name="id_row" not-null="false" />
+			</key>
+			<index column="path" type="string" />
+			<one-to-many class="File" />
 		</map>
-		
-		<map name="rowdata" cascade="all-delete-orphan" inverse="true" access="field" order-by="dataType" outer-join="true">
-		    <cache usage="read-write" />
-			<key><column name="id_row" not-null="false"/></key>
-			<index column="dataType" type="string"/>
-			<one-to-many class="AbstractRowData"/>
+
+		<map name="rowdata" cascade="all-delete-orphan" inverse="true"
+			access="field" order-by="dataType" outer-join="true">
+			<cache usage="read-write" />
+			<key>
+				<column name="id_row" not-null="false" />
+			</key>
+			<index column="dataType" type="string" />
+			<one-to-many class="AbstractRowData" />
 		</map>
-		
+
 	</class>
-	
+
 </hibernate-mapping>
-		

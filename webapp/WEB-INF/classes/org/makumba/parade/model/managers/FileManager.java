@@ -309,6 +309,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         // if there is CVS data for this file we keep it and set is as virtual
         if (file.getCvsStatus() != null) {
             file.setOnDisk(false);
+            file.setCvsStatus(CVSManager.NEEDS_CHECKOUT);
         } else
             file.getRow().getFiles().remove(file.getPath());
     }

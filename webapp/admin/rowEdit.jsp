@@ -7,6 +7,8 @@
 <body>
 
 <mak:object from="parade.Row r" where="r = $row">
+<h2>Edit row <mak:value expr="r.rowname"/></h2>
+
 <mak:editForm object="r" action="rowList.jsp" method="post">
 User: <mak:input field="user"/>
 <input type="submit" value="Save">&nbsp;&nbsp;<input type="button" value="Back" onClick="javascript:back();">

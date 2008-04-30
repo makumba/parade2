@@ -15,18 +15,23 @@ import org.makumba.parade.tools.CVSRevisionComparator;
 import org.makumba.parade.tools.TriggerFilter;
 
 public class CommitHandler extends Thread {
-    
+
     private CVSRevisionComparator c = new CVSRevisionComparator();
 
-    
     private String module;
+
     private String file;
+
     private String newRevision;
+
     private String oldRevision;
+
     private Session s;
+
     private boolean closeSession;
-    
-    public CommitHandler(String module, String file, String newRevision, String oldRevision, Session s, boolean closeSession) {
+
+    public CommitHandler(String module, String file, String newRevision, String oldRevision, Session s,
+            boolean closeSession) {
         super();
         this.module = module;
         this.file = file;
@@ -38,16 +43,16 @@ public class CommitHandler extends Thread {
 
     @Override
     public void run() {
-        
+
         updateRepositoryCache(module, file, newRevision, s);
         updateRowFiles(module, file, newRevision, oldRevision.equals("NONE"), s);
-        
-        if(closeSession) {
+
+        if (closeSession) {
             s.close();
         }
-    
+
     }
-    
+
     private void updateRepositoryCache(String module, String file, String newRevision, Session s) {
 
         Transaction tx = s.beginTransaction();
@@ -71,20 +76,25 @@ public class CommitHandler extends Thread {
         Transaction tx = s.beginTransaction();
 
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        
+
         for (Row r : p.getRows().values()) {
 
             if (r.getApplication() != null && r.getApplication().getName().equals(module)) {
+
+                // if this row has automatic update disabled
+                if (r.getAutomaticCvsUpdate() == 10) {
+                    continue;
+                }
 
                 if (!isNew) {
 
                     boolean newerExists = false;
 
                     File f = r.getFiles().get(r.getRowpath() + file);
-                    
+
                     // sometimes a row may just have the files of a given tag
                     // in that case we ignore it
-                    if(f == null) {
+                    if (f == null) {
                         continue;
                     }
 
@@ -118,6 +128,7 @@ public class CommitHandler extends Thread {
                     CvsController.onUpdateFile(r.getRowname(), r.getRowpath()
                             + file.substring(0, file.lastIndexOf(java.io.File.separator)), r.getRowpath() + file);
                 }
+
             }
         }
 

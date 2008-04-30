@@ -6,10 +6,11 @@
 
 
 
-<h2>Hi ${user.name}!</h2>
+<h2>Hi ${user_name}!</h2>
 Here you can edit your user information.<br><br>
 <mak:object from="parade.User u" where="u.login=:user_login">
-<mak:editForm object="u" action="userView.jsp" method="post" message="Profile information saved">
+<mak:form action="userView.jsp" method="post" message="Profile information saved">
+<mak:editForm object="u">
 <table>
 <tr>
   <td>Name</td>
@@ -31,11 +32,20 @@ Here you can edit your user information.<br><br>
   <td>CVS user</td>
   <td><mak:input field="cvsuser"/></td>
 </tr>
+<mak:list from="parade.Row r" where="r.user = u">
+<mak:editForm object="r">
+<tr>
+  <td>Automatic CVS update of row <mak:value expr="r.rowname"/></td>
+  <td><mak:input field="automaticCvsUpdate"/> (this means that if one file is commited by someone and you didn't touch it, ParaDe will CVS update it for you)</td>
+</tr>
+</mak:editForm>
+</mak:list>
 <tr>
   <td colspan="2"><input type="submit" value="Save">&nbsp; &nbsp; <input type="button" onClick="javascript:back();" value="Cancel"></td>
 </tr>
 </table>
 </mak:editForm>
+</mak:form>
 </mak:object>
 
 
