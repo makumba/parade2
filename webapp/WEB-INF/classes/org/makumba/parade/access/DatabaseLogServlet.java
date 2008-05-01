@@ -104,12 +104,14 @@ public class DatabaseLogServlet extends HttpServlet {
 
         } catch (NullPointerException npe) {
             //throw(npe);
-            PrintWriter p = new PrintWriter(new StringWriter());
+            StringWriter sw = new StringWriter();
+            PrintWriter p = new PrintWriter(sw);
             npe.printStackTrace(p);
+            sw.flush();
             logger.error("\n***********************************************************************\n"
                     + "NPE in database log servlet. please tell developers!\n"
                     + "error message is:\n"
-                    + p.toString()
+                    + sw.toString()
                     + "***********************************************************************");
 
         }
