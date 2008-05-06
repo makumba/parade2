@@ -37,7 +37,7 @@ Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 <tr class="<#if !row.rowstore.watchedByJNotify>notWatched<#else><#if (row_index % 2) = 0>odd<#else>even</#if></#if>">
 <td align='center'>
 <#if !row.rowstore.watchedByJNotify><img src="/images/exclamation.gif">&nbsp;This row is not watched by JNotify and won't work properly! Please restart ParaDe and read the logs to get more information.<br><br></#if>
-<a href='/browse.jsp?context=${row.rowstore.rowname}'>${row.rowstore.rowname}</a> <#if row.rowstore.rowname == '(root)'><a href=''>(Surf)</a></#if><#if row.rowstore.rowname != '(root)'><#if row.webapp.status == 2><a href='${row.rowstore.rowname}'>(Surf)</a><#else>(Surf)</#if></#if><br>
+<a href='/browse.jsp?context=${row.rowstore.rowname}'>${row.rowstore.rowname}</a> <#if row.rowstore.rowname == '(root)'><a href=''>(Surf)</a></#if><#if row.rowstore.rowname != '(root)'><#if row.webapp.status == 2><a href='${row.rowstore.rowname}'>(Surf)</a><#else>(Surf)</#if></#if>&nbsp;<a href='log.jsp?context=${row.rowstore.rowname}' target='new'>(log)</a><br>
 <font style="font-size:smaller;">${row.rowstore.rowpath}</font></td>
 <td>${row.rowstore.rowdescription}</td>
 <td>${row.cvs.user}</td>

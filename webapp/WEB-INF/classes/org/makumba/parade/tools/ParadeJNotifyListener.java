@@ -83,9 +83,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
         // we check if this is the makumba jar, and if yes, we recompute the version number cache
         String filePath = rootPath + java.io.File.separator + name;
-        if (filePath.indexOf("WEB-INF/lib/makumba") > -1 && filePath.indexOf(".jar") > -1) {
-
-            logger.info("Makumba JAR " + filePath + " was changed, refreshing its version.");
+        if (filePath.indexOf("WEB-INF/lib/makumba") > -1 && filePath.endsWith(".jar")) {
 
             Session session = null;
             try {

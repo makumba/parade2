@@ -25,7 +25,7 @@ public class Row {
     
     private int automaticCvsUpdate = 10;
     
-    private boolean watchedByJNotify = false;
+    private boolean watchedByJNotify = true;
 
     public Application getApplication() {
         return application;

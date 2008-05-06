@@ -22,6 +22,7 @@
 		<property name="cvsURI" />
 		<property name="cvsStatus" />
 		<property name="cvsRevision" />
+		<property name="cvsCheckedOutRevision" />
 		<property name="cvsDate" />
 		
 		<many-to-one name="row" column="id_row" not-null="true" outer-join="false"/>

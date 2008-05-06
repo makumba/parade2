@@ -331,6 +331,18 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         logger.error("Couldn't parse date of CVS File " + file.getPath(), t);
                         continue;
                     }
+                    
+                    // we try to catch any tags
+                    ///refundRequestEdit.jsp/1.7/Tue Apr 29 20:50:28 2008//T1.7
+                    
+                    line = line.substring(n + 1);
+                    n = line.indexOf("//");
+                    if(n != -1) {
+                        String tag = line.substring(n + 2);
+                        if(tag.startsWith("T")) {
+                            cvsfile.setCvsCheckedOutRevision(tag.substring(1));
+                        }
+                    }
 
                     long cvsModified = fd.getTime();
 

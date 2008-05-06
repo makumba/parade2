@@ -58,7 +58,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                             + ". Cannot detected Makumba version.");
                 } else {
                     for (String element : libs) {
-                        if (element.indexOf("makumba") > -1 && element.indexOf(".jar") > 0) {
+                        if (element.indexOf("makumba") > -1 && element.endsWith(".jar")) {
                             mak.add(element);
                         }
                     }

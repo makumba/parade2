@@ -181,6 +181,9 @@ public class DatabaseLogServlet extends HttpServlet {
         if(log.getParadecontext() == null) {
             log.setParadecontext(getParam("context", queryString));
         }
+        if(log.getParadecontext() == null) {
+            log.setParadecontext(log.getContext());
+        }
         
         String actionType = "", op = "", params = "", display = "", path = "", file = "";
 
@@ -226,7 +229,7 @@ public class DatabaseLogServlet extends HttpServlet {
         if (uri.endsWith(".jspx")) {
             log.setAction("view");
             // fetch the webapp root in a hackish way
-            String webapp = rp.getRowDefinitions().get(log.getParadecontext()).get("webapp");
+            String webapp = rp.getRowDefinitions().get(log.getParadecontext() == null ? log.getContext() : log.getParadecontext()).get("webapp");
             log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
 
         }

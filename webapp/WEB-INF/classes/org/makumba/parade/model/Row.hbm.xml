@@ -15,9 +15,6 @@
 		<property name="rowname" />
 		<property name="rowpath" />
 		<property name="description" />
-		<property name="watchedByJNotify">
-			<column name="watchedByJNotify" default="true"/>
-		</property>
 		<property name="automaticCvsUpdate" type="integer" insert="false">
 			<column name="automaticCvsUpdate" default="10"/>
 		</property>

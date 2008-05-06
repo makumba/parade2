@@ -42,6 +42,8 @@ public class File {
     private Integer cvsStatus;
 
     private String cvsRevision;
+    
+    private String cvsCheckedOutRevision;
 
     private Date cvsDate;
     
@@ -175,6 +177,14 @@ public class File {
         this.cvsRevision = cvsRevision;
     }
 
+    public String getCvsCheckedOutRevision() {
+        return cvsCheckedOutRevision;
+    }
+
+    public void setCvsCheckedOutRevision(String cvsCheckedOutRevision) {
+        this.cvsCheckedOutRevision = cvsCheckedOutRevision;
+    }
+
     public Date getCvsDate() {
         return cvsDate;
     }
@@ -272,5 +282,4 @@ public class File {
 
         return children;
     }
-
 }
