@@ -1,0 +1,14 @@
+/* TREE */
+.tree {
+	margin: 2px;
+}
+
+A.tree {
+	color: black;
+	text-decoration: none;
+}
+
+A.tree:active {
+	color: white;
+	background: rgb(0, 0, 120);
+}

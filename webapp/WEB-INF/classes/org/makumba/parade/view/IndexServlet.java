@@ -84,7 +84,12 @@ public class IndexServlet extends HttpServlet {
                     RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/browse");
                     dispatcher.forward(req, resp);
                 }
+                RequestDispatcher header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=editor&pageTitle=Welcome%20to%20ParaDe");
+                RequestDispatcher footer = super.getServletContext().getRequestDispatcher("/layout/footer.jsp");
+                
+                header.include(req, resp);
                 out.print(getView(p, context, opResult, success, !(successAttr == null), u));
+                footer.include(req, resp);
             }
         } finally {
             tx.commit();

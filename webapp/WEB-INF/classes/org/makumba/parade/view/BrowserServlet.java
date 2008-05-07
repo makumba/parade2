@@ -107,21 +107,32 @@ public class BrowserServlet extends HttpServlet {
                 CommandViewManager cmdV = new CommandViewManager();
                 FileViewManager fileV = new FileViewManager();
                 FileDisplay filebrowserV = new FileDisplay();
+                
+                RequestDispatcher header = null;
+                RequestDispatcher footer = super.getServletContext().getRequestDispatcher("/layout/footer.jsp");
         
                 // switiching to the right display
                 String page = "";
                 if (display.equals("header")) {
+                    header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=header&baseTarget=command");
                     // FIXME - path in here is null always, but should actually be equal to the currently browsed path
                     page = hdrV.getHeaderView(r, path);
+
                 }
                 if (display.equals("tree")) {
+                    header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=tree");
                     page = fileV.getTreeView(p, r);
+                    
                 }
                 if (display.equals("file")) {
+                    header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=files&pageTitle=File%20browser%20of%20row%20"+r.getRowname());
                     page = filebrowserV.getFileBrowserView(p, r, path, opResult, order, success);
+                    
                 }
                 if (display.equals("command")) {
+                    header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=command");
                     page = cmdV.getCommandView(view, r, path, file, opResult);
+                    
                 }
         
                 // checking whether we include a JSP or not
@@ -130,7 +141,9 @@ public class BrowserServlet extends HttpServlet {
                     RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher(url);
                     dispatcher.forward(req, resp);
                 } else {
+                    header.include(req, resp);
                     out.println(page);
+                    footer.include(req, resp);
                 }
         
             }

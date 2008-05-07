@@ -1,6 +1,4 @@
-<HTML><HEAD><TITLE>Welcome to ParaDe</TITLE></HEAD><BODY><CENTER>
-<link rel='StyleSheet' href='/style/rowstore.css' type='text/css'>
-<link rel='StyleSheet' href='/scripts/tickertape/tickertape.css'>
+<CENTER>
 
 <#if opResult != "">
   <#if displaySuccess>
@@ -29,7 +27,7 @@ Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 <TABLE class='rowstore'>
 <tr>
 <#list headers as header>
-<th>${header}</th>
+<th class='rowstore'>${header}</th>
 </#list>
 </tr>
 
@@ -84,4 +82,4 @@ Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 <script type="text/javascript">var ticker = new TickerTape('/servlet/ticker', 'horizontalTickerTape', 3000, true);</script>
 -->
 
-</CENTER></BODY></HTML>
+</CENTER>

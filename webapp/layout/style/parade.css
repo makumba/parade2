@@ -1,0 +1,43 @@
+/* General StyleSheet for ParaDe */
+BODY {
+	font-family: Tahoma, Arial;
+	font-size: 0.8em;
+}
+
+DIV.command {
+	font-size: smaller;
+}
+
+A img {
+	border: none;
+	border-width: 0px;
+}
+
+TD {
+	font-family: Tahoma, Arial;
+	font-size: 0.8em;
+	vertical-align: middle;
+	padding: 0px;
+	padding-left: 3px;
+	padding-right: 3px;
+	border-spacing: 0px;
+	border-width: 0px;
+}
+
+TH {
+	font: caption;
+	background-color: #ddddff;
+	text-align: left;
+	font-weight: bold;
+}
+
+TR.odd {
+	background-color: #ffffff;
+}
+
+TR.even {
+	background-color: #f5f5ff;
+}
+TR:hover {
+    background-color:#ddddff;
+}

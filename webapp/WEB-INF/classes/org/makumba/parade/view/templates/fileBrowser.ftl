@@ -1,8 +1,3 @@
-<HTML><HEAD><TITLE>${rowName} files</TITLE>
-<link rel='StyleSheet' href='/style/parade.css' type='text/css'>
-<link rel='StyleSheet' href='/style/files.css' type='text/css'>
-</HEAD><BODY class='files'>
-
 <#if opResult != "">
 	<#if success>
 	<div class='success'>${opResult}</div>
@@ -11,7 +6,7 @@
 	</#if>
 </#if>
 
-<h2>[<a href='/servlet/browse?display=file&context=${rowName}'>${rowName}</a>]/<#list parentDirs as parentDir><a href='/servlet/browse?display=file&context=${rowName}&path=${parentDir.path}'>${parentDir.directoryName}</a>/</#list><img src='/images/folder-open.gif'></h2>
+<h2 class="files">[<a href='/servlet/browse?display=file&context=${rowName}'>${rowName}</a>]/<#list parentDirs as parentDir><a href='/servlet/browse?display=file&context=${rowName}&path=${parentDir.path}'>${parentDir.directoryName}</a>/</#list><img src='/images/folder-open.gif'></h2>
 <div class='pathOnDisk'>${pathOnDisk}</div>
 <table class='files'>
 <tr><th></th>
@@ -177,6 +172,4 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
         
 </#list>
 
-</TABLE></BODY></HTML>
-
-
+</TABLE>

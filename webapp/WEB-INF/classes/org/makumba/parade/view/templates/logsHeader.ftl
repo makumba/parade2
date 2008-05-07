@@ -1,12 +1,3 @@
-<html>
-<head>
-<title>Log menu for context ${context}</title>
-<SCRIPT LANGUAGE="JavaScript" SRC="/scripts/CalendarPopup.js"></SCRIPT>
-<link rel='StyleSheet' href='/style/log.css' type='text/css'>
-<link rel='StyleSheet' href='/style/header.css' type='text/css'>
-</head>
-
-<body class="header">
 <form class="nobreak" target="logview" action="/logs?view=logs&context=${context}&years=${year}&months=${month}&days=${day}&filter=${filter}>
 <script language="JavaScript">
 <!--
@@ -40,6 +31,3 @@ Quick filter: <select size="1" name="filter">
 
 <input type="submit" value="Filter">
 </form>
-
-</body>
-</html>

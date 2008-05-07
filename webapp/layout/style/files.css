@@ -1,0 +1,44 @@
+/* FILE LIST */
+
+body.files {
+    font-size:0.7em;
+}
+
+a img {
+  border:none;
+  border-width:0px;
+}
+
+H2.files {
+    margin: 2px;
+    font-weight:normal;
+}
+div.success {
+	color:#228B22;
+	font-weight:bold;
+}
+div.failure {
+	color:#FF0000;
+	font-weight:bold;
+}
+div.pathOnDisk {
+    font-size:smaller;
+}
+table.files {
+    border:0;
+    width:100%;
+    padding:0px;
+    border-spacing:0px;
+    border-width:0px;
+    border-collapse:collapse;
+}
+img {
+    padding-right:2px;
+}
+
+/* cvs-specific should go to plugin-specific css */
+div.cvs-ignored {
+    font-size:smaller;
+    color:#999999;
+    font-style:italic;
+}

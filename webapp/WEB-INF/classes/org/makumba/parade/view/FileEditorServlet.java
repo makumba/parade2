@@ -2,6 +2,7 @@ package org.makumba.parade.view;
 
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -49,7 +50,8 @@ public class FileEditorServlet extends HttpServlet {
         if (r == null) {
             out.println("Unknown context " + context);
         } else {
-
+            
+            
             // we need to build the absolute Path to the file
             String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + fileName;
 
@@ -57,17 +59,23 @@ public class FileEditorServlet extends HttpServlet {
             if (file == null) {
                 out.println("Internal ParaDe error: cannot access file " + absoluteFilePath);
             } else {
+                RequestDispatcher header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=editor&pageTitle=Editor%20for%20"+file.getName());
+                RequestDispatcher footer = super.getServletContext().getRequestDispatcher("/layout/footer.jsp");
+
                 resp.setContentType("text/html");
                 resp.setCharacterEncoding("UTF-8");
 
                 FileEditViewManager oldFileEditV = new FileEditViewManager();
                 CodePressFileEditViewManager codepressFileEditV = new CodePressFileEditViewManager();
 
+                header.include(req, resp);
                 if (editor.equals("codepress")) {
                     out.println(codepressFileEditV.getFileEditorView(r, path, file, source));
+                    
                 } else {
                     out.println(oldFileEditV.getFileEditorView(r, path, file, source));
                 }
+                footer.include(req, resp);
             }
         }
 

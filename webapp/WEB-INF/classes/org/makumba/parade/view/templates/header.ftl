@@ -1,13 +1,3 @@
-<HTML>
-<HEAD>
-<TITLE>Command view for ${rowName}</TITLE>
-<link rel='StyleSheet' href='/style/parade.css' type='text/css'>
-<link rel='StyleSheet' href='/style/header.css' type='text/css'>
-<base target='command'>
-</HEAD>
-
-<BODY class='header'>
-
 <img src='/images/win-x.gif' align=right alt='remove frames' border=0 hspace=1 vspace=1 onMouseDown="src='/images/win-x2.gif' onMouseUp=\"src='/images/win-x.gif'; top.location=top.directory.location;">
 <table class='header'>
 
@@ -56,4 +46,4 @@ function icqNewWin() {
 <a href="/systemInfo.jsp" target="directory">System</a>
 </td>
 
-</tr></table></body></html>
+</tr></table>

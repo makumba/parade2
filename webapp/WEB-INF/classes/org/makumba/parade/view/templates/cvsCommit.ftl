@@ -1,7 +1,3 @@
-<HTML><HEAD><TITLE>Command view for ${rowName}</TITLE>
-<link rel="StyleSheet" href="/style/parade.css" type="text/css">
-<link rel="StyleSheet" href="/style/command.css" type="text/css">
-</HEAD><BODY class="command">
 <table border="0"><tr><td>
 <form style="display: inline;" target="command" action="/Cvs.do" method="GET">
 <input type=hidden value="${rowName}" name="context">
@@ -21,4 +17,3 @@ Committing <strong>${fileName}</strong> with message:<br>
 <li>make sure that the commit message is meaningful</li>
 </ul>
 </td></tr></table>
-</body></html>

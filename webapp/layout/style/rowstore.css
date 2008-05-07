@@ -1,0 +1,59 @@
+/* StyleSheet for the RowStore view */
+
+div.success {
+	color:#228B22;
+	font-size:medium;
+	font-weight:bold;
+}
+div.failure {
+	color:#FF0000;
+	font-size:medium;
+	font-weight:bold;
+}
+
+div.result {
+	font-size:medium;
+	text-align: left;
+}
+
+div.command {
+	font-size:small;
+}
+
+div.notinstalled {
+	font-weight: bold;
+	color: grey;
+}
+
+div.installed {
+	font-weight: bold;
+	color: black;
+}
+
+div.stopped {
+	font-weight: bold;
+	color: red;
+}
+div.started {
+	font-weight: bold;
+	color: green;
+}
+
+table.rowstore {
+    border:0;
+    width:100%;
+    padding:0px;
+    border-spacing:0px;
+    border-width:0px;
+    border-collapse:collapse;
+}
+
+TR.notWatched {
+    background-color:#cc3399;
+}
+TH.rowstore {
+    font:caption;
+    background-color:#ddddff;
+    text-align:center;
+    font-weight:bold;
+}

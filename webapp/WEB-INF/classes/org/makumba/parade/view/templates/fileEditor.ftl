@@ -1,7 +1,3 @@
-<html>
-<head>
-<title>${fileName} - ParaDe editor</title>
-
 <script language="JavaScript">
 <!--
 function insert() {
@@ -127,5 +123,3 @@ function setModified(){
 <textarea name="source" style="width:100%;height:92%" cols="90" rows="23" wrap="virtual" onKeypress="setModified()" STYLE="font-face:Lucida Console; font-size:8pt">${content}</textarea>
 
 </form>
-</body>
-</html>

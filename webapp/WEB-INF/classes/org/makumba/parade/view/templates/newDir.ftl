@@ -1,4 +1,3 @@
-<HTML><HEAD><TITLE>Command view for ${rowName}</TITLE>
 <link rel="StyleSheet" href="/style/parade.css" type="text/css">
 <link rel="StyleSheet" href="/style/command.css" type="text/css">
 </HEAD><BODY class="command">
@@ -10,4 +9,3 @@ Create new directory: <input type="text" name="params">
 <input type=submit value=Create>
 <br><font style="font-size: smaller;">(in ${rowName}${path})</font>
 </form>
-</body></html>

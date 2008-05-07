@@ -1,9 +1,3 @@
-<html>
-<head>
-  <title>ParaDe: new user</title>
-</head>
-<body>
-
 <#if opResult != "">
 	<div class='result'>${opResult}</div><br/>
 </#if>
@@ -35,6 +29,3 @@ In the future, ParaDe will have features that allow better work (development, te
 <tr><td colspan="2" align="centre"><input type="submit" value="Create my account!"></td></tr>
 </table>
 </form>
-</body>
-
-</html>

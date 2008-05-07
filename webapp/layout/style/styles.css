@@ -1,0 +1,375 @@
+/* $Header$ */
+
+
+/*=======================  Data types for displaying records ========================*/
+
+TD.date,TH.date {
+	text-align: center;
+}
+
+TD.number,TH.number {
+	text-align: center;
+}
+
+TH.person {
+	text-align: center;
+}
+
+TD.person {
+	text-align: left;
+}
+
+TH.text {
+	text-align: center;
+}
+
+TD.text {
+	text-align: left;
+}
+
+TD.phone,TH.phone {
+	text-align: center;
+}
+
+TD.abbr,TH.abbr {
+	text-align: center;
+}
+
+TD.icon,TH.icon {
+	text-align: center;
+	background-position:center;
+}
+
+.v_head {
+	text-align: left;
+	vertical-align: top;
+}
+
+
+/* ========== LINK STYLES ==================== */
+
+/* Order of sequence of A definitions: Vilius 2005 10 21
+http://www.westciv.com/style_master/house/tutorials/quick/links/index.html
+
+A:link
+A:visited
+A:hover
+A:active
+
+*/
+ 
+A:link { text-decoration: none; }
+
+A:visited { text-decoration: none; }
+
+A:hover { text-decoration: underline; }  
+
+A:active { text-decoration: underline; }
+
+/* do not underline header links */
+TD.navbar A:hover, H1 A:hover, H2 A:hover, H3 A:hover, H4 A:hover, H5 A:hover { text-decoration: none}
+
+
+/* ========== IMAGE RELATED STYLES ==================== */
+
+
+.icon {
+	vertical-align: text-top;
+	margin: 0px;
+	padding: 0px;
+	border: none;
+}
+
+/* ========== BULLET RELATED STYLES ==================== */
+
+OL, UL { 
+ 	 margin-bottom: 0.5em;
+ 	 margin-top: 0em;
+	}
+
+/* ========== FORM RELATED STYLES ==================== */
+
+FORM { 
+ 	 margin:0 0 0 0;
+}
+
+/* Avoid line break after form, used in menus*/
+FORM.nobreak {
+	display: inline;
+	margin:0 0 0 0;
+	}
+
+
+/* Originally comes from availability, but it seems can be generalised for PA */
+OPTION, INPUT, SELECT{
+  font-size:xx-small;
+}
+
+TEXTAREA {
+	font-size: 1.2em;
+}
+
+.accessKey {
+  font-weight: bold;
+}
+
+/* ========== AUTOMATIC TOC STYLES ==================== */
+/* for automatic TOC in the documents, Vilius 2005 03 25 */
+#toc {
+  float: right;
+  font-size: 100%;
+  border: 1px solid #000;
+  margin: 0px 0px 20px 20px;
+  padding: 5px;
+  background: #ddd;
+  display: none;
+}
+
+#toc .level2 { margin-left: 1em; }
+#toc .level3 { margin-left: 2em; }
+#toc .level4 { margin-left: 3em; }
+#toc .level5 { margin-left: 4em; }
+#toc .level6 { margin-left: 5em; }
+
+
+
+/* .toc is for wiki TOC module, vilius */
+
+.toc {
+  font-size: 100%;
+  border: 1px solid #000;
+  padding: 5px;
+  background: #ddd;
+}
+
+/* .index is for wiki Index module, vilius */
+
+.index .body {
+  font-size: 100%;
+	margin-left: 1em;
+}
+
+
+
+/* ========== MAIN CONTENT TABLE RELATED STYLES ==================== */
+/* for setting pages, vertical headers, Atis 2005 05 08 */
+
+#settings TH {
+    background-color: #ddddff;
+    font-size: 0.9em;
+    padding-left: 3px;
+    padding-right: 3px;
+    width: 150px;
+}
+
+/* ====================== HIGHLIGHTING  ====================== */
+/* Makumba, JSP and HTML syntax highlighting - to be moved to separate file */
+
+#code {
+    font-family: monospace;
+	font-size: larger;
+	margin-left: 3em;
+}
+
+#code .exprLng {
+	font-style: italic;
+	color: blue;
+}
+
+/* ====================== AVAILABILITY STYLES ====================== */
+
+div.eventNothingSpecified, div.nothingSpecified, div.available, div.notavailable, div.ok, div.taskDL {
+	font-size: smaller;
+	font-weight: bold;
+	text-align: center;
+}
+
+div.comment {
+	font-size: xx-small;
+	font-style: italic;
+}
+
+td.ok {
+	font-size: smaller;
+	font-weight: bold;
+	text-align: center;
+	background-color: #fafa00;
+}
+td.notavailable {
+	font-size: smaller;
+	font-weight: bold;
+	text-align: center;
+	background-color: #FF6666;
+}
+td.available {
+	font-size: smaller;
+	font-weight: bold;
+	text-align: center;
+	background-color: green;
+}
+td.nothingSpecified {
+	font-size: smaller;
+	font-weight: bold;
+	text-align: center;
+	background-color: #80cc60; 	
+}
+td.eventNothingSpecified {
+	font-size: smaller;
+	font-weight: bold;
+	text-align: center;
+	background-color: #ffffaa; 	
+}
+td.noday {
+	font-size:smaller;
+	background-color: #eaeaea; 	
+}
+td.taskDL {
+        background-color: #ffd0d0;
+        font-weight:bold;
+        text-align:center;
+}
+hr.availability {
+        color:#777070;
+        background-color: #777070; /* background and border width are needed for Firefox to show orange line - suggested by Atis */
+        border-width: 0px;
+} 
+a.availabilityNavigation {
+  font-size:x-small;
+}
+
+
+
+/* ========== ELEMENT TYPES  ==================== */
+
+/* class blank_value should be used to print something what has empty body. Started to be used on 2005 10 in taskslists */
+.blank_value {
+  color: grey;
+  font-style: italic;
+}
+/* class for elements which are disabled because of missing rights */
+.not_accessible {
+  color: grey;
+}
+/* class for text explaining something what should attract attention */
+.att_explanation {
+  color: red;
+  font-style:italic;
+}
+/* highlighted */
+.highlighted {
+   	font-weight: bold;
+}
+/* emphasized */
+.emph {
+	font-style: italic;	
+}
+.documentation  {
+	width: 80%;
+}
+.documentation A  {
+	border-bottom:thin dotted;
+	text-decoration: none;
+}
+.documentation H3 {
+	padding-left: 10px;
+}
+.documentation H2 A, .documentation H3 A  {
+	border-bottom:none;
+}
+.documentation P {
+	text-indent: 10px;	
+}
+/* box style for showing preview */
+.preview {
+	background-color: #eeeeee; 	
+	border: thin dotted black; 
+	padding: 5px;
+	margin: 5px;
+}
+
+/* ========== AJAX STYLES  ==================== */
+
+div.auto_complete {
+	position:absolute;
+	width:300px;
+	max-height: 290px;
+	overflow: auto;
+	background-color:white;
+	border:1px solid #888;
+	margin:0px;
+	padding:0px;
+}
+ul.auto_complete_list  {
+	list-style-type: none;
+	margin:0px;
+	padding:0px;
+}
+ul.auto_complete_list li.selected { background-color: #ffb; }
+li.auto_complete_list_item {
+	list-style-type: none;
+	display:block;
+	margin:0;
+	padding:2px;
+	clear:left;
+}
+li.auto_complete_list_item div.image {
+	float:left;
+	width:25px;
+	height:32px;
+	margin-right:4px;
+}
+li.auto_complete_list_item div.title {
+	font-weight:bold;
+	font-size:12px;
+	line-height:1.2em;
+}
+li.auto_complete_list_item div.description {
+	font-size:10px;
+	color:#888;
+}
+
+/* ========== WIKI STYLES  ==================== */
+
+a.editpage  { 
+ 	text-decoration: none;
+ 	border-bottom: 1px dashed #fabd23;;
+ 	}
+
+.navbox {
+	float:right;
+	border: 2px solid #FFC850;
+	padding: 2px 1em 1em;
+}
+
+
+
+/* ========== UNKNOWN - TO BE REMOVED ==================== */
+
+.compact { 
+ 	 margin-bottom: 0em;
+ 	 margin-top: 0em;
+	}
+
+
+.birthday {
+	font-size: 0.7em; 
+	}
+
+A.birthday:link{
+	color: #888888;
+	}
+
+.johnnyDeadline {
+	background: #ffaaaa; 
+	font-weight: 500; 
+	}
+	
+.internalEvent {
+	background: #aaffaa; 
+	}
+	
+.titleInfo {
+          color:#FF00CC;
+
+}
+
