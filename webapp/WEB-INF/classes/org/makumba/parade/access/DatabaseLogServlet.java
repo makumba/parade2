@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.LogRecord;
 
 import javax.servlet.ServletConfig;
@@ -229,8 +230,11 @@ public class DatabaseLogServlet extends HttpServlet {
         if (uri.endsWith(".jspx")) {
             log.setAction("view");
             // fetch the webapp root in a hackish way
-            String webapp = rp.getRowDefinitions().get(log.getParadecontext() == null ? log.getContext() : log.getParadecontext()).get("webapp");
-            log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
+            Map<String, String> rowDef = rp.getRowDefinitions().get(log.getParadecontext() == null ? log.getContext() : log.getParadecontext());
+            if(rowDef != null) {
+                String webapp = rowDef.get("webapp");
+                log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
+            }
 
         }
 
