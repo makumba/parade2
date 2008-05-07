@@ -27,27 +27,13 @@ public class ParadeSessionListener implements HttpSessionListener {
 
     public void sessionCreated(HttpSessionEvent e) {
         activeSessions.put(e.getSession().getId(), e.getSession());
-
-        // System.out.println("session created");
-        // System.out.println("id: "+e.getSession().getId());
-        // System.out.println("user attribute: "+e.getSession().getAttribute("org.makumba.parade.user"));
-
-        // TODO create a custom event, send it to dbservlet
-
     }
 
     public void sessionDestroyed(HttpSessionEvent e) {
         activeSessions.remove(e.getSession().getId());
-
-        // System.out.println("session destroyed");
-        // System.out.println("id: "+e.getSession().getId());
-        // System.out.println("user attribute: "+e.getSession().getAttribute("org.makumba.parade.user"));
-
-        // TODO create a custom event, send it to dbservlet
-
     }
 
-    public static List<HttpSession> getActiveSessions() {
+    public static synchronized List<HttpSession> getActiveSessions() {
         List<HttpSession> sessions = new LinkedList<HttpSession>();
         Iterator<String> it = activeSessions.keySet().iterator();
         while (it.hasNext()) {
@@ -64,7 +50,7 @@ public class ParadeSessionListener implements HttpSessionListener {
         return sessions;
     }
 
-    public static List<String[]> getActiveSessionUsers() {
+    public static synchronized List<String[]> getActiveSessionUsers() {
         List<String[]> onlineUsers = new LinkedList<String[]>();
 
         // hashtable for filtering expired sessions
