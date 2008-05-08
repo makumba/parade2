@@ -1,7 +1,6 @@
 package org.makumba.parade.access;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -26,6 +25,7 @@ import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.model.Log;
 import org.makumba.parade.model.User;
+import org.makumba.parade.tools.ActionTypes;
 import org.makumba.parade.tools.PerThreadPrintStreamLogRecord;
 import org.makumba.parade.tools.TriggerFilter;
 import org.makumba.parade.view.TickerTapeData;
@@ -218,17 +218,17 @@ public class DatabaseLogServlet extends HttpServlet {
 
         // browse actions
         if (actionType.equals("browseRow")) {
-            log.setAction("browseRow");
+            log.setAction(ActionTypes.BROWSE_ROW.action());
 
         }
         if (actionType.equals("browse") || actionType.equals("fileBrowse")) {
-            log.setAction("browseDir");
+            log.setAction(ActionTypes.BROWSE_DIR.action());
             log.setFile(nicePath(path, ""));
         }
 
         // view actions
         if (uri.endsWith(".jspx")) {
-            log.setAction("view");
+            log.setAction(ActionTypes.VIEW.action());
             // fetch the webapp root in a hackish way
             Map<String, String> rowDef = rp.getRowDefinitions().get(log.getParadecontext() == null ? log.getContext() : log.getParadecontext());
             if(rowDef != null) {
@@ -240,19 +240,19 @@ public class DatabaseLogServlet extends HttpServlet {
 
         // edit (open editor)
         if (actionType.equals("file") && op.equals("editFile")) {
-            log.setAction("edit");
+            log.setAction(ActionTypes.EDIT.action());
             log.setFile(nicePath(path, file));
         }
 
         // save
         if (actionType.equals("file") && op.equals("saveFile")) {
-            log.setAction("save");
+            log.setAction(ActionTypes.SAVE.action());
             log.setFile(nicePath(path, file));
         }
 
         // delete
         if (actionType.equals("file") && op.equals("deleteFile")) {
-            log.setAction("delete");
+            log.setAction(ActionTypes.DELETE.action());
             log.setFile(nicePath(path, params));
         }
 
@@ -260,18 +260,20 @@ public class DatabaseLogServlet extends HttpServlet {
         if (actionType.equals("cvs")) {
 
             if (op.equals("check")) {
-                log.setAction("cvsCheck");
+                log.setAction(ActionTypes.CVS_CHECK.action());
                 log.setFile("/" + params);
             }
             if (op.equals("update")) {
-                log.setAction("cvsUpdateDirLocal");
+                log.setAction(ActionTypes.CVS_UPDATE_DIR_LOCAL.action());
                 log.setFile("/" + params);
             }
             if (op.equals("rupdate")) {
-                log.setAction("cvsUpdateDirRecursive");
+                log.setAction(ActionTypes.CVS_UPDATE_DIR_RECURSIVE.action());
                 log.setFile("/" + params);
             }
             if (op.equals("commit")) {
+                // this action won't get logged, since we will get another log from the cvs hook
+                // we just store it in a variable
                 log.setAction("paradeCvsCommit");
                 String[] commitParams = getParamValues("params", queryString, null, 0);
                 log.setFile(nicePath(commitParams[1], ""));
@@ -287,30 +289,30 @@ public class DatabaseLogServlet extends HttpServlet {
                 }
             }
             if (op.equals("diff")) {
-                log.setAction("cvsDiff");
+                log.setAction(ActionTypes.CVS_DIFF.action());
                 log.setFile("/" + file);
             }
             if (op.equals("add") || op.equals("addbin")) {
-                log.setAction("cvsAdd");
+                log.setAction(ActionTypes.CVS_ADD.action());
                 log.setFile("/" + file);
             }
             if (op.equals("updatefile")) {
-                log.setAction("cvsUpdateFile");
+                log.setAction(ActionTypes.CVS_UPDATE_FILE.action());
                 log.setFile("/" + file);
             }
             if (op.equals("overridefile")) {
-                log.setAction("cvsOverrideFile");
+                log.setAction(ActionTypes.CVS_OVERRIDE_FILE.action());
                 log.setFile("/" + file);
             }
             if (op.equals("deletefile")) {
-                log.setAction("cvsDeleteFile");
+                log.setAction(ActionTypes.CVS_DELETE_FILE.action());
                 log.setFile("/" + file);
             }
         }
 
         // CVS commit (hook)
         if (log.getAction().equals("cvsCommitRepository")) {
-            log.setAction("cvsCommit");
+            log.setAction(ActionTypes.CVS_COMMIT.action());
             
             if (lastCommit != null && lastCommit.getFile() != null) {
                 // the user commited through parade

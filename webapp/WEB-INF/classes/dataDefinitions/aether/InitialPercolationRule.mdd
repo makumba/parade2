@@ -1,0 +1,5 @@
+objectType=char[255]
+action=char[255]
+userType=int {"All" = 10, "Owner"=20, "All but owner"=30}
+initialLevel=int
+userGroup=char[255]

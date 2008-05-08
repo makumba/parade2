@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+      "-//Hibernate/Hibernate Mapping DTD//EN"
+      "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.makumba.aether.model">
+	<class name="PercolationStep">
+
+		<cache usage="read-write" />
+
+		<id name="id" column="percolationstep">
+			<generator class="native" />
+		</id>
+	
+		<property name="object" />
+		<property name="userGroup" />
+		<property name="focus" />
+		<property name="nimbus" />
+		<property name="percolationId" />
+		
+		<one-to-one name="previous" class="PercolationStep" />
+
+
+	</class>
+</hibernate-mapping>
+
+

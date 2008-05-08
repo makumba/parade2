@@ -231,6 +231,11 @@
 		<servlet-name>dataQuery</servlet-name>
 		<url-pattern>/dataQuery/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+      <servlet-name>codeGenerator</servlet-name>
+      <servlet-class>org.makumba.devel.CodeGenerator</servlet-class>
+    </servlet>
 
 
 <!-- 

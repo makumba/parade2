@@ -1,0 +1,6 @@
+object=int
+userGroup=char[255]
+focus=int
+nimbus=int
+percolationId=int
+previous = ptr aether.PercolationStep

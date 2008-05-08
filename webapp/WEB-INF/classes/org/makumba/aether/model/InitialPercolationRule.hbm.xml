@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+      "-//Hibernate/Hibernate Mapping DTD//EN"
+      "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.makumba.aether.model">
+	<class name="InitialPercolationRule">
+
+		<cache usage="read-write" />
+
+		<id name="id" column="initialpercolationrule">
+			<generator class="native" />
+		</id>
+
+		<property name="objectType" />
+		<property name="action" />
+		<property name="userType" />
+		<property name="initialLevel" />
+		<property name="userGroup" />
+
+
+	</class>
+</hibernate-mapping>
+
+
