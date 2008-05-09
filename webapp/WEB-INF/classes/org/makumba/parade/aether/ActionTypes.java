@@ -1,4 +1,8 @@
-package org.makumba.parade.tools;
+package org.makumba.parade.aether;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * ParaDe action types, for the Aether engine
@@ -33,5 +37,16 @@ public enum ActionTypes {
     public String action() {
         return this.action;
     }
+    
+    public static Set<String> getActions() {
+        ActionTypes[] v = values();
+        Set<String> res = new HashSet<String>();
+        for (int i = 0; i < v.length; i++) {
+            res.add(v[i].action());
+        }
+        return res;
+    }
+
+    
 
 }

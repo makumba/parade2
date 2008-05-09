@@ -1,4 +1,6 @@
-package org.makumba.aether;
+package org.makumba.aether.percolation;
+
+import org.makumba.aether.AetherEvent;
 
 /**
  * Matched aether event that is being percolated

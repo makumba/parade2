@@ -1,5 +1,12 @@
 package org.makumba.aether;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.SessionFactory;
+import org.makumba.aether.percolation.Percolator;
+import org.makumba.aether.percolation.RuleBasedPercolator;
+
 /**
  * The access point to the Aether engine
  * 
@@ -7,6 +14,8 @@ package org.makumba.aether;
  * 
  */
 public class Aether {
+
+    private Logger logger = Logger.getLogger(Aether.class);
 
     private static Aether instance;
 
@@ -19,16 +28,47 @@ public class Aether {
 
     private AetherContext ctx;
 
+    private Percolator p;
+
     private Aether(AetherContext ctx) {
         this.ctx = ctx;
-    }
-    
-    private void startup() {
-        
-    }
-    
-    private void computeAllRelations() {
-        
+        startup();
     }
 
+    /**
+     * Starts the Aether engine up:
+     * <ul>
+     * <li>computes all relations using the relation computers</li>
+     * <li>initialises the percolator</li>
+     * </ul>
+     */
+    private void startup() {
+        logger.info("AETHER-INIT: Starting Aether engine at " + new java.util.Date());
+        long start = System.currentTimeMillis();
+
+        p = new RuleBasedPercolator();
+        p.configure(ctx.getDatabaseName(), ctx.getSessionFactory());
+        computeAllRelations();
+
+        logger.info("AETHER-INIT: Launching Aether finished at " + new java.util.Date());
+        long end = System.currentTimeMillis();
+        long refresh = end - start;
+        logger.info("AETHER-INIT: Initialisation took " + refresh + " ms");
+
+    }
+
+    /**
+     * Computes all the relations using the relation computers
+     */
+    private void computeAllRelations() {
+        List<RelationComputer> computers = ctx.getRelationComputers();
+        for (RelationComputer relationComputer : computers) {
+            try {
+                relationComputer.computeRelations();
+            } catch (RelationComputationException e) {
+                logger.error("Could not compute relations of relation computer " + relationComputer.getName() + ": "
+                        + e.getMessage());
+            }
+        }
+    }
 }

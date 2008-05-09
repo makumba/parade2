@@ -13,6 +13,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
+import org.makumba.aether.Aether;
+import org.makumba.aether.AetherContext;
+import org.makumba.parade.aether.ParadeRelationComputer;
 import org.makumba.parade.model.Parade;
 
 import freemarker.template.DefaultObjectWrapper;
@@ -26,6 +29,8 @@ public class InitServlet extends HttpServlet implements Runnable {
     private static Configuration cfg;
 
     private static SessionFactory sessionFactory = null;
+    
+    private static Aether aether;
 
     private static Long one = new Long(1);
 
@@ -34,6 +39,8 @@ public class InitServlet extends HttpServlet implements Runnable {
     private Parade p = null;
 
     private static freemarker.template.Configuration freemarkerCfg;
+    
+    private static boolean aetherEnabled = ParadeProperties.getProperty("aetherEnabled") != null && ParadeProperties.getProperty("aetherEnabled").equals("true");
 
     {
         /* Initializing Hibernate */
@@ -48,6 +55,18 @@ public class InitServlet extends HttpServlet implements Runnable {
             cfg.addResource("org/makumba/parade/model/ActionLog.hbm.xml");
             cfg.addResource("org/makumba/parade/model/Application.hbm.xml");
             cfg.addResource("org/makumba/parade/model/User.hbm.xml");
+            
+            if(aetherEnabled) {
+                
+                // Aether XMLs
+                // In a standalone Aether those would be in initialised by an own Aether sessionFactory
+                // but that seems a bit too resource-consuming, and we anyway need to query this model
+                cfg.addResource("org/makumba/aether/model/InitialPercolationRule.hbm.xml");
+                cfg.addResource("org/makumba/aether/model/PercolationRule.hbm.xml");
+                cfg.addResource("org/makumba/aether/model/PercolationStep.hbm.xml");
+                
+            }
+            
 
             SessionFactory sf = cfg.buildSessionFactory();
 
@@ -120,6 +139,19 @@ public class InitServlet extends HttpServlet implements Runnable {
         tx.commit();
 
         session.close();
+        
+        
+        if(aetherEnabled) {
+            
+            AetherContext ctx = new AetherContext(ParadeRelationComputer.PARADE_DATABASE_NAME, getSessionFactory());
+            
+            // parade relation computer, generating user to row relations
+            ctx.addRelationComputer(new ParadeRelationComputer());
+            
+            
+            aether = Aether.getAether(ctx);
+            
+        }
 
         logger.info("INIT: Launching ParaDe finished at " + new java.util.Date());
         long end = System.currentTimeMillis();

@@ -13,6 +13,6 @@ public interface RelationComputer {
     
     public void computeRelations() throws RelationComputationException;
     
-    public void updateRelation(String objectURL);
+    public void updateRelation(String objectURL) throws RelationComputationException;
     
 }

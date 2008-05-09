@@ -3,6 +3,8 @@ package org.makumba.aether;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
+
 /**
  * A context needed to configure the aether engine
  * 
@@ -11,32 +13,16 @@ import java.util.List;
  */
 public class AetherContext {
     
-    private Enum actionTypes;
+    private String databaseName;
     
-    private Enum objectTypes;
-    
+    private SessionFactory sessionFactory;
+
     private List<RelationComputer> relationComputers = new LinkedList<RelationComputer>();
 
-    public AetherContext(Enum actionTypes, Enum objectTypes) {
+    public AetherContext(String databaseName, SessionFactory sessionFactory) {
         super();
-        this.actionTypes = actionTypes;
-        this.objectTypes = objectTypes;
-    }
-
-    public Enum getActionTypes() {
-        return actionTypes;
-    }
-
-    public void setActionTypes(Enum actionTypes) {
-        this.actionTypes = actionTypes;
-    }
-
-    public Enum getObjectTypes() {
-        return objectTypes;
-    }
-
-    public void setObjectTypes(Enum objectTypes) {
-        this.objectTypes = objectTypes;
+        this.sessionFactory = sessionFactory;
+        this.databaseName = databaseName;
     }
 
     public List<RelationComputer> getRelationComputers() {
@@ -46,10 +32,21 @@ public class AetherContext {
     public void setRelationComputers(List<RelationComputer> relationComputers) {
         this.relationComputers = relationComputers;
     }
-    
+
     public void addRelationComputer(RelationComputer rc) {
         this.relationComputers.add(rc);
     }
-    
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
 
 }

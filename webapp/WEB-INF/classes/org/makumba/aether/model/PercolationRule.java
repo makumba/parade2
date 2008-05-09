@@ -6,7 +6,7 @@ package org.makumba.aether.model;
  * @author Manuel Gay
  * 
  */
-public class PercolationRule {
+public class PercolationRule implements AetherRule {
 
     private long id;
 
@@ -22,6 +22,8 @@ public class PercolationRule {
 
     private String relationQuery;
 
+    private boolean active = true;
+    
     public PercolationRule() {
 
     }
@@ -80,6 +82,14 @@ public class PercolationRule {
 
     public void setRelationQuery(String relationQuery) {
         this.relationQuery = relationQuery;
+    }
+
+    public boolean isActive() {
+        return this.active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }

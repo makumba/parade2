@@ -8,7 +8,7 @@ package org.makumba.aether.model;
  * @author Manuel Gay
  * 
  */
-public class InitialPercolationRule {
+public class InitialPercolationRule implements AetherRule {
 
     public final static int USER_ALL = 10;
 
@@ -27,6 +27,8 @@ public class InitialPercolationRule {
     private int initialLevel;
 
     private String userGroup;
+    
+    private boolean active = true;
 
     public InitialPercolationRule() {
 
@@ -78,6 +80,24 @@ public class InitialPercolationRule {
 
     public void setUserGroup(String userGroup) {
         this.userGroup = userGroup;
+    }
+    
+    public String toString() {
+        return "oType: "+objectType + " action: "+action + " uType: "+userType + " initLevel: "+initialLevel + " userGroup "+userGroup;
+    }
+
+    /* (non-Javadoc)
+     * @see org.makumba.aether.model.AetherRule#isActive()
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /* (non-Javadoc)
+     * @see org.makumba.aether.model.AetherRule#setActive(boolean)
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }
