@@ -13,14 +13,14 @@
 		<th>Action</th>
 	</thead>
 
-	<mak:list from="parade.Row r" where="r.user <> nil AND r.rowname <> '(root)'" orderBy="r.rowname">
+	<mak:list from="parade.Row r" where="r.user <> nil AND r.rowname <> '(root)' AND NOT (r.rowname like '%-module')" orderBy="r.rowname">
 		<tr>
 			<td><mak:value expr="r.rowname" /></td>
 			<td><mak:value expr="r.user.name" /></td>
 			<td><a href="rowEdit.jsp?row=<mak:value expr="r"/>">Edit</a></td>
 		</tr>
 	</mak:list>
-	<mak:list from="parade.Row r" where="r.user = nil AND r.rowname <> '(root)'" orderBy="r.rowname">
+	<mak:list from="parade.Row r" where="r.user = nil AND r.rowname <> '(root)' AND NOT (r.rowname like '%-module')" orderBy="r.rowname">
 		<tr>
 			<td><mak:value expr="r.rowname" /></td>
 			<td></td>

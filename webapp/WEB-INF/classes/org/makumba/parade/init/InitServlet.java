@@ -127,6 +127,8 @@ public class InitServlet extends HttpServlet implements Runnable {
             p.setId(one);
             p.refresh();
             session.save(p);
+            p.performPostRefreshOperations();
+            session.save(p);            
         }
         try {
             p.refreshApplicationsCache();

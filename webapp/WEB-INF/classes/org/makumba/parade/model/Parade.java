@@ -94,11 +94,21 @@ public class Parade {
         while (i.hasNext()) {
 
             Row r = rows.get(i.next());
-            refreshRow(r);
-        }
 
+            // we don't do this for module rows since they do refresh themselves on creation
+            if(!r.getModuleRow()) {
+                refreshRow(r);
+            }
+        }
+        
         logger.info("ParaDe-wide refresh finished");
 
+    }
+    
+    public void performPostRefreshOperations() {
+        logger.info("Performing post-refresh tasks...");
+        applMgr.checkoutAndCreateModuleRows();
+        logger.info("Post-refresh tasks done");
     }
 
     /**
@@ -174,6 +184,7 @@ public class Parade {
         }
         r.setRowpath(canonicalPath);
         r.setDescription(rowDefinition.get("desc"));
+        r.setModuleRow(false);
 
         return registerRow(r, rowDefinition);
     }
@@ -228,12 +239,12 @@ public class Parade {
         r.setParade(this);
         rows.put(r.getRowname(), r);
 
-        applMgr.newRow(r.getRowname(), r, rowDefinition);
         fileMgr.newRow(r.getRowname(), r, rowDefinition);
         CVSMgr.newRow(r.getRowname(), r, rowDefinition);
         antMgr.newRow(r.getRowname(), r, rowDefinition);
         webappMgr.newRow(r.getRowname(), r, rowDefinition);
         makMgr.newRow(r.getRowname(), r, rowDefinition);
+        applMgr.newRow(r.getRowname(), r, rowDefinition);
 
         return r;
     }
@@ -250,6 +261,7 @@ public class Parade {
         antMgr.rowRefresh(r);
         webappMgr.rowRefresh(r);
         makMgr.rowRefresh(r);
+        
     }
 
     /**

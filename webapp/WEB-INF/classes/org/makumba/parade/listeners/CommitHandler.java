@@ -114,11 +114,13 @@ public class CommitHandler extends Thread {
 
                             // if we have a simple Update or a Merge on a file that the user didn't touch
                             // we just do it so the user doesn't have to worry about it
-                            if (!CVSManager.cvsConflictOnUpdate(f) && f.getCvsStatus() == CVSManager.UP_TO_DATE) {
+                            if (!CVSManager.cvsConflictOnUpdate(f) && (f.getCvsStatus().equals(CVSManager.UP_TO_DATE))) {
                                 CvsController.onUpdateFile(r.getRowname(), f.getParentPath(), f.getPath());
 
-                                // we also log the action as cvsupdate by user system
-                                logUpdate(r.getRowname(), file);
+                                // we also log the action as cvsupdate by user system, if relevant
+                                if(!r.getModuleRow()) {
+                                    logUpdate(r.getRowname(), file);
+                                }
 
                             }
                         }

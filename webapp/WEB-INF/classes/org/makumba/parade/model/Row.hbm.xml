@@ -18,7 +18,8 @@
 		<property name="automaticCvsUpdate" type="integer" insert="false">
 			<column name="automaticCvsUpdate" default="10"/>
 		</property>
-
+		
+		<property name="moduleRow" />
 
 		<many-to-one name="parade" column="id_parade" />
 

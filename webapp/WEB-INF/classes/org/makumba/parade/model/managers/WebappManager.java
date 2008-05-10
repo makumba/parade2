@@ -34,7 +34,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
         RowWebapp webappdata = new RowWebapp();
         webappdata.setDataType("webapp");
-        webappdata.setWebappPath((String) m.get("webapp"));
+        webappdata.setWebappPath(m.get("webapp") == null?"":m.get("webapp"));
         r.addManagerData(webappdata);
     }
 

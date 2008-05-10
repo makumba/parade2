@@ -153,19 +153,22 @@ public class IndexServlet extends HttpServlet {
 
         Iterator<String> rowIterator = p.getRows().keySet().iterator();
         while (rowIterator.hasNext()) {
+            
             String key = rowIterator.next();
             Row r = p.getRows().get(key);
 
-            SimpleHash rowInformation = new SimpleHash();
+            if(!r.getModuleRow()) {
+                SimpleHash rowInformation = new SimpleHash();
 
-            // Each view manager populates the model with the information it needs
-            rowstoreView.setParadeView(rowInformation, r);
-            cvsView.setParadeView(rowInformation, r);
-            antView.setParadeView(rowInformation, r);
-            webappView.setParadeView(rowInformation, r);
-            makView.setParadeView(rowInformation, r);
+                // Each view manager populates the model with the information it needs
+                rowstoreView.setParadeView(rowInformation, r);
+                cvsView.setParadeView(rowInformation, r);
+                antView.setParadeView(rowInformation, r);
+                webappView.setParadeView(rowInformation, r);
+                makView.setParadeView(rowInformation, r);
 
-            rows.add(rowInformation);
+                rows.add(rowInformation);
+            }
         }
 
         root.put("rows", rows);

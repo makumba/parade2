@@ -9,6 +9,8 @@ public class Application {
     private String name;
 
     private String repository;
+    
+    private String webappPath;
 
     private Map<String, String> cvsfiles;
     
@@ -42,9 +44,10 @@ public class Application {
 
     }
 
-    public Application(String name, String repository) {
+    public Application(String name, String repository, String webappPath) {
         this.name = name;
         this.repository = repository;
+        this.webappPath = webappPath;
     }
 
     public long getId() {
@@ -61,6 +64,14 @@ public class Application {
 
     public void setParade(Parade parade) {
         this.parade = parade;
+    }
+
+    public String getWebappPath() {
+        return webappPath;
+    }
+
+    public void setWebappPath(String webappPath) {
+        this.webappPath = webappPath;
     }
 
 }

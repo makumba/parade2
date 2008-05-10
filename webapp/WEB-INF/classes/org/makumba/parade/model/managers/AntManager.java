@@ -39,7 +39,7 @@ public class AntManager implements RowRefresher, ParadeManager {
         File buildFile = setBuildFile(row, antdata);
         if (buildFile == null || !buildFile.exists()) {
             logger
-                    .error("AntManager: no build file found for row " + row.getRowname() + " at path "
+                    .warn("AntManager: no build file found for row " + row.getRowname() + " at path "
                             + row.getRowpath());
         } else {
             Project p = getInitProject(buildFile, row, antdata);

@@ -5,6 +5,10 @@ import java.util.Map;
 
 public class Row {
 
+    public static final int AUTO_CVS_UPDATE_DISABLED = 10;
+
+    public static final int AUTO_CVS_UPDATE_ENABLED = 20;
+    
     private Long id;
 
     private String rowname;
@@ -23,9 +27,21 @@ public class Row {
 
     private User user;
     
-    private int automaticCvsUpdate = 10;
+    // 10 = No, 20 = Yes
+    private int automaticCvsUpdate = AUTO_CVS_UPDATE_DISABLED;
     
     private boolean watchedByJNotify = true;
+    
+    private boolean moduleRow = false;
+
+    
+    public boolean getModuleRow() {
+        return moduleRow;
+    }
+
+    public void setModuleRow(boolean moduleRow) {
+        this.moduleRow = moduleRow;
+    }
 
     public Application getApplication() {
         return application;

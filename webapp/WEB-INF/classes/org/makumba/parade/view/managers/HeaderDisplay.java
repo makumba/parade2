@@ -40,7 +40,11 @@ public class HeaderDisplay {
             if (currentRow.getRowname() == "")
                 displayName = "(root)";
 
-            rows.add(displayName);
+            // we don't add module rows
+            if(!currentRow.getModuleRow()) {
+                rows.add(displayName);
+                
+            }
         }
 
         root.put("rows", rows);

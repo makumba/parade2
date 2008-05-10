@@ -14,6 +14,7 @@
 		
 		<property name="name" />
 		<property name="repository" />
+		<property name="webappPath" />
 		
 		<map name="cvsfiles" lazy="true" table="CvsFiles">
 			<key column = "FILE_ID"/>

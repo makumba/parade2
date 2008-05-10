@@ -1,11 +1,14 @@
 package org.makumba.parade.model.managers;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -13,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Application;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.tools.Execute;
 
@@ -26,6 +30,8 @@ import org.makumba.parade.tools.Execute;
 public class ApplicationManager implements ParadeManager {
 
     private static Logger logger = Logger.getLogger(ApplicationManager.class);
+    
+    private List<Application> needsRowCreation = new LinkedList<Application>();
 
     public void buildCVSlist(Application a) {
 
@@ -150,13 +156,42 @@ public class ApplicationManager implements ParadeManager {
             Application a = r.getParade().getApplications().get(module);
             if (a == null) {
                 logger.info("Registering new application " + module + " used by row " + r.getRowname());
-                a = new Application(module, CVSManager.getCVSRepository(r.getRowpath()));
+                a = new Application(module, CVSManager.getCVSRepository(r.getRowpath()), ((RowWebapp) r.getRowdata()
+                        .get("webapp")).getWebappPath());
+
                 buildCVSlist(a);
                 a.setParade(r.getParade());
                 r.getParade().getApplications().put(a.getName(), a);
+                
+                needsRowCreation.add(a);
+                
             }
             r.setApplication(a);
         }
+    }
+
+    /**
+     * Checks out the CVS repository, for comparison with other files
+     */
+    private void checkoutCVSmoduleAndCreateRow(Application a) {
+        String modulePath = ParadeProperties.getParadeBase() + File.separator + ".." + File.separator
+                + "checkedOutModules" + File.separator + a.getName();
+        File d = new File(modulePath);
+
+        if (d.exists() && new File(d.getPath() + File.separator + "CVS").isDirectory()) {
+            d.delete();
+        }
+        d.mkdirs();
+        RowFromCVSModuleCheckoutHandler mch = new RowFromCVSModuleCheckoutHandler(a, modulePath);
+        mch.start();
+    }
+    
+    
+    public void checkoutAndCreateModuleRows() {
+        for (Application a : needsRowCreation) {
+            checkoutCVSmoduleAndCreateRow(a);
+        }
+        needsRowCreation.removeAll(needsRowCreation);
     }
 
 }
