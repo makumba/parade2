@@ -362,8 +362,8 @@ public class Parade {
             // let's get the path to where the interesting data is
             Row r = getRows().get(i.next());
 
-            // we're not interested in the ParaDe row
-            if (r.getRowpath().equals(getBaseDir())) {
+            // we're not interested in the ParaDe row nor module rows
+            if (r.getRowpath().equals(getBaseDir()) || r.getModuleRow()) {
                 continue;
             }
 
