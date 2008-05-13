@@ -245,7 +245,9 @@ public class File {
         while (i.hasNext()) {
             File f = i.next();
             Hibernate.initialize(f.getFiledata());
-            Hibernate.initialize(f.getRow().getApplication().getCvsfiles());
+            if(f.getRow().getApplication() != null) {
+                Hibernate.initialize(f.getRow().getApplication().getCvsfiles());
+            }
         }
 
         tx.commit();

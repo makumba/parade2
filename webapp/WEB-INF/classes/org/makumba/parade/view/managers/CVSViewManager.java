@@ -62,23 +62,29 @@ public class CVSViewManager implements ParadeView {
 
         // let's see if there's a newer version of this on the repository
         boolean newerExists = false;
-        Hibernate.initialize(r.getApplication().getCvsfiles());
-        String repositoryRevision = r.getApplication().getCvsfiles().get(f.getCvsPath());
-        String rowRevision = f.getCvsRevision();
-        if (repositoryRevision != null && rowRevision != null) {
+        String repositoryRevision = "", rowRevision="";
+        
+        if(r.getApplication() != null) {
+            Hibernate.initialize(r.getApplication().getCvsfiles());
+            repositoryRevision = r.getApplication().getCvsfiles().get(f.getCvsPath());
+            rowRevision = f.getCvsRevision();
+            
+            if (repositoryRevision != null && rowRevision != null) {
 
-            if (repositoryRevision.equals("1.1.1.1")) {
-                repositoryRevision = "1.1";
+                if (repositoryRevision.equals("1.1.1.1")) {
+                    repositoryRevision = "1.1";
+                }
+                if (rowRevision.equals("1.1.1.1")) {
+                    rowRevision = "1.1";
+                }
+                
+                newerExists = c.compare(repositoryRevision, rowRevision) == 1;
+                
+            } else {
+                fileView.put("cvsNewerExists", false);
             }
-            if (rowRevision.equals("1.1.1.1")) {
-                rowRevision = "1.1";
-            }
-            
-            newerExists = c.compare(repositoryRevision, rowRevision) == 1;
-            
-        } else {
-            fileView.put("cvsNewerExists", false);
         }
+        
 
         fileView.put("cvsNewerExists", newerExists);
         
@@ -86,7 +92,5 @@ public class CVSViewManager implements ParadeView {
             fileView.put("cvsConflictOnUpdate", CVSManager.cvsConflictOnUpdate(f));
             fileView.put("cvsNewRevision", repositoryRevision == null ? "" : repositoryRevision);
         }
-        
     }
-
 }
