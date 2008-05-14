@@ -1,4 +1,4 @@
-<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak"%>
+<%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 
 <html>
 <head>
@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<mak:object from="parade.Row r" where="r = $row">
+<mak:object from="Row r" where="r = :row">
 <h2>Edit row <mak:value expr="r.rowname"/></h2>
 
 <mak:editForm object="r" action="rowList.jsp" method="post">
