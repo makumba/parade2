@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.makumba.aether.RelationComputationException;
 import org.makumba.aether.RelationComputer;
 import org.makumba.commons.NamedResources;
@@ -24,12 +25,28 @@ import org.makumba.providers.datadefinition.makumba.RecordInfo;
  * 
  */
 public class MakumbaContextRelationComputer implements RelationComputer {
+    
+    protected Logger logger;
 
-    private Row r;
+    protected Row r;
 
-    private RelationCrawler rc;
+    protected RelationCrawler rc;
 
-    private String webappPath;
+    protected String webappPath;
+
+    public MakumbaContextRelationComputer(Row r) {
+        this.r = r;
+        this.webappPath = r.getRowpath() + java.io.File.separator
+                + ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
+        initRelationCrawler();
+        logger = Logger.getLogger(MakumbaContextRelationComputer.class);
+
+    }
+    
+    protected void initRelationCrawler() {
+        this.rc = RelationCrawler.getRelationCrawler(this.webappPath,
+                ParadeRelationComputer.PARADE_DATABASE_NAME, true, "file:/", r.getRowname());
+    }
 
     public String getName() {
         return "MakumbaContextRelationComputer for row " + r.getRowname();
@@ -37,13 +54,12 @@ public class MakumbaContextRelationComputer implements RelationComputer {
 
     public void computeRelations() throws RelationComputationException {
 
-
         // let's compute all relations using the Makumba relations crawler
         // while we crawl, we adjust the MDD provider root to the webapp root
         RecordInfo.setWebappRoot(webappPath);
         
-        for (String path : getNotCrawledFiles()) {
-            System.out.println("now crawling "+path.substring(webappPath.length()));
+        for (String path : getFilesToCrawl()) {
+            logger.debug("Crawling file "+path);
             rc.crawl(path.substring(webappPath.length()));
         }
         
@@ -57,6 +73,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
     public void updateRelation(String filePath) throws RelationComputationException {
         
         if(filePath.startsWith(webappPath)) {
+            logger.debug("Updating relations of "+filePath);
             filePath = filePath.substring(r.getRowpath().length());
             if(filePath.startsWith("/"))
                 filePath = filePath.substring(1);
@@ -66,19 +83,9 @@ public class MakumbaContextRelationComputer implements RelationComputer {
             NamedResources.cleanStaticCache(RecordInfo.infos);
             rc.writeRelationsToDb();
         }
-
     }
 
-    public MakumbaContextRelationComputer(Row r) {
-        this.r = r;
-        this.webappPath = r.getRowpath() + java.io.File.separator
-                + ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
-        this.rc = RelationCrawler.getRelationCrawler(this.webappPath,
-                ParadeRelationComputer.PARADE_DATABASE_NAME, true, "file:/", r.getRowname());
-
-    }
-
-    protected List<String> getNotCrawledFiles() {
+    protected List<String> getFilesToCrawl() {
         List<String> res = new LinkedList<String>();
 
         // we get only the files that are not UP_TO_DATE
@@ -86,7 +93,6 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         TransactionProvider tp = new TransactionProvider(new HibernateTransactionProvider());
 
         org.makumba.Transaction t = tp.getConnectionTo(ParadeRelationComputer.PARADE_DATABASE_NAME);
-        Object[] args = new Object[] { r.getRowpath(), ParadeRelationComputer.PARADE_DATABASE_NAME, r.getId() };
         Map<String, Object> params = new HashMap<String, Object>();
         String webappRoot = r.getRowpath() + "/" + ((RowWebapp)r.getRowdata().get("webapp")).getWebappPath();
         params.put("webappRoot", webappRoot);
@@ -110,6 +116,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
 
     public void deleteRelation(String filePath) throws RelationComputationException {
         if(filePath.startsWith(webappPath)) {
+            logger.debug("Deleting relations of "+filePath);
             filePath = filePath.substring(webappPath.length());
             if(filePath.startsWith("/"))
                 filePath = filePath.substring(1);
