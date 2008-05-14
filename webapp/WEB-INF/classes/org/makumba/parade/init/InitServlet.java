@@ -1,6 +1,9 @@
 package org.makumba.parade.init;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -13,10 +16,15 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
+import org.makumba.HibernateSFManager;
 import org.makumba.aether.Aether;
 import org.makumba.aether.AetherContext;
+import org.makumba.parade.aether.CVSModuleRelationComputer;
+import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.aether.ParadeRelationComputer;
 import org.makumba.parade.model.Parade;
+import org.makumba.parade.model.Row;
+import org.makumba.parade.model.RowMakumba;
 
 import freemarker.template.DefaultObjectWrapper;
 
@@ -32,45 +40,50 @@ public class InitServlet extends HttpServlet implements Runnable {
     
     private static Aether aether;
 
+    private static Map<String, MakumbaContextRelationComputer> rowComputers = new HashMap<String, MakumbaContextRelationComputer>();
+    
     private static Long one = new Long(1);
 
     private Session session = null;
 
     private Parade p = null;
 
+
     private static freemarker.template.Configuration freemarkerCfg;
     
-    private static boolean aetherEnabled = ParadeProperties.getProperty("aetherEnabled") != null && ParadeProperties.getProperty("aetherEnabled").equals("true");
+    public static boolean aetherEnabled = ParadeProperties.getProperty("aetherEnabled") != null && ParadeProperties.getProperty("aetherEnabled").equals("true");
 
     {
-        /* Initializing Hibernate */
+        /* Initializing Makumba-driven Hibernate */
+        Vector<String> resources = new Vector<String>();
+        
         try {
-            cfg = new Configuration().configure("localhost_mysql_parade.cfg.xml");
-            cfg.addResource("org/makumba/parade/model/AbstractFileData.hbm.xml");
-            cfg.addResource("org/makumba/parade/model/Parade.hbm.xml");
-            cfg.addResource("org/makumba/parade/model/Row.hbm.xml");
-            cfg.addResource("org/makumba/parade/model/AbstractRowData.hbm.xml");
-            cfg.addResource("org/makumba/parade/model/File.hbm.xml");
-            cfg.addResource("org/makumba/parade/model/Log.hbm.xml");
-            cfg.addResource("org/makumba/parade/model/ActionLog.hbm.xml");
-            cfg.addResource("org/makumba/parade/model/Application.hbm.xml");
-            cfg.addResource("org/makumba/parade/model/User.hbm.xml");
+            //cfg = new Configuration().configure("localhost_mysql_parade.cfg.xml");
+            resources.add("org/makumba/parade/model/AbstractFileData.hbm.xml");
+            resources.add("org/makumba/parade/model/Parade.hbm.xml");
+            resources.add("org/makumba/parade/model/Row.hbm.xml");
+            resources.add("org/makumba/parade/model/AbstractRowData.hbm.xml");
+            resources.add("org/makumba/parade/model/File.hbm.xml");
+            resources.add("org/makumba/parade/model/Log.hbm.xml");
+            resources.add("org/makumba/parade/model/ActionLog.hbm.xml");
+            resources.add("org/makumba/parade/model/Application.hbm.xml");
+            resources.add("org/makumba/parade/model/User.hbm.xml");
             
             if(aetherEnabled) {
                 
                 // Aether XMLs
                 // In a standalone Aether those would be in initialised by an own Aether sessionFactory
                 // but that seems a bit too resource-consuming, and we anyway need to query this model
-                cfg.addResource("org/makumba/aether/model/InitialPercolationRule.hbm.xml");
-                cfg.addResource("org/makumba/aether/model/PercolationRule.hbm.xml");
-                cfg.addResource("org/makumba/aether/model/PercolationStep.hbm.xml");
+                resources.add("org/makumba/aether/model/InitialPercolationRule.hbm.xml");
+                resources.add("org/makumba/aether/model/PercolationRule.hbm.xml");
+                resources.add("org/makumba/aether/model/PercolationStep.hbm.xml");
                 
             }
             
+            HibernateSFManager.setExternalConfigurationResources(resources);
+            SessionFactory sf = HibernateSFManager.getSF();
 
-            SessionFactory sf = cfg.buildSessionFactory();
-
-            SchemaUpdate schemaUpdate = new SchemaUpdate(cfg);
+            SchemaUpdate schemaUpdate = new SchemaUpdate(HibernateSFManager.getConfiguredConfiguration());
             schemaUpdate.execute(true, true);
 
             // now it's ready to be available for other classes
@@ -137,11 +150,6 @@ public class InitServlet extends HttpServlet implements Runnable {
             e.printStackTrace();
         }
         Hibernate.initialize(p.getRows());
-
-        tx.commit();
-
-        session.close();
-        
         
         if(aetherEnabled) {
             
@@ -151,9 +159,28 @@ public class InitServlet extends HttpServlet implements Runnable {
             ctx.addRelationComputer(new ParadeRelationComputer());
             
             
+            for(Row r : p.getRows().values()) {
+                
+                if(r.getRowname().equals("(root)")) {
+                    continue;
+                }
+
+                if(((RowMakumba)r.getRowdata().get("makumba")).getHasMakumba() && !r.getModuleRow()) {
+                    MakumbaContextRelationComputer c = new MakumbaContextRelationComputer(r); 
+                    ctx.addRelationComputer(c);
+                    rowComputers.put(r.getRowpath(), c);
+                    
+                } else if(((RowMakumba)r.getRowdata().get("makumba")).getHasMakumba() && r.getModuleRow()) {
+                    ctx.addRelationComputer(new CVSModuleRelationComputer(r));
+                }
+            }
             aether = Aether.getAether(ctx);
-            
         }
+        
+        tx.commit();
+
+        session.close();
+
 
         logger.info("INIT: Launching ParaDe finished at " + new java.util.Date());
         long end = System.currentTimeMillis();
@@ -169,6 +196,10 @@ public class InitServlet extends HttpServlet implements Runnable {
 
     public static freemarker.template.Configuration getFreemarkerCfg() {
         return freemarkerCfg;
+    }
+    
+    public static MakumbaContextRelationComputer getContextRelationComputer(String rowPath) {
+        return rowComputers.get(rowPath);
     }
 
 }

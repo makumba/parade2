@@ -29,6 +29,7 @@
 	<property name="hibernate.c3p0.max_statements">0</property>
 	<property name="hibernate.c3p0.preferredTestQuery">select 1;</property>
 	
+	<property name="makumba.mdd.list">org.makumba.devel.relations.Relation, org.makumba.devel.relations.RelationOrigin, org.makumba.devel.relations.WebappDatabase</property>
 	
 	 
 </session-factory>

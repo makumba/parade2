@@ -82,7 +82,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
      * 
      */
     public synchronized void directoryRefresh(Row row, String path, boolean local) {
-        logger.debug("Refreshing directory "+path+" of row "+row.getRowname());
         java.io.File currDir = new java.io.File(path);
 
         if (currDir.isDirectory()) {

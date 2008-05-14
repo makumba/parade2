@@ -5,4 +5,4 @@ nickname=char[255]
 email=char[255]
 jpegPhoto=binary
 cvsuser=char[255]
-parade=ptr parade.Parade
+parade=ptr Parade

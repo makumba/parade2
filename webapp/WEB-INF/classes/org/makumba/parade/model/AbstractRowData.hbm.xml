@@ -60,6 +60,7 @@
         
         <property name="version" />
         <property name="db" />
+        <property name="hasMakumba" />
         
     </joined-subclass>
     

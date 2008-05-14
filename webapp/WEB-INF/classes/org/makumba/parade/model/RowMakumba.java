@@ -7,6 +7,16 @@ public class RowMakumba extends AbstractRowData implements RowData {
     private String version;
 
     private String db;
+    
+    private boolean hasMakumba;
+
+    public boolean getHasMakumba() {
+        return hasMakumba;
+    }
+
+    public void setHasMakumba(boolean hasMakumba) {
+        this.hasMakumba = hasMakumba;
+    }
 
     @Override
     public Long getId() {

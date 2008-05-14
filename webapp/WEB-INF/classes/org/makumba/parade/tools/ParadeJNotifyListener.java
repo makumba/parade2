@@ -10,6 +10,8 @@ import net.contentobjects.jnotify.JNotifyListener;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.makumba.aether.RelationComputationException;
+import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
@@ -38,6 +40,13 @@ public class ParadeJNotifyListener implements JNotifyListener {
                 + newName);
         checkSpecialFile(rootPath, oldName);
         checkSpecialFile(rootPath, newName);
+        
+        if(InitServlet.aetherEnabled) {
+            
+            deleteRelations(rootPath, oldName);
+            updateRelations(rootPath, newName);
+        }
+        
         if (isLocked(rootPath, oldName, JNotify.FILE_RENAMED))
             return;
         cacheDeleted(rootPath, oldName);
@@ -48,6 +57,11 @@ public class ParadeJNotifyListener implements JNotifyListener {
     public void fileModified(int wd, String rootPath, String name) {
         logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
         checkSpecialFile(rootPath, name);
+        
+        if(InitServlet.aetherEnabled) {
+            updateRelations(rootPath, name);
+        }
+        
         if (isLocked(rootPath, name, JNotify.FILE_MODIFIED))
             return;
         cacheModified(rootPath, name);
@@ -56,6 +70,11 @@ public class ParadeJNotifyListener implements JNotifyListener {
     public void fileDeleted(int wd, String rootPath, String name) {
         logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", " + name);
         checkSpecialFile(rootPath, name);
+        
+        if(InitServlet.aetherEnabled) {
+            deleteRelations(rootPath, name);
+        }
+        
         if (isLocked(rootPath, name, JNotify.FILE_DELETED))
             return;
         cacheDeleted(rootPath, name);
@@ -64,6 +83,11 @@ public class ParadeJNotifyListener implements JNotifyListener {
     public void fileCreated(int wd, String rootPath, String name) {
         logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", " + name);
         checkSpecialFile(rootPath, name);
+        
+        if(InitServlet.aetherEnabled) {
+            updateRelations(rootPath, name);
+        }
+        
         if (isLocked(rootPath, name, JNotify.FILE_CREATED))
             return;
         cacheNew(rootPath, name);
@@ -271,6 +295,34 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
         return false;
     }
+    
+    
+    private void updateRelations(String rootPath, String name) {
+     
+        if(name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) {
+            logger.debug("Updating relations for file "+name+" in "+rootPath);
+            try {
+                InitServlet.getContextRelationComputer(rootPath).updateRelation(rootPath + (rootPath.endsWith(java.io.File.separator) || name.startsWith(java.io.File.separator) ? "" : "/")  + name);
+            } catch (RelationComputationException e) {
+                logger.warn("Failed updating relations for file "+name+" in "+rootPath+": "+e.getMessage());
+            }
+            logger.debug("Finished updating relations for file "+name+" in "+rootPath);
+        }
+    }
+    
+    private void deleteRelations(String rootPath, String name) {
+
+        if(name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) {
+            logger.debug("Deleting relations for file "+name+" in "+rootPath);
+            try {
+                InitServlet.getContextRelationComputer(rootPath).deleteRelation(rootPath + (rootPath.endsWith(java.io.File.separator) || name.startsWith(java.io.File.separator) ? "" : "/")  + name);
+            } catch (RelationComputationException e) {
+                logger.warn("Failed deleting relations for file "+name+" in "+rootPath+": "+e.getMessage());
+            }
+            logger.debug("Finished deleting relations for file "+name+" in "+rootPath);
+        }
+    }
+    
 
     public static void removeDirectoryLock(String absoluteDirectoryPath) {
         java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + LOCK);

@@ -1,0 +1,9 @@
+rowname=char[255]
+rowpath=char[255]
+description=char[255]
+parade=ptr Parade ;needs to have column id_parade
+application=ptr Application
+user=ptr User
+automaticCvsUpdate=int{"No"=10, "Yes"=20}
+#files=set parade.File
+#rowdata=set AbstractRowData ;inheritance...

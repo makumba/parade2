@@ -1,7 +1,7 @@
 baseDir=char[255]
-applications = set parade.Application
-users = set parade.User
-rows = set parade.Row
+applications = set Application
+users = set User
+rows = set Row
 JNotifyWatches=set
 JNotifyWatches->rowname=char[255]
 JNotifyWatches->watch=int

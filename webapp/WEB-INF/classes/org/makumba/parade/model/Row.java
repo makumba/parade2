@@ -145,5 +145,9 @@ public class Row {
     public void setWatchedByJNotify(boolean watchedByJNotify) {
         this.watchedByJNotify = watchedByJNotify;
     }
+    
+    public String toString() {
+        return getRowname() + " - " + getDescription();
+    }
 
 }

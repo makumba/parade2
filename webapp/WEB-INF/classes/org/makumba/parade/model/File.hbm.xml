@@ -8,7 +8,7 @@
 	
 		<cache usage="read-write" />
 	
-		<id name="id"> <!-- unsaved-value="undefined" -->
+		<id name="id" column="file"> <!-- unsaved-value="undefined" -->
 		    <generator class="native" />
 		</id>
 		
