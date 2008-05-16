@@ -1,6 +1,7 @@
 package org.makumba.parade.tools;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -11,10 +12,12 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.aether.RelationComputationException;
-import org.makumba.parade.aether.MakumbaContextRelationComputer;
+import org.makumba.parade.access.ActionLogDTO;
+import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.User;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.MakumbaManager;
 
@@ -65,6 +68,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
         if (isLocked(rootPath, name, JNotify.FILE_MODIFIED))
             return;
         cacheModified(rootPath, name);
+        logAction(rootPath, name, JNotify.FILE_MODIFIED);
     }
 
     public void fileDeleted(int wd, String rootPath, String name) {
@@ -78,6 +82,8 @@ public class ParadeJNotifyListener implements JNotifyListener {
         if (isLocked(rootPath, name, JNotify.FILE_DELETED))
             return;
         cacheDeleted(rootPath, name);
+        logAction(rootPath, name, JNotify.FILE_DELETED);
+
     }
 
     public void fileCreated(int wd, String rootPath, String name) {
@@ -91,6 +97,8 @@ public class ParadeJNotifyListener implements JNotifyListener {
         if (isLocked(rootPath, name, JNotify.FILE_CREATED))
             return;
         cacheNew(rootPath, name);
+        logAction(rootPath, name, JNotify.FILE_MODIFIED);
+
     }
 
     /**
@@ -323,6 +331,62 @@ public class ParadeJNotifyListener implements JNotifyListener {
         }
     }
     
+    private void logAction(String root, String file, int action) {
+        
+        switch(action) {
+        
+        case JNotify.FILE_CREATED:
+            logAction(root, file, ActionTypes.SAVE.action());
+            break;
+            
+        case JNotify.FILE_MODIFIED:
+            logAction(root, file, ActionTypes.SAVE.action());
+            break;
+            
+        case JNotify.FILE_DELETED:
+            logAction(root, file, ActionTypes.DELETE.action());
+            break;
+            
+        default:
+            break;
+        }
+        
+    }
+    
+    private void logAction(String root, String file, String action) {
+        Session s = null;
+        try {
+            s = InitServlet.getSessionFactory().openSession();
+            Transaction tx = s.beginTransaction();
+            Parade p = (Parade)s.get(Parade.class, new Long(1));
+            Row r = findRowFromContext(root, p);
+            
+            ActionLogDTO log = new ActionLogDTO();
+            log.setAction(action);
+            log.setDate(new Date());
+            log.setParadecontext(r.getRowname());
+            log.setFile(file);
+            
+            // TODO maybe we have to replace this with a more elaborate mechanism
+            // such as trying to figure who does unison via a process listing
+            User u = r.getUser();
+            if(u != null) {
+                log.setUser(u.getLogin());
+            } else {
+                logger.error("User for row "+r.getRowname() + " not set! Please go to the ParaDe admin interface and set it there!");
+            }
+
+            TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+            
+            tx.commit();
+            
+        } finally {
+            if(s!=null) {
+                s.close();
+            }
+        }
+        
+    }
 
     public static void removeDirectoryLock(String absoluteDirectoryPath) {
         java.io.File f = new java.io.File(absoluteDirectoryPath + java.io.File.separator + LOCK);
