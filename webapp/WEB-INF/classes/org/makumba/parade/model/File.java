@@ -47,6 +47,8 @@ public class File {
 
     private Date cvsDate;
     
+    private boolean crawled = false;
+    
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
         FileManager fileMgr = new FileManager();
@@ -193,6 +195,14 @@ public class File {
         this.cvsDate = cvsDate;
     }
     
+    public boolean getCrawled() {
+        return crawled;
+    }
+
+    public void setCrawled(boolean crawled) {
+        this.crawled = crawled;
+    }
+    
     public String getFileURI() {
         return "file://" + row.getRowname() + path.substring(row.getRowpath().length()).replace(java.io.File.separator, "/");
     }
@@ -284,4 +294,5 @@ public class File {
 
         return children;
     }
+
 }

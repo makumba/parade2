@@ -9,3 +9,4 @@ cvsCheckedOutRevision=char[255]
 cvsDate=date
 row = ptr Row
 isDir=boolean
+crawled=boolean

@@ -52,16 +52,20 @@ public class CVSModuleRelationComputer extends MakumbaContextRelationComputer im
         params.put("rowId", r.getId().intValue());
         Vector<Dictionary<String, Object>> v = t
                 .executeQuery(
-                        "SELECT f.path AS path FROM File f WHERE (f.path like :webappRootLike AND f.isDir = false AND f.row.id = :rowId) AND f.path NOT IN (SELECT concat(:webappRoot, r.fromFile) FROM org.makumba.devel.relations.Relation r JOIN r.webapp w WHERE w.relationDatabase = :relationsDb AND w.webappRoot = :webappRoot)",
+                        "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND f.isDir = false AND f.row.id = :rowId AND f.crawled = false",
                         params);
 
         for (Dictionary<String, Object> dictionary : v) {
-            res.add((String) dictionary.get("path"));
+            String path = (String) dictionary.get("path");
+            if(path.endsWith(".mdd") || path.endsWith(".jsp") || path.endsWith(".java")) {
+                res.add(path);
+            }
         }
 
         t.close();
 
         return res; 
     }
+
     
 }

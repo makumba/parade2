@@ -2,17 +2,22 @@ package org.makumba.parade.aether;
 
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.makumba.aether.RelationComputationException;
 import org.makumba.aether.RelationComputer;
 import org.makumba.commons.NamedResources;
 import org.makumba.db.hibernate.HibernateTransactionProvider;
 import org.makumba.devel.relations.RelationCrawler;
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowWebapp;
 import org.makumba.providers.TransactionProvider;
@@ -58,7 +63,9 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         // while we crawl, we adjust the MDD provider root to the webapp root
         RecordInfo.setWebappRoot(webappPath);
         
-        for (String path : getFilesToCrawl()) {
+        List<String> filesToCrawl = getFilesToCrawl();
+        
+        for (String path : filesToCrawl) {
             logger.debug("Crawling file "+path);
             rc.crawl(path.substring(webappPath.length()));
         }
@@ -66,8 +73,38 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         // we set it back to null after the crawling and clean the cache
         RecordInfo.setWebappRoot(null);
         NamedResources.cleanStaticCache(RecordInfo.infos);
-
+        
         rc.writeRelationsToDb();
+        
+        // now we also update the file cache of the crawled files. they were crawled.
+        if(filesToCrawl.size() != 0) {
+            Session s = null;
+            try {
+                s = InitServlet.getSessionFactory().openSession();
+                Transaction tx = s.beginTransaction();
+                Query q = s.createQuery("update File set crawled = true where path in (" + fileListToHQLSet(filesToCrawl) + ")");
+                q.executeUpdate();
+                tx.commit();
+                
+            } finally {
+                if(s!= null) {
+                    s.close();
+                }
+            }
+        }
+    }
+    
+    private String fileListToHQLSet(List<String> files) {
+        String res = "";
+        Iterator<String> it = files.iterator();
+        while (it.hasNext()) {
+            String s = it.next();
+            res += "'" + s + "'";
+            if(it.hasNext()) {
+                res+= ", ";
+            }
+        }
+        return res;
     }
 
     public void updateRelation(String filePath) throws RelationComputationException {
@@ -102,11 +139,14 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         params.put("rowId", r.getId().intValue());
         Vector<Dictionary<String, Object>> v = t
                 .executeQuery(
-                        "SELECT f.path AS path FROM File f WHERE (f.path like :webappRootLike AND f.isDir = false AND f.cvsStatus != 100 AND f.row.id = :rowId) AND f.path NOT IN (SELECT concat(:webappRoot, r.fromFile) FROM org.makumba.devel.relations.Relation r JOIN r.webapp w WHERE w.relationDatabase = :relationsDb AND w.webappRoot = :webappRoot)",
+                        "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND f.isDir = false AND f.cvsStatus != 100 AND f.row.id = :rowId AND f.crawled = false",
                         params);
 
         for (Dictionary<String, Object> dictionary : v) {
-            res.add((String) dictionary.get("path"));
+            String path = (String) dictionary.get("path");
+            if(path.endsWith(".mdd") || path.endsWith(".jsp") || path.endsWith(".java")) {
+                res.add(path);
+            }
         }
 
         t.close();
@@ -122,6 +162,12 @@ public class MakumbaContextRelationComputer implements RelationComputer {
                 filePath = filePath.substring(1);
             rc.deleteFileRelations(filePath);
         }
+    }
+    
+
+    // TODO implement this
+    public static void resetCrawlStatus(Row r, Session s) {
+        
     }
     
 }
