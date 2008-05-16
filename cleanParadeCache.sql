@@ -1,4 +1,3 @@
-drop table FILE_CVS;
 drop table FILE_TRACKER;
 drop table File;
 drop table FileData;
