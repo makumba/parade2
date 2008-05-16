@@ -5,8 +5,7 @@
 	<c:set var="user" value="${user_login}" />
 </c:if>
 
-<mak:object from="parade.User u" where="u.login=:user">
-
+<mak:object from="User u" where="u.login=:user">
 
 	<html>
 	<head>
@@ -55,7 +54,7 @@ Here's the information ParaDe knows about you.
 					<td style="font-weight: bold;">CVS user</td>
 					<td><mak:value expr="u.cvsuser" /></td>
 				</tr>
-				<mak:list from="parade.Row r" where="r.user = u" separator=" and ">
+				<mak:list from="Row r" where="r.user = u" separator=" and ">
 				<c:if test="${mak:maxCount() > 0}">
 				<c:if test="${mak:count()==1}"><tr></tr><td colspan="2">&nbsp;</td><tr><td colspan="2" style="font-weight: bold;">Proud owner of row</c:if>
 				<mak:value expr="r.rowname" />

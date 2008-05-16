@@ -8,7 +8,7 @@
 
 <h2>Hi ${user_name}!</h2>
 Here you can edit your user information.<br><br>
-<mak:object from="parade.User u" where="u.login=:user_login">
+<mak:object from="User u" where="u.login=:user_login">
 <mak:form action="userView.jsp" method="post" message="Profile information saved">
 <mak:editForm object="u">
 <table>
@@ -32,7 +32,7 @@ Here you can edit your user information.<br><br>
   <td>CVS user</td>
   <td><mak:input field="cvsuser"/></td>
 </tr>
-<mak:list from="parade.Row r" where="r.user = u">
+<mak:list from="Row r" where="r.user = u">
 <mak:editForm object="r">
 <tr>
   <td>Automatic CVS update of row <mak:value expr="r.rowname"/></td>
