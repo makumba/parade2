@@ -1,10 +1,6 @@
 package org.makumba.aether.percolation;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Dictionary;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -13,7 +9,6 @@ import org.hibernate.Transaction;
 import org.makumba.aether.AetherEvent;
 import org.makumba.aether.PercolationException;
 import org.makumba.aether.UserTypes;
-import org.makumba.aether.model.AetherRule;
 import org.makumba.aether.model.InitialPercolationRule;
 import org.makumba.aether.model.PercolationRule;
 import org.makumba.parade.aether.ActionTypes;
@@ -59,22 +54,25 @@ public class RuleBasedPercolator implements Percolator {
             logger.debug("Found " + rules.size() + " initial percolation rules");
             for (InitialPercolationRule r : rules) {
                 logger.debug(r.toString());
-                
-                if(!ActionTypes.getActions().contains(r.getAction())) {
-                    logger.warn("Initial percolation rule \""+r.toString()+"\" has invalid action "+r.getAction()+". It will be ignored.");
+
+                if (!ActionTypes.getActions().contains(r.getAction())) {
+                    logger.warn("Initial percolation rule \"" + r.toString() + "\" has invalid action " + r.getAction()
+                            + ". It will be ignored.");
                     r.setActive(false);
                 }
-                
-                if(!UserTypes.getUserTypes().contains(r.getUserType())) {
-                    logger.warn("Initial percolation rule \""+r.toString()+"\" has invalid user type "+r.getUserType()+". It will be ignored.");
+
+                if (!UserTypes.getUserTypes().contains(r.getUserType())) {
+                    logger.warn("Initial percolation rule \"" + r.toString() + "\" has invalid user type "
+                            + r.getUserType() + ". It will be ignored.");
                     r.setActive(false);
                 }
-                
-                if(!ObjectTypes.getObjectTypes().contains(r.getObjectType())) {
-                    logger.warn("Initial percolation rule \""+r.toString()+"\" has invalid object type "+r.getObjectType()+". It will be ignored.");
+
+                if (!ObjectTypes.getObjectTypes().contains(r.getObjectType())) {
+                    logger.warn("Initial percolation rule \"" + r.toString() + "\" has invalid object type "
+                            + r.getObjectType() + ". It will be ignored.");
                     r.setActive(false);
                 }
-                
+
             }
 
             tx.commit();
@@ -89,7 +87,7 @@ public class RuleBasedPercolator implements Percolator {
 
     private void checkPercolationRules() {
         logger.info("Checking percolation rules...");
-        
+
         Session s = null;
         Transaction tx = null;
         try {
@@ -100,17 +98,19 @@ public class RuleBasedPercolator implements Percolator {
             logger.debug("Found " + rules.size() + " percolation rules");
             for (PercolationRule r : rules) {
                 logger.debug(r.toString());
-                
-                if(!ObjectTypes.getObjectTypes().contains(r.getObject())) {
-                    logger.warn("Initial percolation rule \""+r.toString()+"\" has invalid object type "+r.getObject()+". It will be ignored.");
+
+                if (!ObjectTypes.getObjectTypes().contains(r.getObject())) {
+                    logger.warn("Initial percolation rule \"" + r.toString() + "\" has invalid object type "
+                            + r.getObject() + ". It will be ignored.");
                     r.setActive(false);
                 }
-                
-                if(!ObjectTypes.getObjectTypes().contains(r.getSubject())) {
-                    logger.warn("Initial percolation rule \""+r.toString()+"\" has invalid subject type "+r.getObject()+". It will be ignored.");
+
+                if (!ObjectTypes.getObjectTypes().contains(r.getSubject())) {
+                    logger.warn("Initial percolation rule \"" + r.toString() + "\" has invalid subject type "
+                            + r.getObject() + ". It will be ignored.");
                     r.setActive(false);
                 }
-                
+
             }
 
             tx.commit();
@@ -126,7 +126,7 @@ public class RuleBasedPercolator implements Percolator {
     public void configure(String databaseName, SessionFactory sessionFactory) {
         this.databaseName = databaseName;
         this.sessionFactory = sessionFactory;
-        
+
         logger.info("Starting initialisation of Rule-based percolator");
 
         checkInitialPercolationRules();

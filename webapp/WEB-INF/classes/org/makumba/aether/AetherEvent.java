@@ -10,7 +10,7 @@ public class AetherEvent {
     protected String objectURL;
     protected String objectType;
     protected String user;
-    protected int userType;
+    protected String userType;
     protected String action;
     
     public String getObjectURL() {
@@ -25,7 +25,7 @@ public class AetherEvent {
         return user;
     }
 
-    public int getUserType() {
+    public String getUserType() {
         return userType;
     }
 
@@ -33,7 +33,7 @@ public class AetherEvent {
         return action;
     }
 
-    public AetherEvent(String objectURL, String objectType, String user, int userType, String action) {
+    public AetherEvent(String objectURL, String objectType, String user, String userType, String action) {
         super();
         this.objectURL = objectURL;
         this.objectType = objectType;
@@ -51,5 +51,8 @@ public class AetherEvent {
         this.action = e.getAction();
     }
     
+    public String toString() {
+        return this.user + " ("+this.userType+") --(" + this.action + ")--> " + this.objectURL + " ("+this.objectType + ")";
+    }
 
 }

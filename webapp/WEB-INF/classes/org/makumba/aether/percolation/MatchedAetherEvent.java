@@ -16,7 +16,7 @@ public class MatchedAetherEvent extends AetherEvent {
     private String userGroup;
     
 
-    public MatchedAetherEvent(String objectURL, String objectType, String user, int userType, String action, int initialPercolationLevel, String userGroup) {
+    public MatchedAetherEvent(String objectURL, String objectType, String user, String userType, String action, int initialPercolationLevel, String userGroup) {
         super(objectURL, objectType, user, userType, action);
         this.initialPercolationLevel = initialPercolationLevel;
         this.userGroup = userGroup;

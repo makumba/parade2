@@ -5,6 +5,17 @@
 
 <hibernate-mapping package="org.makumba.parade.model"
 	default-lazy="false" >
+	
+	<typedef name="objectType"
+		class="org.makumba.parade.tools.EnumUserType">
+		<param name="enumClass">org.makumba.parade.aether.ObjectTypes</param>
+	</typedef>
+
+	<typedef name="userType"
+		class="org.makumba.parade.tools.EnumUserType">
+		<param name="enumClass">org.makumba.aether.UserTypes</param>
+	</typedef>
+	
 	<class name="ActionLog">
 
 		<cache usage="read-write" />
@@ -23,6 +34,8 @@
 		<property name="origin" />
 		<property name="paradecontext" />
 		<property name="file" />
+		<property name="objectType" type="objectType" />
+		<property name="userType" type="userType" />
 
 	</class>
 </hibernate-mapping>

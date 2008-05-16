@@ -201,5 +201,9 @@ public class InitServlet extends HttpServlet implements Runnable {
     public static MakumbaContextRelationComputer getContextRelationComputer(String rowPath) {
         return rowComputers.get(rowPath);
     }
+    
+    public static Aether getAether() {
+        return aether;
+    }
 
 }

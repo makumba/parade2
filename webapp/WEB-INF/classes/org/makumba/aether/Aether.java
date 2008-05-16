@@ -3,7 +3,6 @@ package org.makumba.aether;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
 import org.makumba.aether.percolation.Percolator;
 import org.makumba.aether.percolation.RuleBasedPercolator;
 
@@ -70,5 +69,15 @@ public class Aether {
                         + e.getMessage());
             }
         }
+    }
+
+    public void registerEvent(AetherEvent e) {
+        logger.debug("Registering new Aether event \"" + e.toString()+"\"");
+        try {
+            p.percolate(e);
+        } catch (PercolationException e1) {
+            logger.warn("Exception while percolating event \""+e.toString()+"\": "+e1.getMessage());
+        }
+
     }
 }

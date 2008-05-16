@@ -2,26 +2,27 @@
 <!DOCTYPE hibernate-mapping PUBLIC 
       "-//Hibernate/Hibernate Mapping DTD//EN"
       "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-      
+
 <hibernate-mapping package="org.makumba.parade.model">
+
 	<class name="Log">
-	
 		<cache usage="read-write" />
-	
+
 		<id name="id">
 			<generator class="native" />
 		</id>
-		
+
 		<property name="date" />
 		<property name="level" />
-		<property name="message" length="2000"/>
+		<property name="message" length="2000" />
 		<property name="throwable" />
 		<property name="origin" />
 		
-		<many-to-one name="actionLog" not-null="true" outer-join="false"/>
-		
-		
+		<many-to-one name="actionLog" not-null="true"
+			outer-join="false" />
+
+
 	</class>
 </hibernate-mapping>
 
-      
+

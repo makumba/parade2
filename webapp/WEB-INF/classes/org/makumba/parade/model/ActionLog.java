@@ -2,6 +2,9 @@ package org.makumba.parade.model;
 
 import java.util.Date;
 
+import org.makumba.aether.UserTypes;
+import org.makumba.parade.aether.ObjectTypes;
+
 public class ActionLog {
 
     private Long id;
@@ -25,6 +28,10 @@ public class ActionLog {
     private String paradecontext;
 
     private String file;
+    
+    private ObjectTypes objectType;
+    
+    private UserTypes userType;
 
     public String getAction() {
         return action;
@@ -112,6 +119,22 @@ public class ActionLog {
 
     public void setFile(String file) {
         this.file = file;
+    }
+
+    public ObjectTypes getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(ObjectTypes objectType) {
+        this.objectType = objectType;
+    }
+
+    public UserTypes getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserTypes userType) {
+        this.userType = userType;
     }
 
 }

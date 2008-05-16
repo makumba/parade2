@@ -3,27 +3,27 @@ package org.makumba.aether;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.makumba.parade.aether.ActionTypes;
-
 public enum UserTypes {
     
-    ALL(10),
-    OWNER(20),
-    ALL_BUT_OWNER(30);
+    NONE("none"),
+    ALL("all"),
+    OWNER("owner"),
+    ALL_BUT_OWNER("all_but_owner"),
+    ALL_BUT_ACTOR("all_but_actor");
     
-    private int type;
+    private String type;
 
-    UserTypes(int type) {
+    UserTypes(String type) {
         this.type = type;
     }
     
-    public int type() {
+    public String type() {
         return this.type;
     }
 
-    public static Set<Integer> getUserTypes() {
+    public static Set<String> getUserTypes() {
         UserTypes[] v = values();
-        Set<Integer> res = new HashSet<Integer>();
+        Set<String> res = new HashSet<String>();
         for (int i = 0; i < v.length; i++) {
             res.add(v[i].type());
         }

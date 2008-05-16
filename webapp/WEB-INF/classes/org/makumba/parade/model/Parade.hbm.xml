@@ -35,12 +35,6 @@
 			<one-to-many class="Row" />
 		</map>
 		
-		<map name="JNotifyWatches" lazy="true" table="JNotifyWatches">
-			<key column = "WATCH_ID"/>
-			<index column = "rowname" type="string"/>
-			<element column = "watch" type="int" not-null="true" />
-		</map>
-		
 	</class>
 </hibernate-mapping>
 

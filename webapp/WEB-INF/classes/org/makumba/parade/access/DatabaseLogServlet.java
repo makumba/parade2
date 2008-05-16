@@ -20,7 +20,10 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.makumba.aether.AetherEvent;
+import org.makumba.aether.UserTypes;
 import org.makumba.parade.aether.ActionTypes;
+import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.ActionLog;
@@ -58,7 +61,6 @@ public class DatabaseLogServlet extends HttpServlet {
 
     private String lastCommitId;
 
-    
     public void init(ServletConfig conf) {
         rp = new RowProperties();
     }
@@ -103,19 +105,46 @@ public class DatabaseLogServlet extends HttpServlet {
                 s.close();
             }
 
+            if (record instanceof ActionLogDTO && InitServlet.aetherEnabled) {
+                AetherEvent e = buildAetherEventFromLog((ActionLogDTO) record);
+
+                InitServlet.getAether().registerEvent(e);
+            }
+
         } catch (NullPointerException npe) {
-            //throw(npe);
+            // throw(npe);
             StringWriter sw = new StringWriter();
             PrintWriter p = new PrintWriter(sw);
             npe.printStackTrace(p);
             sw.flush();
             logger.error("\n***********************************************************************\n"
-                    + "NPE in database log servlet. please tell developers!\n"
-                    + "error message is:\n"
-                    + sw.toString()
+                    + "NPE in database log servlet. please tell developers!\n" + "error message is:\n" + sw.toString()
                     + "***********************************************************************");
 
         }
+    }
+
+    private AetherEvent buildAetherEventFromLog(ActionLogDTO log) {
+        String objectURL = log.getObjectType().prefix() + log.getParadecontext() + "/";
+        switch (log.getObjectType()) {
+        case ROW:
+            objectURL += log.getParadecontext();
+            break;
+        case USER:
+            objectURL += log.getUser();
+            break;
+        case FILE:
+            objectURL += log.getFile();
+            break;
+        case DIR:
+            objectURL += log.getFile();
+            break;
+        case CVSFILE:
+            objectURL += log.getFile();
+            break;
+        }
+
+        return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getUserType().type(), log.getAction());
     }
 
     private void handleActionLog(HttpServletRequest req, Object record, Session s) {
@@ -160,7 +189,7 @@ public class DatabaseLogServlet extends HttpServlet {
     }
 
     /**
-     * Filter that does some "cosmetics" on the log and extracts meaning
+     * Filter that does some "cosmetics" on the log and gives it meaning
      * 
      * @param log
      *            the original log to be altered
@@ -179,13 +208,13 @@ public class DatabaseLogServlet extends HttpServlet {
         if (log.getAction() == null)
             log.setAction("");
 
-        if(log.getParadecontext() == null) {
+        if (log.getParadecontext() == null) {
             log.setParadecontext(getParam("context", queryString));
         }
-        if(log.getParadecontext() == null) {
+        if (log.getParadecontext() == null) {
             log.setParadecontext(log.getContext());
         }
-        
+
         String actionType = "", op = "", params = "", display = "", path = "", file = "";
 
         if (uri.indexOf("browse.jsp") > -1)
@@ -219,21 +248,28 @@ public class DatabaseLogServlet extends HttpServlet {
         // browse actions
         if (actionType.equals("browseRow")) {
             log.setAction(ActionTypes.BROWSE_ROW.action());
+            log.setObjectType(ObjectTypes.ROW);
+            log.setUserType(UserTypes.ALL_BUT_ACTOR);
 
         }
         if (actionType.equals("browse") || actionType.equals("fileBrowse")) {
             log.setAction(ActionTypes.BROWSE_DIR.action());
             log.setFile(nicePath(path, ""));
+            log.setObjectType(ObjectTypes.DIR);
+            log.setUserType(UserTypes.ALL_BUT_ACTOR);
         }
 
         // view actions
         if (uri.endsWith(".jspx")) {
             log.setAction(ActionTypes.VIEW.action());
             // fetch the webapp root in a hackish way
-            Map<String, String> rowDef = rp.getRowDefinitions().get(log.getParadecontext() == null ? log.getContext() : log.getParadecontext());
-            if(rowDef != null) {
+            Map<String, String> rowDef = rp.getRowDefinitions().get(
+                    log.getParadecontext() == null ? log.getContext() : log.getParadecontext());
+            if (rowDef != null) {
                 String webapp = rowDef.get("webapp");
                 log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
+                log.setObjectType(ObjectTypes.FILE);
+                log.setUserType(UserTypes.ALL_BUT_ACTOR);
             }
 
         }
@@ -242,18 +278,24 @@ public class DatabaseLogServlet extends HttpServlet {
         if (actionType.equals("file") && op.equals("editFile")) {
             log.setAction(ActionTypes.EDIT.action());
             log.setFile(nicePath(path, file));
+            log.setObjectType(ObjectTypes.FILE);
+            log.setUserType(UserTypes.ALL_BUT_ACTOR);
         }
 
         // save
         if (actionType.equals("file") && op.equals("saveFile")) {
             log.setAction(ActionTypes.SAVE.action());
             log.setFile(nicePath(path, file));
+            log.setObjectType(ObjectTypes.FILE);
+            log.setUserType(UserTypes.ALL_BUT_ACTOR);
         }
 
         // delete
         if (actionType.equals("file") && op.equals("deleteFile")) {
             log.setAction(ActionTypes.DELETE.action());
             log.setFile(nicePath(path, params));
+            log.setObjectType(ObjectTypes.FILE);
+            log.setUserType(UserTypes.ALL_BUT_ACTOR);
         }
 
         // CVS
@@ -262,14 +304,21 @@ public class DatabaseLogServlet extends HttpServlet {
             if (op.equals("check")) {
                 log.setAction(ActionTypes.CVS_CHECK.action());
                 log.setFile("/" + params);
+                log.setObjectType(ObjectTypes.CVSFILE);
+                log.setUserType(UserTypes.NONE);
             }
             if (op.equals("update")) {
                 log.setAction(ActionTypes.CVS_UPDATE_DIR_LOCAL.action());
                 log.setFile("/" + params);
+                log.setObjectType(ObjectTypes.CVSFILE);
+                log.setUserType(UserTypes.ALL_BUT_ACTOR);
+
             }
             if (op.equals("rupdate")) {
                 log.setAction(ActionTypes.CVS_UPDATE_DIR_RECURSIVE.action());
                 log.setFile("/" + params);
+                log.setObjectType(ObjectTypes.CVSFILE);
+                log.setUserType(UserTypes.ALL_BUT_ACTOR);
             }
             if (op.equals("commit")) {
                 // this action won't get logged, since we will get another log from the cvs hook
@@ -277,11 +326,13 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setAction("paradeCvsCommit");
                 String[] commitParams = getParamValues("params", queryString, null, 0);
                 log.setFile(nicePath(commitParams[1], ""));
-                
+                log.setObjectType(ObjectTypes.CVSFILE);
+                log.setUserType(UserTypes.ALL_BUT_ACTOR);
+
                 // for some weird reason, commit gets logged twice (maybe because of struts?)
                 // so since we don't want this, we do a check
-                
-                if(lastCommitId != null && lastCommitId.equals(log.getFile() + log.getQueryString())) {
+
+                if (lastCommitId != null && lastCommitId.equals(log.getFile() + log.getQueryString())) {
                     lastCommitId = null;
                     // we ignore that log
                 } else {
@@ -291,29 +342,41 @@ public class DatabaseLogServlet extends HttpServlet {
             if (op.equals("diff")) {
                 log.setAction(ActionTypes.CVS_DIFF.action());
                 log.setFile("/" + file);
+                log.setObjectType(ObjectTypes.CVSFILE);
+                log.setUserType(UserTypes.NONE);
             }
             if (op.equals("add") || op.equals("addbin")) {
                 log.setAction(ActionTypes.CVS_ADD.action());
                 log.setFile("/" + file);
+                log.setObjectType(ObjectTypes.CVSFILE);
+                log.setUserType(UserTypes.ALL_BUT_ACTOR);
             }
             if (op.equals("updatefile")) {
                 log.setAction(ActionTypes.CVS_UPDATE_FILE.action());
                 log.setFile("/" + file);
+                log.setObjectType(ObjectTypes.CVSFILE);
+                log.setUserType(UserTypes.OWNER);
             }
             if (op.equals("overridefile")) {
                 log.setAction(ActionTypes.CVS_OVERRIDE_FILE.action());
                 log.setFile("/" + file);
+                log.setObjectType(ObjectTypes.CVSFILE);
+                log.setUserType(UserTypes.OWNER);
+
             }
             if (op.equals("deletefile")) {
                 log.setAction(ActionTypes.CVS_DELETE_FILE.action());
                 log.setFile("/" + file);
+                log.setObjectType(ObjectTypes.CVSFILE);
+                log.setUserType(UserTypes.ALL);
+
             }
         }
 
         // CVS commit (hook)
         if (log.getAction().equals("cvsCommitRepository")) {
             log.setAction(ActionTypes.CVS_COMMIT.action());
-            
+
             if (lastCommit != null && lastCommit.getFile() != null) {
                 // the user commited through parade
 
@@ -321,16 +384,17 @@ public class DatabaseLogServlet extends HttpServlet {
                 // (it will be logged anyway after this)
                 // and we also add other useful info
                 if (lastCommit.getFile().equals(log.getFile())) {
-                    lastCommitId = lastCommit.getFile()+lastCommit.getQueryString();
+                    lastCommitId = lastCommit.getFile() + lastCommit.getQueryString();
                     log.setQueryString(lastCommit.getQueryString() + log.getQueryString());
                     log.setContext(lastCommit.getContext());
                     log.setParadecontext(lastCommit.getParadecontext());
                     log.setUser(lastCommit.getUser());
+                    log.setObjectType(ObjectTypes.CVSFILE);
                     lastCommit = null;
                 } else {
                     logger.error("***********************************************************************\n"
-                               + "Unrecognised parade commit. please tell developers!\n"
-                               + "***********************************************************************");
+                            + "Unrecognised parade commit. please tell developers!\n"
+                            + "***********************************************************************");
                 }
             } else {
                 // this is an external commit that doesn't come thru parade
@@ -339,14 +403,14 @@ public class DatabaseLogServlet extends HttpServlet {
                 Query q = s.createQuery("from User u where u.cvsuser = ?");
                 q.setString(0, log.getUser());
                 List<User> results = q.list();
-                if(results.size() > 0) {
+                if (results.size() > 0) {
                     User u = results.get(0);
                     if (u != null) {
                         log.setUser(u.getLogin());
                     }
                 }
                 tx.commit();
-        
+
             }
         }
     }
@@ -426,6 +490,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
                         || log.getUrl().equals("/Command.do") || log.getUrl().startsWith("/scripts/codepress/"))
 
+                || log.getUser() == null
                 || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))) {
             return false;
         }

@@ -137,6 +137,10 @@
 				
 				<include name="org/makumba/parade/listeners/ParadeSessionListener*.class" />
 				
+				<include name="org/makumba/parade/aether/ObjectTypes*.class" />
+				<include name="org/makumba/aether/UserTypes*.class" />
+
+				
 			</fileset>
 
 			<fileset dir=".">

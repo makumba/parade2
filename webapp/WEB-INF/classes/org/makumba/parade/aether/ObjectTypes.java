@@ -5,7 +5,7 @@ import java.util.Set;
 
 public enum ObjectTypes {
     
-    FILE, ROW, USER, CVSFILE;
+    FILE("file:/"), DIR("dir:/"), ROW("row:/"), USER("user:/"), CVSFILE("cvs:/");
     
     public static Set<String> getObjectTypes() {
         ObjectTypes[] v = values();
@@ -15,5 +15,15 @@ public enum ObjectTypes {
         }
         return res;
     }
+
+    private String prefix;
+    
+     ObjectTypes(String prefix) {
+        this.prefix = prefix;
+    }
+     
+     public String prefix() {
+         return this.prefix;
+     }
 
 }
