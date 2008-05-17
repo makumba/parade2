@@ -1,4 +1,3 @@
-<#include "/layout/header.jsp">
 <body bgcolor="#dddddd" TOPMARGIN=0 LEFTMARGIN=0 RIGHTMARGIN=0 BOTTOMMARGIN=0 marginwidth=0 marginheight=0 STYLE="margin: 0px">
 
 <form name="sourceEdit" method="post" action="/File.do?op=saveFile&context=${rowName}&path=${path}&file=${fileName}&editor=codepress" style="margin:0px;">
@@ -27,5 +26,3 @@ function getEditorCode() {
 }
 </script>
 </form>
-
-<#include "/layout/footer.jsp">
