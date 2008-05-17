@@ -32,7 +32,7 @@ public class CVSModuleRelationComputer extends MakumbaContextRelationComputer im
     @Override
     protected void initRelationCrawler() {
         rc = RelationCrawler.getRelationCrawler(webappPath,
-                ParadeRelationComputer.PARADE_DATABASE_NAME, true, "cvs:/", r.getApplication().getName()); 
+                ParadeRelationComputer.PARADE_DATABASE_NAME, true, "cvs://", r.getApplication().getName()); 
     }
     
     @Override

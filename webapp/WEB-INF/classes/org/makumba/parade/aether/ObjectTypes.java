@@ -5,7 +5,7 @@ import java.util.Set;
 
 public enum ObjectTypes {
     
-    FILE("file:/"), DIR("dir:/"), ROW("row:/"), USER("user:/"), CVSFILE("cvs:/");
+    FILE("file://"), DIR("dir://"), ROW("row://"), USER("user://"), CVSFILE("cvs://");
     
     public static Set<String> getObjectTypes() {
         ObjectTypes[] v = values();
@@ -24,6 +24,10 @@ public enum ObjectTypes {
      
      public String prefix() {
          return this.prefix;
+     }
+     
+     public static String fileFromRow(String fileURL) {
+        return "row://"+fileURL.substring("file://".length(), fileURL.substring("file://".length()).indexOf("/"));
      }
 
 }

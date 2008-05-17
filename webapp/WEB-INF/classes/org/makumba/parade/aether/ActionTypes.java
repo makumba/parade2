@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.sun.accessibility.internal.resources.accessibility;
+
 /**
  * ParaDe action types, for the Aether engine
  * 
@@ -12,8 +14,6 @@ import java.util.Set;
  */
 public enum ActionTypes {
 
-    BROWSE_ROW("browseRow"),
-    BROWSE_DIR("browseDir"),
     VIEW("view"),
     EDIT("edit"),
     SAVE("save"),
@@ -45,6 +45,10 @@ public enum ActionTypes {
             res.add(v[i].action());
         }
         return res;
+    }
+    
+    public static boolean isFileAction(String a) {
+        return a.equals(VIEW.action()) || a.equals(EDIT.action()) || a.equals(SAVE.action()) || a.equals(DELETE.action());
     }
 
     

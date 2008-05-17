@@ -10,25 +10,19 @@ package org.makumba.aether.model;
  */
 public class InitialPercolationRule implements AetherRule {
 
-    public final static int USER_ALL = 10;
-
-    public final static int USER_OWNER = 20;
-
-    public final static int USER_ALLBUTOWNER = 30;
-
     private long id;
 
     private String objectType;
 
     private String action;
 
-    private int userType;
+    private String userType;
 
     private int initialLevel;
 
     private String userGroup;
     
-    private boolean active = true;
+    private transient boolean active = true;
 
     public InitialPercolationRule() {
 
@@ -58,11 +52,11 @@ public class InitialPercolationRule implements AetherRule {
         this.action = action;
     }
 
-    public int getUserType() {
+    public String getUserType() {
         return userType;
     }
 
-    public void setUserType(int userType) {
+    public void setUserType(String userType) {
         this.userType = userType;
     }
 

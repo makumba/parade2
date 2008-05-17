@@ -8,34 +8,38 @@ import org.makumba.aether.AetherEvent;
  * TODO add progression curve
  * 
  * @author Manuel Gay
- *
+ * 
  */
 public class MatchedAetherEvent extends AetherEvent {
-    
-    private int initialPercolationLevel;
-    private String userGroup;
-    
 
-    public MatchedAetherEvent(String objectURL, String objectType, String user, String userType, String action, int initialPercolationLevel, String userGroup) {
+    private int initialPercolationLevel;
+
+    private String userGroup;
+
+    public MatchedAetherEvent(String objectURL, String objectType, String user, String userType, String action,
+            int initialPercolationLevel, String userGroup) {
         super(objectURL, objectType, user, userType, action);
         this.initialPercolationLevel = initialPercolationLevel;
         this.userGroup = userGroup;
     }
-    
+
     public MatchedAetherEvent(AetherEvent e, int initialPercolationLevel, String userGroup) {
         super(e);
         this.initialPercolationLevel = initialPercolationLevel;
         this.userGroup = userGroup;
     }
 
-
     public int getInitialPercolationLevel() {
         return initialPercolationLevel;
     }
 
-
     public String getUserGroup() {
         return userGroup;
+    }
+
+    public String toString() {
+        return this.user + " (" + this.userType + ") --(" + this.action + ")--> " + this.objectURL + " ("
+                + this.objectType + ") ===> " + this.initialPercolationLevel + " on group " + this.userGroup;
     }
 
 }

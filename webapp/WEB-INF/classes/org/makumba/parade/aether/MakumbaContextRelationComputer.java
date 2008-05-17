@@ -50,7 +50,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
     
     protected void initRelationCrawler() {
         this.rc = RelationCrawler.getRelationCrawler(this.webappPath,
-                ParadeRelationComputer.PARADE_DATABASE_NAME, true, "file:/", r.getRowname());
+                ParadeRelationComputer.PARADE_DATABASE_NAME, true, "file://", r.getRowname());
     }
 
     public String getName() {

@@ -1,5 +1,7 @@
 package org.makumba.aether;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -77,6 +79,14 @@ public class Aether {
             p.percolate(e);
         } catch (PercolationException e1) {
             logger.warn("Exception while percolating event \""+e.toString()+"\": "+e1.getMessage());
+            StringWriter sw = new StringWriter();
+            PrintWriter p = new PrintWriter(sw);
+            e1.printStackTrace(p);
+            sw.flush();
+            logger.debug("\n***********************************************************************\n"
+                    + sw.toString()
+                    + "***********************************************************************");
+
         }
 
     }

@@ -125,7 +125,7 @@ public class DatabaseLogServlet extends HttpServlet {
     }
 
     private AetherEvent buildAetherEventFromLog(ActionLogDTO log) {
-        String objectURL = log.getObjectType().prefix() + log.getParadecontext() + "/";
+        String objectURL = log.getObjectType().prefix() + log.getParadecontext();
         switch (log.getObjectType()) {
         case ROW:
             objectURL += log.getParadecontext();
@@ -247,13 +247,13 @@ public class DatabaseLogServlet extends HttpServlet {
 
         // browse actions
         if (actionType.equals("browseRow")) {
-            log.setAction(ActionTypes.BROWSE_ROW.action());
+            log.setAction(ActionTypes.VIEW.action());
             log.setObjectType(ObjectTypes.ROW);
             log.setUserType(UserTypes.ALL_BUT_ACTOR);
 
         }
         if (actionType.equals("browse") || actionType.equals("fileBrowse")) {
-            log.setAction(ActionTypes.BROWSE_DIR.action());
+            log.setAction(ActionTypes.VIEW.action());
             log.setFile(nicePath(path, ""));
             log.setObjectType(ObjectTypes.DIR);
             log.setUserType(UserTypes.ALL_BUT_ACTOR);
@@ -482,13 +482,18 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().equals("/servlet/cvscommit/")
                         || log.getUrl().equals("/tipOfTheDay.jsp")
                         || log.getUrl().equals("/index.jsp")
+                        || log.getUrl().equals("/log.jsp")
                         || log.getUrl().equals("/")
-                        || log.getUrl().startsWith("playground")
+                        || log.getUrl().startsWith("/aether")
+                        || log.getUrl().startsWith("/logic")
+                        || log.getUrl().startsWith("/dataDefinitions")
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
                         || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
-                        || log.getUrl().equals("/Command.do") || log.getUrl().startsWith("/scripts/codepress/"))
+                        || log.getUrl().equals("/Command.do")
+                        || log.getUrl().startsWith("/scripts/codepress/"))
+
 
                 || log.getUser() == null
                 || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))) {

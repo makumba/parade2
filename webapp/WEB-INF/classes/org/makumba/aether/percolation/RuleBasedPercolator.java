@@ -3,6 +3,7 @@ package org.makumba.aether.percolation;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -35,10 +36,11 @@ public class RuleBasedPercolator implements Percolator {
     private String databaseName;
 
     private SessionFactory sessionFactory;
+    
+    private PercolationStrategy strategy;
 
     public void percolate(AetherEvent e) throws PercolationException {
-        // TODO Auto-generated method stub
-
+        strategy.percolate(e, sessionFactory);
     }
 
     private void checkInitialPercolationRules() {
@@ -126,6 +128,7 @@ public class RuleBasedPercolator implements Percolator {
     public void configure(String databaseName, SessionFactory sessionFactory) {
         this.databaseName = databaseName;
         this.sessionFactory = sessionFactory;
+        this.strategy = new SimplePercolationStrategy();
 
         logger.info("Starting initialisation of Rule-based percolator");
 

@@ -22,7 +22,7 @@ public class PercolationRule implements AetherRule {
 
     private String relationQuery;
 
-    private boolean active = true;
+    private transient boolean active = true;
     
     public PercolationRule() {
 

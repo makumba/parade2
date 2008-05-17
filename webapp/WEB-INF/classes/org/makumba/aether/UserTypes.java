@@ -7,6 +7,7 @@ public enum UserTypes {
     
     NONE("none"),
     ALL("all"),
+    ACTOR("actor"),
     OWNER("owner"),
     ALL_BUT_OWNER("all_but_owner"),
     ALL_BUT_ACTOR("all_but_actor");
