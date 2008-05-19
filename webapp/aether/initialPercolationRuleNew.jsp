@@ -1,10 +1,11 @@
-<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak" %>
+<%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak" %>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 
-<%-- Makumba Generator - START OF  *** NEW ***  PAGE FOR OBJECT aether.InitialPercolationRule --%>
-<fieldset style="text-align:right;">
-  <legend>New InitialPercolationRule</legend
-<mak:newForm type="aether.InitialPercolationRule" action="initialPercolationRuleView.jsp" name="initialPercolationRule" >
+<%-- Makumba Generator - START OF  *** NEW ***  PAGE FOR OBJECT InitialPercolationRule --%>
+<fieldset style="text-align:left;">
+  <legend>New InitialPercolationRule</legend>
+  <jsp:include page="aetherTypes.jsp"/>
+<mak:newForm type="InitialPercolationRule" action="initialPercolationRuleView.jsp" name="initialPercolationRule" >
   <table>
   <%-- Makumba Generator - START OF NORMAL FIELDS --%>
     <tr>
@@ -23,10 +24,16 @@
       <th><label for="initialLevel"><span class="accessKey">i</span>nitialLevel</label></th>
       <td><mak:input field="initialLevel" styleId="initialLevel" accessKey="i" /></td>
     </tr>
+    <% /*
     <tr>
-      <th><label for="userGroup">Us<span class="accessKey">e</span>rGroup</label></th>
-      <td><mak:input field="userGroup" styleId="userGroup" accessKey="e" /></td>
+      <th><label for="">Re<span class="accessKey">l</span>ationQueries</label></th>
+      <td>
+        <mak:addForm object="initialPercolationRule" field="relationQueries">
+        <mak:input field="query" styleId="relationQuery" accessKey="l" />
+        </mak:addForm>
+      </td>
     </tr>
+    */ %>
   <%-- Makumba Generator - END OF NORMAL FIELDS --%>
     <tr>
       <td>  <input type="submit" value="Add" accessKey="A">  <input type="reset" accessKey="R">  <input type="reset" value="Cancel" accessKey="C" onClick="javascript:back();">  </td>
@@ -35,4 +42,4 @@
 </fieldset>
 </mak:newForm>
 
-<%-- Makumba Generator - END OF *** NEW ***  PAGE FOR OBJECT aether.InitialPercolationRule --%>
+<%-- Makumba Generator - END OF *** NEW ***  PAGE FOR OBJECT InitialPercolationRule --%>

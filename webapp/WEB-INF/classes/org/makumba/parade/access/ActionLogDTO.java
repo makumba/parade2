@@ -40,22 +40,12 @@ public class ActionLogDTO {
     
     private ObjectTypes objectType;
     
-    private UserTypes userType;
-
     public ObjectTypes getObjectType() {
         return objectType;
     }
 
     public void setObjectType(ObjectTypes objectType) {
         this.objectType = objectType;
-    }
-
-    public UserTypes getUserType() {
-        return userType;
-    }
-
-    public void setUserType(UserTypes userType) {
-        this.userType = userType;
     }
 
     public String getParadecontext() {
@@ -164,7 +154,6 @@ public class ActionLogDTO {
         log.setOrigin(origin);
         log.setParadecontext(paradecontext);
         log.setFile(file);
-        log.setUserType(userType);
         log.setObjectType(objectType);
     }
 
@@ -180,7 +169,6 @@ public class ActionLogDTO {
         this.origin = log.getOrigin();
         this.paradecontext = log.getParadecontext();
         this.file = log.getFile();
-        this.userType = log.getUserType();
         this.objectType = log.getObjectType();
     }
 

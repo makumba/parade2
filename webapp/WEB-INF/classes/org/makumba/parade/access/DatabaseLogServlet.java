@@ -21,7 +21,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.aether.AetherEvent;
-import org.makumba.aether.UserTypes;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
@@ -105,6 +104,7 @@ public class DatabaseLogServlet extends HttpServlet {
                 s.close();
             }
 
+            // now we pass the event to Aether
             if (record instanceof ActionLogDTO && InitServlet.aetherEnabled) {
                 AetherEvent e = buildAetherEventFromLog((ActionLogDTO) record);
 
@@ -144,7 +144,7 @@ public class DatabaseLogServlet extends HttpServlet {
             break;
         }
 
-        return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getUserType().type(), log.getAction());
+        return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getAction(), log.getDate());
     }
 
     private void handleActionLog(HttpServletRequest req, Object record, Session s) {
@@ -249,14 +249,11 @@ public class DatabaseLogServlet extends HttpServlet {
         if (actionType.equals("browseRow")) {
             log.setAction(ActionTypes.VIEW.action());
             log.setObjectType(ObjectTypes.ROW);
-            log.setUserType(UserTypes.ALL_BUT_ACTOR);
-
         }
         if (actionType.equals("browse") || actionType.equals("fileBrowse")) {
             log.setAction(ActionTypes.VIEW.action());
             log.setFile(nicePath(path, ""));
             log.setObjectType(ObjectTypes.DIR);
-            log.setUserType(UserTypes.ALL_BUT_ACTOR);
         }
 
         // view actions
@@ -269,7 +266,6 @@ public class DatabaseLogServlet extends HttpServlet {
                 String webapp = rowDef.get("webapp");
                 log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
                 log.setObjectType(ObjectTypes.FILE);
-                log.setUserType(UserTypes.ALL_BUT_ACTOR);
             }
 
         }
@@ -279,7 +275,6 @@ public class DatabaseLogServlet extends HttpServlet {
             log.setAction(ActionTypes.EDIT.action());
             log.setFile(nicePath(path, file));
             log.setObjectType(ObjectTypes.FILE);
-            log.setUserType(UserTypes.ALL_BUT_ACTOR);
         }
 
         // save
@@ -287,7 +282,6 @@ public class DatabaseLogServlet extends HttpServlet {
             log.setAction(ActionTypes.SAVE.action());
             log.setFile(nicePath(path, file));
             log.setObjectType(ObjectTypes.FILE);
-            log.setUserType(UserTypes.ALL_BUT_ACTOR);
         }
 
         // delete
@@ -295,7 +289,6 @@ public class DatabaseLogServlet extends HttpServlet {
             log.setAction(ActionTypes.DELETE.action());
             log.setFile(nicePath(path, params));
             log.setObjectType(ObjectTypes.FILE);
-            log.setUserType(UserTypes.ALL_BUT_ACTOR);
         }
 
         // CVS
@@ -305,20 +298,17 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setAction(ActionTypes.CVS_CHECK.action());
                 log.setFile("/" + params);
                 log.setObjectType(ObjectTypes.CVSFILE);
-                log.setUserType(UserTypes.NONE);
             }
             if (op.equals("update")) {
                 log.setAction(ActionTypes.CVS_UPDATE_DIR_LOCAL.action());
                 log.setFile("/" + params);
                 log.setObjectType(ObjectTypes.CVSFILE);
-                log.setUserType(UserTypes.ALL_BUT_ACTOR);
 
             }
             if (op.equals("rupdate")) {
                 log.setAction(ActionTypes.CVS_UPDATE_DIR_RECURSIVE.action());
                 log.setFile("/" + params);
                 log.setObjectType(ObjectTypes.CVSFILE);
-                log.setUserType(UserTypes.ALL_BUT_ACTOR);
             }
             if (op.equals("commit")) {
                 // this action won't get logged, since we will get another log from the cvs hook
@@ -327,7 +317,6 @@ public class DatabaseLogServlet extends HttpServlet {
                 String[] commitParams = getParamValues("params", queryString, null, 0);
                 log.setFile(nicePath(commitParams[1], ""));
                 log.setObjectType(ObjectTypes.CVSFILE);
-                log.setUserType(UserTypes.ALL_BUT_ACTOR);
 
                 // for some weird reason, commit gets logged twice (maybe because of struts?)
                 // so since we don't want this, we do a check
@@ -343,33 +332,26 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setAction(ActionTypes.CVS_DIFF.action());
                 log.setFile("/" + file);
                 log.setObjectType(ObjectTypes.CVSFILE);
-                log.setUserType(UserTypes.NONE);
             }
             if (op.equals("add") || op.equals("addbin")) {
                 log.setAction(ActionTypes.CVS_ADD.action());
                 log.setFile("/" + file);
                 log.setObjectType(ObjectTypes.CVSFILE);
-                log.setUserType(UserTypes.ALL_BUT_ACTOR);
             }
             if (op.equals("updatefile")) {
                 log.setAction(ActionTypes.CVS_UPDATE_FILE.action());
                 log.setFile("/" + file);
                 log.setObjectType(ObjectTypes.CVSFILE);
-                log.setUserType(UserTypes.OWNER);
             }
             if (op.equals("overridefile")) {
                 log.setAction(ActionTypes.CVS_OVERRIDE_FILE.action());
                 log.setFile("/" + file);
                 log.setObjectType(ObjectTypes.CVSFILE);
-                log.setUserType(UserTypes.OWNER);
-
             }
             if (op.equals("deletefile")) {
                 log.setAction(ActionTypes.CVS_DELETE_FILE.action());
                 log.setFile("/" + file);
                 log.setObjectType(ObjectTypes.CVSFILE);
-                log.setUserType(UserTypes.ALL);
-
             }
         }
 
@@ -483,6 +465,8 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().equals("/tipOfTheDay.jsp")
                         || log.getUrl().equals("/index.jsp")
                         || log.getUrl().equals("/log.jsp")
+                        || log.getUrl().equals("/userView.jsp")
+                        || log.getUrl().equals("/userEdit.jsp")
                         || log.getUrl().equals("/")
                         || log.getUrl().startsWith("/aether")
                         || log.getUrl().startsWith("/logic")
@@ -493,6 +477,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
                         || log.getUrl().equals("/Command.do")
                         || log.getUrl().startsWith("/scripts/codepress/"))
+                        
 
 
                 || log.getUser() == null

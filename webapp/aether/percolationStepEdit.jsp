@@ -1,8 +1,8 @@
-<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak" %>
+<%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak" %>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 
-<%-- Makumba Generator - START OF  *** EDIT ***  PAGE FOR OBJECT aether.PercolationStep --%>
-<mak:object from="aether.PercolationStep percolationStep" where="percolationStep=$percolationStep">
+<%-- Makumba Generator - START OF  *** EDIT ***  PAGE FOR OBJECT PercolationStep --%>
+<mak:object from="PercolationStep percolationStep" where="percolationStep=:percolationStep">
   <fieldset style="text-align:right;">
   <legend>Edit PercolationStep <i><mak:value expr="percolationStep.object" /></i></legend
   <mak:editForm object="percolationStep" action="percolationStepView.jsp" method="post">
@@ -48,4 +48,4 @@
 </fieldset>
 </mak:object>
 
-<%-- Makumba Generator - END OF *** EDIT ***  PAGE FOR OBJECT aether.PercolationStep --%>
+<%-- Makumba Generator - END OF *** EDIT ***  PAGE FOR OBJECT PercolationStep --%>

@@ -1,5 +1,8 @@
 package org.makumba.aether.model;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Initial percolation rule for rule-based percolation
  * 
@@ -19,8 +22,9 @@ public class InitialPercolationRule implements AetherRule {
     private String userType;
 
     private int initialLevel;
+    
+    private List<RelationQuery> relationQueries;
 
-    private String userGroup;
     
     private transient boolean active = true;
 
@@ -67,17 +71,17 @@ public class InitialPercolationRule implements AetherRule {
     public void setInitialLevel(int initialLevel) {
         this.initialLevel = initialLevel;
     }
-
-    public String getUserGroup() {
-        return userGroup;
+    
+    public List<RelationQuery> getRelationQueries() {
+        return relationQueries;
     }
 
-    public void setUserGroup(String userGroup) {
-        this.userGroup = userGroup;
+    public void setRelationQueries(List<RelationQuery> relationQuery) {
+        this.relationQueries = relationQuery;
     }
     
     public String toString() {
-        return "oType: "+objectType + " action: "+action + " uType: "+userType + " initLevel: "+initialLevel + " userGroup "+userGroup;
+        return "oType: "+objectType + " action: "+action + " uType: "+userType + " initLevel: "+initialLevel;
     }
 
     /* (non-Javadoc)

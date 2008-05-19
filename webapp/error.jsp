@@ -6,7 +6,11 @@
 <head>
 <title>Relax, take it easy</title>
 </head>
-<%if(exception instanceof ParadeException) {%>
+<%if(request.getAttribute("mak_error_title") != null) { %>
+<h1><%=request.getAttribute("mak_error_title") %></h1>
+<font color="green"><i><%=request.getAttribute("mak_error_description") %></i></font>
+<br><br>
+<% } else if(exception instanceof ParadeException) {%>
 <h1>Sorry, a ParaDe error occured</h1>
 <br>
 An internal ParaDe error just happened, with following message:<br><br>

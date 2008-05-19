@@ -20,8 +20,6 @@ public class PercolationRule implements AetherRule {
 
     private String description;
 
-    private String relationQuery;
-
     private transient boolean active = true;
     
     public PercolationRule() {
@@ -74,14 +72,6 @@ public class PercolationRule implements AetherRule {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getRelationQuery() {
-        return relationQuery;
-    }
-
-    public void setRelationQuery(String relationQuery) {
-        this.relationQuery = relationQuery;
     }
 
     public boolean isActive() {

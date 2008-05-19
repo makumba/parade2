@@ -30,8 +30,6 @@ public class ActionLog {
     private String file;
     
     private ObjectTypes objectType;
-    
-    private UserTypes userType;
 
     public String getAction() {
         return action;
@@ -127,14 +125,6 @@ public class ActionLog {
 
     public void setObjectType(ObjectTypes objectType) {
         this.objectType = objectType;
-    }
-
-    public UserTypes getUserType() {
-        return userType;
-    }
-
-    public void setUserType(UserTypes userType) {
-        this.userType = userType;
     }
 
 }

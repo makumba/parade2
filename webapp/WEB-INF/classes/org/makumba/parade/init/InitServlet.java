@@ -77,6 +77,8 @@ public class InitServlet extends HttpServlet implements Runnable {
                 resources.add("org/makumba/aether/model/InitialPercolationRule.hbm.xml");
                 resources.add("org/makumba/aether/model/PercolationRule.hbm.xml");
                 resources.add("org/makumba/aether/model/PercolationStep.hbm.xml");
+                resources.add("org/makumba/aether/model/RelationQuery.hbm.xml");
+                resources.add("org/makumba/aether/model/MatchedAetherEvent.hbm.xml");
                 
             }
             

@@ -14,6 +14,8 @@ import org.makumba.aether.AetherEvent;
 import org.makumba.aether.PercolationException;
 import org.makumba.aether.UserTypes;
 import org.makumba.aether.model.InitialPercolationRule;
+import org.makumba.aether.model.MatchedAetherEvent;
+import org.makumba.aether.model.RelationQuery;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.aether.ObjectTypes;
 
@@ -37,15 +39,15 @@ public class SimplePercolationStrategy implements PercolationStrategy {
     public void percolate(AetherEvent e, SessionFactory sessionFactory) throws PercolationException {
 
         try {
-
+            
             List<MatchedAetherEvent> matchedEvents = new LinkedList<MatchedAetherEvent>();
-
+            
             Session s = null;
             Transaction tx = null;
             try {
                 s = sessionFactory.openSession();
                 tx = s.beginTransaction();
-
+                
                 Query q = s
                         .createQuery("SELECT r from InitialPercolationRule r where r.objectType = :objectType and r.action = :action ");
                 q.setParameter("objectType", e.getObjectType());
@@ -53,7 +55,9 @@ public class SimplePercolationStrategy implements PercolationStrategy {
 
                 List<InitialPercolationRule> iprs = q.list();
                 for (InitialPercolationRule ipr : iprs) {
-                    matchedEvents.add(match(e, ipr, s));
+                    MatchedAetherEvent mae = match(e, ipr, s);
+                    s.save(mae);
+                    matchedEvents.add(mae);
                 }
 
                 for (MatchedAetherEvent mae : matchedEvents) {
@@ -77,20 +81,39 @@ public class SimplePercolationStrategy implements PercolationStrategy {
     private void percolateMatchedEvent(MatchedAetherEvent mae, Session s) {
         logger.debug("Starting percolation of matched event \"" + mae.toString() + "\"");
 
-        List<String[]> allRelations = getAllRelations(mae, s);
+        List<String[]> allRelations = getRelationsForMatchedEvent(mae, s);
 
         if (allRelations == null) {
             return;
         }
-
-        for (String[] relation : allRelations) {
-            System.out.println(Arrays.toString(relation));
+        
+        
+        
+        for (Object[] relation : allRelations) {
+            logger.debug("Percolation relation:\t"+Arrays.toString(relation));
+            
         }
 
     }
 
+    private List<String[]> getRelationsForMatchedEvent(MatchedAetherEvent mae, Session s) {
+        
+        // first let's get the queries from the MatchedEvent
+        List<RelationQuery> queries = mae.getInitialPercolationRule().getRelationQueries();
+        
+        List<String[]> res = new LinkedList<String[]>();
+        
+        for (RelationQuery query : queries) {
+            logger.debug("Executing relation query: "+query);
+            res.addAll(s.createQuery(query.getQuery()).setString("fromURL", mae.getObjectURL()).list());
+        }
+        return res;
+    }
+
     /**
      * Gets all the relations of a matched event
+     * 
+     * TODO implement other types than just FILE
      * 
      * @param mae
      *            the {@link MatchedAetherEvent}
@@ -105,8 +128,20 @@ public class SimplePercolationStrategy implements PercolationStrategy {
         if (mae.getObjectType().equals(ObjectTypes.FILE.toString())) {
             res = getDependsOnRelations(mae, s);
             res.addAll(getVersionOfRelations(mae, s));
-
         }
+        
+        if(mae.getObjectType().equals(ObjectTypes.ROW.toString())) {
+            
+        }
+        
+        if(mae.getObjectType().equals(ObjectTypes.USER.toString())) {
+            
+        }
+        
+        if(mae.getObjectType().equals(ObjectTypes.DIR.toString())) {
+            
+        }
+        
         return res;
     }
 
@@ -120,8 +155,8 @@ public class SimplePercolationStrategy implements PercolationStrategy {
     private List<String[]> getVersionOfRelations(MatchedAetherEvent mae, Session s) {
         return s
                 .createQuery(
-                        "SELECT r.rowname + f.path.substring(length(r.rowpath), length(f.path)), :type, f.cvsURI FROM File f JOIN f.row r WHERE (r.rowname + f.path.substring(length(r.rowpath), length(f.path))) = :fromURL")
-                .setString("fromURL", mae.getObjectURL()).setParameter("type", "versionOf").list();
+                        "SELECT concat('file://', concat(r.rowname, substring(f.path, length(r.rowpath) + 1, length(f.path)))) as fromURL, 'versionOf' as type, f.cvsURI as toURL FROM File f JOIN f.row r WHERE concat('file://', concat(r.rowname, substring(f.path, length(r.rowpath) + 1, length(f.path)))) = :fromURL AND f.cvsURI is not null")
+                .setString("fromURL", mae.getObjectURL()).list();
     }
 
     private MatchedAetherEvent match(AetherEvent e, InitialPercolationRule ipr, Session s) {
@@ -132,7 +167,7 @@ public class SimplePercolationStrategy implements PercolationStrategy {
             userGroup = "*";
         }
         if (ipr.getUserType().equals(UserTypes.ALL_BUT_ACTOR.type())) {
-            userGroup = "*,-" + e.getUser();
+            userGroup = "*,-" + e.getActor();
         }
         if (ipr.getUserType().equals(UserTypes.NONE.type())) {
             userGroup = "";
@@ -170,11 +205,11 @@ public class SimplePercolationStrategy implements PercolationStrategy {
             }
         }
         if (ipr.getUserType().equals(UserTypes.ACTOR)) {
-            userGroup = e.getUser();
+            userGroup = e.getActor();
         }
 
         if (userGroup.length() > 0) {
-            return new MatchedAetherEvent(e, ipr.getInitialLevel(), userGroup);
+            return new MatchedAetherEvent(e, userGroup, ipr);
         }
 
         return null;

@@ -1,10 +1,12 @@
-<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak" %>
+<%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak" %>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 
-<%-- Makumba Generator - START OF  *** EDIT ***  PAGE FOR OBJECT aether.PercolationRule --%>
-<mak:object from="aether.PercolationRule percolationRule" where="percolationRule=$percolationRule">
+<%-- Makumba Generator - START OF  *** EDIT ***  PAGE FOR OBJECT PercolationRule --%>
+<mak:object from="PercolationRule percolationRule" where="percolationRule=$percolationRule">
   <fieldset style="text-align:right;">
-  <legend>Edit PercolationRule <i><mak:value expr="percolationRule.subject" /></i></legend
+  <legend>Edit PercolationRule <i><mak:value expr="percolationRule.subject" /></i></legend>
+    <jsp:include page="aetherTypes.jsp"/>
+  
   <mak:editForm object="percolationRule" action="percolationRuleView.jsp" method="post">
     <table>
     <%-- Makumba Generator - START OF NORMAL FIELDS --%>
@@ -29,10 +31,6 @@
         <td><mak:input field="description" styleId="description" accessKey="t" /></td>
       </tr>
       <tr>
-        <th><label for="relationQuery">Re<span class="accessKey">l</span>ationQuery</label></th>
-        <td><mak:input field="relationQuery" styleId="relationQuery" accessKey="l" /></td>
-      </tr>
-      <tr>
         <td>    <input type="submit" value="Save changes" accessKey="S">    <input type="reset" accessKey="R">    <input type="reset" value="Cancel" accessKey="C" onClick="javascript:back();">    </td>
       </tr>
     </table>
@@ -48,4 +46,4 @@
 </fieldset>
 </mak:object>
 
-<%-- Makumba Generator - END OF *** EDIT ***  PAGE FOR OBJECT aether.PercolationRule --%>
+<%-- Makumba Generator - END OF *** EDIT ***  PAGE FOR OBJECT PercolationRule --%>

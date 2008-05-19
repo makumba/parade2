@@ -3,4 +3,3 @@ predicate=char[255]
 object=char[255]
 consumption=int;
 description=text;
-relationQuery=text;

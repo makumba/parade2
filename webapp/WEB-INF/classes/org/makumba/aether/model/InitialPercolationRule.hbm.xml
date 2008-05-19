@@ -15,10 +15,14 @@
 		<property name="objectType" />
 		<property name="action" />
 		<property name="userType" />
-		
-		<property name="initialLevel" />
-		<property name="userGroup" />
 
+		<property name="initialLevel" />
+		
+
+		<bag name="relationQueries" lazy="false" cascade="all" inverse="false">
+			<key column="id_initialpercolationrule" />
+			<many-to-many class="RelationQuery" />
+		</bag>
 
 	</class>
 </hibernate-mapping>

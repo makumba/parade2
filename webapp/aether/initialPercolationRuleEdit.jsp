@@ -1,8 +1,8 @@
-<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak" %>
+<%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak" %>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 
-<%-- Makumba Generator - START OF  *** EDIT ***  PAGE FOR OBJECT aether.InitialPercolationRule --%>
-<mak:object from="aether.InitialPercolationRule initialPercolationRule" where="initialPercolationRule=$initialPercolationRule">
+<%-- Makumba Generator - START OF  *** EDIT ***  PAGE FOR OBJECT InitialPercolationRule --%>
+<mak:object from="InitialPercolationRule initialPercolationRule" where="initialPercolationRule.id=:initialPercolationRule">
   <fieldset style="text-align:right;">
   <legend>Edit InitialPercolationRule <i><mak:value expr="initialPercolationRule.objectType" /></i></legend
   <mak:editForm object="initialPercolationRule" action="initialPercolationRuleView.jsp" method="post">
@@ -24,10 +24,7 @@
         <th><label for="initialLevel"><span class="accessKey">i</span>nitialLevel</label></th>
         <td><mak:input field="initialLevel" styleId="initialLevel" accessKey="i" /></td>
       </tr>
-      <tr>
-        <th><label for="userGroup">Us<span class="accessKey">e</span>rGroup</label></th>
-        <td><mak:input field="userGroup" styleId="userGroup" accessKey="e" /></td>
-      </tr>
+      <input type="hidden" name="initialPercolationRule" value="<mak:value expr="initialPercolationRule.id"/>"/>
       <tr>
         <td>    <input type="submit" value="Save changes" accessKey="S">    <input type="reset" accessKey="R">    <input type="reset" value="Cancel" accessKey="C" onClick="javascript:back();">    </td>
       </tr>
@@ -40,8 +37,15 @@
 
   <%-- Makumba Generator - END OF SETS --%>
 
+<tr><td>relationQueries</td>
+    <td><mak:list from="join initialPercolationRule.relationQueries rq">
+      <mak:value expr="rq.query"/>&nbsp;<a href="initialPercolationRuleQueryEdit.jsp?relationQuery=<mak:value expr="rq.id"/>">[Edit]</a><br>
+      </mak:list>
+    </td>
+</tr>
+
 </table>
 </fieldset>
 </mak:object>
 
-<%-- Makumba Generator - END OF *** EDIT ***  PAGE FOR OBJECT aether.InitialPercolationRule --%>
+<%-- Makumba Generator - END OF *** EDIT ***  PAGE FOR OBJECT InitialPercolationRule --%>

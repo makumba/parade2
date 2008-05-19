@@ -19,6 +19,8 @@ public class PercolationStep {
     private int nimbus;
 
     private long percolationId;
+    
+    private MatchedAetherEvent matchedAetherEvent;
 
     private PercolationStep previous;
 
@@ -80,6 +82,14 @@ public class PercolationStep {
 
     public void setPrevious(PercolationStep previous) {
         this.previous = previous;
+    }
+
+    public MatchedAetherEvent getMatchedAetherEvent() {
+        return matchedAetherEvent;
+    }
+
+    public void setMatchedAetherEvent(MatchedAetherEvent matchedAetherEvent) {
+        this.matchedAetherEvent = matchedAetherEvent;
     }
 
 }

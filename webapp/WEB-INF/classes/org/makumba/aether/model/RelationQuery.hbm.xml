@@ -4,21 +4,18 @@
       "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.makumba.aether.model">
-	<class name="PercolationRule">
+	<class name="RelationQuery">
 
 		<cache usage="read-write" />
 
-		<id name="id" column="percolationrule">
+		<id name="id" column="relationquery">
 			<generator class="native" />
 		</id>
 
-		<property name="subject" />
-		<property name="predicate" />
-		<property name="object" />
-		<property name="consumption" />
-		<property name="description" />
+		<property name="query">
+			<column name="query" length="2000" not-null="true" />
+		</property>
 
 	</class>
+
 </hibernate-mapping>
-
-

@@ -1,10 +1,10 @@
-<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak" %>
+<%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak" %>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 
-<%-- Makumba Generator - START OF  *** NEW ***  PAGE FOR OBJECT aether.PercolationStep --%>
+<%-- Makumba Generator - START OF  *** NEW ***  PAGE FOR OBJECT PercolationStep --%>
 <fieldset style="text-align:right;">
   <legend>New PercolationStep</legend
-<mak:newForm type="aether.PercolationStep" action="percolationStepView.jsp" name="percolationStep" >
+<mak:newForm type="PercolationStep" action="percolationStepView.jsp" name="percolationStep" >
   <table>
   <%-- Makumba Generator - START OF NORMAL FIELDS --%>
     <tr>
@@ -39,4 +39,4 @@
 </fieldset>
 </mak:newForm>
 
-<%-- Makumba Generator - END OF *** NEW ***  PAGE FOR OBJECT aether.PercolationStep --%>
+<%-- Makumba Generator - END OF *** NEW ***  PAGE FOR OBJECT PercolationStep --%>

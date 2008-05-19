@@ -2,4 +2,4 @@ objectType=char[255]
 action=char[255]
 userType=char[255]
 initialLevel=int
-userGroup=char[255]
+relationQueries = set RelationQuery

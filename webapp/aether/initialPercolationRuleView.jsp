@@ -1,8 +1,9 @@
-<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak" %>
+<%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak" %>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 
-<%-- Makumba Generator - START OF  *** OBJECT ***  PAGE FOR OBJECT aether.InitialPercolationRule --%>
-<mak:object from="aether.InitialPercolationRule initialPercolationRule" where="initialPercolationRule=$initialPercolationRule">
+<%-- Makumba Generator - START OF  *** OBJECT ***  PAGE FOR OBJECT InitialPercolationRule --%>
+<mak:response/>
+<mak:object from="InitialPercolationRule initialPercolationRule" where="initialPercolationRule.id=:initialPercolationRule">
   <fieldset style="text-align:right;">
   <legend>InitialPercolationRule <i><mak:value expr="initialPercolationRule.objectType" /></i></legend
   <table>
@@ -24,8 +25,8 @@
       <td><mak:value expr="initialPercolationRule.initialLevel"/></td>
     </tr>
     <tr>
-      <th>userGroup</th>
-      <td><mak:value expr="initialPercolationRule.userGroup"/></td>
+      <th>relationQueries</th>
+      <td><mak:list from="IN(initialPercolationRule.relationQueries) rq"><mak:value expr="rq.query"/></mak:list></td>
     </tr>
   </table>
 </fieldset>
@@ -36,7 +37,8 @@
   <%-- Makumba Generator - END OF SETS --%>
 
 </table>
+<a href="initialPercolationRuleList.jsp">Back to initialPercolationRule list</a>
 </fieldset>
 </mak:object>
 
-<%-- Makumba Generator - END OF *** OBJECT ***  PAGE FOR OBJECT aether.InitialPercolationRule --%>
+<%-- Makumba Generator - END OF *** OBJECT ***  PAGE FOR OBJECT InitialPercolationRule --%>

@@ -16,10 +16,9 @@
 		<property name="userGroup" />
 		<property name="focus" />
 		<property name="nimbus" />
-		<property name="percolationId" />
 		
 		<one-to-one name="previous" class="PercolationStep" />
-
+		<many-to-one name="matchedAetherEvent" class="MatchedAetherEvent" />
 
 	</class>
 </hibernate-mapping>
