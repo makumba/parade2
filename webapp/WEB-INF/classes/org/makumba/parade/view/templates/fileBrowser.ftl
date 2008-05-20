@@ -76,7 +76,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 </#if>
 <#else>
 
-<#if file.cvsNewerExists>
+<#if file.cvsNewerExists && file.cvsStatus != 5>
 <#if file.cvsConflictOnUpdate>
 <img src='/images/exclamation.gif' title='There is a newer file on the repository with revision ${file.cvsNewRevision}, and updating will provoke a CVS conflict.'>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
