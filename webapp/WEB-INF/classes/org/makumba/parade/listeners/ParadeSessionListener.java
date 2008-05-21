@@ -1,5 +1,7 @@
 package org.makumba.parade.listeners;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -33,7 +35,7 @@ public class ParadeSessionListener implements HttpSessionListener {
         activeSessions.remove(e.getSession().getId());
     }
 
-    public static synchronized List<HttpSession> getActiveSessions() {
+    public static synchronized Collection<HttpSession> getActiveSessions() {
         List<HttpSession> sessions = new LinkedList<HttpSession>();
         Iterator<String> it = activeSessions.keySet().iterator();
         while (it.hasNext()) {
@@ -47,10 +49,10 @@ public class ParadeSessionListener implements HttpSessionListener {
             }
 
         }
-        return sessions;
+        return Collections.synchronizedCollection(sessions);
     }
 
-    public static synchronized List<String[]> getActiveSessionUsers() {
+    public static synchronized Collection<String[]> getActiveSessionUsers() {
         List<String[]> onlineUsers = new LinkedList<String[]>();
 
         // hashtable for filtering expired sessions
@@ -75,6 +77,6 @@ public class ParadeSessionListener implements HttpSessionListener {
             onlineUsers.add(new String[] {key, online.get(key)});
         }
 
-        return onlineUsers;
+        return Collections.synchronizedCollection(onlineUsers);
     }
 }
