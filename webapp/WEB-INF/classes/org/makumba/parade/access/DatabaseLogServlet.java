@@ -467,6 +467,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().equals("/log.jsp")
                         || log.getUrl().equals("/userView.jsp")
                         || log.getUrl().equals("/userEdit.jsp")
+                        || log.getUrl().equals("/showImage.jsp")
                         || log.getUrl().equals("/")
                         || log.getUrl().startsWith("/aether")
                         || log.getUrl().startsWith("/logic")
