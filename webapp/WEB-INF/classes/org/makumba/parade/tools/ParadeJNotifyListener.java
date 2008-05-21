@@ -373,7 +373,8 @@ public class ParadeJNotifyListener implements JNotifyListener {
             if(u != null) {
                 log.setUser(u.getLogin());
             } else {
-                logger.error("User for row "+r.getRowname() + " not set! Please go to the ParaDe admin interface and set it there!");
+                log.setUser(User.getUnknownUser().getLogin());
+//                logger.error("User for row "+r.getRowname() + " not set! Please go to the ParaDe admin interface and set it there!");
             }
 
             TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
