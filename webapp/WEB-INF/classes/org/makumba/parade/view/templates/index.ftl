@@ -83,3 +83,6 @@ Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 -->
 
 </CENTER>
+
+<br>
+<a href="todo.jsp">ParaDe</a>
