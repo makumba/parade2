@@ -14,6 +14,7 @@
 
 		<property name="rowname" />
 		<property name="rowpath" />
+		<property name="webappPath" />
 		<property name="description" />
 		<property name="automaticCvsUpdate" type="integer" insert="false">
 			<column name="automaticCvsUpdate" default="10"/>

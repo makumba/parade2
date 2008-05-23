@@ -16,6 +16,7 @@
 		<property name="objectType"/>
 		<property name="actor"/>
 		<property name="userType" />
+		<property name="userGroup" />
 		<property name="action"/>
 		<property name="eventDate"/>
 		

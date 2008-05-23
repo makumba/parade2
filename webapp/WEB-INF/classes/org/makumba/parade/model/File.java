@@ -37,7 +37,7 @@ public class File {
 
     private String parentPath;
 
-    private String cvsURI;
+    private String cvsURL;
 
     private Integer cvsStatus;
 
@@ -155,12 +155,12 @@ public class File {
         this.onDisk = onDisk;
     }
 
-    public String getCvsURI() {
-        return cvsURI;
+    public String getCvsURL() {
+        return cvsURL;
     }
 
-    public void setCvsURI(String cvsURI) {
-        this.cvsURI = cvsURI;
+    public void setCvsURL(String cvsURL) {
+        this.cvsURL = cvsURL;
     }
 
     public Integer getCvsStatus() {
@@ -215,7 +215,7 @@ public class File {
         setCvsDate(null);
         setCvsRevision(null);
         setCvsStatus(null);
-        setCvsURI(null);
+        setCvsURL(null);
     }
 
     /* returns a List of the direct children (files, dirs) of a given Path */

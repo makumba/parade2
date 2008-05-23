@@ -10,7 +10,7 @@ public class PercolationStep {
 
     private long id;
 
-    private long object;
+    private String objectURL;
 
     private String userGroup;
 
@@ -18,7 +18,7 @@ public class PercolationStep {
 
     private int nimbus;
 
-    private long percolationId;
+    private PercolationRule percolationRule;
     
     private MatchedAetherEvent matchedAetherEvent;
 
@@ -34,14 +34,6 @@ public class PercolationStep {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public long getObject() {
-        return object;
-    }
-
-    public void setObject(long object) {
-        this.object = object;
     }
 
     public String getUserGroup() {
@@ -68,14 +60,6 @@ public class PercolationStep {
         this.nimbus = nimbus;
     }
 
-    public long getPercolationId() {
-        return percolationId;
-    }
-
-    public void setPercolationId(long percolationId) {
-        this.percolationId = percolationId;
-    }
-
     public PercolationStep getPrevious() {
         return previous;
     }
@@ -90,6 +74,34 @@ public class PercolationStep {
 
     public void setMatchedAetherEvent(MatchedAetherEvent matchedAetherEvent) {
         this.matchedAetherEvent = matchedAetherEvent;
+    }
+
+    public PercolationRule getPercolationRule() {
+        return percolationRule;
+    }
+
+    public void setPercolationRule(PercolationRule percolationRule) {
+        this.percolationRule = percolationRule;
+    }
+
+    public PercolationStep(String object, String userGroup, int focus, int nimbus, PercolationRule percolationRule,
+            MatchedAetherEvent matchedAetherEvent, PercolationStep previous) {
+        super();
+        this.objectURL = object;
+        this.userGroup = userGroup;
+        this.focus = focus;
+        this.nimbus = nimbus;
+        this.percolationRule = percolationRule;
+        this.matchedAetherEvent = matchedAetherEvent;
+        this.previous = previous;
+    }
+
+    public String getObjectURL() {
+        return objectURL;
+    }
+
+    public void setObjectURL(String objectURL) {
+        this.objectURL = objectURL;
     }
 
 }

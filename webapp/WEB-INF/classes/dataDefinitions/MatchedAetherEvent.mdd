@@ -2,6 +2,7 @@ objectURL=char[255]
 objectType=char[255]
 actor=char[255]
 userType=char[255]
+userGroup=char[255]
 action=char[255]
 eventDate=date
 initialPercolationRule=ptr InitialPercolationRule

@@ -3,12 +3,22 @@ package org.makumba.parade.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Representation of a ParaDe row.<br>
+ * A Row has a number of basic attributes (rowname, rowpath, description, ...) and more specific data stored in the
+ * rowdata.<br>
+ * Due to the importance of CVS data in ParaDe, as well as the webapp path of a row, this data is stored directly in the
+ * row itself (it eases access through queries).
+ * 
+ * @author Manuel Gay
+ * 
+ */
 public class Row {
 
     public static final int AUTO_CVS_UPDATE_DISABLED = 10;
 
     public static final int AUTO_CVS_UPDATE_ENABLED = 20;
-    
+
     private Long id;
 
     private String rowname;
@@ -16,6 +26,8 @@ public class Row {
     private String rowpath;
 
     private String description;
+
+    private String webappPath;
 
     private Map<String, File> files = new HashMap<String, File>();
 
@@ -26,15 +38,14 @@ public class Row {
     private Application application;
 
     private User user;
-    
+
     // 10 = No, 20 = Yes
     private int automaticCvsUpdate = AUTO_CVS_UPDATE_DISABLED;
-    
+
     private boolean watchedByJNotify = true;
-    
+
     private boolean moduleRow = false;
 
-    
     public boolean getModuleRow() {
         return moduleRow;
     }
@@ -145,9 +156,17 @@ public class Row {
     public void setWatchedByJNotify(boolean watchedByJNotify) {
         this.watchedByJNotify = watchedByJNotify;
     }
-    
+
     public String toString() {
         return getRowname() + " - " + getDescription();
+    }
+
+    public String getWebappPath() {
+        return webappPath;
+    }
+
+    public void setWebappPath(String webappPath) {
+        this.webappPath = webappPath;
     }
 
 }

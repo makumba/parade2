@@ -19,7 +19,7 @@
 		<property name="parentPath" />
 		<property name="isDir" />
 		<property name="onDisk" />
-		<property name="cvsURI" />
+		<property name="cvsURL" />
 		<property name="cvsStatus" />
 		<property name="cvsRevision" />
 		<property name="cvsCheckedOutRevision" />

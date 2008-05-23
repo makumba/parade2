@@ -27,6 +27,10 @@
       <th>description</th>
       <td><mak:value expr="percolationRule.description"/></td>
     </tr>
+    <tr>
+      <th>relationQueries</th>
+      <td><mak:list from="IN(percolationRule.relationQueries) rq"><mak:value expr="rq.query"/></mak:list></td>
+    </tr>
   </table>
 </fieldset>
   <%-- Makumba Generator - END OF NORMAL FIELDS --%>

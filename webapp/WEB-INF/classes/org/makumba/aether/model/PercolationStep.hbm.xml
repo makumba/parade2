@@ -12,13 +12,14 @@
 			<generator class="native" />
 		</id>
 	
-		<property name="object" />
+		<property name="objectURL" />
 		<property name="userGroup" />
 		<property name="focus" />
 		<property name="nimbus" />
 		
 		<one-to-one name="previous" class="PercolationStep" />
 		<many-to-one name="matchedAetherEvent" class="MatchedAetherEvent" />
+		<many-to-one name="percolationRule" class="PercolationRule" />
 
 	</class>
 </hibernate-mapping>

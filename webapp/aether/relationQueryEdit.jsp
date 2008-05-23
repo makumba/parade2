@@ -3,8 +3,10 @@
 
 <%-- Makumba Generator - START OF  *** EDIT ***  PAGE FOR OBJECT InitialPercolationRule --%>
 <mak:object from="RelationQuery rq" where="rq.id=:relationQuery">
-<mak:editForm object="rq" action="initialPercolationRuleList.jsp">
-<mak:input field="query"/>
+<mak:editForm object="rq" action="relationQuery.jsp">
+Description: <mak:input field="description" cols="100"/><br><br>
+Query: <mak:input field="query" cols="100" rows="5"/><br>
+<br>
 <input type="submit" value="Save"/>
 </mak:editForm>
 </mak:object>

@@ -24,6 +24,10 @@
         <th><label for="initialLevel"><span class="accessKey">i</span>nitialLevel</label></th>
         <td><mak:input field="initialLevel" styleId="initialLevel" accessKey="i" /></td>
       </tr>
+      <tr>
+        <th><label for="percolationMode"><span class="accessKey">p</span>ercolationMode</label></th>
+        <td><mak:input field="percolationMode" styleId="percolationMode" accessKey="p" /></td>
+      </tr>
       <input type="hidden" name="initialPercolationRule" value="<mak:value expr="initialPercolationRule.id"/>"/>
       <tr>
         <td>    <input type="submit" value="Save changes" accessKey="S">    <input type="reset" accessKey="R">    <input type="reset" value="Cancel" accessKey="C" onClick="javascript:back();">    </td>
@@ -37,15 +41,28 @@
 
   <%-- Makumba Generator - END OF SETS --%>
 
-<tr><td>relationQueries</td>
-    <td><mak:list from="join initialPercolationRule.relationQueries rq">
-      <mak:value expr="rq.query"/>&nbsp;<a href="initialPercolationRuleQueryEdit.jsp?relationQuery=<mak:value expr="rq.id"/>">[Edit]</a><br>
-      </mak:list>
-    </td>
-</tr>
-
 </table>
 </fieldset>
 </mak:object>
+
+<br>
+
+<h2>Queries for InitialPercolationRule ${param.initialPercolationRule}</h2>
+<ul>
+<mak:list from="InitialPercolationRule ipr, IN(ipr.relationQueries) rq" where="ipr.id = :initialPercolationRule">
+<li><mak:value expr="rq.query"/></li>
+</mak:list>
+</ul>
+<br>
+
+<h2>Select queries for InitialPercolationRule ${param.initialPercolationRule}</h2>
+<mak:object from="InitialPercolationRule ipr" where="ipr.id = :initialPercolationRule">
+<mak:editForm object="ipr" action="initialPercolationRuleList.jsp">
+<mak:input field="relationQueries"/>
+<input type="submit" value="Save"/>
+</mak:editForm>
+</mak:object>
+<br>
+
 
 <%-- Makumba Generator - END OF *** EDIT ***  PAGE FOR OBJECT InitialPercolationRule --%>

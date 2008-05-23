@@ -31,7 +31,7 @@ import org.makumba.providers.datadefinition.makumba.RecordInfo;
  */
 public class MakumbaContextRelationComputer implements RelationComputer {
     
-    protected Logger logger;
+    private static Logger logger;
 
     protected Row r;
 
@@ -111,9 +111,9 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         
         if(filePath.startsWith(webappPath)) {
             logger.debug("Updating relations of "+filePath);
-            filePath = filePath.substring(r.getRowpath().length());
-            if(filePath.startsWith("/"))
-                filePath = filePath.substring(1);
+            filePath = filePath.substring(webappPath.length());
+            if(!filePath.startsWith("/"))
+                filePath = "/"+filePath;
             RecordInfo.setWebappRoot(webappPath);
             rc.crawl(filePath);
             RecordInfo.setWebappRoot(null);
@@ -122,6 +122,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         }
     }
 
+    // TODO refactor to use hibernate api
     protected List<String> getFilesToCrawl() {
         List<String> res = new LinkedList<String>();
 
@@ -139,14 +140,12 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         params.put("rowId", r.getId().intValue());
         Vector<Dictionary<String, Object>> v = t
                 .executeQuery(
-                        "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND f.isDir = false AND f.cvsStatus != 100 AND f.row.id = :rowId AND f.crawled = false",
+                        "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND (f.path like '%.mdd' OR f.path like '%.jsp' OR f.path like '%.java') AND f.isDir = false AND f.cvsStatus != 100 AND f.row.id = :rowId AND f.crawled = false",
                         params);
 
         for (Dictionary<String, Object> dictionary : v) {
             String path = (String) dictionary.get("path");
-            if(path.endsWith(".mdd") || path.endsWith(".jsp") || path.endsWith(".java")) {
                 res.add(path);
-            }
         }
 
         t.close();
@@ -165,9 +164,11 @@ public class MakumbaContextRelationComputer implements RelationComputer {
     }
     
 
-    // TODO implement this
     public static void resetCrawlStatus(Row r, Session s) {
-        
+        Query q = s.createQuery("UPDATE File f set f.crawled = false where f.row.id = :rowid");
+        q.setParameter("rowid", r.getId());
+        int u = q.executeUpdate();
+        logger.debug("Reset the crawl status of "+u+" files");
     }
     
 }

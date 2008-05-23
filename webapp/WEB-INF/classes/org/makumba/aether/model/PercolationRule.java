@@ -1,5 +1,7 @@
 package org.makumba.aether.model;
 
+import java.util.List;
+
 /**
  * Percolation rule for rule-based percolation.
  * 
@@ -21,6 +23,8 @@ public class PercolationRule implements AetherRule {
     private String description;
 
     private transient boolean active = true;
+    
+    private List<RelationQuery> relationQueries;
     
     public PercolationRule() {
 
@@ -80,6 +84,18 @@ public class PercolationRule implements AetherRule {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public List<RelationQuery> getRelationQueries() {
+        return relationQueries;
+    }
+
+    public void setRelationQueries(List<RelationQuery> relationQueries) {
+        this.relationQueries = relationQueries;
+    }
+    
+    public String toString() {
+        return this.subject +" --("+this.predicate+")--> "+object+" (consumes "+consumption+") - "+description;
     }
 
 }

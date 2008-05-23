@@ -11,6 +11,10 @@ public class SimpleFileFilter implements FileFilter {
         if (name.endsWith("~") || name.endsWith(".class") || name.endsWith(".save"))
             return false;
 
+        // if this is the Eclipse build directory
+        if (f.isDirectory() && (name.trim().equals("build")))
+            return false;
+        
         // if this is a CVS directory
         if (f.isDirectory() && (name.trim().equals("CVS")))
             return false;

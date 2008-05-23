@@ -126,5 +126,4 @@ public class ActionLog {
     public void setObjectType(ObjectTypes objectType) {
         this.objectType = objectType;
     }
-
 }

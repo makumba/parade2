@@ -66,5 +66,20 @@ Still to come.
 
 <h2>Cache status</h2>
 Still to come.
+
+<h1>Aether administration</h1>
+
+<h3>Global relation cache refresh</h3>
+To make Aether run all RelationComputers relation computations on next startup, <a href="/Admin.do?op=resetCrawlStatus">click here</a>.
+
+<h3>Per row relation cache refresh</h3>
+<form action="/Admin.do"><input type="hidden" name="op"
+	value="resetRowCrawlStatus" /> <input type="hidden" name="display"
+	value="index" /> Refresh crawl status of row <input name="context"
+	type="text"> <input type="submit" value="Do it!">
+(enter the exact name of the row, e.g. manu-k).<br>
+<br>
+</form>
+
 </body>
 </html>

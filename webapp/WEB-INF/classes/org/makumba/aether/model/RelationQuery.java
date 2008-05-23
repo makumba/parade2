@@ -6,6 +6,8 @@ public class RelationQuery {
     
     private String query;
     
+    private String description;
+    
     public long getId() {
         return id;
     }
@@ -28,6 +30,14 @@ public class RelationQuery {
     
     public String toString() {
         return query;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

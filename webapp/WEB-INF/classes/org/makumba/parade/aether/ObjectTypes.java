@@ -29,5 +29,14 @@ public enum ObjectTypes {
      public static String fileFromRow(String fileURL) {
         return "row://"+fileURL.substring("file://".length(), fileURL.substring("file://".length()).indexOf("/"));
      }
+     
+     public static String typeFromURL(String URL) {
+         for(ObjectTypes o : values()) {
+             if(URL.startsWith(o.prefix)) {
+                 return o.toString();
+             }
+         }
+         return "UNKNOWN";
+     }
 
 }

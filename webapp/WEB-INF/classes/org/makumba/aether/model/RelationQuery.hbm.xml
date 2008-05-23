@@ -16,6 +16,11 @@
 			<column name="query" length="2000" not-null="true" />
 		</property>
 
+		<property name="description">
+			<column name="description" length="2000" not-null="false" />
+		</property>
+
+
 	</class>
 
 </hibernate-mapping>

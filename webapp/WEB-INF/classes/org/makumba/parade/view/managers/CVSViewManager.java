@@ -59,7 +59,7 @@ public class CVSViewManager implements ParadeView {
         fileView.put("cvsRevision", f.getCvsRevision() == null ? "" : f.getCvsRevision());
         fileView.put("cvsCheckedOutRevision", f.getCvsCheckedOutRevision() == null ? "" : f.getCvsCheckedOutRevision());
         fileView.put("cvsStatus", f.getCvsStatus() == null ? "" : f.getCvsStatus());
-
+        
         // let's see if there's a newer version of this on the repository
         boolean newerExists = false;
         String repositoryRevision = "", rowRevision="";

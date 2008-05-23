@@ -27,6 +27,7 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
+import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.CacheRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
@@ -225,6 +226,9 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         continue;
                     String name = line.substring(1, n);
 
+                    if(name.equals("_root_"))
+                        continue;
+                    
                     if (entry != null && !(updatedSimpleFileCache = name.equals(entry)))
                         continue;
 
@@ -300,7 +304,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
                     if (fl == null && !revision.startsWith("-")) {
                         cvsfile.setCvsStatus(NEEDS_CHECKOUT);
-                        cvsfile.setCvsURI(null);
+                        cvsfile.setCvsURL(null);
                         continue;
                     }
 
@@ -308,19 +312,19 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
                     if (date.equals("Result of merge")) {
                         cvsfile.setCvsStatus(LOCALLY_MODIFIED);
-                        cvsfile.setCvsURI(null);
+                        cvsfile.setCvsURL(null);
                         continue;
                     }
 
                     if (date.startsWith("Result of merge+")) {
                         cvsfile.setCvsStatus(CONFLICT);
-                        cvsfile.setCvsURI(null);
+                        cvsfile.setCvsURL(null);
                         continue;
                     }
 
                     if (date.equals("dummy timestamp")) {
                         cvsfile.setCvsStatus(revision.startsWith("-") ? DELETED : ADDED);
-                        cvsfile.setCvsURI(null);
+                        cvsfile.setCvsURL(null);
                         continue;
                     }
 
@@ -331,15 +335,15 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         logger.error("Couldn't parse date of CVS File " + file.getPath(), t);
                         continue;
                     }
-                    
+
                     // we try to catch any tags
-                    ///refundRequestEdit.jsp/1.7/Tue Apr 29 20:50:28 2008//T1.7
-                    
+                    // /refundRequestEdit.jsp/1.7/Tue Apr 29 20:50:28 2008//T1.7
+
                     line = line.substring(n + 1);
                     n = line.indexOf("//");
-                    if(n != -1) {
+                    if (n != -1) {
                         String tag = line.substring(n + 2);
-                        if(tag.startsWith("T")) {
+                        if (tag.startsWith("T")) {
                             cvsfile.setCvsCheckedOutRevision(tag.substring(1));
                         }
                     }
@@ -355,14 +359,19 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                             || Math.abs(Math.abs(l) - 3600000) < 1000) {
                         cvsfile.setCvsStatus(UP_TO_DATE);
 
-                        // if the file is the same as on the repository, we can set a cvs uri
-                        cvsfile.setCvsURI("cvs://" + getCVSModule(r.getRowpath()) + "/" + name);
+                        // if the file is the same as on the repository, we can set a cvs url
+                        String rowWebapp = r.getRowpath() + "/" + r.getWebappPath();
+                        cvsfile.setCvsURL("cvs://"
+                                + getCVSModule(r.getRowpath())
+                                + (file.getPath().startsWith(rowWebapp) ? file.getPath().substring(
+                                        rowWebapp.length()) : file.getPath().substring(r.getRowpath().length()))
+                                + "/" + name);
 
                         continue;
                     }
 
                     cvsfile.setCvsStatus(l > 0 ? LOCALLY_MODIFIED : NEEDS_UPDATE);
-                    cvsfile.setCvsURI(null);
+                    cvsfile.setCvsURL(null);
                     continue;
 
                     // if the entry is a dir
@@ -499,10 +508,12 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         s.close();
         logger.debug("Finished refreshing CVS cache for file " + absolutePath + " of row " + context);
     }
-    
+
     /**
      * Checks if there will be a cvs conflict if this file is updated
-     * @param f the file to check
+     * 
+     * @param f
+     *            the file to check
      * @return <code>true</code> if there will be a CVS conflict on update, <code>false</code> otherwise
      */
     public static boolean cvsConflictOnUpdate(File f) {
@@ -546,7 +557,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                 return false;
             }
         }
-        
+
         return cvsConflictOnUpdate;
     }
 }

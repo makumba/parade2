@@ -1,10 +1,7 @@
 package org.makumba.parade.aether;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
-
-import com.sun.accessibility.internal.resources.accessibility;
 
 /**
  * ParaDe action types, for the Aether engine

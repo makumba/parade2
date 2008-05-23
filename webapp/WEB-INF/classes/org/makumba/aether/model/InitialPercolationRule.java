@@ -1,7 +1,6 @@
 package org.makumba.aether.model;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Initial percolation rule for rule-based percolation
@@ -12,6 +11,14 @@ import java.util.Set;
  * 
  */
 public class InitialPercolationRule implements AetherRule {
+    
+    public static final int NO_PERCOLATION = 0;
+
+    public static final int FOCUS_PERCOLATION = 10;
+
+    public static final int NIMBUS_PERCOLATION = 20;
+
+    public static final int FOCUS_NIMBUS_PERCOLATION = 30;
 
     private long id;
 
@@ -21,11 +28,12 @@ public class InitialPercolationRule implements AetherRule {
 
     private String userType;
 
+    private int percolationMode;
+
     private int initialLevel;
-    
+
     private List<RelationQuery> relationQueries;
 
-    
     private transient boolean active = true;
 
     public InitialPercolationRule() {
@@ -71,7 +79,7 @@ public class InitialPercolationRule implements AetherRule {
     public void setInitialLevel(int initialLevel) {
         this.initialLevel = initialLevel;
     }
-    
+
     public List<RelationQuery> getRelationQueries() {
         return relationQueries;
     }
@@ -79,23 +87,39 @@ public class InitialPercolationRule implements AetherRule {
     public void setRelationQueries(List<RelationQuery> relationQuery) {
         this.relationQueries = relationQuery;
     }
-    
-    public String toString() {
-        return "oType: "+objectType + " action: "+action + " uType: "+userType + " initLevel: "+initialLevel;
-    }
 
-    /* (non-Javadoc)
-     * @see org.makumba.aether.model.AetherRule#isActive()
-     */
     public boolean isActive() {
         return active;
     }
 
-    /* (non-Javadoc)
-     * @see org.makumba.aether.model.AetherRule#setActive(boolean)
-     */
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public int getPercolationMode() {
+        return percolationMode;
+    }
+
+    public void setPercolationMode(int percolationMode) {
+        this.percolationMode = percolationMode;
+    }
+
+    public String toString() {
+        return "oType: " + objectType + " action: " + action + " uType: " + userType + " initLevel: " + initialLevel
+                + " percolationMode: " + percolationMode(this.percolationMode);
+    }
+
+    private static String percolationMode(int n) {
+        switch (n) {
+        case FOCUS_PERCOLATION:
+            return "Focus";
+        case NIMBUS_PERCOLATION:
+            return "Nimbus";
+        case FOCUS_NIMBUS_PERCOLATION:
+            return "Focus/Nimbus";
+        default:
+            return "Should not be here";
+        }
     }
 
 }

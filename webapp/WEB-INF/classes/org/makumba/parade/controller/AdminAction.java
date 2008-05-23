@@ -9,6 +9,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Application;
 import org.makumba.parade.model.Parade;
@@ -131,6 +132,68 @@ public class AdminAction extends DispatchAction {
 
             request.setAttribute("result", "Applications cache refreshed !");
             request.setAttribute("success", new Boolean(true));
+
+            return mapping.findForward("index");
+
+            
+        } finally {
+            tx.commit();
+            s.close();
+        }
+    }
+    
+    public ActionForward resetCrawlStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        Session s = null;
+        Transaction tx = null;
+        try {
+            s = InitServlet.getSessionFactory().openSession();
+            tx = s.beginTransaction();
+
+            Parade p = (Parade) s.get(Parade.class, new Long(1));
+            
+            for(Row r : p.getRows().values()) {
+                MakumbaContextRelationComputer.resetCrawlStatus(r, s);
+            }
+
+            request.setAttribute("result", "Crawl status refreshedApplications cache refreshed !");
+            request.setAttribute("success", new Boolean(true));
+
+            return mapping.findForward("index");
+
+            
+        } finally {
+            tx.commit();
+            s.close();
+        }
+    }
+    
+    public ActionForward resetRowCrawlStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        Session s = null;
+        Transaction tx = null;
+        try {
+            s = InitServlet.getSessionFactory().openSession();
+            tx = s.beginTransaction();
+            
+            String context = (String) request.getParameter("context");
+
+            Parade p = (Parade) s.get(Parade.class, new Long(1));
+            
+            Row r = p.getRows().get(context);
+            
+            if(r != null) {
+                MakumbaContextRelationComputer.resetCrawlStatus(r, s);
+                request.setAttribute("result", "Crawl status refreshedApplications cache refreshed !");
+                request.setAttribute("success", new Boolean(true));
+
+            } else {
+
+                request.setAttribute("result", "Couldn't refresh crawl status of context "+context+": context not found");
+                request.setAttribute("success", new Boolean(false));
+            }
 
             return mapping.findForward("index");
 

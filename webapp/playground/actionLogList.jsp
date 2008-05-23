@@ -2,8 +2,7 @@
 
 <table>
 <thead><th>Date</th><th>User</th><th>Action</th><th>File</th><th>URL</th><th>Query String</th></thead>
-	<mak:list from="parade.ActionLog l">
-	
+	<mak:list from="ActionLog l"> 
 		<tr>
 			<td><mak:value expr="l.logDate" /></td>
 			<td><mak:value expr="l.user" /></td>

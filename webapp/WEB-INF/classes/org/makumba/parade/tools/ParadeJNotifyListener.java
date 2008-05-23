@@ -3,6 +3,7 @@ package org.makumba.parade.tools;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import net.contentobjects.jnotify.JNotify;
@@ -15,6 +16,7 @@ import org.makumba.aether.RelationComputationException;
 import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.User;
@@ -38,11 +40,16 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
     public static Vector<String> lockedDirectories = new Vector<String>();
 
+    private RowProperties rp = new RowProperties();
+    
     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
         logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", " + oldName + " -> "
                 + newName);
         checkSpecialFile(rootPath, oldName);
         checkSpecialFile(rootPath, newName);
+        
+        if (isLocked(rootPath, oldName, JNotify.FILE_RENAMED))
+            return;
         
         if(InitServlet.aetherEnabled) {
             
@@ -50,8 +57,6 @@ public class ParadeJNotifyListener implements JNotifyListener {
             updateRelations(rootPath, newName);
         }
         
-        if (isLocked(rootPath, oldName, JNotify.FILE_RENAMED))
-            return;
         cacheDeleted(rootPath, oldName);
         cacheNew(rootPath, newName);
 
@@ -61,12 +66,13 @@ public class ParadeJNotifyListener implements JNotifyListener {
         logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
         checkSpecialFile(rootPath, name);
         
+        if (isLocked(rootPath, name, JNotify.FILE_MODIFIED))
+            return;
+        
         if(InitServlet.aetherEnabled) {
             updateRelations(rootPath, name);
         }
         
-        if (isLocked(rootPath, name, JNotify.FILE_MODIFIED))
-            return;
         cacheModified(rootPath, name);
         logAction(rootPath, name, JNotify.FILE_MODIFIED);
     }
@@ -90,12 +96,13 @@ public class ParadeJNotifyListener implements JNotifyListener {
         logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", " + name);
         checkSpecialFile(rootPath, name);
         
+        if (isLocked(rootPath, name, JNotify.FILE_CREATED))
+            return;
+
         if(InitServlet.aetherEnabled) {
             updateRelations(rootPath, name);
         }
         
-        if (isLocked(rootPath, name, JNotify.FILE_CREATED))
-            return;
         cacheNew(rootPath, name);
         logAction(rootPath, name, JNotify.FILE_MODIFIED);
 
@@ -305,7 +312,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
     }
     
     
-    private void updateRelations(String rootPath, String name) {
+    public static void updateRelations(String rootPath, String name) {
      
         if(name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) {
             logger.debug("Updating relations for file "+name+" in "+rootPath);
@@ -318,7 +325,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
         }
     }
     
-    private void deleteRelations(String rootPath, String name) {
+    public static void deleteRelations(String rootPath, String name) {
 
         if(name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) {
             logger.debug("Deleting relations for file "+name+" in "+rootPath);
@@ -361,6 +368,10 @@ public class ParadeJNotifyListener implements JNotifyListener {
             Parade p = (Parade)s.get(Parade.class, new Long(1));
             Row r = findRowFromContext(root, p);
             
+            if(r.getFiles().get(file) == null) {
+                return;
+            }
+            
             ActionLogDTO log = new ActionLogDTO();
             log.setAction(action);
             log.setDate(new Date());
@@ -373,8 +384,18 @@ public class ParadeJNotifyListener implements JNotifyListener {
             if(u != null) {
                 log.setUser(u.getLogin());
             } else {
-                log.setUser(User.getUnknownUser().getLogin());
-//                logger.error("User for row "+r.getRowname() + " not set! Please go to the ParaDe admin interface and set it there!");
+                // try to fetch it from rowstore
+                Map<String, String> defs = rp.getRowDefinitions().get(r.getRowname());
+                if(defs!=null) {
+                    String user = defs.get("user");
+                    if(user!=null) {
+                        log.setUser(user);
+                    } else {
+                        log.setUser(User.getUnknownUser().getLogin());
+//                      logger.error("User for row "+r.getRowname() + " not set! Please go to the ParaDe admin interface and set it there!");
+
+                    }
+                }
             }
 
             TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);

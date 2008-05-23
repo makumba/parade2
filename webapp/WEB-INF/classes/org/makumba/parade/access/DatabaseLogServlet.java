@@ -99,16 +99,16 @@ public class DatabaseLogServlet extends HttpServlet {
                     handleLog(req, record, s);
                 }
 
+                // now we pass the event to Aether
+                if (record instanceof ActionLogDTO && InitServlet.aetherEnabled) {
+                    AetherEvent e = buildAetherEventFromLog((ActionLogDTO) record);
+
+                    InitServlet.getAether().registerEvent(e);
+                }
+                
             } finally {
                 // close the session in any case
                 s.close();
-            }
-
-            // now we pass the event to Aether
-            if (record instanceof ActionLogDTO && InitServlet.aetherEnabled) {
-                AetherEvent e = buildAetherEventFromLog((ActionLogDTO) record);
-
-                InitServlet.getAether().registerEvent(e);
             }
 
         } catch (NullPointerException npe) {
@@ -214,6 +214,15 @@ public class DatabaseLogServlet extends HttpServlet {
         if (log.getParadecontext() == null) {
             log.setParadecontext(log.getContext());
         }
+        
+        String webapp="";
+        
+        // fetch the webapp root in a hackish way
+        Map<String, String> rowDef = rp.getRowDefinitions().get(log.getParadecontext() == null ? log.getContext() : log.getParadecontext());
+        if (rowDef != null) {
+            webapp = rowDef.get("webapp");
+        }
+        
 
         String actionType = "", op = "", params = "", display = "", path = "", file = "";
 
@@ -252,18 +261,14 @@ public class DatabaseLogServlet extends HttpServlet {
         }
         if (actionType.equals("browse") || actionType.equals("fileBrowse")) {
             log.setAction(ActionTypes.VIEW.action());
-            log.setFile(nicePath(path, ""));
+            log.setFile(nicePath(path, "", ""));
             log.setObjectType(ObjectTypes.DIR);
         }
 
         // view actions
         if (uri.endsWith(".jspx")) {
             log.setAction(ActionTypes.VIEW.action());
-            // fetch the webapp root in a hackish way
-            Map<String, String> rowDef = rp.getRowDefinitions().get(
-                    log.getParadecontext() == null ? log.getContext() : log.getParadecontext());
-            if (rowDef != null) {
-                String webapp = rowDef.get("webapp");
+            if (webapp.length() > 0 ) {
                 log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
                 log.setObjectType(ObjectTypes.FILE);
             }
@@ -273,21 +278,21 @@ public class DatabaseLogServlet extends HttpServlet {
         // edit (open editor)
         if (actionType.equals("file") && op.equals("editFile")) {
             log.setAction(ActionTypes.EDIT.action());
-            log.setFile(nicePath(path, file));
+            log.setFile(nicePath(path, file, webapp));
             log.setObjectType(ObjectTypes.FILE);
         }
 
         // save
         if (actionType.equals("file") && op.equals("saveFile")) {
             log.setAction(ActionTypes.SAVE.action());
-            log.setFile(nicePath(path, file));
+            log.setFile(nicePath(path, file, webapp));
             log.setObjectType(ObjectTypes.FILE);
         }
 
         // delete
         if (actionType.equals("file") && op.equals("deleteFile")) {
             log.setAction(ActionTypes.DELETE.action());
-            log.setFile(nicePath(path, params));
+            log.setFile(nicePath(path, params, webapp));
             log.setObjectType(ObjectTypes.FILE);
         }
 
@@ -315,7 +320,7 @@ public class DatabaseLogServlet extends HttpServlet {
                 // we just store it in a variable
                 log.setAction("paradeCvsCommit");
                 String[] commitParams = getParamValues("params", queryString, null, 0);
-                log.setFile(nicePath(commitParams[1], ""));
+                log.setFile(nicePath(commitParams[1], "", ""));
                 log.setObjectType(ObjectTypes.CVSFILE);
 
                 // for some weird reason, commit gets logged twice (maybe because of struts?)
@@ -397,12 +402,23 @@ public class DatabaseLogServlet extends HttpServlet {
         }
     }
 
-    private String nicePath(String path, String file) {
+    private String nicePath(String path, String file, String webapp) {
         try {
+            // path doesn't end with /
             path = path.indexOf("%") > -1 ? URLDecoder.decode(path, "UTF-8") : path;
             path = path.startsWith("/") ? "" : "/" + (path.endsWith("/") ? path.substring(0, path.length() - 1) : path);
+            
+            // file starts with /
             file = file.indexOf("%") > -1 ? URLDecoder.decode(file, "UTF-8") : file;
             file = file.startsWith("/") ? file : file.length() == 0 ? "" : "/" + file;
+            
+            // remove webapp path
+            if(webapp.length() > 0) {
+                path = path.startsWith("/" + webapp) ? path.substring(("/" + webapp).length()) : path;
+                file = file.startsWith("/" + webapp) ? file.substring(("/" + webapp).length()) : file;
+                
+            }
+            
         } catch (UnsupportedEncodingException e) {
             // shouldn't happen
         }
@@ -468,7 +484,10 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().equals("/userView.jsp")
                         || log.getUrl().equals("/userEdit.jsp")
                         || log.getUrl().equals("/showImage.jsp")
+                        || log.getUrl().equals("/todo.jsp")
                         || log.getUrl().equals("/")
+                        || log.getUrl().startsWith("/admin")
+                        || log.getUrl().startsWith("/Admin.do")
                         || log.getUrl().startsWith("/aether")
                         || log.getUrl().startsWith("/logic")
                         || log.getUrl().startsWith("/dataDefinitions")

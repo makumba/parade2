@@ -5,7 +5,7 @@
 <fieldset style="text-align:left;">
   <legend>New InitialPercolationRule</legend>
   <jsp:include page="aetherTypes.jsp"/>
-<mak:newForm type="InitialPercolationRule" action="initialPercolationRuleView.jsp" name="initialPercolationRule" >
+  <mak:newForm type="InitialPercolationRule" action="initialPercolationRuleView.jsp" name="initialPercolationRule" >
   <table>
   <%-- Makumba Generator - START OF NORMAL FIELDS --%>
     <tr>
@@ -24,16 +24,10 @@
       <th><label for="initialLevel"><span class="accessKey">i</span>nitialLevel</label></th>
       <td><mak:input field="initialLevel" styleId="initialLevel" accessKey="i" /></td>
     </tr>
-    <% /*
     <tr>
-      <th><label for="">Re<span class="accessKey">l</span>ationQueries</label></th>
-      <td>
-        <mak:addForm object="initialPercolationRule" field="relationQueries">
-        <mak:input field="query" styleId="relationQuery" accessKey="l" />
-        </mak:addForm>
-      </td>
+      <th><label for="percolation"><span class="accessKey">M</span>ode</label></th>
+      <td><mak:input field="percolationMode" styleId="percolationMode" accessKey="M" /></td>
     </tr>
-    */ %>
   <%-- Makumba Generator - END OF NORMAL FIELDS --%>
     <tr>
       <td>  <input type="submit" value="Add" accessKey="A">  <input type="reset" accessKey="R">  <input type="reset" value="Cancel" accessKey="C" onClick="javascript:back();">  </td>

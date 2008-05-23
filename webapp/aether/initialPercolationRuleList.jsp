@@ -31,7 +31,7 @@ InitialPercolationRules</legend
       <td><mak:value expr="initialPercolationRule.initialLevel" /></td>
       <td><mak:value expr="initialPercolationRule.userType" /></td>
       <td>
-<a href="initialPercolationRuleView.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[View]</a> <a href="initialPercolationRuleEdit.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[Edit]</a>  <a href="initialPercolationRuleAddQuery.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[Add]</a> <a href="initialPercolationRuleDelete.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[Delete]</a> </td>    </tr>
+<a href="initialPercolationRuleView.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[View]</a> <a href="initialPercolationRuleEdit.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[Edit]</a> <a href="initialPercolationRuleDelete.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[Delete]</a> </td>    </tr>
   </mak:list>
 </table>
 </fieldset>

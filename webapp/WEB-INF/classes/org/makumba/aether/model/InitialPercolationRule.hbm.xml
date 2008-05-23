@@ -15,11 +15,14 @@
 		<property name="objectType" />
 		<property name="action" />
 		<property name="userType" />
+		<property name="percolationMode" >
+  			<column name="percolationMode" default="0" />
+		</property>
 
 		<property name="initialLevel" />
 		
 
-		<bag name="relationQueries" lazy="false" cascade="all" inverse="false">
+		<bag name="relationQueries" table="InitialPercolationRule__relationQueries" lazy="false" cascade="all" inverse="false">
 			<key column="id_initialpercolationrule" />
 			<many-to-many class="RelationQuery" />
 		</bag>

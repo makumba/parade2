@@ -64,12 +64,14 @@ public class Aether {
     private void computeAllRelations() {
         List<RelationComputer> computers = ctx.getRelationComputers();
         for (RelationComputer relationComputer : computers) {
+            logger.debug("Starting computation of all relations for "+relationComputer.getName());
             try {
                 relationComputer.computeRelations();
             } catch (RelationComputationException e) {
                 logger.error("Could not compute relations of relation computer " + relationComputer.getName() + ": "
                         + e.getMessage());
             }
+            logger.debug("Finished computation of all relations for "+relationComputer.getName());
         }
     }
 

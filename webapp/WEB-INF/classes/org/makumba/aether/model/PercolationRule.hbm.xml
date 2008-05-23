@@ -17,6 +17,11 @@
 		<property name="object" />
 		<property name="consumption" />
 		<property name="description" />
+		
+		<bag name="relationQueries" table="PercolationRule__relationQueries" lazy="false" cascade="all" inverse="false">
+			<key column="id_initialpercolationrule" />
+			<many-to-many class="RelationQuery" />
+		</bag>
 
 	</class>
 </hibernate-mapping>

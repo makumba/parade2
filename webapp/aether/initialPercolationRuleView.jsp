@@ -25,6 +25,10 @@
       <td><mak:value expr="initialPercolationRule.initialLevel"/></td>
     </tr>
     <tr>
+      <th>percolationMode</th>
+      <td><mak:value expr="initialPercolationRule.percolationMode"/></td>
+    </tr>
+    <tr>
       <th>relationQueries</th>
       <td><mak:list from="IN(initialPercolationRule.relationQueries) rq"><mak:value expr="rq.query"/></mak:list></td>
     </tr>

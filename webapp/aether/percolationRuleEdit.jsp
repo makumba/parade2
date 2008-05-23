@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 
 <%-- Makumba Generator - START OF  *** EDIT ***  PAGE FOR OBJECT PercolationRule --%>
-<mak:object from="PercolationRule percolationRule" where="percolationRule=$percolationRule">
+<mak:object from="PercolationRule percolationRule" where="percolationRule.id=:percolationRule">
   <fieldset style="text-align:right;">
   <legend>Edit PercolationRule <i><mak:value expr="percolationRule.subject" /></i></legend>
     <jsp:include page="aetherTypes.jsp"/>
@@ -31,6 +31,13 @@
         <td><mak:input field="description" styleId="description" accessKey="t" /></td>
       </tr>
       <tr>
+        <th><label for="description">Rel<span class="accessKey">a</span>tionQueries</label></th>
+        <td><mak:input field="relationQueries" styleId="relationQueries" accessKey="a" /></td>
+      </tr>
+      
+      <input type="hidden" name="percolationRule" value="<mak:value expr="percolationRule.id"/>"/>
+
+      <tr>
         <td>    <input type="submit" value="Save changes" accessKey="S">    <input type="reset" accessKey="R">    <input type="reset" value="Cancel" accessKey="C" onClick="javascript:back();">    </td>
       </tr>
     </table>
@@ -45,5 +52,5 @@
 </table>
 </fieldset>
 </mak:object>
-
+<br>
 <%-- Makumba Generator - END OF *** EDIT ***  PAGE FOR OBJECT PercolationRule --%>

@@ -43,10 +43,12 @@ public class FileAction extends Action {
         if (op != null && op.startsWith("saveFile")) {
             String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + file;
             ParadeJNotifyListener.createFileLock(absoluteFilePath);
-            FileController.saveFile(absoluteFilePath, source);
 
+            FileController.saveFile(absoluteFilePath, source);
+            
             FileManager.updateSimpleFileCache(context, path, file);
             CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
+            ParadeJNotifyListener.updateRelations(Parade.constructAbsolutePath(context, ""), path + (path.endsWith("/") || file.startsWith("/") ? "" : java.io.File.separator) + file);
             ParadeJNotifyListener.removeFileLock(absoluteFilePath);
 
             return (mapping.findForward("edit"));
