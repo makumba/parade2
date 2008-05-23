@@ -45,13 +45,6 @@ d_stop() {
         tail -n 15 $D_PATH/tomcat/logs/catalina.out
 }
 
-# 
-#       Function that sends a SIGHUP to the daemon/service.
-#
-d_reload() {
-        su -c "cd $D_PATH; ant reload" - "$D_USER"
-}
-
 #
 #       Function that takes the stacktrace logs to a file.
 #
@@ -108,11 +101,6 @@ case "$1" in
         d_stop
         echo "."
         ;;
-  reload|force-reload)
-        echo -n "Reloading $DESC configuration..."
-        d_reload
-        echo "."
-        ;;
   restart)
         echo -n "Restarting $DESC"
         d_stop
@@ -144,7 +132,7 @@ case "$1" in
         echo "."
         ;;
   *)
-        echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload|kill|stacktrace|clean|all}" >&2
+        echo "Usage: $SCRIPTNAME {start|stop|restart|kill|stacktrace|clean|all}" >&2
         exit 1
         ;;
 esac
