@@ -1,0 +1,43 @@
+ParaDe TODO list
+================
+
+$Id$
+
+This file contains the TODO of features that would be nice to have in ParaDe.
+Anyone is welcome to join and help implementing!
+
+=====
+TO-DO
+=====
+
+BUG
+- fix the issue with jnotify not watching freshly created directories (ParadeJNotifyListener)
+
+ENHANCEMENT (EASY)
+- record an ActionLog for the login of a user (AccessServlet)
+- tell which makumba jars were found if more than 1 was found (MakumbaManager)
+
+ENHANCEMENT (MEDIUM)
+- improve log view:
+  - automatically select view that is more relevant depending on last activity (last hour, day, week...)
+    (LogViewManager)
+- display errors / incorrect behaviour of MakumbaManager in red in view (RowStoreViewManager, MakumbaManager)
+- record an ActionLog for the execution of a page (new ActionType)  (DatabaseLogServlet, maybe more?)
+
+ENHANCEMENT (HARD)
+- optimise operations for deletion of a directory: delete cache of all subfiles at once...if possible!
+  (we get a delete notification for each single file, and execute one query for each cache update...)
+  (ParadeJNotifyListener)
+- cache active sessions in the listener so that parade still knows about them on restart (and display people who
+  were there before restart) (ParadeSessionListener, probably also Parade and Parade.hbm.xml)
+- implement tabbed browsing: common header foll all pages, with quick link to row store view, "my row" view, dashboard)
+- implement dashobard view: recent commits, my last modified files, ...
+
+
+
+====
+DONE
+====
+
+manu, 23/05/2008
+- write this TODO list and link it from the index
