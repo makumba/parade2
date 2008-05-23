@@ -10,6 +10,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" >
 <tr>
 <td align="left">
+<a href="log.jsp?context=all">[Log]</a>&nbsp;&nbsp;
 <strong>Currently online:</strong> <#list onlineUsers as user><a href='userView.jsp?user=${user[0]}'>${user[1]}</a>&nbsp;&nbsp;</#list>
 </td>
 <td align="right">
@@ -55,7 +56,7 @@ Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 <#if row.webapp.status == 2><div class="started">started</div></#if>
 
 <#if row.webapp.status == 2>
-<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path="+${row.webapp.path}&op=servletContextReload'>reload</a> 
+<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextReload'>reload</a> 
 <a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextStop'>stop</a>        
 </#if>
 <#if row.webapp.status == 1>

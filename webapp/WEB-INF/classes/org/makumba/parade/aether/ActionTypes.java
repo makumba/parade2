@@ -11,7 +11,9 @@ import java.util.Set;
  */
 public enum ActionTypes {
 
+    LOGIN("login"),
     VIEW("view"),
+    EXECUTE("execute"),
     EDIT("edit"),
     SAVE("save"),
     DELETE("delete"),
@@ -23,7 +25,13 @@ public enum ActionTypes {
     CVS_ADD("cvsAdd"),
     CVS_UPDATE_FILE("cvsUpdateFile"),
     CVS_OVERRIDE_FILE("cvsOverrideFile"),
-    CVS_DELETE_FILE("cvsDeleteFile");
+    CVS_DELETE_FILE("cvsDeleteFile"),
+    WEBAPP_INSTALL("webappInstall"),
+    WEBAPP_UNINSTALL("webappUninstall"),
+    WEBAPP_RELOAD("webappReload"),
+    WEBAPP_STOP("webappStop"),
+    WEBAPP_START("webappStart")
+    ;
 
     private String action;
 

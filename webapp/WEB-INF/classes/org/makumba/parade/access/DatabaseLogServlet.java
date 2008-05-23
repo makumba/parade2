@@ -102,8 +102,10 @@ public class DatabaseLogServlet extends HttpServlet {
                 // now we pass the event to Aether
                 if (record instanceof ActionLogDTO && InitServlet.aetherEnabled) {
                     AetherEvent e = buildAetherEventFromLog((ActionLogDTO) record);
-
-                    InitServlet.getAether().registerEvent(e);
+                    
+                    if(e!=null) {
+                        InitServlet.getAether().registerEvent(e);
+                    }
                 }
                 
             } finally {
@@ -125,6 +127,13 @@ public class DatabaseLogServlet extends HttpServlet {
     }
 
     private AetherEvent buildAetherEventFromLog(ActionLogDTO log) {
+        
+        if(log.getObjectType() == null) {
+            logger.error("**********************************\n" +
+            		"Object type for ActionLog having action "+log.getAction()+" not set.");
+            return null;
+        }
+        
         String objectURL = log.getObjectType().prefix() + log.getParadecontext();
         switch (log.getObjectType()) {
         case ROW:
@@ -236,6 +245,8 @@ public class DatabaseLogServlet extends HttpServlet {
             actionType = "fileBrowse";
         if (uri.indexOf("Cvs.do") > -1)
             actionType = "cvs";
+        if(uri.indexOf("Webapp.do") > -1)
+            actionType = "webapp";
 
         op = getParam("op", queryString);
         params = getParam("params", queryString);
@@ -273,6 +284,15 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setObjectType(ObjectTypes.FILE);
             }
 
+        }
+        
+        // execute actions
+        if(uri.endsWith(".jsp")) {
+            log.setAction(ActionTypes.EXECUTE.action());
+            if (webapp.length() > 0 ) {
+                log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
+                log.setObjectType(ObjectTypes.FILE);
+            }
         }
 
         // edit (open editor)
@@ -359,7 +379,7 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setObjectType(ObjectTypes.CVSFILE);
             }
         }
-
+        
         // CVS commit (hook)
         if (log.getAction().equals("cvsCommitRepository")) {
             log.setAction(ActionTypes.CVS_COMMIT.action());
@@ -398,6 +418,31 @@ public class DatabaseLogServlet extends HttpServlet {
                 }
                 tx.commit();
 
+            }
+        }
+        
+        // webapp matters
+        if(actionType.equals("webapp")) {
+            log.setObjectType(ObjectTypes.ROW);
+            
+            if(op.equals("servletContextInstall")) {
+                log.setAction(ActionTypes.WEBAPP_INSTALL.action());
+            }
+            
+            if(op.equals("servletContextRemove")) {
+                log.setAction(ActionTypes.WEBAPP_UNINSTALL.action());
+            }
+            
+            if(op.equals("servletContextReload")) {
+                log.setAction(ActionTypes.WEBAPP_RELOAD.action());
+            }
+            
+            if(op.equals("servletContextStop")) {
+                log.setAction(ActionTypes.WEBAPP_STOP.action());
+            }
+            
+            if(op.equals("servletContextStart")) {
+                log.setAction(ActionTypes.WEBAPP_START.action());
             }
         }
     }
@@ -475,9 +520,11 @@ public class DatabaseLogServlet extends HttpServlet {
                 && (log.getUrl().endsWith(".ico")
                         || log.getUrl().endsWith(".css")
                         || log.getUrl().endsWith(".gif")
+                        || log.getUrl().endsWith(".jpg")
                         || log.getUrl().endsWith(".js")
-                        || log.getUrl().equals("/servlet/ticker")
-                        || log.getUrl().equals("/servlet/cvscommit/")
+                        || log.getUrl().startsWith("/servlet/ticker")
+                        || log.getUrl().startsWith("/servlet/cvscommit")
+                        || log.getUrl().startsWith("/servlet/logs")
                         || log.getUrl().equals("/tipOfTheDay.jsp")
                         || log.getUrl().equals("/index.jsp")
                         || log.getUrl().equals("/log.jsp")
@@ -489,6 +536,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().startsWith("/admin")
                         || log.getUrl().startsWith("/Admin.do")
                         || log.getUrl().startsWith("/aether")
+                        || log.getUrl().startsWith("/playground")
                         || log.getUrl().startsWith("/logic")
                         || log.getUrl().startsWith("/dataDefinitions")
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)

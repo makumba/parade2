@@ -1,3 +1,4 @@
+<a HREF='/' TARGET='_top' title='back to front page'>&lt;</a>
 <form class="nobreak" target="logview" action="/logs?view=logs&context=${context}&years=${year}&months=${month}&days=${day}&filter=${filter}>
 <script language="JavaScript">
 <!--

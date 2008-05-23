@@ -1,5 +1,6 @@
 package org.makumba.parade.access;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -15,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.auth.Authorizer;
 import org.makumba.parade.auth.DatabaseAuthorizer;
 import org.makumba.parade.auth.LDAPAuthorizer;
@@ -153,11 +155,24 @@ public class AccessServlet extends HttpServlet {
             return new HttpServletRequestWrapper((HttpServletRequest) req) {
                 @Override
                 public String getRemoteUser() {
-                    return (String) ((HttpServletRequest) getRequest()).getSession(true).getAttribute(PARADE_USER);
+                    String user = (String) ((HttpServletRequest) getRequest()).getSession(true).getAttribute(PARADE_USER);
+                    AccessServlet.logUserLogin(user);
+                    return user;
                 }
             };
         }
         return null;
+    }
+
+    protected static void logUserLogin(String user) {
+            
+        ActionLogDTO log = new ActionLogDTO();
+        log.setAction(ActionTypes.LOGIN.action());
+        log.setDate(new Date());
+        log.setUser(user);
+        
+        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+        
     }
 
     String setOutputPrefix(HttpServletRequest req, HttpServletResponse resp) {

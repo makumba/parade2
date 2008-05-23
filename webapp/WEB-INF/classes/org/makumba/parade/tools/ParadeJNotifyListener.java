@@ -42,6 +42,8 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
     private RowProperties rp = new RowProperties();
     
+    private SimpleFileFilter sf = new SimpleFileFilter();
+    
     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
         logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", " + oldName + " -> "
                 + newName);
@@ -149,8 +151,6 @@ public class ParadeJNotifyListener implements JNotifyListener {
         if (!f.exists())
             return;
 
-        SimpleFileFilter sf = new SimpleFileFilter();
-
         if (sf.accept(f)) {
             cacheFile(rootPath, fileName);
         }
@@ -162,8 +162,6 @@ public class ParadeJNotifyListener implements JNotifyListener {
         if (!f.exists())
             return;
 
-        SimpleFileFilter sf = new SimpleFileFilter();
-
         // we don't refresh directories, since the modification of files in there are going to be
         // notified
         if (sf.accept(f) && !f.isDirectory()) {
@@ -173,8 +171,6 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
     private synchronized void cacheDeleted(String rootPath, String fileName) {
         java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
-
-        SimpleFileFilter sf = new SimpleFileFilter();
 
         if (sf.accept(f) && !f.isDirectory()) {
             deleteFile(rootPath, fileName);
@@ -339,6 +335,11 @@ public class ParadeJNotifyListener implements JNotifyListener {
     }
     
     private void logAction(String root, String file, int action) {
+        
+        java.io.File f = new java.io.File(root + java.io.File.separator + file);
+
+        if(!sf.accept(f))
+            return;
         
         switch(action) {
         

@@ -68,11 +68,11 @@ public class LogViewManager {
 
         String dateQuery = "l.date > :myDate";
 
-        boolean c = contextQuery.length() == 0;
+        boolean noContext = contextQuery.length() == 0;
         // FIXME the server restart should be detected solely as ActionLog (and generated as such in TriggerFilter), but
         // here we list ActionLog-Log couples
-        String query = "from Log l, ActionLog al where l.actionLog = al and (" + contextQuery
-                + " or (al.origin = 'tomcat' and al.action='start' and l.origin='TriggerFilter'))" + (c ? "" : " and ")
+        String query = "from Log l, ActionLog al where l.actionLog = al and "
+                + (noContext ? "" : "(" + contextQuery + " or (al.origin = 'tomcat' and al.action='start' and l.origin='TriggerFilter')) and ")
                 + dateQuery;
 
         Query q = s.createQuery(query);
@@ -238,6 +238,7 @@ public class LogViewManager {
         root.put("filter", filter);
 
         List<String> rows = new LinkedList<String>();
+        rows.add("all");
 
         Parade p = (Parade) s.get(Parade.class, new Long(1));
 
