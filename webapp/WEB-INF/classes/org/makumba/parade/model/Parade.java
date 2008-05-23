@@ -183,6 +183,7 @@ public class Parade {
             logger.error("Could not get the canonical path for row " + name + " with path " + path);
         }
         r.setRowpath(canonicalPath);
+        r.setWebappPath(rowDefinition.get("webapp"));
         r.setDescription(rowDefinition.get("desc"));
         r.setModuleRow(false);
 
@@ -220,6 +221,12 @@ public class Parade {
         if (!rowDefinition.get("desc").trim().equals(storedRow.getDescription())) {
             storedRow.setDescription(rowDefinition.get("desc"));
             logger.warn("The description of row " + rowname + " was updated to " + rowDefinition.get("desc"));
+        }
+        
+        // the webapp path is modified
+        if (!rowDefinition.get("webapp").trim().equals(storedRow.getWebappPath())) {
+            storedRow.setWebappPath((rowDefinition.get("webapp")));
+            logger.warn("The webapp path of row " + rowname + " was updated to " + rowDefinition.get("webapp"));
         }
 
         // updating the specific row data
@@ -299,16 +306,7 @@ public class Parade {
             // we refresh it
             logger.info("Populating cache of row " + r.getRowname());
             refreshRow(r1);
-
-            // finally, we re-register the JNotify listener
-            try {
-                JNotify.removeWatch(JNotifyWatches.get(r.getRowname()));
-                addJNotifyListener(r);
-            } catch (JNotifyException jne) {
-                logger.error("Exception while trying to refresh JNotify listener of row " + r.getRowname());
-                jne.printStackTrace();
-            }
-
+            
             long end = new Date().getTime();
 
             logger.info("Finished rebuilding cache of row " + rowName + ". Operation took " + (end - start) + " ms");

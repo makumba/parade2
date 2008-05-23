@@ -57,16 +57,16 @@ public class RowProperties {
      *            the relative path to the webapp folder
      * @param description
      *            the description of the row
-     * @param application
-     *            the name of the application used in this row
+     * @param user
+     *            the name of the primary user of this row
      */
-    public void addRowDefinition(String name, String path, String webapp, String description, String application) {
+    public void addRowDefinition(String name, String path, String webapp, String description, String user) {
         Map<String, String> row = new HashMap<String, String>();
         row.put("name", name);
         row.put("path", path);
         row.put("webapp", webapp);
         row.put("desc", description);
-        row.put("application", application);
+        row.put("user", user);
 
         rowDefinitions.put(name, row);
 
@@ -131,7 +131,7 @@ public class RowProperties {
     private void extractRowDefinitions(String name) {
 
         String propName = "rowdata." + name + ".";
-        String obs = "", webapp = "", application = "";
+        String obs = "", webapp = "", user = "";
         for (Enumeration e = state.keys(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
 
@@ -139,8 +139,8 @@ public class RowProperties {
                 obs = state.getProperty(propName + "obs");
             if (key.startsWith(propName + "webapp"))
                 webapp = state.getProperty(propName + "webapp");
-            if (key.startsWith(propName + "application"))
-                application = state.getProperty(propName + "application");
+            if (key.startsWith(propName + "user"))
+                user = state.getProperty(propName + "user");
         }
 
         // if we don't find anything, add as default the ParaDe row
@@ -148,7 +148,7 @@ public class RowProperties {
             this.addRowDefinition("(root)", state.getProperty(name), ParadeProperties.getProperty("webapp.path"),
                     "ParaDe webapp", "parade");
         } else {
-            this.addRowDefinition(name, state.getProperty(name), webapp, obs, application);
+            this.addRowDefinition(name, state.getProperty(name), webapp, obs, user);
         }
     }
 
