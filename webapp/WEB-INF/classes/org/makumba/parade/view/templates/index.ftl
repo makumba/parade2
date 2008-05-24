@@ -33,9 +33,9 @@ Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 </tr>
 
 <#list rows as row>
-<tr class="<#if !row.rowstore.watchedByJNotify>notWatched<#else><#if (row_index % 2) = 0>odd<#else>even</#if></#if>">
+<tr class="<#if !row.rowstore.watchedByJNotify && row.rowstore.rowname != '(root)'>notWatched<#else><#if (row_index % 2) = 0>odd<#else>even</#if></#if>">
 <td align='center'>
-<#if !row.rowstore.watchedByJNotify><img src="/images/exclamation.gif">&nbsp;This row is not watched by JNotify and won't work properly! Please restart ParaDe and read the logs to get more information.<br><br></#if>
+<#if !row.rowstore.watchedByJNotify && row.rowstore.rowname != '(root)'><img src="/images/exclamation.gif">&nbsp;This row is not watched by JNotify and won't work properly! Please restart ParaDe and read the logs to get more information.<br><br></#if>
 <a href='/browse.jsp?context=${row.rowstore.rowname}'>${row.rowstore.rowname}</a> <#if row.rowstore.rowname == '(root)'><a href=''>(Surf)</a></#if><#if row.rowstore.rowname != '(root)'><#if row.webapp.status == 2><a href='${row.rowstore.rowname}'>(Surf)</a><#else>(Surf)</#if></#if>&nbsp;<a href='log.jsp?context=${row.rowstore.rowname}' target='new'>(log)</a><br>
 <font style="font-size:smaller;">${row.rowstore.rowpath}</font></td>
 <td>${row.rowstore.rowdescription}</td>
@@ -56,13 +56,14 @@ Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 <#if row.webapp.status == 2><div class="started">started</div></#if>
 
 <#if row.webapp.status == 2>
-<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextReload'>reload</a> 
+<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextReload'>reload</a>
 <a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextStop'>stop</a>        
 </#if>
 <#if row.webapp.status == 1>
 <a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextStart'>start</a>
 </#if>
 <#if row.webapp.status != 0>
+<a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextRedeploy'>redeploy</a>  
 <a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextRemove'>uninstall</a>
 </#if>
 <#if row.webapp.status == 0>

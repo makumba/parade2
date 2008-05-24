@@ -38,6 +38,7 @@ function icqNewWin() {
 <a href='/Webapp.do?display=command&context=${rowName}&path=${webapp.path}&op=servletContextStart&getPathFromSession=true'>start</a>
 </#if>
 <#if webapp.status != 0>
+<a href='/Webapp.do?display=index&context=${rowName}&path=${webapp.path}&op=servletContextRedeploy'>redeploy</a>  
 <a href='/Webapp.do?display=command&context=${rowName}&path=${webapp.path}&op=servletContextRemove&getPathFromSession=true'>uninstall</a>
 </#if>
 <#if webapp.status = 0>

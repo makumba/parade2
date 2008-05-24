@@ -122,6 +122,20 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
         return "Error: you cannot stop ParaDe like this !";
     }
+    
+    public String servletContextRedeployRow(Row row) {
+        RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
+
+        String result = "";
+        if (!isParade(row)) {
+            String webapp = row.getRowpath() + File.separator + data.getWebappPath();
+            result = getServletContainer().redeployContext(data.getContextname(), webapp);
+        } else {
+            result = "Error: you cannot redeploy ParaDe this way!";
+        }
+        return result;
+        
+    }
 
     public String servletContextReloadRow(Row row) {
         RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");

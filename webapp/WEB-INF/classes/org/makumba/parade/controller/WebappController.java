@@ -40,6 +40,9 @@ public class WebappController {
         if (op.equals("servletContextInstall")) {
             opResult = webappMgr.servletContextInstallRow(entryRow);
         }
+        if(op.equals("servletContextRedeploy")) {
+            opResult = webappMgr.servletContextRedeployRow(entryRow);
+        }
 
         tx.commit();
         s.close();

@@ -202,6 +202,24 @@ public class TomcatManager implements ServletContainer {
             s = "Could not reload " + contextName + ". " + pleaseCheck(s);
         return s;
     }
+    
+    public synchronized String redeployContext(String contextName, String contextPath) {
+        String s = unInstallContext(contextName);
+        String s1 = "";
+        if (s.startsWith("OK")) {
+            s1 = s;
+            s = installContext(contextName, contextPath);
+        }
+        if(s.startsWith("OK")) {
+            s = s1 + "<br>" + s;
+            servletContextCache.put(contextName, new Integer(RUNNING));
+            
+        } else {
+            s = "Could not redeploy " + contextName + ". " + pleaseCheck(s);
+        }
+        return s;
+    }
+
 
     static String pleaseCheck(String s) {
         return "Please check the output on the Parade log. "

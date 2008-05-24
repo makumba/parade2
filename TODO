@@ -22,6 +22,7 @@ ENHANCEMENT (MEDIUM)
 - improve log view:
   - automatically select view that is more relevant depending on last activity (last hour, day, week...)
     (LogViewManager)
+- also paint a row browser of a non-watched row in pink (FileViewManager)
 
 ENHANCEMENT (HARD)
 - optimise operations for deletion of a directory: delete cache of all subfiles at once...if possible!
@@ -31,11 +32,16 @@ ENHANCEMENT (HARD)
   were there before restart) (ParadeSessionListener, probably also Parade and Parade.hbm.xml)
 - implement tabbed browsing: common header foll all pages, with quick link to row store view, "my row" view, dashboard) (XUL?)
 - implement dashobard view: recent commits, my last modified files, ...
-
+- deploy parade and the webapps in two separate tomcats
 
 ====
 DONE
 ====
+
+manu, 24/05/2008
+- fixing bug in CVS display of directories
+- fixing bug with non-watched rows not displaying correctly
+- new webapp action "redeploy" for fast undeploy and redeploy of a webapp
 
 manu, 23/05/2008
 - "all logs" view

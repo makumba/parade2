@@ -28,6 +28,7 @@ public enum ActionTypes {
     CVS_DELETE_FILE("cvsDeleteFile"),
     WEBAPP_INSTALL("webappInstall"),
     WEBAPP_UNINSTALL("webappUninstall"),
+    WEBAPP_REDEPLOY("webappRedeploy"),
     WEBAPP_RELOAD("webappReload"),
     WEBAPP_STOP("webappStop"),
     WEBAPP_START("webappStart")

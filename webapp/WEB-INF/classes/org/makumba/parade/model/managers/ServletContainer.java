@@ -24,5 +24,7 @@ public interface ServletContainer {
     public String stopContext(String contextName);
 
     public String reloadContext(String contextName);
+    
+    public String redeployContext(String contextName, String contextPath);
 
 }
