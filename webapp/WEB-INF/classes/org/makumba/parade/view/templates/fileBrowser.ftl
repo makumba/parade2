@@ -67,7 +67,13 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 </td>
 
 <!-- CVS -->
+
 <td>
+
+<#if file.isDir>
+<a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
+<#else>
+
 <#if file.cvsIsNull>
 <#if file.isConflictBackup><a title='Backup of your working file, can be deleted once you resolved its conflicts with CVS'>Conflict Backup</a>
 <#else>
@@ -104,43 +110,27 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <!-- UP_TO_DATE -->
 
 <#case 100>
-<#if file.isDir>
-<a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
-<#else>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
-</#if>
 <#break>
 
 <!-- LOCALLY_MODIFIED -->
 <#case 1>
-<#if file.isDir>
-<a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
-<#else>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
 <a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit (place new file version on repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
-</#if>
 <#break>
 
 <!-- NEEDS_CHECKOUT -->
 <#case 2>
-<#if file.isDir>
-<a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
-<#else>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile' title='CVS update file from repository'><img src='/images/cvs-update.gif' alt='CVS checkout'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=deletefile' title='CVS delete file from repository'><img src='/images/cvs-remove.gif' alt='CVS remove'></a>
-</#if>
 <#break>
 
 <!-- NEEDS_UPDATE -->
 <#case 3>
-<#if file.isDir>
-<a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
-<#else>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=updatefile' title='CVS update file from repository'><img src='/images/cvs-update.gif' alt='CVS update'></a>
-</#if>
 <#break>
 
 <!-- ADDED -->
@@ -164,6 +154,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <#break>
 
 </#switch>
+</#if>
 </#if>
 </#if>
 
