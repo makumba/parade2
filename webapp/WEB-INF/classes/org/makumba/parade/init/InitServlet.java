@@ -171,9 +171,6 @@ public class InitServlet extends HttpServlet implements Runnable {
                     MakumbaContextRelationComputer c = new MakumbaContextRelationComputer(r); 
                     ctx.addRelationComputer(c);
                     rowComputers.put(r.getRowpath(), c);
-                    
-                } else if(((RowMakumba)r.getRowdata().get("makumba")).getHasMakumba() && r.getModuleRow()) {
-                    ctx.addRelationComputer(new CVSModuleRelationComputer(r));
                 }
             }
             aether = Aether.getAether(ctx);

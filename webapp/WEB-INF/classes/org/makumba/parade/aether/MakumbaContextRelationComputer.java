@@ -139,7 +139,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         params.put("rowId", r.getId().intValue());
         Vector<Dictionary<String, Object>> v = t
                 .executeQuery(
-                        "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND (f.path like '%.mdd' OR f.path like '%.jsp' OR f.path like '%.java') AND f.isDir = false AND f.cvsStatus != 100 AND f.row.id = :rowId AND f.crawled = false",
+                        "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND (f.path like '%.mdd' OR f.path like '%.jsp' OR f.path like '%.java') AND f.isDir = false AND f.row.id = :rowId AND f.crawled = false",
                         params);
 
         for (Dictionary<String, Object> dictionary : v) {
