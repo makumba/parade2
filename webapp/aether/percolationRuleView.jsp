@@ -28,8 +28,12 @@
       <td><mak:value expr="percolationRule.description"/></td>
     </tr>
     <tr>
-      <th>relationQueries</th>
-      <td><mak:list from="IN(percolationRule.relationQueries) rq"><mak:value expr="rq.query"/></mak:list></td>
+      <th>active</th>
+      <td><mak:value expr="percolationRule.active"/></td>
+    </tr>
+    <tr>
+      <th>next relations</th>
+      <td><ul><mak:list from="IN(percolationRule.relationQueries) rq"><li><a href="relationQueryEdit.jsp?relationQuery=<mak:value expr="rq.id"/>"><mak:value expr="rq.description"/></a></li></mak:list></ul></td>
     </tr>
   </table>
 </fieldset>

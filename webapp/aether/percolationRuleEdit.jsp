@@ -31,8 +31,12 @@
         <td><mak:input field="description" styleId="description" accessKey="t" /></td>
       </tr>
       <tr>
-        <th><label for="description">Rel<span class="accessKey">a</span>tionQueries</label></th>
+        <th><label for="description">next relations</label></th>
         <td><mak:input field="relationQueries" styleId="relationQueries" accessKey="a" /></td>
+      </tr>
+      <tr>
+        <th><label for="active">act<span class="accessKey">i</span>ve</label></th>
+        <td><mak:input field="active" styleId="active" accessKey="i" /></td>
       </tr>
       
       <input type="hidden" name="percolationRule" value="<mak:value expr="percolationRule.id"/>"/>

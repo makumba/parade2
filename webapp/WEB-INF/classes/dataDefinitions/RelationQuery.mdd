@@ -1,2 +1,3 @@
 query=text
 description=text
+arguments=char[255]

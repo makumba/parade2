@@ -1,7 +1,11 @@
+previousURL=char[255]
 objectURL=char[255]
 userGroup=char[255]
 focus=int
 nimbus=int
+percolationPath=text
+percolationLevel=int
 percolationRule = ptr PercolationRule
 matchedAetherEvent=ptr MatchedAetherEvent 
 previous = ptr PercolationStep
+root = ptr PercolationStep

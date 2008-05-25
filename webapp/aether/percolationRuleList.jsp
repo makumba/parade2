@@ -10,7 +10,7 @@
     <c:set var="sortBy" value="percolationRule.${param.sortBy}" />
   </c:when>
   <c:otherwise>
-    <c:set var="sortBy" value="percolationRule.subject" />
+    <c:set var="sortBy" value="percolationRule.active" />
   </c:otherwise>
 </c:choose>
 
@@ -21,6 +21,7 @@
     <th><a href="percolationRuleList.jsp?sortBy=predicate">predicate</a></th>
     <th><a href="percolationRuleList.jsp?sortBy=object">object</a></th>
     <th><a href="percolationRuleList.jsp?sortBy=consumption">consumption</a></th>
+    <th><a href="percolationRuleList.jsp?sortBy=active">active</a></th>
     <th>Actions</th>
   </tr>
   <mak:list from="PercolationRule percolationRule" orderBy="#{sortBy}">
@@ -30,6 +31,7 @@
       <td><mak:value expr="percolationRule.predicate" /></td>
       <td><mak:value expr="percolationRule.object" /></td>
       <td><mak:value expr="percolationRule.consumption" /></td>
+      <td><mak:value expr="percolationRule.active" /></td>
       <td>
 <a href="percolationRuleView.jsp?percolationRule=<mak:value expr="percolationRule.id" />">[View]</a> <a href="percolationRuleEdit.jsp?percolationRule=<mak:value expr="percolationRule.id" />">[Edit]</a> <a href="percolationRuleDelete.jsp?percolationRule=<mak:value expr="percolationRule.id" />">[Delete]</a> </td>    </tr>
   </mak:list>

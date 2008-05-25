@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,7 +26,6 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
-import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.CacheRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
@@ -226,9 +224,9 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         continue;
                     String name = line.substring(1, n);
 
-                    if(name.equals("_root_"))
+                    if (name.equals("_root_"))
                         continue;
-                    
+
                     if (entry != null && !(updatedSimpleFileCache = name.equals(entry)))
                         continue;
 
@@ -312,13 +310,13 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
                     if (date.equals("Result of merge")) {
                         cvsfile.setCvsStatus(LOCALLY_MODIFIED);
-                        cvsfile.setCvsURL(null);
+                        cvsfile.setCvsURL(getCvsURL(r, file, name));
                         continue;
                     }
 
                     if (date.startsWith("Result of merge+")) {
                         cvsfile.setCvsStatus(CONFLICT);
-                        cvsfile.setCvsURL(null);
+                        cvsfile.setCvsURL(getCvsURL(r, file, name));
                         continue;
                     }
 
@@ -360,18 +358,13 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         cvsfile.setCvsStatus(UP_TO_DATE);
 
                         // if the file is the same as on the repository, we can set a cvs url
-                        String rowWebapp = r.getRowpath() + "/" + r.getWebappPath();
-                        cvsfile.setCvsURL("cvs://"
-                                + getCVSModule(r.getRowpath())
-                                + (file.getPath().startsWith(rowWebapp) ? file.getPath().substring(
-                                        rowWebapp.length()) : file.getPath().substring(r.getRowpath().length()))
-                                + "/" + name);
+                        cvsfile.setCvsURL(getCvsURL(r, file, name));
 
                         continue;
                     }
 
                     cvsfile.setCvsStatus(l > 0 ? LOCALLY_MODIFIED : NEEDS_UPDATE);
-                    cvsfile.setCvsURL(null);
+                    cvsfile.setCvsURL(getCvsURL(r, file, name));
                     continue;
 
                     // if the entry is a dir
@@ -426,6 +419,14 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
             logger.error("Error while trying to set CVS information for file " + file.getName() + " at path "
                     + file.getPath(), t);
         }
+    }
+
+    private String getCvsURL(Row r, File file, String name) {
+        String rowWebapp = r.getRowpath() + "/" + r.getWebappPath();
+        String pathToFile = (file.getPath().startsWith(rowWebapp) ? file.getPath().substring(rowWebapp.length())
+                : file.getPath().substring(r.getRowpath().length()));
+        return "cvs://" + getCVSModule(r.getRowpath())+ (pathToFile.startsWith("/") ? "" : "/") + pathToFile + (pathToFile.endsWith("/") ? "" : "/") + name;
+        
     }
 
     /* Reads .cvsignore */
@@ -538,24 +539,10 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     + result.toString());
         } else {
 
-            BufferedReader br = new BufferedReader(new StringReader(result.toString()));
-
-            try {
-
-                // we skip the first two lines, that is just displaying the command
-                br.readLine();
-                br.readLine();
-
-                // U personDelete.jsp
-                String line = br.readLine();
-                if (line.startsWith("rcsmerge: warning: conflicts during merge")) {
-                    cvsConflictOnUpdate = true;
-                }
-
-            } catch (IOException ioe) {
-                logger.error("IO Exception while reading CVS output: " + ioe.getMessage());
-                return false;
+            if (result.toString().indexOf("rcsmerge: warning: conflicts during merge") > -1) {
+                cvsConflictOnUpdate = true;
             }
+
         }
 
         return cvsConflictOnUpdate;

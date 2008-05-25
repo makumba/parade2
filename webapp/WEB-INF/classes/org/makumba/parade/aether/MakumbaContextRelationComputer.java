@@ -41,8 +41,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
 
     public MakumbaContextRelationComputer(Row r) {
         this.r = r;
-        this.webappPath = r.getRowpath() + java.io.File.separator
-                + ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
+        this.webappPath = r.getRowpath() + java.io.File.separator + r.getWebappPath();
         initRelationCrawler();
         logger = Logger.getLogger(MakumbaContextRelationComputer.class);
 

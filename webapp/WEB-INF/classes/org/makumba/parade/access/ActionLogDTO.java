@@ -37,9 +37,9 @@ public class ActionLogDTO {
     private String paradecontext;
 
     private String file;
-    
+
     private ObjectTypes objectType;
-    
+
     public ObjectTypes getObjectType() {
         return objectType;
     }
@@ -176,4 +176,9 @@ public class ActionLogDTO {
 
     }
 
+    public String toString() {
+        return "id: " + id + " context: " + context + " date: " + date + " post: " + post + " queryString: "
+                + queryString + " url: " + url + " user: " + user + " action: " + action + " origin: " + origin
+                + " paradecontext: " + paradecontext + " file: " + file + " objectType: " + objectType;
+    }
 }

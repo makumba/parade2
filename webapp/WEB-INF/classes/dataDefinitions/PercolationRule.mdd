@@ -4,3 +4,4 @@ object=char[255]
 consumption=int;
 description=text;
 relationQueries = set RelationQuery
+active=boolean

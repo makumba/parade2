@@ -11,13 +11,18 @@
 		<id name="id" column="percolationstep">
 			<generator class="native" />
 		</id>
-	
+
+		<property name="previousURL" />
 		<property name="objectURL" />
 		<property name="userGroup" />
 		<property name="focus" />
 		<property name="nimbus" />
+		<property name="percolationPath" />
+		<property name="percolationLevel" />
 		
-		<one-to-one name="previous" class="PercolationStep" />
+		
+		<many-to-one name="previous" class="PercolationStep" />
+		<many-to-one name="root" class="PercolationStep" />
 		<many-to-one name="matchedAetherEvent" class="MatchedAetherEvent" />
 		<many-to-one name="percolationRule" class="PercolationRule" />
 

@@ -8,6 +8,8 @@ public class RelationQuery {
     
     private String description;
     
+    private String arguments;
+    
     public long getId() {
         return id;
     }
@@ -38,6 +40,14 @@ public class RelationQuery {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getArguments() {
+        return arguments;
+    }
+
+    public void setArguments(String arguments) {
+        this.arguments = arguments;
     }
 
 }

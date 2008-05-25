@@ -34,7 +34,7 @@ public class InitialPercolationRule implements AetherRule {
 
     private List<RelationQuery> relationQueries;
 
-    private transient boolean active = true;
+    private boolean active = true;
 
     public InitialPercolationRule() {
 
@@ -88,7 +88,7 @@ public class InitialPercolationRule implements AetherRule {
         this.relationQueries = relationQuery;
     }
 
-    public boolean isActive() {
+    public boolean getActive() {
         return active;
     }
 

@@ -28,6 +28,10 @@
         <th><label for="percolationMode"><span class="accessKey">p</span>ercolationMode</label></th>
         <td><mak:input field="percolationMode" styleId="percolationMode" accessKey="p" /></td>
       </tr>
+      <tr>
+        <th><label for="active">active</label></th>
+        <td><mak:input field="active" styleId="active" /></td>
+      </tr>
       <input type="hidden" name="initialPercolationRule" value="<mak:value expr="initialPercolationRule.id"/>"/>
       <tr>
         <td>    <input type="submit" value="Save changes" accessKey="S">    <input type="reset" accessKey="R">    <input type="reset" value="Cancel" accessKey="C" onClick="javascript:back();">    </td>

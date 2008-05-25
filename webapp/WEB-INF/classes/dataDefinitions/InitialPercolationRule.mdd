@@ -4,3 +4,4 @@ userType=char[255]
 initialLevel=int
 percolationMode=int {"None"=0, "Focus"=10, "Nimbus"=20, "Focus/Nimbus"=30}
 relationQueries = set RelationQuery
+active=boolean

@@ -20,6 +20,7 @@
 		</property>
 
 		<property name="initialLevel" />
+		<property name="active" />
 		
 
 		<bag name="relationQueries" table="InitialPercolationRule__relationQueries" lazy="false" cascade="all" inverse="false">

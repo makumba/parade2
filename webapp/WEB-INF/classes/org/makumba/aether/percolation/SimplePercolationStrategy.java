@@ -1,9 +1,12 @@
 package org.makumba.aether.percolation;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -85,21 +88,33 @@ public class SimplePercolationStrategy implements PercolationStrategy {
     private void percolateMatchedEvent(MatchedAetherEvent mae, Session s) {
         logger.debug("Starting percolation of matched event \"" + mae.toString() + "\"");
 
-        List<Object[]> initialRelations = getRelationsForMatchedEvent(mae, s);
+        // first let's get the queries from the MatchedEvent
+        List<RelationQuery> queries = mae.getInitialPercolationRule().getRelationQueries();
+
+        List<Object[]> res = new LinkedList<Object[]>();
+
+        for (RelationQuery query : queries) {
+            Map<String, Object> arguments = new HashMap<String, Object>();
+            arguments.put("fromURL", mae.getObjectURL());
+            arguments.put("percolationPath", "");
+            res.addAll(executeRelationQueries(query, arguments, s));
+        }
+
+        List<Object[]> initialRelations = res;
 
         if (initialRelations == null) {
             return;
         }
-        
-        logger.debug("Going to percolate along "+initialRelations.size()+" initial relations");
+
+        logger.debug("Going to percolate along " + initialRelations.size() + " initial relations");
 
         if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.FOCUS_PERCOLATION) {
-            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), true, null);
+            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), true, null, 0);
         } else if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.NIMBUS_PERCOLATION) {
-            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), false, null);
+            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), false, null, 0);
         } else if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.FOCUS_NIMBUS_PERCOLATION) {
-            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), true, null);
-            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), false, null);
+            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), true, null, 0);
+            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), false, null, 0);
         }
 
     }
@@ -114,39 +129,46 @@ public class SimplePercolationStrategy implements PercolationStrategy {
     // invariants along percolation: MatchedAetherEvent
     // variants along percolation: previous step (null at beginning), F/N level, percolation rule that lead to match,
     // relations to explore
-    private void percolate(MatchedAetherEvent mae, Session s, List<Object[]> relations, int level,
-            boolean isFocusPercolation, PercolationStep previousStep) {
 
-        logger.debug("Going to percolate along "+relations.size()+" discovered relations");
-        
+    // fix the focus issue (focus is not to be percolated)
+    // fix problem: queries should be able to give params to set or so
 
-        for (Object[] relation : relations) {
-            logger.debug((isFocusPercolation ? "FOCUS PERCOLATION" : "NIMBUS PERCOLATION") + "\t"
-                    + Arrays.toString(relation));
+    private void percolate(MatchedAetherEvent mae, Session s, List<Object[]> relations, int energy,
+            boolean isFocusPercolation, PercolationStep previousStep, int threadLevel) {
 
-            if (isFocusPercolation) {
+        if (isFocusPercolation) {
 
-                // we figure the percolation rules that may apply to this kind of event
+            logger.debug("====== START FOCUS PERCOLATION ======");
 
-                Query q = s
-                        .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType");
-                q.setParameter("subjectType", ObjectTypes.USER.toString());
-                q.setParameter("predicate", mae.getAction());
-                q.setParameter("objectType", mae.getObjectType());
+            // we figure the percolation rules that may apply to this kind of event
 
-                // for each match
-                for (PercolationRule pr : (List<PercolationRule>) q.list()) {
-                    logger.debug("\t == Processing percolation rule match of rule "+pr.toString());
+            Query q = s
+                    .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType");
+            q.setParameter("subjectType", ObjectTypes.USER.toString());
+            q.setParameter("predicate", mae.getAction());
+            q.setParameter("objectType", mae.getObjectType());
 
-                    // record a new percolation step
-                    logger.debug("\t Recording percolation step with level " + level);
+            // for each match
+            for (PercolationRule pr : (List<PercolationRule>) q.list()) {
+                logger.debug("\t == Processing percolation rule match of rule " + pr.toString());
 
-                    PercolationStep ps = buildPercolationStep(mae, (String) relation[2], pr, level, isFocusPercolation,
-                            previousStep);
-                    s.save(ps);
-                }
+                // record a new percolation step
+                logger.debug("\t Recording percolation step with level " + energy);
 
-            } else {
+                PercolationStep ps = buildPercolationStep(mae, mae.getObjectURL(), mae.getObjectURL(), pr, energy,
+                        isFocusPercolation, previousStep, threadLevel);
+                s.save(ps);
+            }
+
+            logger.debug("====== END FOCUS PERCOLATION ======");
+
+        } else {
+
+            logger.debug("Going to percolate along " + relations.size() + " discovered relations");
+
+            for (Object[] relation : relations) {
+                logger.debug("===== START NIMBUS PERCOLATION ====");
+                logger.debug("===== " + Arrays.toString(relation));
 
                 Query q = s
                         .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType");
@@ -156,29 +178,37 @@ public class SimplePercolationStrategy implements PercolationStrategy {
 
                 // for each match
                 for (PercolationRule pr : (List<PercolationRule>) q.list()) {
-                    logger.debug("\t == Processing percolation rule match of rule "+pr.toString());
+                    logger.debug("\t == Processing percolation rule match of rule " + pr.toString());
 
                     // we remove the consumption of the previous relation
-                    int relationLevel = level - pr.getConsumption();
+                    int relationEnergy = energy - pr.getConsumption();
 
-                    // - record a new percolation step (object, userGroup, focus/nimbus, matched aether event, previous
-                    // (if any))
-                    logger.debug("\t Recording percolation step with level " + relationLevel);
-                    PercolationStep ps = buildPercolationStep(mae, (String) relation[2], pr, relationLevel, isFocusPercolation,
-                            previousStep);
+                    // - record a new percolation step
+                    logger.debug("\t == Recording percolation step with level " + relationEnergy);
+                    PercolationStep ps = buildPercolationStep(mae, (String) relation[0], (String) relation[2], pr,
+                            relationEnergy, isFocusPercolation, previousStep, threadLevel);
                     s.save(ps);
 
-                    if (relationLevel < MIN_ENERGY_LEVEL) {
+                    // now we can set the threadPath
+                    // basically this goes like parent-threadPath + parentId + thisUID
+                    ps.setPercolationPath(previousStep == null ? "" : previousStep.getPercolationPath() + "_"
+                            + previousStep.getId() + "_" + ps.getObjectURL());
 
-                        logger.debug("\t Percolation of event "+mae.toString()+" stopped after relation "+Arrays.toString(relation)+" due to insuffiscient energy");
-                        
+                    // and we also set the threadRoot
+                    ps.setRoot(previousStep == null ? ps : previousStep.getRoot());
+
+                    if (relationEnergy < MIN_ENERGY_LEVEL) {
+
+                        logger.debug("\t Percolation of event " + mae.toString() + " stopped after relation "
+                                + Arrays.toString(relation) + " due to insuffiscient energy");
+
                     } else {
 
                         // - get the next relations (use a RelationQuery for this)
-                        List<Object[]> nextRelations = getNextRelations(relation, pr, s);
+                        List<Object[]> nextRelations = getNextRelations(relation, pr, ps, s);
 
                         // do it again, again, again
-                        percolate(mae, s, nextRelations, relationLevel, isFocusPercolation, ps);
+                        percolate(mae, s, nextRelations, relationEnergy, isFocusPercolation, ps, threadLevel + 1);
 
                     }
                 }
@@ -187,52 +217,74 @@ public class SimplePercolationStrategy implements PercolationStrategy {
     }
 
     /**
-     * Gets all the relations for an initially matched event
+     * TODO refactor this in order to use the PercolationStep instead of the relation object...anyway previous relations
+     * should be matched in a better fashion that there are now, like using fromURL+type+toURL and not a stupid
+     * Integer...
      * 
-     * @param mae
-     *            the {@link MatchedAetherEvent}
+     * @param relation
+     * @param pr
+     * @param ps
      * @param s
-     *            a Hibernate {@link Session}
-     * @return fromURL type toURL
+     * @return
      */
-    private List<Object[]> getRelationsForMatchedEvent(MatchedAetherEvent mae, Session s) {
-
-        // first let's get the queries from the MatchedEvent
-        List<RelationQuery> queries = mae.getInitialPercolationRule().getRelationQueries();
-
-        List<Object[]> res = new LinkedList<Object[]>();
-
-        for (RelationQuery query : queries) {
-            logger.debug("Executing relation query: " + query+ " with parameter fromURL="+mae.getObjectURL());
-            res.addAll(s.createQuery(query.getQuery()).setString("fromURL", mae.getObjectURL()).list());
-        }
-        return res;
-    }
-
-    private List<Object[]> getNextRelations(Object[] relation, PercolationRule pr, Session s) {
+    private List<Object[]> getNextRelations(Object[] relation, PercolationRule pr, PercolationStep ps, Session s) {
 
         List<Object[]> res = new LinkedList<Object[]>();
 
         if (pr.getRelationQueries().size() > 0) {
 
+            Map<String, Object> arguments = new HashMap<String, Object>();
+            arguments.put("fromURL", ps.getObjectURL());
+            arguments.put("rowName", getRowNameFromURL(ps.getPreviousURL()));
+            arguments.put("percolationPath", ps.getPercolationPath());
+
             for (RelationQuery query : pr.getRelationQueries()) {
-                logger.debug("Executing relation query: " + query+ " with parameter fromURL="+(String)relation[2]);
-                res.addAll(s.createQuery(query.getQuery()).setString("fromURL", (String) relation[2]).list());
+                res.addAll(executeRelationQueries(query, arguments, s));
             }
 
         } else {
             res
                     .addAll(s
                             .createQuery(
-                                    "SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL from org.makumba.devel.relations.Relation r where r.fromURL = :fromURL")
+                                    "SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL, r.id as relationId from org.makumba.devel.relations.Relation r where r.fromURL = :fromURL")
                             .setString("fromURL", (String) relation[2]).list());
         }
 
         return res;
     }
 
+    private List<String[]> executeRelationQueries(RelationQuery query, Map<String, Object> arguments, Session s) {
+        String queryArguments = "fromURL";
+
+        if (query.getArguments().length() > 0) {
+            queryArguments = query.getArguments();
+        }
+
+        Query q = s.createQuery(query.getQuery());
+
+        String args = ""; // for debug
+        StringTokenizer st = new StringTokenizer(queryArguments, ",");
+        while (st.hasMoreTokens()) {
+
+            String t = st.nextToken().trim();
+
+            Object value = arguments.get(t);
+            if (value != null) {
+                q.setParameter(t, value);
+                args += t + "=" + value;
+                if (st.hasMoreTokens())
+                    args += ", ";
+            }
+        }
+
+        logger.debug("Executing relation query: " + query + " with arguments " + args);
+        return q.list();
+    }
+
     /**
      * Gets all the relations of a matched event
+     * 
+     * @deprecated
      * 
      * TODO implement other types than just FILE
      * 
@@ -242,6 +294,7 @@ public class SimplePercolationStrategy implements PercolationStrategy {
      *            a hibernate {@link Session}
      * @return a String array containing as fields: the fromURL, type and toURL of the relation
      */
+    @Deprecated
     private List<String[]> getAllRelations(MatchedAetherEvent mae, Session s) {
 
         List<String[]> res = null;
@@ -266,6 +319,10 @@ public class SimplePercolationStrategy implements PercolationStrategy {
         return res;
     }
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     private List<String[]> getDependsOnRelations(MatchedAetherEvent mae, Session s) {
         return s
                 .createQuery(
@@ -283,6 +340,8 @@ public class SimplePercolationStrategy implements PercolationStrategy {
     /**
      * Builds a {@link MatchedAetherEvent} from a {@link AetherEvent} and a {@link InitialPercolationRule} it was
      * matcehd against
+     * 
+     * 
      * 
      * @param e
      *            the {@link AetherEvent} to match
@@ -357,14 +416,35 @@ public class SimplePercolationStrategy implements PercolationStrategy {
      *            the {@link PercolationRule}
      * @param isFocusPercolation
      *            <code>true</code> if this is focus percolation, <code>false</code> if it's nimbus percolation
+     * @param percolationLevel
+     *            TODO
+     * @param percolationPath
+     *            TODO
      * @return a {@link PercolationStep} corresponding to this part of the percolation
      */
-    private PercolationStep buildPercolationStep(MatchedAetherEvent mae, String objectURL, PercolationRule pr,
-            int level, boolean isFocusPercolation, PercolationStep previous) {
+    private PercolationStep buildPercolationStep(MatchedAetherEvent mae, String previousURL, String objectURL,
+            PercolationRule pr, int level, boolean isFocusPercolation, PercolationStep previous, int percolationLevel) {
 
-        return new PercolationStep(objectURL, mae.getUserGroup(), (isFocusPercolation ? level : 0),
-                (!isFocusPercolation ? level : 0), pr, mae, previous);
+        return new PercolationStep(previousURL, objectURL, mae.getUserGroup(), (isFocusPercolation ? level : 0),
+                (!isFocusPercolation ? level : 0), pr, mae, previous, percolationLevel);
 
+    }
+
+    // very ugly code. but I'm too tired
+    private static String getRowNameFromURL(String URL) {
+        int n = URL.indexOf(":");
+        if (n == -1) {
+            return "";
+        }
+        if (!(URL.charAt(++n) == '/')) {
+            return "";
+        }
+        if (!(URL.charAt(++n) == '/')) {
+            return "";
+        }
+        n++;
+        URL = URL.substring(n);
+        return URL.substring(0, URL.indexOf("/"));
     }
 
 }

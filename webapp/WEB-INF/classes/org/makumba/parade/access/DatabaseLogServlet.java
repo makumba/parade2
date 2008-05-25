@@ -101,10 +101,15 @@ public class DatabaseLogServlet extends HttpServlet {
 
                 // now we pass the event to Aether
                 if (record instanceof ActionLogDTO && InitServlet.aetherEnabled) {
-                    AetherEvent e = buildAetherEventFromLog((ActionLogDTO) record);
                     
-                    if(e!=null) {
-                        InitServlet.getAether().registerEvent(e);
+                    ActionLogDTO a = (ActionLogDTO) record;
+                                        
+                    if(!a.getAction().equals(ActionTypes.LOGIN.action())) {
+                        AetherEvent e = buildAetherEventFromLog(a);
+                        
+                        if(e!=null) {
+                            InitServlet.getAether().registerEvent(e);
+                        }
                     }
                 }
                 
@@ -130,11 +135,11 @@ public class DatabaseLogServlet extends HttpServlet {
         
         if(log.getObjectType() == null) {
             logger.error("**********************************\n" +
-            		"Object type for ActionLog having action "+log.getAction()+" not set.");
+            		"Object type for ActionLog not set: "+log.toString());
             return null;
         }
         
-        String objectURL = log.getObjectType().prefix() + log.getParadecontext();
+        String objectURL = log.getObjectType().prefix();
         switch (log.getObjectType()) {
         case ROW:
             objectURL += log.getParadecontext();
@@ -143,13 +148,13 @@ public class DatabaseLogServlet extends HttpServlet {
             objectURL += log.getUser();
             break;
         case FILE:
-            objectURL += log.getFile();
+            objectURL += log.getParadecontext() + log.getFile();
             break;
         case DIR:
-            objectURL += log.getFile();
+            objectURL += log.getParadecontext() + log.getFile();
             break;
         case CVSFILE:
-            objectURL += log.getFile();
+            objectURL += log.getParadecontext() + log.getFile();
             break;
         }
 
@@ -227,9 +232,14 @@ public class DatabaseLogServlet extends HttpServlet {
         String webapp="";
         
         // fetch the webapp root in a hackish way
-        Map<String, String> rowDef = rp.getRowDefinitions().get(log.getParadecontext() == null ? log.getContext() : log.getParadecontext());
-        if (rowDef != null) {
-            webapp = rowDef.get("webapp");
+        String ctx = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
+        if(ctx != null) {
+            Map<String, String> rowDef = rp.getRowDefinitions().get(ctx);
+            if (rowDef != null) {
+                webapp = rowDef.get("webapp");
+            } else {
+                logger.warn("Null context for actionLogDTO "+log.toString());
+            }
         }
         
 
@@ -437,6 +447,10 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setAction(ActionTypes.WEBAPP_RELOAD.action());
             }
             
+            if(op.equals("servletContextRedeploy")) {
+                log.setAction(ActionTypes.WEBAPP_REDEPLOY.action());
+            }
+            
             if(op.equals("servletContextStop")) {
                 log.setAction(ActionTypes.WEBAPP_STOP.action());
             }
@@ -532,6 +546,8 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().equals("/userEdit.jsp")
                         || log.getUrl().equals("/showImage.jsp")
                         || log.getUrl().equals("/todo.jsp")
+                        || log.getUrl().equals("/unauthorized.jsp")
+                        || log.getUrl().equals("/error.jsp")
                         || log.getUrl().equals("/")
                         || log.getUrl().startsWith("/admin")
                         || log.getUrl().startsWith("/Admin.do")

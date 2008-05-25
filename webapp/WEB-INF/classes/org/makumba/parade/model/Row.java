@@ -42,7 +42,7 @@ public class Row {
     // 10 = No, 20 = Yes
     private int automaticCvsUpdate = AUTO_CVS_UPDATE_DISABLED;
 
-    private boolean watchedByJNotify = true;
+    private boolean watchedByJNotify = false;
 
     private boolean moduleRow = false;
 
@@ -150,7 +150,7 @@ public class Row {
     }
 
     public boolean getWatchedByJNotify() {
-        return watchedByJNotify;
+        return this.watchedByJNotify;
     }
 
     public void setWatchedByJNotify(boolean watchedByJNotify) {

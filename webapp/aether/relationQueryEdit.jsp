@@ -6,6 +6,8 @@
 <mak:editForm object="rq" action="relationQuery.jsp">
 Description: <mak:input field="description" cols="100"/><br><br>
 Query: <mak:input field="query" cols="100" rows="5"/><br>
+Arguments: <mak:input field="arguments"/> (if none, fromURL is default)<br>
+Supported arguments: fromURL, rowName, previousURL<br>
 <br>
 <input type="submit" value="Save"/>
 </mak:editForm>

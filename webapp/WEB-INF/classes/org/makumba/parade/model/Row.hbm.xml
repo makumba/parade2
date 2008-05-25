@@ -19,6 +19,9 @@
 		<property name="automaticCvsUpdate" type="integer" insert="false">
 			<column name="automaticCvsUpdate" default="10"/>
 		</property>
+		<property name="watchedByJNotify" type="boolean" insert="false">
+			<column name="watchedByJNotify" default="false"/>
+		</property>
 		
 		<property name="moduleRow" />
 

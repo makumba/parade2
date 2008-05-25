@@ -67,6 +67,7 @@ public class RowFromCVSModuleCheckoutHandler extends Thread {
             }
             r.setRowpath(canonicalPath);
             r.setDescription("Row of CVS module "+a.getName());
+            r.setWebappPath(a.getWebappPath());
             r.setModuleRow(true);
             r.setAutomaticCvsUpdate(Row.AUTO_CVS_UPDATE_ENABLED);
             

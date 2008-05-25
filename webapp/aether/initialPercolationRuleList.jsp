@@ -10,7 +10,7 @@ InitialPercolationRules</legend
     <c:set var="sortBy" value="initialPercolationRule.${param.sortBy}" />
   </c:when>
   <c:otherwise>
-    <c:set var="sortBy" value="initialPercolationRule.objectType" />
+    <c:set var="sortBy" value="initialPercolationRule.active" />
   </c:otherwise>
 </c:choose>
 
@@ -21,6 +21,7 @@ InitialPercolationRules</legend
     <th><a href="initialPercolationRuleList.jsp?sortBy=action">action</a></th>
     <th><a href="initialPercolationRuleList.jsp?sortBy=initialLevel">initialLevel</a></th>
     <th><a href="initialPercolationRuleList.jsp?sortBy=userType">userType</a></th>
+    <th><a href="initialPercolationRuleList.jsp?sortBy=actuve">active</a></th>
     <th>Actions</th>
   </tr>
   <mak:list from="InitialPercolationRule initialPercolationRule" orderBy="#{sortBy}">
@@ -30,6 +31,7 @@ InitialPercolationRules</legend
       <td><mak:value expr="initialPercolationRule.action" /></td>
       <td><mak:value expr="initialPercolationRule.initialLevel" /></td>
       <td><mak:value expr="initialPercolationRule.userType" /></td>
+      <td><mak:value expr="initialPercolationRule.active" /></td>
       <td>
 <a href="initialPercolationRuleView.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[View]</a> <a href="initialPercolationRuleEdit.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[Edit]</a> <a href="initialPercolationRuleDelete.jsp?initialPercolationRule=<mak:value expr="initialPercolationRule.id" />">[Delete]</a> </td>    </tr>
   </mak:list>
