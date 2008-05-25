@@ -143,7 +143,7 @@ public class SimplePercolationStrategy implements PercolationStrategy {
             // we figure the percolation rules that may apply to this kind of event
 
             Query q = s
-                    .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType");
+                    .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType and r.active = true");
             q.setParameter("subjectType", ObjectTypes.USER.toString());
             q.setParameter("predicate", mae.getAction());
             q.setParameter("objectType", mae.getObjectType());
@@ -171,7 +171,7 @@ public class SimplePercolationStrategy implements PercolationStrategy {
                 logger.debug("===== " + Arrays.toString(relation));
 
                 Query q = s
-                        .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType");
+                        .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType and r.active = true");
                 q.setParameter("subjectType", ObjectTypes.typeFromURL((String) relation[0]));
                 q.setParameter("predicate", relation[1]);
                 q.setParameter("objectType", ObjectTypes.typeFromURL((String) relation[2]));
@@ -191,8 +191,8 @@ public class SimplePercolationStrategy implements PercolationStrategy {
 
                     // now we can set the threadPath
                     // basically this goes like parent-threadPath + parentId + thisUID
-                    ps.setPercolationPath(previousStep == null ? "" : previousStep.getPercolationPath() + "_"
-                            + previousStep.getId() + "_" + ps.getObjectURL());
+                    ps.setPercolationPath(previousStep == null ? ps.getId() + "_" + ps.getObjectURL() : previousStep.getPercolationPath() + "_"
+                            + ps.getId() + "_" + ps.getObjectURL());
 
                     // and we also set the threadRoot
                     ps.setRoot(previousStep == null ? ps : previousStep.getRoot());
