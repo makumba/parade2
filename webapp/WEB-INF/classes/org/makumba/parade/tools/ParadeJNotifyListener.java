@@ -310,7 +310,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
     
     public static void updateRelations(String rootPath, String name) {
      
-        if(name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) {
+        if((name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) && InitServlet.aetherEnabled) {
             logger.debug("Updating relations for file "+name+" in "+rootPath);
             try {
                 InitServlet.getContextRelationComputer(rootPath).updateRelation(rootPath + (rootPath.endsWith(java.io.File.separator) || name.startsWith(java.io.File.separator) ? "" : "/")  + name);
@@ -323,7 +323,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
     
     public static void deleteRelations(String rootPath, String name) {
 
-        if(name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) {
+        if((name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) && InitServlet.aetherEnabled) {
             logger.debug("Deleting relations for file "+name+" in "+rootPath);
             try {
                 InitServlet.getContextRelationComputer(rootPath).deleteRelation(rootPath + (rootPath.endsWith(java.io.File.separator) || name.startsWith(java.io.File.separator) ? "" : "/")  + name);
