@@ -38,6 +38,10 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+manu, 25/05/2008
+- customised Unauthorized page
+- fixing issue with LDAP Authorizer not working when no picture attribute is set
+
 manu, 24/05/2008
 - fixing bug in CVS display of directories
 - fixing bug with non-watched rows not displaying correctly

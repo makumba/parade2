@@ -237,11 +237,14 @@
       <servlet-class>org.makumba.devel.CodeGenerator</servlet-class>
     </servlet>
 
-
-
 	<error-page>
 		<error-code>500</error-code>
 		<location>/error.jsp</location>
+	</error-page>
+	
+	<error-page>
+		<error-code>401</error-code>
+		<location>/unauthorized.jsp</location>
 	</error-page>
 
 </web-app>

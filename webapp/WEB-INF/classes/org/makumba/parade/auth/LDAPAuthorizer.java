@@ -1,6 +1,8 @@
 package org.makumba.parade.auth;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.Security;
 import java.util.StringTokenizer;
@@ -13,6 +15,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.makumba.parade.init.ParadeProperties;
 
+import com.novell.ldap.LDAPAttribute;
 import com.novell.ldap.LDAPAttributeSet;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPEntry;
@@ -133,7 +136,11 @@ public class LDAPAuthorizer implements Authorizer {
             } else {
                 cn = attributeSet.getAttribute("cn").getStringValue();
             }
-            jpegPhoto = attributeSet.getAttribute("jpegPhoto").getByteValue();
+            
+            LDAPAttribute picture = attributeSet.getAttribute("jpegPhoto");
+            if(picture != null) {
+                jpegPhoto = picture.getByteValue();
+            }
 
             // in the end we disconnect
             lc.disconnect();
@@ -141,6 +148,7 @@ public class LDAPAuthorizer implements Authorizer {
 
         } catch (LDAPException e) {
             System.err.println("LDAP AUTHORIZER ERROR: login failed for user " + username + ", loginDN " + loginDN);
+            System.err.println("LDAP AURHORIZER ERROR: exception is: "+e.getMessage());
             return false;
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
