@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.CacheRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
+import org.makumba.parade.tools.LineNumberCounter;
 import org.makumba.parade.tools.SimpleFileFilter;
 
 /**
@@ -197,6 +199,8 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
             fileData.setOnDisk(true);
+            fileData.setPreviousLines(fileData.getCurrentLines());
+            fileData.setCurrentLines(LineNumberCounter.countLineNumbers(file));
 
             // otherwise we make a new file
         } else {
@@ -213,23 +217,27 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             fileData.setName(file.getName());
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
+            fileData.setCurrentLines(LineNumberCounter.countLineNumbers(file));
+            fileData.setPreviousLines(LineNumberCounter.countLineNumbers(file));
             fileData.setOnDisk(true);
         }
         return fileData;
     }
 
     public static File setVirtualFileData(Row r, File path, String name, boolean dir) {
-        File cvsfile = new File();
-        cvsfile.setName(name);
-        cvsfile.setPath(path.getPath() + java.io.File.separator + name);
-        cvsfile.setParentPath(path.getPath().replace(java.io.File.separatorChar, '/'));
-        cvsfile.setOnDisk(false);
-        cvsfile.setIsDir(dir);
-        cvsfile.setRow(r);
-        cvsfile.setDate(new Long((new Date()).getTime()));
-        cvsfile.setSize(new Long(0));
-        cvsfile.setFiledata(new HashMap<String, AbstractFileData>());
-        return cvsfile;
+        File virtualFile = new File();
+        virtualFile.setName(name);
+        virtualFile.setPath(path.getPath() + java.io.File.separator + name);
+        virtualFile.setParentPath(path.getPath().replace(java.io.File.separatorChar, '/'));
+        virtualFile.setOnDisk(false);
+        virtualFile.setIsDir(dir);
+        virtualFile.setRow(r);
+        virtualFile.setDate(new Long((new Date()).getTime()));
+        virtualFile.setSize(new Long(0));
+        virtualFile.setCurrentLines(0);
+        virtualFile.setPreviousLines(0);
+        virtualFile.setFiledata(new HashMap<String, AbstractFileData>());
+        return virtualFile;
     }
 
     public void newRow(String name, Row r, Map<String, String> m) {

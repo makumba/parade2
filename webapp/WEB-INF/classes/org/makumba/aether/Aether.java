@@ -76,7 +76,9 @@ public class Aether {
     }
 
     public void registerEvent(AetherEvent e) {
-        logger.debug("Registering new Aether event \"" + e.toString()+"\"");
+        
+        long start = System.currentTimeMillis();
+
         try {
             p.percolate(e);
         } catch (PercolationException e1) {
@@ -91,5 +93,9 @@ public class Aether {
 
         }
 
+        long end = System.currentTimeMillis();
+        long refresh = end - start;
+        logger.info("AETHER: percolation of event " + e.toString() + " took " + refresh + " ms");
+        
     }
 }

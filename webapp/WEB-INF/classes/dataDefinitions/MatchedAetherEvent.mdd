@@ -6,3 +6,4 @@ userGroup=char[255]
 action=char[255]
 eventDate=date
 initialPercolationRule=ptr InitialPercolationRule
+initialLevelCoefficient=real

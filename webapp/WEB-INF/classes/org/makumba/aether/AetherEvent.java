@@ -14,6 +14,7 @@ public class AetherEvent {
     protected String actor;
     protected String action;
     protected Date eventDate;
+    protected Double initialLevelCoefficient; 
     
     public void setObjectURL(String objectURL) {
         this.objectURL = objectURL;
@@ -55,13 +56,14 @@ public class AetherEvent {
         return eventDate;
     }
 
-    public AetherEvent(String objectURL, String objectType, String user, String action, Date eventDate) {
+    public AetherEvent(String objectURL, String objectType, String user, String action, Date eventDate, Double initialLevelCoefficient) {
         super();
         this.objectURL = objectURL;
         this.objectType = objectType;
         this.actor = user;
         this.action = action;
         this.eventDate = eventDate;
+        this.initialLevelCoefficient = initialLevelCoefficient;
     }
     
     // for MatchedAetherEvent
@@ -71,6 +73,7 @@ public class AetherEvent {
         this.actor = e.getActor();
         this.action = e.getAction();
         this.eventDate = e.getEventDate();
+        this.initialLevelCoefficient = e.getInitialLevelCoefficient();
     }
     
     // for MatchedAetherEvent
@@ -80,6 +83,14 @@ public class AetherEvent {
     
     public String toString() {
         return this.actor +" --(" + this.action + ")--> " + this.objectURL + " ("+this.objectType + ")";
+    }
+
+    public Double getInitialLevelCoefficient() {
+        return initialLevelCoefficient;
+    }
+
+    public void setInitialLevelCoefficient(Double initialLevelCoefficient) {
+        this.initialLevelCoefficient = initialLevelCoefficient;
     }
 
 }

@@ -28,6 +28,8 @@ public class SimplePercolationStrategy implements PercolationStrategy {
 
     private static final int MIN_ENERGY_LEVEL = 21;
 
+    private static final int MAX_PERCOLATION_TIME = 2000;
+
     private Logger logger = Logger.getLogger(SimplePercolationStrategy.class);
 
     /**
@@ -108,13 +110,22 @@ public class SimplePercolationStrategy implements PercolationStrategy {
 
         logger.debug("Going to percolate along " + initialRelations.size() + " initial relations");
 
+        // for focus percolation, we want to emphasize the initial energy level
+        // for nimbus percolation, we make it dependent on how much was modified
+        // that is why we add "1" to the coef for focus percolation
+
+        int initialEnergyFocus = new Long(Math.round(mae.getInitialPercolationLevel()
+                * (1.0 + mae.getInitialLevelCoefficient()))).intValue();
+        int initialEnergyNimbus = new Long(Math.round(mae.getInitialPercolationLevel()
+                * mae.getInitialLevelCoefficient())).intValue();
+
         if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.FOCUS_PERCOLATION) {
-            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), true, null, 0);
+            percolate(mae, s, initialRelations, initialEnergyFocus, true, null, 0);
         } else if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.NIMBUS_PERCOLATION) {
-            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), false, null, 0);
+            percolate(mae, s, initialRelations, initialEnergyNimbus, false, null, 0);
         } else if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.FOCUS_NIMBUS_PERCOLATION) {
-            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), true, null, 0);
-            percolate(mae, s, initialRelations, mae.getInitialPercolationLevel(), false, null, 0);
+            percolate(mae, s, initialRelations, initialEnergyFocus, true, null, 0);
+            percolate(mae, s, initialRelations, initialEnergyNimbus, false, null, 0);
         }
 
     }
@@ -136,6 +147,8 @@ public class SimplePercolationStrategy implements PercolationStrategy {
     private void percolate(MatchedAetherEvent mae, Session s, List<Object[]> relations, int energy,
             boolean isFocusPercolation, PercolationStep previousStep, int threadLevel) {
 
+        long start = System.currentTimeMillis();
+
         if (isFocusPercolation) {
 
             logger.debug("====== START FOCUS PERCOLATION ======");
@@ -153,7 +166,7 @@ public class SimplePercolationStrategy implements PercolationStrategy {
                 logger.debug("\t == Processing percolation rule match of rule " + pr.toString());
 
                 // record a new percolation step
-                logger.debug("\t Recording percolation step with level " + energy);
+                logger.debug("\t == Recording percolation step with level " + energy);
 
                 PercolationStep ps = buildPercolationStep(mae, mae.getObjectURL(), mae.getObjectURL(), pr, energy,
                         isFocusPercolation, previousStep, threadLevel);
@@ -164,69 +177,80 @@ public class SimplePercolationStrategy implements PercolationStrategy {
 
         } else {
 
-            logger.debug("Going to percolate along " + relations.size() + " discovered relations");
+            if (energy < MIN_ENERGY_LEVEL) {
+                logger.debug("NIMBUS-PERCOLATION: Not percolating any further because energy too low: " + energy);
+            } else {
 
-            for (Object[] relation : relations) {
-                logger.debug("===== START NIMBUS PERCOLATION ====");
-                logger.debug("===== " + Arrays.toString(relation));
+                logger.debug("NIMBUS-PERCOLATION: Going to percolate along " + relations.size()
+                        + " discovered relations");
 
-                Query q = s
-                        .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType and r.active = true");
-                q.setParameter("subjectType", ObjectTypes.typeFromURL((String) relation[0]));
-                q.setParameter("predicate", relation[1]);
-                q.setParameter("objectType", ObjectTypes.typeFromURL((String) relation[2]));
+                for (Object[] relation : relations) {
+                    logger.debug("===== START NIMBUS PERCOLATION ====");
+                    logger.debug("===== " + Arrays.toString(relation));
 
-                // for each match
-                for (PercolationRule pr : (List<PercolationRule>) q.list()) {
-                    logger.debug("\t == Processing percolation rule match of rule " + pr.toString());
+                    Query q = s
+                            .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType and r.active = true");
+                    q.setParameter("subjectType", ObjectTypes.typeFromURL((String) relation[0]));
+                    q.setParameter("predicate", relation[1]);
+                    q.setParameter("objectType", ObjectTypes.typeFromURL((String) relation[2]));
 
-                    // we remove the consumption of the previous relation
-                    int relationEnergy = energy - pr.getConsumption();
+                    // for each match
+                    for (PercolationRule pr : (List<PercolationRule>) q.list()) {
+                        logger.debug("\t == Processing percolation rule match of rule " + pr.toString());
 
-                    // - record a new percolation step
-                    logger.debug("\t == Recording percolation step with level " + relationEnergy);
-                    PercolationStep ps = buildPercolationStep(mae, (String) relation[0], (String) relation[2], pr,
-                            relationEnergy, isFocusPercolation, previousStep, threadLevel);
-                    s.save(ps);
+                        // we remove the consumption of the previous relation
+                        int relationEnergy = energy - pr.getConsumption();
 
-                    // now we can set the threadPath
-                    // basically this goes like parent-threadPath + parentId + thisUID
-                    ps.setPercolationPath(previousStep == null ? ps.getId() + "_" + ps.getObjectURL() : previousStep.getPercolationPath() + "_"
-                            + ps.getId() + "_" + ps.getObjectURL());
+                        // - record a new percolation step
+                        logger.debug("\t == Recording percolation step with level " + relationEnergy);
+                        PercolationStep ps = buildPercolationStep(mae, (String) relation[2], (String) relation[0], pr,
+                                relationEnergy, isFocusPercolation, previousStep, threadLevel);
+                        s.save(ps);
 
-                    // and we also set the threadRoot
-                    ps.setRoot(previousStep == null ? ps : previousStep.getRoot());
+                        // now we can set the threadPath
+                        // basically this goes like parent-threadPath + parentId + thisUID
+                        ps.setPercolationPath(previousStep == null ? ps.getId() + "_" + ps.getObjectURL()
+                                : previousStep.getPercolationPath() + "_" + ps.getId() + "_" + ps.getObjectURL());
 
-                    if (relationEnergy < MIN_ENERGY_LEVEL) {
+                        // and we also set the threadRoot
+                        ps.setRoot(previousStep == null ? ps : previousStep.getRoot());
 
-                        logger.debug("\t Percolation of event " + mae.toString() + " stopped after relation "
-                                + Arrays.toString(relation) + " due to insuffiscient energy");
+                        if (relationEnergy < MIN_ENERGY_LEVEL) {
 
+                            logger.debug("NIMBUS-PERCOLATION: Percolation of event " + mae.toString()
+                                    + " stopped after relation " + Arrays.toString(relation)
+                                    + " due to insuffiscient energy");
+
+                        } else {
+
+                            long now = System.currentTimeMillis();
+                            if (!(now - start > MAX_PERCOLATION_TIME)) {
+                                // - get the next relations (use a RelationQuery for this)
+                                List<Object[]> nextRelations = getNextRelations(relation, pr, ps, s);
+
+                                // do it again, again, again
+                                percolate(mae, s, nextRelations, relationEnergy, isFocusPercolation, ps,
+                                        threadLevel + 1);
+                            } else {
+                                logger.debug("NIMBUS-PERCOLATION: Percolation of event " + mae.toString()
+                                        + " stopped after relation " + Arrays.toString(relation) + " due to timeout");
+                                break;
+                            }
+                        }
+                    }
+                    long now = System.currentTimeMillis();
+                    if (!(now - start > MAX_PERCOLATION_TIME)) {
+                        continue;
                     } else {
-
-                        // - get the next relations (use a RelationQuery for this)
-                        List<Object[]> nextRelations = getNextRelations(relation, pr, ps, s);
-
-                        // do it again, again, again
-                        percolate(mae, s, nextRelations, relationEnergy, isFocusPercolation, ps, threadLevel + 1);
-
+                        logger.debug("\t Percolation of event " + mae.toString() + " stopped after relation "
+                                + Arrays.toString(relation) + " due to timeout");
+                        break;
                     }
                 }
             }
         }
     }
 
-    /**
-     * TODO refactor this in order to use the PercolationStep instead of the relation object...anyway previous relations
-     * should be matched in a better fashion that there are now, like using fromURL+type+toURL and not a stupid
-     * Integer...
-     * 
-     * @param relation
-     * @param pr
-     * @param ps
-     * @param s
-     * @return
-     */
     private List<Object[]> getNextRelations(Object[] relation, PercolationRule pr, PercolationStep ps, Session s) {
 
         List<Object[]> res = new LinkedList<Object[]>();

@@ -26,6 +26,7 @@ import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.ActionLog;
+import org.makumba.parade.model.File;
 import org.makumba.parade.model.Log;
 import org.makumba.parade.model.User;
 import org.makumba.parade.tools.PerThreadPrintStreamLogRecord;
@@ -101,18 +102,18 @@ public class DatabaseLogServlet extends HttpServlet {
 
                 // now we pass the event to Aether
                 if (record instanceof ActionLogDTO && InitServlet.aetherEnabled) {
-                    
+
                     ActionLogDTO a = (ActionLogDTO) record;
-                                        
-                    if(!a.getAction().equals(ActionTypes.LOGIN.action())) {
-                        AetherEvent e = buildAetherEventFromLog(a);
-                        
-                        if(e!=null) {
+
+                    if (!a.getAction().equals(ActionTypes.LOGIN.action())) {
+                        AetherEvent e = buildAetherEventFromLog(a, s);
+
+                        if (e != null) {
                             InitServlet.getAether().registerEvent(e);
                         }
                     }
                 }
-                
+
             } finally {
                 // close the session in any case
                 s.close();
@@ -131,14 +132,15 @@ public class DatabaseLogServlet extends HttpServlet {
         }
     }
 
-    private AetherEvent buildAetherEventFromLog(ActionLogDTO log) {
-        
-        if(log.getObjectType() == null) {
-            logger.error("**********************************\n" +
-            		"Object type for ActionLog not set: "+log.toString());
+    private AetherEvent buildAetherEventFromLog(ActionLogDTO log, Session s) {
+
+        if (log.getObjectType() == null) {
+            logger.error("**********************************\n" + "Object type for ActionLog not set: "
+                    + log.toString());
             return null;
         }
-        
+
+        Double initialLevelCoefficient = 1.0;
         String objectURL = log.getObjectType().prefix();
         switch (log.getObjectType()) {
         case ROW:
@@ -149,6 +151,22 @@ public class DatabaseLogServlet extends HttpServlet {
             break;
         case FILE:
             objectURL += log.getParadecontext() + log.getFile();
+
+            Transaction tx = s.beginTransaction();
+            String rowName = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
+            if (rowName == null)
+                rowName = "";
+            File f = (File) s
+                    .createQuery(
+                            "select f as file from File f join f.row r where substring(f.path, 1 + length(r.rowpath) + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)) = :path and r.rowname = :rowname")
+                    .setString("path", log.getFile()).setString("rowname", rowName).uniqueResult();
+
+            if (f != null) {
+                initialLevelCoefficient = new Double(Math.abs(f.getPreviousLines() - f.getCurrentLines()) / f.getCurrentLines());
+            }
+            
+            tx.commit();
+            
             break;
         case DIR:
             objectURL += log.getParadecontext() + log.getFile();
@@ -158,7 +176,8 @@ public class DatabaseLogServlet extends HttpServlet {
             break;
         }
 
-        return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getAction(), log.getDate());
+        return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getAction(), log
+                .getDate(), initialLevelCoefficient);
     }
 
     private void handleActionLog(HttpServletRequest req, Object record, Session s) {
@@ -228,20 +247,19 @@ public class DatabaseLogServlet extends HttpServlet {
         if (log.getParadecontext() == null) {
             log.setParadecontext(log.getContext());
         }
-        
-        String webapp="";
-        
+
+        String webapp = "";
+
         // fetch the webapp root in a hackish way
         String ctx = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
-        if(ctx != null) {
+        if (ctx != null) {
             Map<String, String> rowDef = rp.getRowDefinitions().get(ctx);
             if (rowDef != null) {
                 webapp = rowDef.get("webapp");
             } else {
-                logger.warn("Null context for actionLogDTO "+log.toString());
+                logger.warn("Null context for actionLogDTO " + log.toString());
             }
         }
-        
 
         String actionType = "", op = "", params = "", display = "", path = "", file = "";
 
@@ -255,7 +273,7 @@ public class DatabaseLogServlet extends HttpServlet {
             actionType = "fileBrowse";
         if (uri.indexOf("Cvs.do") > -1)
             actionType = "cvs";
-        if(uri.indexOf("Webapp.do") > -1)
+        if (uri.indexOf("Webapp.do") > -1)
             actionType = "webapp";
 
         op = getParam("op", queryString);
@@ -289,17 +307,17 @@ public class DatabaseLogServlet extends HttpServlet {
         // view actions
         if (uri.endsWith(".jspx")) {
             log.setAction(ActionTypes.VIEW.action());
-            if (webapp.length() > 0 ) {
+            if (webapp.length() > 0) {
                 log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
                 log.setObjectType(ObjectTypes.FILE);
             }
 
         }
-        
+
         // execute actions
-        if(uri.endsWith(".jsp")) {
+        if (uri.endsWith(".jsp")) {
             log.setAction(ActionTypes.EXECUTE.action());
-            if (webapp.length() > 0 ) {
+            if (webapp.length() > 0) {
                 log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
                 log.setObjectType(ObjectTypes.FILE);
             }
@@ -389,7 +407,7 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setObjectType(ObjectTypes.CVSFILE);
             }
         }
-        
+
         // CVS commit (hook)
         if (log.getAction().equals("cvsCommitRepository")) {
             log.setAction(ActionTypes.CVS_COMMIT.action());
@@ -430,32 +448,32 @@ public class DatabaseLogServlet extends HttpServlet {
 
             }
         }
-        
+
         // webapp matters
-        if(actionType.equals("webapp")) {
+        if (actionType.equals("webapp")) {
             log.setObjectType(ObjectTypes.ROW);
-            
-            if(op.equals("servletContextInstall")) {
+
+            if (op.equals("servletContextInstall")) {
                 log.setAction(ActionTypes.WEBAPP_INSTALL.action());
             }
-            
-            if(op.equals("servletContextRemove")) {
+
+            if (op.equals("servletContextRemove")) {
                 log.setAction(ActionTypes.WEBAPP_UNINSTALL.action());
             }
-            
-            if(op.equals("servletContextReload")) {
+
+            if (op.equals("servletContextReload")) {
                 log.setAction(ActionTypes.WEBAPP_RELOAD.action());
             }
-            
-            if(op.equals("servletContextRedeploy")) {
+
+            if (op.equals("servletContextRedeploy")) {
                 log.setAction(ActionTypes.WEBAPP_REDEPLOY.action());
             }
-            
-            if(op.equals("servletContextStop")) {
+
+            if (op.equals("servletContextStop")) {
                 log.setAction(ActionTypes.WEBAPP_STOP.action());
             }
-            
-            if(op.equals("servletContextStart")) {
+
+            if (op.equals("servletContextStart")) {
                 log.setAction(ActionTypes.WEBAPP_START.action());
             }
         }
@@ -466,18 +484,18 @@ public class DatabaseLogServlet extends HttpServlet {
             // path doesn't end with /
             path = path.indexOf("%") > -1 ? URLDecoder.decode(path, "UTF-8") : path;
             path = path.startsWith("/") ? "" : "/" + (path.endsWith("/") ? path.substring(0, path.length() - 1) : path);
-            
+
             // file starts with /
             file = file.indexOf("%") > -1 ? URLDecoder.decode(file, "UTF-8") : file;
             file = file.startsWith("/") ? file : file.length() == 0 ? "" : "/" + file;
-            
+
             // remove webapp path
-            if(webapp.length() > 0) {
+            if (webapp.length() > 0) {
                 path = path.startsWith("/" + webapp) ? path.substring(("/" + webapp).length()) : path;
                 file = file.startsWith("/" + webapp) ? file.substring(("/" + webapp).length()) : file;
-                
+
             }
-            
+
         } catch (UnsupportedEncodingException e) {
             // shouldn't happen
         }
@@ -559,13 +577,9 @@ public class DatabaseLogServlet extends HttpServlet {
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
                         || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
-                        || log.getUrl().equals("/Command.do")
-                        || log.getUrl().startsWith("/scripts/codepress/"))
-                        
+                        || log.getUrl().equals("/Command.do") || log.getUrl().startsWith("/scripts/codepress/"))
 
-
-                || log.getUser() == null
-                || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))) {
+                || log.getUser() == null || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))) {
             return false;
         }
 

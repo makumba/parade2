@@ -19,6 +19,7 @@
 		<property name="userGroup" />
 		<property name="action"/>
 		<property name="eventDate"/>
+		<property name="initialLevelCoefficient"/>
 		
 		<many-to-one name="initialPercolationRule" class="InitialPercolationRule"/>
 

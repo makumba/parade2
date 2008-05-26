@@ -28,6 +28,10 @@ public class File {
     private Long date;
 
     private Long size;
+    
+    private Integer currentLines;
+    
+    private Integer previousLines;
 
     private Map<String, AbstractFileData> filedata = new HashMap<String, AbstractFileData>();
 
@@ -293,6 +297,22 @@ public class File {
         s.close();
 
         return children;
+    }
+
+    public Integer getCurrentLines() {
+        return currentLines;
+    }
+
+    public void setCurrentLines(Integer lines) {
+        this.currentLines = lines;
+    }
+
+    public Integer getPreviousLines() {
+        return previousLines;
+    }
+
+    public void setPreviousLines(Integer previousLines) {
+        this.previousLines = previousLines;
     }
 
 }

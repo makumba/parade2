@@ -70,7 +70,7 @@ public class MatchedAetherEvent extends AetherEvent {
 
     public String toString() {
         return this.actor + " (" + this.userType + ") --(" + this.action + ")--> " + this.objectURL + " ("
-                + this.objectType + ") ===> " + initialPercolationRule.getInitialLevel() + " on group " + this.userGroup;
+                + this.objectType + ") ===> " + initialPercolationRule.getInitialLevel() + " (coef. "+ this.initialLevelCoefficient+ ") on group " + this.userGroup;
     }
 
 }

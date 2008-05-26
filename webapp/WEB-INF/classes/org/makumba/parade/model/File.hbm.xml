@@ -2,16 +2,16 @@
 <!DOCTYPE hibernate-mapping PUBLIC 
       "-//Hibernate/Hibernate Mapping DTD//EN"
       "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-      
+
 <hibernate-mapping package="org.makumba.parade.model">
 	<class name="File" lazy="true">
-	
+
 		<cache usage="read-write" />
-	
-		<id name="id" column="file"> <!-- unsaved-value="undefined" -->
-		    <generator class="native" />
+
+		<id name="id" column="file"><!-- unsaved-value="undefined" -->
+			<generator class="native" />
 		</id>
-		
+
 		<property name="name" />
 		<property name="date" />
 		<property name="size" />
@@ -19,26 +19,30 @@
 		<property name="parentPath" />
 		<property name="isDir" />
 		<property name="onDisk" />
+		<property name="currentLines" />
+		<property name="previousLines" />
 		<property name="cvsURL" />
 		<property name="cvsStatus" />
 		<property name="cvsRevision" />
 		<property name="cvsCheckedOutRevision" />
 		<property name="cvsDate" />
 		<property name="crawled">
-		<column name="crawled" default="false">
-		</column>
+			<column name="crawled" default="false"></column>
 		</property>
-		
-		<many-to-one name="row" column="id_row" not-null="true" outer-join="false"/>
-		
-        <map name="filedata" cascade="all-delete-orphan" inverse="true" access="field" order-by="dataType" lazy="true">
-		    <cache usage="read-write" />
-			<key><column name="id_file" not-null="false"/></key>
-			<index column="dataType" type="string"/>
+
+		<many-to-one name="row" column="id_row" not-null="true"
+			outer-join="false" />
+
+		<map name="filedata" cascade="all-delete-orphan" inverse="true"
+			access="field" order-by="dataType" lazy="true">
+			<cache usage="read-write" />
+			<key>
+				<column name="id_file" not-null="false" />
+			</key>
+			<index column="dataType" type="string" />
 			<one-to-many class="AbstractFileData" />
 		</map>
-		
+
 	</class>
-		
+
 </hibernate-mapping>
-		
