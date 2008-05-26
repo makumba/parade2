@@ -2,9 +2,9 @@
 
 <table>
 <thead><th>Date</th><th>User</th><th>Action</th><th>File</th><th>URL</th><th>Query String</th></thead>
-	<mak:list from="ActionLog l"> 
+	<mak:list from="ActionLog l" orderBy="l.logDate asc" limit="300"> 
 		<tr>
-			<td><mak:value expr="l.logDate" /></td>
+			<td><mak:value expr="l.logDate" format="dd-MM HH:mm"/></td>
 			<td><mak:value expr="l.user" /></td>
 			<td><mak:value expr="l.action" /></td>
 			<td><mak:value expr="l.file" /></td>
