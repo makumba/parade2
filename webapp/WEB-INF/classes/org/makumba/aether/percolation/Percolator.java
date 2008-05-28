@@ -16,5 +16,7 @@ public interface Percolator {
     
     public void percolate(AetherEvent e) throws PercolationException;
     
+    public int getALE(String objectURL, String user);
+    
     
 }

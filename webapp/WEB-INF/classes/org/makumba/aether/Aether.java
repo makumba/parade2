@@ -98,4 +98,8 @@ public class Aether {
         logger.info("AETHER: percolation of event " + e.toString() + " took " + refresh + " ms");
         
     }
+    
+    public int getALE(String objectURL, String user) {
+        return p.getALE(objectURL, user);        
+    }
 }

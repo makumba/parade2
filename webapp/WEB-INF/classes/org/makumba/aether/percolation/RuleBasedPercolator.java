@@ -1,5 +1,6 @@
 package org.makumba.aether.percolation;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -7,6 +8,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.type.LongType;
+import org.hibernate.type.Type;
 import org.makumba.aether.AetherEvent;
 import org.makumba.aether.PercolationException;
 import org.makumba.aether.UserTypes;
@@ -37,7 +40,7 @@ public class RuleBasedPercolator implements Percolator {
     private String databaseName;
 
     private SessionFactory sessionFactory;
-    
+
     private PercolationStrategy strategy;
 
     public void percolate(AetherEvent e) throws PercolationException {
@@ -137,6 +140,50 @@ public class RuleBasedPercolator implements Percolator {
         checkPercolationRules();
 
         logger.info("Finished initialisation of Rule-based percolator");
+    }
+
+    public int getALE(String objectURL, String user) {
+
+        Session s = null;
+        Transaction tx = null;
+        try {
+            s = sessionFactory.openSession();
+            tx = s.beginTransaction();
+            
+            String query = "select sum(ps.focus), sum(ps.nimbus) from PercolationStep ps where ps.objectURL = :objectURL and ps.userGroup like '%*%' and ps.userGroup not like :minusUser";
+            
+            Query q = s.createQuery(query).setString("objectURL", objectURL).setString("minusUser", "%-"+user+"%");
+
+            List<Object> list = q.list();
+            
+            for (Object object : list) {
+
+                Object[] pair = (Object[])object;
+                
+                if(pair[0] == null || pair[1] == null) {
+                    return 0;
+                }
+                
+                Long nimbus = (Long)pair[0];
+                Long focus = (Long)pair[1];
+                
+                if(nimbus != 0 && focus != 0) {
+                    return new Long(nimbus + focus).intValue();
+                } else {
+                    return 0;
+                }
+                
+            }
+            
+            tx.commit();
+
+        } finally {
+            if (s != null) {
+                s.close();
+            }
+        }
+
+        return 0;
     }
 
 }
