@@ -11,7 +11,12 @@ TO-DO
 =====
 
 BUG
+- fix the issue with deleted cvs files becoming zombies after cvs update (if they were not deleted)
+- fix the bug with the cvs commit listener, when a file is moved to attic:
+  - cvs revision comparator doesn't know what is "NONE"
+  - there seems to be an attempt of updating a file that was deleted...look into that
 - fix the issue with jnotify not watching freshly created directories (ParadeJNotifyListener)
+
 
 ENHANCEMENT (EASY)
 - tell which makumba jars were found if more than 1 was found (MakumbaManager)
@@ -23,6 +28,7 @@ ENHANCEMENT (MEDIUM)
   - automatically select view that is more relevant depending on last activity (last hour, day, week...)
     (LogViewManager)
 - also paint a row browser of a non-watched row in pink (FileViewManager)
+- administration: enable easy removal of rows via the admin interface (admin/index.jsp, AdminAction, Parade)
 
 ENHANCEMENT (HARD)
 - optimise operations for deletion of a directory: delete cache of all subfiles at once...if possible!
