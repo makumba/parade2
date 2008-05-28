@@ -1,11 +1,16 @@
 package org.makumba.parade.tools;
 
+import java.util.Date;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.makumba.parade.access.AccessServlet;
+import org.makumba.parade.access.ActionLogDTO;
+import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.auth.Authorizer;
 
 /**
@@ -40,6 +45,22 @@ public class HttpLogin {
     }
 
     protected boolean checkAuth(String user, String pass, HttpServletRequest req) {
-        return a.auth(user, pass);
+        boolean authenticated = a.auth(user, pass);
+        if(authenticated) {
+            logUserLogin(user);
+        }
+        
+        return authenticated;
+    }
+    
+    protected static void logUserLogin(String user) {
+        
+        ActionLogDTO log = new ActionLogDTO();
+        log.setAction(ActionTypes.LOGIN.action());
+        log.setDate(new Date());
+        log.setUser(user);
+        
+        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+        
     }
 }

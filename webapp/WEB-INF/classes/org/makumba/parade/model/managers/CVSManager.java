@@ -423,10 +423,11 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
     private String getCvsURL(Row r, File file, String name) {
         String rowWebapp = r.getRowpath() + "/" + r.getWebappPath();
-        String pathToFile = (file.getPath().startsWith(rowWebapp) ? file.getPath().substring(rowWebapp.length())
-                : file.getPath().substring(r.getRowpath().length()));
-        return "cvs://" + getCVSModule(r.getRowpath())+ (pathToFile.startsWith("/") ? "" : "/") + pathToFile + (pathToFile.endsWith("/") ? "" : "/") + name;
-        
+        String pathToFile = (file.getPath().startsWith(rowWebapp) ? file.getPath().substring(rowWebapp.length()) : file
+                .getPath().substring(r.getRowpath().length()));
+        return "cvs://" + getCVSModule(r.getRowpath()) + (pathToFile.startsWith("/") ? "" : "/") + pathToFile
+                + (pathToFile.endsWith("/") ? "" : "/") + name;
+
     }
 
     /* Reads .cvsignore */

@@ -156,23 +156,11 @@ public class AccessServlet extends HttpServlet {
                 @Override
                 public String getRemoteUser() {
                     String user = (String) ((HttpServletRequest) getRequest()).getSession(true).getAttribute(PARADE_USER);
-                    AccessServlet.logUserLogin(user);
                     return user;
                 }
             };
         }
         return null;
-    }
-
-    protected static void logUserLogin(String user) {
-            
-        ActionLogDTO log = new ActionLogDTO();
-        log.setAction(ActionTypes.LOGIN.action());
-        log.setDate(new Date());
-        log.setUser(user);
-        
-        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
-        
     }
 
     String setOutputPrefix(HttpServletRequest req, HttpServletResponse resp) {

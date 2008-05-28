@@ -11,12 +11,7 @@ TO-DO
 =====
 
 BUG
-- fix the issue with deleted cvs files becoming zombies after cvs update (if they were not deleted)
-- fix the bug with the cvs commit listener, when a file is moved to attic:
-  - cvs revision comparator doesn't know what is "NONE"
-  - there seems to be an attempt of updating a file that was deleted...look into that
 - fix the issue with jnotify not watching freshly created directories (ParadeJNotifyListener)
-
 
 ENHANCEMENT (EASY)
 - tell which makumba jars were found if more than 1 was found (MakumbaManager)
@@ -43,6 +38,14 @@ ENHANCEMENT (HARD)
 ====
 DONE
 ====
+
+manu, 28/05/2008
+- fix the issue with deleted cvs files becoming zombies after cvs update (if they were not deleted)
+- fix the bug with the cvs commit listener, when a file is moved to attic:
+  - cvs revision comparator doesn't know what is "NONE"
+  - there seems to be an attempt of updating a file that was deleted...look into that
+- fix bug with login action log happening way too often
+  
 
 manu, 25/05/2008
 - customised Unauthorized page

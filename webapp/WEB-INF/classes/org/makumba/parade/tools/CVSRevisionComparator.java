@@ -14,16 +14,42 @@ public class CVSRevisionComparator implements Comparator<String> {
      * Compares two CVS revisions
      * 
      * @param r0
-     *            the first revision string
+     *            the revision string of the supposedly new revision
      * @param r1
-     *            the second revision string
+     *            the revision string of the supposedly old revision
+     *            
      * @return 0 if both are equal, -1 if r0 < r1, 1 if r0 > r1, and 2 if there's a comparison error
      */
     public int compare(String r0, String r1) {
-
+        
         if (r0.equals(r1)) {
             return 0;
         }
+        
+        if(r0.equals("NONE")) {
+            return -1;
+        }
+        
+        // new file
+        // we do a strong assumption here: we assume that r0 is the new one, and that we don't have a 1.1 moved to attic...
+        if(r0.equals("NONE") && r1.equals("1.1")) {
+            return -1;
+        }
+        
+        if(r0.equals("1.1") && r1.equals("NONE")) {
+            return 1;
+        }
+        
+        //file moved to attic
+        if(r0.equals("NONE")) {
+            return -1;
+        }
+        
+        if(r1.equals("NONE")) {
+            return 1;
+        }
+        
+        
 
         String[] re0 = r0.split("\\.");
 
