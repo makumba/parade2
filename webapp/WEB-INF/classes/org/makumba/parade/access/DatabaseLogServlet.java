@@ -560,6 +560,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().startsWith("/tipOfTheDay.jsp")
                         || log.getUrl().startsWith("/index.jsp")
                         || log.getUrl().startsWith("/log.jsp")
+                        || log.getUrl().startsWith("/logs")
                         || log.getUrl().startsWith("/userView.jsp")
                         || log.getUrl().startsWith("/userEdit.jsp")
                         || log.getUrl().startsWith("/showImage.jsp")
