@@ -39,6 +39,10 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+manu, 29/05/2008
+- fixing zombie file cleanup
+- attempting to fix concurrency exception
+
 manu, 28/05/2008
 - fix the issue with deleted cvs files becoming zombies after cvs update (if they were not deleted)
 - fix the bug with the cvs commit listener, when a file is moved to attic:
@@ -46,7 +50,6 @@ manu, 28/05/2008
   - there seems to be an attempt of updating a file that was deleted...look into that
 - fix bug with login action log happening way too often
   
-
 manu, 25/05/2008
 - customised Unauthorized page
 - fixing issue with LDAP Authorizer not working when no picture attribute is set
