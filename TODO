@@ -43,6 +43,7 @@ manu, 29/05/2008
 - fixing zombie file cleanup
 - attempting to fix concurrency exception
 - making row properties configuration reader more robust against errors
+- also taking into account log4j levels in log stylesheet
 
 manu, 28/05/2008
 - fix the issue with deleted cvs files becoming zombies after cvs update (if they were not deleted)

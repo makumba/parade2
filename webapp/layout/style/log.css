@@ -21,6 +21,10 @@ PRE {
 	color: #666666
 }
 
+.DEBUG {
+	color: #666666
+}
+
 .CONFIG {
 	color: orange
 }
@@ -34,7 +38,17 @@ PRE {
 	background: pink
 }
 
+.WARN {
+	color: blue;
+	background: pink
+}
+
 .SEVERE {
+	color: yellow;
+	background: red
+}
+
+.ERROR {
 	color: yellow;
 	background: red
 }
