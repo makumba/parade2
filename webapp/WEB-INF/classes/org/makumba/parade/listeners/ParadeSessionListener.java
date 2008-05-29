@@ -2,14 +2,11 @@ package org.makumba.parade.listeners;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
@@ -25,7 +22,7 @@ import javax.servlet.http.HttpSessionListener;
  */
 public class ParadeSessionListener implements HttpSessionListener {
 
-    private static Map<String, HttpSession> activeSessions = new HashMap<String, HttpSession>();
+    private static Map<String, HttpSession> activeSessions = new Hashtable<String, HttpSession>();
 
     public void sessionCreated(HttpSessionEvent e) {
         activeSessions.put(e.getSession().getId(), e.getSession());
