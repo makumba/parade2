@@ -110,6 +110,11 @@ public class RowProperties {
 
                 // we check if the row path is valid, if not, we ignore it
                 String rowPath = state.getProperty(rowName);
+                
+                if(rowPath == null) {
+                    logger.error("Error in rows.properties: row "+rowName+" is not configured but appears as having one or more rowdata elements. Please check!");
+                    continue;
+                }
 
                 java.io.File f = new java.io.File(rowPath);
                 if (f.exists()) {
