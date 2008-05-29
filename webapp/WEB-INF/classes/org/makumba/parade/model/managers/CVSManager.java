@@ -215,7 +215,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
             String line = null;
             while ((line = br.readLine()) != null || !updatedSimpleFileCache) {
                 if (line == null)
-                    return;
+                    break;
 
                 // if the Entry is a file
                 if (line.startsWith("/")) {

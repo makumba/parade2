@@ -218,6 +218,7 @@ public class File {
     public void emptyCvsData() {
         setCvsDate(null);
         setCvsRevision(null);
+        setCvsCheckedOutRevision(null);
         setCvsStatus(null);
         setCvsURL(null);
     }
@@ -285,7 +286,7 @@ public class File {
 
         Query q = s
                 .createSQLQuery(
-                        "SELECT path FROM File f JOIN Row r WHERE f.ID_ROW = r.ID AND f.parentPath = ? AND r.rowname = ? ORDER BY f.isDir DESC, f.path ASC")
+                        "SELECT path FROM File f JOIN Row r WHERE f.ID_ROW = r.row AND f.parentPath = ? AND r.rowname = ? ORDER BY f.isDir DESC, f.path ASC")
                 .addScalar("path", Hibernate.STRING);
         q.setCacheable(true);
         q.setString(0, keyPath);
@@ -314,5 +315,10 @@ public class File {
     public void setPreviousLines(Integer previousLines) {
         this.previousLines = previousLines;
     }
+    
+    public String toString() {
+        return this.path + "("+this.row.getRowname()+"), "+(onDisk?"on disk" : "virtual")+", cvs revision"+this.cvsRevision+" cvs status "+this.cvsStatus;
+    }
+
 
 }

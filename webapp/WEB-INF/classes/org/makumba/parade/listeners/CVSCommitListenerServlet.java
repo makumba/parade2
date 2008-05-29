@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.makumba.parade.access.ActionLogDTO;
+import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.tools.TriggerFilter;
 
@@ -55,8 +56,8 @@ public class CVSCommitListenerServlet extends HttpServlet {
 
         // module/path
         String path = commit.substring(0, commit.indexOf(":"));
-        String module = path.substring(0, path.indexOf("/"));
-        path = path.substring(path.indexOf("/"));
+        String module = path.indexOf("/") > -1 ? path.substring(0, path.indexOf("/")) : path;
+        path = path.indexOf("/") > -1 ? path.substring(path.indexOf("/")) : "";
 
         commit = commit.substring(commit.indexOf(":") + 1);
 
@@ -96,6 +97,7 @@ public class CVSCommitListenerServlet extends HttpServlet {
     private void logCommit(String module, String file, String user, String newRevision) {
         ActionLogDTO log = new ActionLogDTO();
         log.setAction("cvsCommitRepository");
+        log.setObjectType(ObjectTypes.FILE);
         log.setDate(new Date());
         log.setUser(user);
         log.setFile(file);
