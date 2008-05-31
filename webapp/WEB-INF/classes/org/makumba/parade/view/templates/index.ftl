@@ -10,11 +10,11 @@
 <table width="100%" cellpadding="0" cellspacing="0" >
 <tr>
 <td align="left">
-<a href="log.jsp?context=all">[Log]</a>&nbsp;&nbsp;
-<strong>Currently online:</strong> <#list onlineUsers as user><a href='userView.jsp?user=${user[0]}'>${user[1]}</a>&nbsp;&nbsp;</#list>
+<a title="All the logs" href="log.jsp?context=all">[Log]</a>&nbsp;&nbsp;
+<strong><a title="People who were active in the 20 past minutes">Currently online:</a></strong> <#list onlineUsers as user><a href='userView.jsp?user=${user[0]}'>${user[1]}</a>&nbsp;&nbsp;</#list>
 </td>
 <td align="right">
-<a href="userView.jsp">My profile</a>&nbsp;&nbsp;<a href="logout.jsp">Logout</a>
+<a title="See and modify your profile here" href="userView.jsp">My profile</a>&nbsp;&nbsp;<a href="logout.jsp">Logout</a>
 </td>
 </tr>
 </table>
@@ -87,4 +87,4 @@ Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 </CENTER>
 
 <br>
-<a href="todo.jsp">ParaDe</a>
+<a title="ParaDe TODO list" href="todo.jsp">ParaDe</a>
