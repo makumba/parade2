@@ -318,7 +318,7 @@ public class DatabaseLogServlet extends HttpServlet {
         if (uri.endsWith(".jsp")) {
             log.setAction(ActionTypes.EXECUTE.action());
             if (webapp.length() > 0) {
-                log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
+                log.setFile("/" + webapp + uri.substring(0, uri.length()));
                 log.setObjectType(ObjectTypes.FILE);
             }
         }
