@@ -29,15 +29,16 @@ ENHANCEMENT (HARD)
 - optimise operations for deletion of a directory: delete cache of all subfiles at once...if possible!
   (we get a delete notification for each single file, and execute one query for each cache update...)
   (ParadeJNotifyListener)
-- cache active sessions in the listener so that parade still knows about them on restart (and display people who
-  were there before restart) (ParadeSessionListener, probably also Parade and Parade.hbm.xml)
 - implement tabbed browsing: common header foll all pages, with quick link to row store view, "my row" view, dashboard) (XUL?)
-- implement dashobard view: recent commits, my last modified files, ...
+- implement dashboard view: recent commits, my last modified files, ...
 - deploy parade and the webapps in two separate tomcats
 
 ====
 DONE
 ====
+
+manu, 31/05/2008
+- replacing session listener with ActionLog query
 
 manu, 29/05/2008
 - fixing zombie file cleanup

@@ -3,6 +3,8 @@ package org.makumba.parade.view;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,10 +16,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
-import org.makumba.parade.listeners.ParadeSessionListener;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.User;
@@ -140,7 +142,7 @@ public class IndexServlet extends HttpServlet {
 
         root.put("headers", headers);
 
-        root.put("onlineUsers", ParadeSessionListener.getActiveSessionUsers());
+        root.put("onlineUsers", getActiveUsers());
 
         // Iteration over the rows
 
@@ -186,6 +188,40 @@ public class IndexServlet extends HttpServlet {
         out.flush();
 
         return result.toString();
+    }
+    
+    /**
+     * Gets the users active in the past 20 minutes
+     * @return a String array containing the 
+     */
+    public static List<String[]> getActiveUsers() {
+        List<String[]> activeUsers = new LinkedList<String[]>();
+        
+        Session s = null;
+        try {
+           s = InitServlet.getSessionFactory().openSession();
+           
+           Query q = s.createQuery("select u.login, u.nickname from ActionLog a, User u where a.user = u.login and a.logDate > :myDate group by u.login");
+           
+           Calendar cal = Calendar.getInstance();
+           cal.setTime(new Date());
+           cal.add(Calendar.MINUTE, -20);
+
+           q.setTimestamp("myDate", cal.getTime());
+           
+           for(Object res : q.list()) {
+               Object[] userInfo = (Object[]) res;
+               activeUsers.add(new String[] {(String)userInfo[0], (String)userInfo[1]});
+           }
+           
+        } finally {
+            if(s!=null) {
+                s.close();
+            }
+        }
+        
+        return activeUsers;
+        
     }
 
 }
