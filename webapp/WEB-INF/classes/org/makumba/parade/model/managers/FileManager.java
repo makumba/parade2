@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -107,8 +106,8 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
                         if (dirContent.contains(child.getPath())) {
                             continue;
-                        // if the file is not on disk but it has cvs data, we keep it
-                        } else if (!dirContent.contains(child.getPath()) && child.getCvsStatus() != null) {
+                        // if the file is not on disk but it was scheduled for CVS deletion, we keep it
+                        } else if (!dirContent.contains(child.getPath()) && child.getCvsStatus() != null && child.getCvsStatus() == CVSManager.DELETED) {
                             child.setOnDisk(false);
                             continue;
                         } else {
