@@ -18,6 +18,7 @@ ENHANCEMENT (EASY)
 - display errors / incorrect behaviour of MakumbaManager in red in view (RowStoreViewManager, MakumbaManager)
 
 ENHANCEMENT (MEDIUM)
+- display rows that a user uses next to the nick in the parade welcome page (IndexServlet, index.ftl)
 - actionLog JSP (hibernate-mak driven) that displays the 10-20 last things that happened to give a feeling of what's going on
 - improve log view:
   - automatically select view that is more relevant depending on last activity (last hour, day, week...)
@@ -29,7 +30,7 @@ ENHANCEMENT (HARD)
 - optimise operations for deletion of a directory: delete cache of all subfiles at once...if possible!
   (we get a delete notification for each single file, and execute one query for each cache update...)
   (ParadeJNotifyListener)
-- implement tabbed browsing: common header foll all pages, with quick link to row store view, "my row" view, dashboard) (XUL?)
+- implement tabbed browsing: common header for all pages, with quick link to row store view, "my row" view, dashboard) (XUL?)
 - implement dashboard view: recent commits, my last modified files, ...
 - deploy parade and the webapps in two separate tomcats
 
