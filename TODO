@@ -10,8 +10,14 @@ Anyone is welcome to join and help implementing!
 TO-DO
 =====
 
-BUG
+BUG (HIGH PRIO)
 - fix the issue with jnotify not watching freshly created directories (ParadeJNotifyListener)
+
+BUG (LOW PRIO)
+- when a LOCALLY_MODIFIED file was moved to Attic, a CVS update won't update the Entries file. so it is necessary to parse
+  the output of the CVS command and reset the CVS cache of the file accordingly. this can be done by writing a regexp that looks for
+  "cvs update: conflict: `<STUFF>' is modified but no longer in the repository". (CvsController: pass the log to the CVSManager,
+  CVSManager: after Entries parsing check also the log)
 
 ENHANCEMENT (EASY)
 - tell which makumba jars were found if more than 1 was found (MakumbaManager)
