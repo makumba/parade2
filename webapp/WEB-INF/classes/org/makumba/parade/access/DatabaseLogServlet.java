@@ -162,11 +162,12 @@ public class DatabaseLogServlet extends HttpServlet {
                     .setString("path", log.getFile()).setString("rowname", rowName).uniqueResult();
 
             if (f != null) {
-                initialLevelCoefficient = new Double(Math.abs(f.getPreviousLines() - f.getCurrentLines()) / f.getCurrentLines());
+                initialLevelCoefficient = new Double(Math.abs(f.getPreviousLines() - f.getCurrentLines())
+                        / f.getCurrentLines());
             }
-            
+
             tx.commit();
-            
+
             break;
         case DIR:
             objectURL += log.getParadecontext() + log.getFile();
@@ -176,8 +177,8 @@ public class DatabaseLogServlet extends HttpServlet {
             break;
         }
 
-        return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getAction(), log
-                .getDate(), initialLevelCoefficient);
+        return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getAction(),
+                log.getDate(), initialLevelCoefficient);
     }
 
     private void handleActionLog(HttpServletRequest req, Object record, Session s) {
@@ -263,6 +264,8 @@ public class DatabaseLogServlet extends HttpServlet {
 
         String actionType = "", op = "", params = "", display = "", path = "", file = "";
 
+        if (uri.equals("/") || uri.equals("/index.jsp"))
+            actionType = "browseParade";
         if (uri.indexOf("browse.jsp") > -1)
             actionType = "browseRow";
         if (uri.indexOf("/servlet/browse") > -1)
@@ -294,15 +297,21 @@ public class DatabaseLogServlet extends HttpServlet {
             file = "";
 
         // browse actions
+        if (actionType.equals("browseParade")) {
+            log.setAction(ActionTypes.VIEW.action());
+            log.setObjectType(ObjectTypes.PARADE);
+        } else
+
         if (actionType.equals("browseRow")) {
             log.setAction(ActionTypes.VIEW.action());
             log.setObjectType(ObjectTypes.ROW);
-        }
+        } else
+
         if (actionType.equals("browse") || actionType.equals("fileBrowse")) {
             log.setAction(ActionTypes.VIEW.action());
             log.setFile(nicePath(path, "", ""));
             log.setObjectType(ObjectTypes.DIR);
-        }
+        } else
 
         // view actions
         if (uri.endsWith(".jspx")) {
@@ -311,8 +320,7 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
                 log.setObjectType(ObjectTypes.FILE);
             }
-
-        }
+        } else
 
         // execute actions
         if (uri.endsWith(".jsp")) {
@@ -321,28 +329,28 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setFile("/" + webapp + uri.substring(0, uri.length()));
                 log.setObjectType(ObjectTypes.FILE);
             }
-        }
+        } else
 
         // edit (open editor)
         if (actionType.equals("file") && op.equals("editFile")) {
             log.setAction(ActionTypes.EDIT.action());
             log.setFile(nicePath(path, file, webapp));
             log.setObjectType(ObjectTypes.FILE);
-        }
+        } else
 
         // save
         if (actionType.equals("file") && op.equals("saveFile")) {
             log.setAction(ActionTypes.SAVE.action());
             log.setFile(nicePath(path, file, webapp));
             log.setObjectType(ObjectTypes.FILE);
-        }
+        } else
 
         // delete
         if (actionType.equals("file") && op.equals("deleteFile")) {
             log.setAction(ActionTypes.DELETE.action());
             log.setFile(nicePath(path, params, webapp));
             log.setObjectType(ObjectTypes.FILE);
-        }
+        } else
 
         // CVS
         if (actionType.equals("cvs")) {
@@ -553,22 +561,21 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().endsWith(".css")
                         || log.getUrl().endsWith(".gif")
                         || log.getUrl().endsWith(".jpg")
+                        || log.getUrl().endsWith(".png")
                         || log.getUrl().endsWith(".js")
                         || log.getUrl().startsWith("/servlet/ticker")
                         || log.getUrl().startsWith("/servlet/cvscommit")
                         || log.getUrl().startsWith("/servlet/logs")
                         || log.getUrl().startsWith("/tipOfTheDay.jsp")
-                        || log.getUrl().startsWith("/index.jsp")
                         || log.getUrl().startsWith("/logout.jsp")
                         || log.getUrl().startsWith("/log.jsp")
                         || log.getUrl().startsWith("/logs")
-                        || log.getUrl().startsWith("/userView.jsp")
-                        || log.getUrl().startsWith("/userEdit.jsp")
-                        || log.getUrl().startsWith("/showImage.jsp")
+                        || log.getUrl().equals("/userView.jsp")
+                        || log.getUrl().equals("/userEdit.jsp")
+                        || log.getUrl().equals("/showImage.jsp")
                         || log.getUrl().startsWith("/todo.jsp")
                         || log.getUrl().startsWith("/unauthorized.jsp")
                         || log.getUrl().startsWith("/error.jsp")
-                        || log.getUrl().equals("/")
                         || log.getUrl().startsWith("/admin")
                         || log.getUrl().startsWith("/Admin.do")
                         || log.getUrl().startsWith("/aether")
@@ -579,9 +586,17 @@ public class DatabaseLogServlet extends HttpServlet {
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
                         || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
-                        || log.getUrl().equals("/Command.do") || log.getUrl().startsWith("/scripts/codepress/"))
+                        || log.getUrl().equals("/Command.do")
+                        || log.getUrl().startsWith("/scripts/codepress/")
+                        || log.getUrl().equals("/User.do"))
+                        || log.getUrl().equals("/reload")
 
-                || log.getUser() == null || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))) {
+                || log.getUser() == null
+                || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))
+                || (log.getUser().equals("system-u") && log.getContext().equals("parade2") && log.getUrl() == null
+                        && log.getAction() == null && log.getOrigin() == null)
+
+        ) {
             return false;
         }
 

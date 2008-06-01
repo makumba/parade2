@@ -5,7 +5,7 @@ import java.util.Set;
 
 public enum ObjectTypes {
     
-    FILE("file://"), DIR("dir://"), ROW("row://"), USER("user://"), CVSFILE("cvs://");
+    FILE("file://"), DIR("dir://"), ROW("row://"), USER("user://"), CVSFILE("cvs://"), PARADE("parade://");
     
     public static Set<String> getObjectTypes() {
         ObjectTypes[] v = values();
