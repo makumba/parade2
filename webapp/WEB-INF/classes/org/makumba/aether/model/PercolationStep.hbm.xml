@@ -12,6 +12,7 @@
 			<generator class="native" />
 		</id>
 
+		<property name="lastModified" />
 		<property name="previousURL" />
 		<property name="objectURL" />
 		<property name="userGroup" />

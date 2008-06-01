@@ -20,9 +20,11 @@
 		</property>
 
 		<property name="initialLevel" />
+		<property name="focusProgressionCurve" />
+		<property name="nimbusProgressionCurve" />
+		
 		<property name="active" />
 		
-
 		<bag name="relationQueries" table="InitialPercolationRule__relationQueries" lazy="false" cascade="all" inverse="false">
 			<key column="id_initialpercolationrule" />
 			<many-to-many class="RelationQuery" />

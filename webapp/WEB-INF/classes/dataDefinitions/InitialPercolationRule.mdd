@@ -2,6 +2,8 @@ objectType=char[255]
 action=char[255]
 userType=char[255]
 initialLevel=int
+focusProgressionCurve=char[255]
+nimbusProgressionCurve=char[255]
 percolationMode=int {"None"=0, "Focus"=10, "Nimbus"=20, "Focus/Nimbus"=30}
 relationQueries = set RelationQuery
 active=boolean

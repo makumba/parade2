@@ -31,6 +31,10 @@ public class InitialPercolationRule implements AetherRule {
     private int percolationMode;
 
     private int initialLevel;
+    
+    private String focusProgressionCurve;
+    
+    private String nimbusProgressionCurve;
 
     private List<RelationQuery> relationQueries;
 
@@ -120,6 +124,22 @@ public class InitialPercolationRule implements AetherRule {
         default:
             return "Should not be here";
         }
+    }
+
+    public String getFocusProgressionCurve() {
+        return focusProgressionCurve;
+    }
+
+    public void setFocusProgressionCurve(String focusProgressionCurve) {
+        this.focusProgressionCurve = focusProgressionCurve;
+    }
+
+    public String getNimbusProgressionCurve() {
+        return nimbusProgressionCurve;
+    }
+
+    public void setNimbusProgressionCurve(String nimbusProgressionCurve) {
+        this.nimbusProgressionCurve = nimbusProgressionCurve;
     }
 
 }

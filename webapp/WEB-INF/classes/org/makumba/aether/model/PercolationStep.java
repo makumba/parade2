@@ -1,5 +1,7 @@
 package org.makumba.aether.model;
 
+import java.util.Date;
+
 /**
  * Percolation step, containing focus and nimbus for each percolation step
  * 
@@ -9,6 +11,8 @@ package org.makumba.aether.model;
 public class PercolationStep {
 
     private long id;
+    
+    private Date lastModified;
     
     private String previousURL;
 
@@ -104,6 +108,7 @@ public class PercolationStep {
         this.matchedAetherEvent = matchedAetherEvent;
         this.previous = previous;
         this.percolationLevel = percolationLevel;
+        this.lastModified = new Date();
     }
 
     public String getPercolationPath() {
@@ -144,6 +149,14 @@ public class PercolationStep {
 
     public void setObjectURL(String objectURL) {
         this.objectURL = objectURL;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 
 }
