@@ -588,9 +588,9 @@ public class DatabaseLogServlet extends HttpServlet {
                         || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
                         || log.getUrl().equals("/Command.do")
                         || log.getUrl().startsWith("/scripts/codepress/")
-                        || log.getUrl().equals("/User.do"))
+                        || log.getUrl().equals("/User.do")
                         || log.getUrl().equals("/reload")
-
+                )
                 || log.getUser() == null
                 || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))
                 || (log.getUser().equals("system-u") && log.getContext().equals("parade2") && log.getUrl() == null
