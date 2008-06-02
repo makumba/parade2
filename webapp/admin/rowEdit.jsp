@@ -10,7 +10,12 @@
 <h2>Edit row <mak:value expr="r.rowname"/></h2>
 
 <mak:editForm object="r" action="rowList.jsp" method="post">
-User: <mak:input field="user"/>
+User: 
+<mak:input field="user"> 
+  <mak:list from="User u" orderBy="u.name, u.surname"> 
+    <mak:option value="u.id"> <mak:value expr="u.name"/>  <mak:value expr="u.surname"/> (<mak:value expr="u.nickname"/>) </mak:option> 
+  </mak:list> 
+</mak:input>
 <input type="submit" value="Save">&nbsp;&nbsp;<input type="button" value="Back" onClick="javascript:back();">
 </mak:editForm>
 </mak:object>
