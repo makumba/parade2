@@ -412,6 +412,10 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                 if (!cvsFiles.contains(filePath)) {
                     // remove zombie entry
                     File zombie = r.getFiles().get(filePath);
+                    if(zombie == null) {
+                        logger.warn("Couldn't retrieve zombie file "+filePath);
+                        continue;
+                    }
                     if(zombie.getOnDisk()) {
                         zombie.emptyCvsData();
                     } else {
