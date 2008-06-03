@@ -10,7 +10,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" >
 <tr>
 <td align="left">
-<a title="All the logs" href="log.jsp?context=all">[Log]</a>&nbsp;&nbsp;
+<a title="All the logs" href="log.jsp?context=all">[Log]</a>&nbsp;&nbsp; <a title="All the action logs" href="actionLog.jsp?context=all">[Action log] (beta)</a>&nbsp;&nbsp;
 <strong><a title="People who were active in the 20 past minutes">Currently online:</a></strong> <#list onlineUsers as user><a href='userView.jsp?user=${user[0]}'>${user[1]}</a>&nbsp;&nbsp;</#list>
 </td>
 <td align="right">
