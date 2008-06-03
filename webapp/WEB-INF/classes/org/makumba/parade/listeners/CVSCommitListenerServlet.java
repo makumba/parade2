@@ -2,7 +2,9 @@ package org.makumba.parade.listeners;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -81,17 +83,24 @@ public class CVSCommitListenerServlet extends HttpServlet {
 
             logCommit(module, file, user, newRevision);
 
-            handleFileCommit(module, file, newRevision, oldRevision, s, !st.hasMoreTokens());
+            commitQueue.add(new Commit(module, file, newRevision, oldRevision));
+            
         }
+        
+        handleFileCommit(s);
 
         logger.info(commitLog);
 
     }
+    
+    private Vector<Commit> commitQueue = new Vector<Commit>(); 
 
-    private void handleFileCommit(String module, String file, String newRevision, String oldRevision, Session s,
-            boolean closeSession) {
-        CommitHandler ch = new CommitHandler(module, file, newRevision, oldRevision, s, closeSession);
+    private void handleFileCommit(Session s) {
+        
+        CommitHandler ch = new CommitHandler(commitQueue, s);
         ch.start();
+        commitQueue.clear();
+        
     }
 
     private void logCommit(String module, String file, String user, String newRevision) {
@@ -104,6 +113,33 @@ public class CVSCommitListenerServlet extends HttpServlet {
         log.setQueryString("&module=" + module + "&newVersion=" + newRevision);
 
         TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+    }
+    
+    public class Commit {
+        private String module;
+        private String file;
+        private String newRevision;
+        private String oldRevision;
+        public String getModule() {
+            return module;
+        }
+        public String getFile() {
+            return file;
+        }
+        public String getNewRevision() {
+            return newRevision;
+        }
+        public String getOldRevision() {
+            return oldRevision;
+        }
+        public Commit(String module, String file, String newRevision, String oldRevision) {
+            super();
+            this.module = module;
+            this.file = file;
+            this.newRevision = newRevision;
+            this.oldRevision = oldRevision;
+        }
+        
     }
 
 }

@@ -1,11 +1,14 @@
 package org.makumba.parade.listeners;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.controller.CvsController;
+import org.makumba.parade.listeners.CVSCommitListenerServlet.Commit;
 import org.makumba.parade.model.Application;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
@@ -18,38 +21,32 @@ public class CommitHandler extends Thread {
 
     private CVSRevisionComparator c = new CVSRevisionComparator();
 
-    private String module;
-
-    private String file;
-
-    private String newRevision;
-
-    private String oldRevision;
+    private Vector<Commit> commits;
 
     private Session s;
 
-    private boolean closeSession;
-
-    public CommitHandler(String module, String file, String newRevision, String oldRevision, Session s,
-            boolean closeSession) {
+    public CommitHandler(Vector<Commit> commits, Session s) {
         super();
-        this.module = module;
-        this.file = file;
-        this.newRevision = newRevision;
-        this.oldRevision = oldRevision;
+        this.commits = commits;
         this.s = s;
-        this.closeSession = closeSession;
     }
 
     @Override
     public void run() {
-
-        updateRepositoryCache(module, file, newRevision, s);
-        updateRowFiles(module, file, newRevision, oldRevision.equals("NONE"), s);
-
-        if (closeSession) {
+        
+        try {
+        
+            Iterator<Commit> it = commits.iterator();
+            while (it.hasNext()) {
+                Commit commit = it.next();
+                updateRepositoryCache(commit.getModule(), commit.getFile(), commit.getNewRevision(), s);
+                updateRowFiles(commit.getModule(), commit.getFile(), commit.getNewRevision(), commit.getOldRevision().equals("NONE"), s);
+            }
+        
+        } finally {
             s.close();
         }
+       
 
     }
 
