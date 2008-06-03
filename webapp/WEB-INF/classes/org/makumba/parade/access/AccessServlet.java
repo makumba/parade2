@@ -1,6 +1,5 @@
 package org.makumba.parade.access;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -16,7 +15,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.auth.Authorizer;
 import org.makumba.parade.auth.DatabaseAuthorizer;
 import org.makumba.parade.auth.LDAPAuthorizer;
@@ -146,6 +144,10 @@ public class AccessServlet extends HttpServlet {
             ((HttpServletRequest) req).getSession(true).setAttribute(PARADE_USER, "cvs-hook");
             return false;
         }
+        if(((HttpServletRequest) req).getRequestURI().startsWith("/unauthorized")) {
+            return false;
+        }
+        
         return true;
     }
 
@@ -160,6 +162,7 @@ public class AccessServlet extends HttpServlet {
                 }
             };
         }
+
         return null;
     }
 
@@ -173,6 +176,7 @@ public class AccessServlet extends HttpServlet {
         if (nm == null)
             nm = "(unknown user)";
 
+        
         ServletContext ctx = (ServletContext) req.getAttribute("org.eu.best.tools.TriggerFilter.context");
 
         try {
@@ -187,6 +191,7 @@ public class AccessServlet extends HttpServlet {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+        
 
         return nm;
     }
@@ -237,9 +242,11 @@ public class AccessServlet extends HttpServlet {
             log.setUser(user);
             origReq.setAttribute("org.eu.best.tools.TriggerFilter.request", req1);
 
-        } else
-            // login failed, we tell the trigger filter not to filter further
+        } else {
             origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
+            origReq.setAttribute("org.makumba.parade.unauthorizedAccess", new Boolean(true));
+        }
+            
     }
 
     private void setUserAttributes(ServletRequest req, User u) {

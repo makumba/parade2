@@ -590,6 +590,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         || log.getUrl().startsWith("/scripts/codepress/")
                         || log.getUrl().equals("/User.do")
                         || log.getUrl().equals("/reload")
+                        || log.getUrl().startsWith("/unauthorized")
                 )
                 || log.getUser() == null
                 || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))

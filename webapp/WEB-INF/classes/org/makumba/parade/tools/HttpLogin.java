@@ -8,7 +8,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.makumba.parade.access.AccessServlet;
 import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.auth.Authorizer;
@@ -37,10 +36,7 @@ public class HttpLogin {
 
         ((HttpServletResponse) res).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ((HttpServletResponse) res).setHeader("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
-        res.setContentType("text/html");
-        ServletOutputStream out = res.getOutputStream();
-        out.println("<h1> Unauthorized </h1>");
-        out.close();
+        
         return false;
     }
 

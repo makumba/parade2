@@ -14,11 +14,13 @@ import java.util.logging.LogRecord;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.makumba.parade.access.ActionLogDTO;
 
@@ -100,7 +102,9 @@ public class TriggerFilter implements Filter {
 
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws java.io.IOException,
             ServletException {
-
+        
+        ServletRequest origReq = req;
+        
         PerThreadPrintStream.setEnabled(true);
 
         ServletContext ctx = context.getContext(beforeContext);
@@ -130,11 +134,11 @@ public class TriggerFilter implements Filter {
             // first, we ask the db servlet to log our actionlog
             dummyReq.setAttribute("org.makumba.parade.servletParam", log);
             invokeServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", ctx, dummyReq, resp);
-
+            
             // then we proceed
             if (beforeServlet != null)
                 invokeServlet(beforeServlet, ctx, dummyReq, resp);
-
+            
             // now we have the user gracefully provided by the beforeServlet so we can set the prefix
             TriggerFilter.setPrefix();
 
@@ -142,12 +146,30 @@ public class TriggerFilter implements Filter {
 
         req = (ServletRequest) dummyReq.getAttribute("org.eu.best.tools.TriggerFilter.request");
 
-        if (req == null)
-            // beforeServlet signaled closure
-            return;
-
+        if (req == null) {
+            if(dummyReq.getAttribute("org.makumba.parade.unauthorizedAccess") != null) {
+                req = origReq;
+                
+                try {
+                    req.getRequestDispatcher("/unauthorized/index.jsp").forward(req, resp);
+                } catch (ServletException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                //chain.doFilter(req, resp);
+                return;
+                
+            } else {
+                // beforeServlet signaled closure
+                return;
+            }
+        }
+        
         resp = (ServletResponse) dummyReq.getAttribute("org.eu.best.tools.TriggerFilter.response");
-
+    
         chain.doFilter(req, resp);
 
         ctx = context.getContext(afterContext);
@@ -166,7 +188,7 @@ public class TriggerFilter implements Filter {
 
         // we make sure the actionLog is null after each access
         actionLog.set(null);
-
+    
     }
 
     /**
