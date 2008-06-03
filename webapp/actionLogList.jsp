@@ -28,7 +28,7 @@
 <mak:value expr="al.logDate" format="yyyy-MM-dd HH:mm" /> <mak:value expr="al.user"/>@<mak:value expr="al.paradecontext"/> : <mak:value expr="al.action"/> <mak:value expr="al.objectType"/> <mak:value expr="al.file"/><br>
 <div style="padding-left: 20px;">
 <mak:list from="Log l" where="l.actionLog.id = al.id" orderBy="l.logDate desc">
-<span class="<mak:value expr="l.level"/>"><mak:value expr="l.message"/></span>
+<div class="<mak:value expr="l.level"/>"><mak:value expr="l.message"/></div>
 </mak:list>
 </div>
 </mak:list>
