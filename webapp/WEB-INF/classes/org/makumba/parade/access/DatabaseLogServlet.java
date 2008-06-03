@@ -21,6 +21,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.aether.AetherEvent;
+import org.makumba.commons.StringUtils;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
@@ -254,11 +255,15 @@ public class DatabaseLogServlet extends HttpServlet {
         // fetch the webapp root in a hackish way
         String ctx = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
         if (ctx != null) {
-            Map<String, String> rowDef = rp.getRowDefinitions().get(ctx);
-            if (rowDef != null) {
-                webapp = rowDef.get("webapp");
+            if(ctx.equals("parade2")) {
+                webapp = "";
             } else {
-                logger.warn("Null context for actionLogDTO " + log.toString());
+                Map<String, String> rowDef = rp.getRowDefinitions().get(ctx);
+                if (rowDef != null) {
+                    webapp = rowDef.get("webapp");
+                } else {
+                    logger.warn("Context "+ctx+" has invalid webapp path for actionLogDTO " + log.toString());
+                }
             }
         }
 
@@ -548,6 +553,11 @@ public class DatabaseLogServlet extends HttpServlet {
         return paramValues;
 
     }
+    
+    String[] endFilter = {".ico", ".css", ".gif", ".jpg", ".png", ".js"};
+    String[] startFilter = {"/logs", "/admin", "/aether", "/playground", "/logic", "/dataDefinitions", "/scripts/codepress/"};
+    String[] equalFilter = {"/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
+            "/Admin.do", "/Command.do", "/User.do", "/servlet/ticker", "/servlet/cvscommit", "/servlet/logs", "/reload", "/unauthorized/index.jsp"};
 
     /**
      * Checks whether this access should be logged or not
@@ -557,43 +567,21 @@ public class DatabaseLogServlet extends HttpServlet {
      * @return <code>true</code> if this is worth logging, <code>false</code> otherwise
      */
     private boolean shouldLog(ActionLogDTO log) {
+        
+        
+        if (log.getUrl() != null && (
+                        
+                StringUtils.startsWith(log.getUrl(), startFilter)
+                || StringUtils.endsWith(log.getUrl(), endFilter)
+                || StringUtils.equalsAny(log.getUrl(), equalFilter)
+                
+                || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
+                || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
+                || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
+                || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
 
-        if (log.getUrl() != null
-                && (log.getUrl().endsWith(".ico")
-                        || log.getUrl().endsWith(".css")
-                        || log.getUrl().endsWith(".gif")
-                        || log.getUrl().endsWith(".jpg")
-                        || log.getUrl().endsWith(".png")
-                        || log.getUrl().endsWith(".js")
-                        || log.getUrl().startsWith("/servlet/ticker")
-                        || log.getUrl().startsWith("/servlet/cvscommit")
-                        || log.getUrl().startsWith("/servlet/logs")
-                        || log.getUrl().startsWith("/tipOfTheDay.jsp")
-                        || log.getUrl().startsWith("/logout.jsp")
-                        || log.getUrl().startsWith("/log.jsp")
-                        || log.getUrl().startsWith("/logs")
-                        || log.getUrl().equals("/userView.jsp")
-                        || log.getUrl().equals("/userEdit.jsp")
-                        || log.getUrl().equals("/showImage.jsp")
-                        || log.getUrl().startsWith("/todo.jsp")
-                        || log.getUrl().startsWith("/unauthorized.jsp")
-                        || log.getUrl().startsWith("/error.jsp")
-                        || log.getUrl().startsWith("/admin")
-                        || log.getUrl().startsWith("/Admin.do")
-                        || log.getUrl().startsWith("/aether")
-                        || log.getUrl().startsWith("/playground")
-                        || log.getUrl().startsWith("/logic")
-                        || log.getUrl().startsWith("/dataDefinitions")
-                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
-                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
-                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
-                        || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
-                        || log.getUrl().equals("/Command.do")
-                        || log.getUrl().startsWith("/scripts/codepress/")
-                        || log.getUrl().equals("/User.do")
-                        || log.getUrl().equals("/reload")
-                        || log.getUrl().startsWith("/unauthorized")
                 )
+                
                 || log.getUser() == null
                 || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))
                 || (log.getUser().equals("system-u") && log.getContext().equals("parade2") && log.getUrl() == null
