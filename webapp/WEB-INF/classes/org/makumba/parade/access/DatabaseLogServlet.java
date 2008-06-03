@@ -298,6 +298,8 @@ public class DatabaseLogServlet extends HttpServlet {
 
         // browse actions
         if (actionType.equals("browseParade")) {
+            log.setContext("parade2");
+            log.setParadecontext("parade2");
             log.setAction(ActionTypes.VIEW.action());
             log.setObjectType(ObjectTypes.PARADE);
         } else
