@@ -139,6 +139,8 @@
 				
 				<include name="org/makumba/parade/aether/ObjectTypes*.class" />
 				<include name="org/makumba/aether/UserTypes*.class" />
+				
+				<include name="org/makumba/commons/ServletObjects*.class" />
 
 				
 			</fileset>

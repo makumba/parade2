@@ -151,7 +151,7 @@ public class TriggerFilter implements Filter {
                 req = origReq;
                 
                 try {
-                    req.getRequestDispatcher("/unauthorized/index.jsp").forward(req, resp);
+                    staticRootCtx.getRequestDispatcher("/unauthorized/index.jsp").forward(req, resp);
                 } catch (ServletException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -521,7 +521,7 @@ public class TriggerFilter implements Filter {
      */
     private static synchronized void computeStaticRoot(TriggerFilterQueueData data) {
         if (staticRootCtx != null) {
-            // probably staticRootCtx was set just afte we checked for it and just before we came into this method
+            // probably staticRootCtx was set just after we checked for it and just before we came into this method
             data.sendTo(staticRootCtx);
             return;
         }
