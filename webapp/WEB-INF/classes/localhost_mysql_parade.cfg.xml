@@ -18,7 +18,7 @@
 		<property name="connection.driver_class">
 			com.mysql.jdbc.Driver
 		</property>
-		<property name="hibernate.cglib.use_reflection_optimizer">
+		<property name="hibernate.bytecode.use_reflection_optimizer">
 			true
 		</property>
 		<property name="hibernate.show_sql">false</property>
