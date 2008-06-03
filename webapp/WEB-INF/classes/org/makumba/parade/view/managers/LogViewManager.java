@@ -66,7 +66,7 @@ public class LogViewManager {
         if (context.equals("(root)"))
             contextQuery = "(al.context is null or al.context = 'parade2')";
 
-        String dateQuery = "l.date > :myDate";
+        String dateQuery = "l.logDate > :myDate";
 
         boolean noContext = contextQuery.length() == 0;
         // FIXME the server restart should be detected solely as ActionLog (and generated as such in TriggerFilter), but
