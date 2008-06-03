@@ -96,10 +96,10 @@ public class LogViewManager {
             if (filter.equals(LAST_RESTART)) {
                 // FIXME there's probably more performant way to do this
                 // FIXME like, using a report query
-                Query q1 = s.createQuery("from Log l where l.message = 'Server restart' order by l.date DESC");
+                Query q1 = s.createQuery("from Log l where l.message = 'Server restart' order by l.logDate DESC");
                 Date d = null;
                 if (q1.list().size() > 0) {
-                    d = ((Log) q1.list().get(0)).getDate();
+                    d = ((Log) q1.list().get(0)).getLogDate();
                 }
                 if (d != null)
                     cal.setTime(d);
@@ -152,7 +152,7 @@ public class LogViewManager {
         else
             entry.put("serverRestart", false);
         entry.put("message", HtmlUtils.string2html(log.getMessage()));
-        entry.put("date", log.getDate().toString());
+        entry.put("date", log.getLogDate().toString());
         entry.put("level", log.getLevel());
 
     }
@@ -176,13 +176,13 @@ public class LogViewManager {
 
         List<SimpleHash> viewEntries = new LinkedList<SimpleHash>();
 
-        Query q = s.createQuery("from ActionLog al order by al.date DESC");
+        Query q = s.createQuery("from ActionLog al order by al.logDate DESC");
         List<ActionLog> res = q.list();
         for (int i = 0; i < res.size(); i++) {
             SimpleHash actionLogEntry = new SimpleHash();
             List<SimpleHash> logEntries = new LinkedList<SimpleHash>();
             ActionLog actionLog = res.get(i);
-            Query q1 = s.createQuery("from Log l where l.actionLog = :actionLog order by l.date DESC");
+            Query q1 = s.createQuery("from Log l where l.actionLog = :actionLog order by l.logDate DESC");
             q1.setParameter("actionLog", actionLog);
             List<Log> res1 = q1.list();
             for (int j = 0; j < res1.size(); j++) {
@@ -248,7 +248,9 @@ public class LogViewManager {
             if (currentRow.getRowname() == "")
                 displayName = "(root)";
 
-            rows.add(displayName);
+            if(!currentRow.getModuleRow()) {
+                rows.add(displayName);
+            }
         }
 
         root.put("rows", rows);

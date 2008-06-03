@@ -46,6 +46,8 @@ DONE
 
 manu, 03/06/2008
 - making the custom unauthorized page work
+- attempting to fix synchronization bug with CVS commit notification recording
+- starting to work on action log view
 
 rudi, 02/06/2008
 - fixing problem in row-user relation setting (now you know exactly who is the user)

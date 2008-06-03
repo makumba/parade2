@@ -6,7 +6,7 @@ public class Log {
 
     private Long id;
 
-    private Date date;
+    private Date logDate;
 
     private String level;
 
@@ -50,12 +50,12 @@ public class Log {
         this.throwable = throwable;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getLogDate() {
+        return logDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setLogDate(Date date) {
+        this.logDate = date;
     }
 
     public String getOrigin() {

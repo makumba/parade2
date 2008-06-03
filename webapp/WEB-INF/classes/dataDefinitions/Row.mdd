@@ -8,3 +8,4 @@ user=ptr User
 automaticCvsUpdate=int{"No"=10, "Yes"=20}
 #files=set parade.File
 #rowdata=set AbstractRowData ;inheritance...
+moduleRow=boolean

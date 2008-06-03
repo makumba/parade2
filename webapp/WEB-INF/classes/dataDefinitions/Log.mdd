@@ -1,0 +1,5 @@
+logDate=date
+level=char[255]
+message=text
+origin=char[255]
+actionLog=not null ptr ActionLog

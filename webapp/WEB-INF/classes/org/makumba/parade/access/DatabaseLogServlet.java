@@ -65,6 +65,8 @@ public class DatabaseLogServlet extends HttpServlet {
     public void init(ServletConfig conf) {
         rp = new RowProperties();
     }
+    
+    private final static boolean STRICT_ACTIONLOG_FILTER = true;
 
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -255,14 +257,14 @@ public class DatabaseLogServlet extends HttpServlet {
         // fetch the webapp root in a hackish way
         String ctx = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
         if (ctx != null) {
-            if(ctx.equals("parade2")) {
+            if (ctx.equals("parade2")) {
                 webapp = "";
             } else {
                 Map<String, String> rowDef = rp.getRowDefinitions().get(ctx);
                 if (rowDef != null) {
                     webapp = rowDef.get("webapp");
                 } else {
-                    logger.warn("Context "+ctx+" has invalid webapp path for actionLogDTO " + log.toString());
+                    logger.warn("Context " + ctx + " has invalid webapp path for actionLogDTO " + log.toString());
                 }
             }
         }
@@ -337,22 +339,22 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setObjectType(ObjectTypes.FILE);
             }
         } else
-            
-        if(uri.indexOf("servlet") > -1 && !log.getContext().equals("parade2")) {
+
+        if (uri.indexOf("servlet") > -1 && !log.getContext().equals("parade2")) {
             log.setAction(ActionTypes.EXECUTE.action());
             if (webapp.length() > 0) {
                 log.setFile("/" + webapp + uri.substring(0, uri.length()));
                 log.setObjectType(ObjectTypes.FILE);
             }
         } else
-        
-            if(uri.endsWith("/") && !log.getContext().equals("parade2")) {
-                log.setAction(ActionTypes.EXECUTE.action());
-                if (webapp.length() > 0) {
-                    log.setFile("/" + webapp + uri.substring(0, uri.length()));
-                    log.setObjectType(ObjectTypes.DIR);
-                }
-            } else
+
+        if (uri.endsWith("/") && !log.getContext().equals("parade2")) {
+            log.setAction(ActionTypes.EXECUTE.action());
+            if (webapp.length() > 0) {
+                log.setFile("/" + webapp + uri.substring(0, uri.length()));
+                log.setObjectType(ObjectTypes.DIR);
+            }
+        } else
 
         // edit (open editor)
         if (actionType.equals("file") && op.equals("editFile")) {
@@ -569,11 +571,16 @@ public class DatabaseLogServlet extends HttpServlet {
         return paramValues;
 
     }
-    
-    String[] endFilter = {".ico", ".css", ".gif", ".jpg", ".png", ".js"};
-    String[] startFilter = {"/logs", "/admin", "/aether", "/playground/", "/logic", "/dataDefinitions", "/scripts/codepress/"};
-    String[] equalFilter = {"/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
-            "/Admin.do", "/Command.do", "/User.do", "/servlet/ticker", "/servlet/cvscommit", "/servlet/logs", "/reload", "/unauthorized/index.jsp"};
+
+    String[] endFilter = { ".ico", ".css", ".gif", ".jpg", ".png", ".js" };
+
+    String[] startFilter = { "/logs", "/admin", "/aether", "/playground/", "/logic", "/dataDefinitions",
+            "/scripts/codepress/" };
+
+    String[] equalFilter = { "/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp",
+            "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
+            "/Admin.do", "/Command.do", "/User.do", "/servlet/ticker", "/servlet/cvscommit", "/servlet/logs",
+            "/reload", "/unauthorized/index.jsp" };
 
     /**
      * Checks whether this access should be logged or not.<br>
@@ -584,21 +591,21 @@ public class DatabaseLogServlet extends HttpServlet {
      * @return <code>true</code> if this is worth logging, <code>false</code> otherwise
      */
     private boolean shouldLog(ActionLogDTO log) {
-        
-        
-        if (log.getUrl() != null && (
-                        
+
+        if (log.getUrl() != null
+                && (
+
                 StringUtils.startsWith(log.getUrl(), startFilter)
-                || StringUtils.endsWith(log.getUrl(), endFilter)
-                || StringUtils.equalsAny(log.getUrl(), equalFilter)
-                
-                || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
-                || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
-                || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
-                || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
+                        || StringUtils.endsWith(log.getUrl(), endFilter)
+                        || StringUtils.equalsAny(log.getUrl(), equalFilter)
+
+                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
+                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
+                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1) || (log
+                        .getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
 
                 )
-                
+
                 || log.getUser() == null
                 || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))
                 || (log.getUser().equals("system-u") && log.getContext().equals("parade2") && log.getUrl() == null
@@ -616,12 +623,17 @@ public class DatabaseLogServlet extends HttpServlet {
 
         Log log = new Log();
         ActionLog actionLog = retrieveActionLog(s);
+        
+        if(actionLog == null) {
+            return;
+        }
+        
         log.setActionLog(actionLog);
 
         // this is a java.util.logging.LogRecord
         if (record instanceof LogRecord) {
             LogRecord logrecord = (LogRecord) record;
-            log.setDate(new Date(logrecord.getMillis()));
+            log.setLogDate(new Date(logrecord.getMillis()));
             log.setLevel(logrecord.getLevel().getName());
             log.setMessage(logrecord.getMessage());
             log.setOrigin("java.util.Logging");
@@ -629,7 +641,7 @@ public class DatabaseLogServlet extends HttpServlet {
         } else if (record instanceof LoggingEvent) {
             LoggingEvent logevent = (LoggingEvent) record;
             log.setOrigin("log4j");
-            log.setDate(new Date(logevent.timeStamp));
+            log.setLogDate(new Date(logevent.timeStamp));
             log.setLevel(logevent.getLevel().toString());
             log.setMessage(logevent.getRenderedMessage());
             // if(logevent.getThrowableInformation() != null)
@@ -638,14 +650,14 @@ public class DatabaseLogServlet extends HttpServlet {
             // log.setThrowable(null);
         } else if (record instanceof PerThreadPrintStreamLogRecord) {
             PerThreadPrintStreamLogRecord pRecord = (PerThreadPrintStreamLogRecord) record;
-            log.setDate(pRecord.getDate());
+            log.setLogDate(pRecord.getDate());
             log.setOrigin("stdout");
             log.setLevel("INFO");
             log.setMessage(pRecord.getMessage());
             // log.setThrowable(null);
         } else if (record instanceof Object[]) {
             Object[] rec = (Object[]) record;
-            log.setDate((Date) rec[0]);
+            log.setLogDate((Date) rec[0]);
             log.setOrigin("TriggerFilter");
             log.setLevel("INFO");
             log.setMessage((String) rec[1]);
@@ -658,8 +670,18 @@ public class DatabaseLogServlet extends HttpServlet {
         tx.commit();
     }
 
+    /**
+     * Retrieves the current ActionLog and persists if it necessary.
+     * @param s a Hibernate {@link Session}
+     * @return the current {@link ActionLog}, null if it should not be persisted.
+     */
     private ActionLog retrieveActionLog(Session s) {
         ActionLogDTO actionLogDTO = TriggerFilter.actionLog.get();
+        
+        if(!shouldLog(actionLogDTO) && STRICT_ACTIONLOG_FILTER) {
+            return null;
+        }
+        
         ActionLog actionLog = new ActionLog();
         actionLogDTO.populate(actionLog);
 
