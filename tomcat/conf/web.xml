@@ -1002,12 +1002,12 @@
     </welcome-file-list>
     
     
-    <!-- Listeners -->
+    <!-- Listeners
 	<listener>
 		<listener-class>
 		org.makumba.parade.listeners.ParadeSessionListener
 		</listener-class>
 	</listener>
-    
+    -->
 
 </web-app>
