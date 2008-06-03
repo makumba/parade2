@@ -337,6 +337,22 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setObjectType(ObjectTypes.FILE);
             }
         } else
+            
+        if(uri.indexOf("servlet") > -1 && !log.getContext().equals("parade2")) {
+            log.setAction(ActionTypes.EXECUTE.action());
+            if (webapp.length() > 0) {
+                log.setFile("/" + webapp + uri.substring(0, uri.length()));
+                log.setObjectType(ObjectTypes.FILE);
+            }
+        } else
+        
+            if(uri.endsWith("/") && !log.getContext().equals("parade2")) {
+                log.setAction(ActionTypes.EXECUTE.action());
+                if (webapp.length() > 0) {
+                    log.setFile("/" + webapp + uri.substring(0, uri.length()));
+                    log.setObjectType(ObjectTypes.DIR);
+                }
+            } else
 
         // edit (open editor)
         if (actionType.equals("file") && op.equals("editFile")) {
@@ -555,12 +571,13 @@ public class DatabaseLogServlet extends HttpServlet {
     }
     
     String[] endFilter = {".ico", ".css", ".gif", ".jpg", ".png", ".js"};
-    String[] startFilter = {"/logs", "/admin", "/aether", "/playground", "/logic", "/dataDefinitions", "/scripts/codepress/"};
+    String[] startFilter = {"/logs", "/admin", "/aether", "/playground/", "/logic", "/dataDefinitions", "/scripts/codepress/"};
     String[] equalFilter = {"/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
             "/Admin.do", "/Command.do", "/User.do", "/servlet/ticker", "/servlet/cvscommit", "/servlet/logs", "/reload", "/unauthorized/index.jsp"};
 
     /**
-     * Checks whether this access should be logged or not
+     * Checks whether this access should be logged or not.<br>
+     * Note that since each Log needs an attached ActionLog this mechanism won't always work.
      * 
      * @param log
      *            the DTO containing the log entry
