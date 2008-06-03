@@ -44,6 +44,12 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+manu, 03/06/2008
+- making the custom unauthorized page work
+
+rudi, 02/06/2008
+- fixing problem in row-user relation setting (now you know exactly who is the user)
+
 manu, 31/05/2008
 - replacing session listener with ActionLog query
 
