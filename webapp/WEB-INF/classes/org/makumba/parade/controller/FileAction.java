@@ -46,7 +46,7 @@ public class FileAction extends Action {
 
             FileController.saveFile(absoluteFilePath, source);
             
-            FileManager.updateSimpleFileCache(context, path, file);
+            FileManager.updateSimpleFileCache(context, Parade.constructAbsolutePath(context, path), file);
             CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
             ParadeJNotifyListener.updateRelations(Parade.constructAbsolutePath(context, ""), path + (path.endsWith("/") || file.startsWith("/") ? "" : java.io.File.separator) + file);
             ParadeJNotifyListener.removeFileLock(absoluteFilePath);
