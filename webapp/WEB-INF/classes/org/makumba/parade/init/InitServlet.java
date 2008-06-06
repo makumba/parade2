@@ -19,7 +19,6 @@ import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.makumba.HibernateSFManager;
 import org.makumba.aether.Aether;
 import org.makumba.aether.AetherContext;
-import org.makumba.parade.aether.CVSModuleRelationComputer;
 import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.aether.ParadeRelationComputer;
 import org.makumba.parade.model.Parade;
@@ -48,12 +47,15 @@ public class InitServlet extends HttpServlet implements Runnable {
 
     private Parade p = null;
 
-
     private static freemarker.template.Configuration freemarkerCfg;
     
     public static boolean aetherEnabled = ParadeProperties.getProperty("aetherEnabled") != null && ParadeProperties.getProperty("aetherEnabled").equals("true");
 
-    {
+    static {
+        initSessionFactory();
+    }
+    
+    private static void initSessionFactory() {
         /* Initializing Makumba-driven Hibernate */
         Vector<String> resources = new Vector<String>();
         
@@ -204,5 +206,6 @@ public class InitServlet extends HttpServlet implements Runnable {
     public static Aether getAether() {
         return aether;
     }
+    
 
 }
