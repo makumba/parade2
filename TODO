@@ -44,6 +44,9 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+manu, 06/06/2008
+- improving CVS directory support, also reading status from Entries.Log file
+
 manu, 03/06/2008
 - making the custom unauthorized page work
 - attempting to fix synchronization bug with CVS commit notification recording

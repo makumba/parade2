@@ -99,7 +99,8 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
         java.io.File f = new java.io.File(absolutePath);
         File currFile = row.getFiles().get(f.getParent());
         if (!(currFile == null) && currFile.getIsDir()) {
-            readCVSEntries(row, currFile, f.getName());
+            readCVSEntries(row, currFile, f.getName(), f.isDirectory());
+            readCVSEntriesLog(row, currFile, f.getName(), f.isDirectory());
         }
     }
 
@@ -194,18 +195,32 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
     private void readFiles(Row r, File f) {
 
-        readCVSEntries(r, f, null);
+        readCVSEntries(r, f, null, false);
+        readCVSEntriesLog(r, f, null, false);
         readCVSIgnore(r, f);
-        // readCVSCheckUpdate(paradeRow, data, pc);
     }
 
     /* Reads Entries file and extracts information */
-    private void readCVSEntries(Row r, File file, String entry) {
+    private void readCVSEntries(Row r, File file, String entry, boolean entryIsDir) {
         java.io.File f = new java.io.File((file.getPath() + "/" + "CVS/Entries").replace('/',
                 java.io.File.separatorChar));
         if (!f.exists())
             return;
 
+        readFromEntryFile(r, file, entry, entryIsDir, f);
+    }
+    
+    /* Reads Entries.Log file and extracts information */
+    private void readCVSEntriesLog(Row r, File file, String entry, boolean entryIsDir) {
+        java.io.File f = new java.io.File((file.getPath() + "/" + "CVS/Entries.Log").replace('/',
+                java.io.File.separatorChar));
+        if (!f.exists())
+            return;
+
+        readFromEntryFile(r, file, entry, entryIsDir, f);
+    }
+
+    private void readFromEntryFile(Row r, File file, String entry, boolean entryIsDir, java.io.File f) {
         Set<String> cvsFiles = new HashSet<String>();
 
         boolean updatedSimpleFileCache = false;
@@ -227,7 +242,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     if (name.equals("_root_"))
                         continue;
 
-                    if (entry != null && !(updatedSimpleFileCache = name.equals(entry)))
+                    if (entry != null && !(updatedSimpleFileCache = (name.equals(entry) && !entryIsDir)))
                         continue;
 
                     // logger.warn("Looking for CVS file: "+name);
@@ -369,17 +384,20 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
                     // if the entry is a dir
                 } else if (line.startsWith("D/")) {
-                    if (entry != null)
-                        continue;
 
                     int n = line.indexOf('/', 2);
                     if (n == -1)
                         continue;
+                    
                     String name = line.substring(2, n);
+                    
+                    if (entry != null && !(updatedSimpleFileCache = (name.equals(entry) && entryIsDir)))
+                        continue;
 
+                    
                     String absoluteDirectoryPath = file.getPath() + java.io.File.separator + name;
 
-                    // we add this directory entry to the other entries, for further checking agains the cache
+                    // we add this directory entry to the other entries, for further checking against the cache
                     cvsFiles.add(absoluteDirectoryPath);
 
                     // checking if the directory we are looking for is mapped
@@ -392,6 +410,36 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     if (cvsfile.getCvsStatus() == null) {
                         cvsfile.setCvsStatus(NEEDS_CHECKOUT);
                     } else {
+                        cvsfile.setCvsStatus(UP_TO_DATE);
+                        cvsfile.setCvsRevision("(dir)");
+                    }
+                } else if(line.startsWith("A ")) {
+                    // in Entries.Log you sometimes have stuff like "A D/test8////"
+                    // so this means this D was added
+                    line = line.substring(2);
+                    if(line.startsWith("D/")) {
+                        int n = line.indexOf('/', 2);
+                        if (n == -1)
+                            continue;
+                        
+                        String name = line.substring(2, n);
+                        
+                        if (entry != null && !(updatedSimpleFileCache = (name.equals(entry) && entryIsDir)))
+                            continue;
+
+                        
+                        String absoluteDirectoryPath = file.getPath() + java.io.File.separator + name;
+
+                        // we add this directory entry to the other entries, for further checking against the cache
+                        cvsFiles.add(absoluteDirectoryPath);
+
+                        // checking if the directory we are looking for is mapped
+                        File cvsfile = r.getFiles().get(absoluteDirectoryPath);
+                        if (cvsfile == null) {
+                            cvsfile = FileManager.setVirtualFileData(r, file, name, true);
+                            r.getFiles().put(absoluteDirectoryPath, cvsfile);
+                        }
+                        // a added directory is up-to-date, directories don't need to be commited
                         cvsfile.setCvsStatus(UP_TO_DATE);
                         cvsfile.setCvsRevision("(dir)");
                     }
