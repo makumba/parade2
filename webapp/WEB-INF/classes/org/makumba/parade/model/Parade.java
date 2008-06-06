@@ -3,6 +3,7 @@ package org.makumba.parade.model;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -404,6 +405,8 @@ public class Parade {
             // do nothing. JNotify returns plenty of those.
         }
     }
+    
+    private static Hashtable<String, String> absoluteFilePathCache = new Hashtable<String, String>();
 
     /**
      * Builds the absolute path of a file, based on its context
@@ -415,6 +418,11 @@ public class Parade {
      * @return the absolute path of the file on the file system
      */
     public static String constructAbsolutePath(String context, String relativePath) {
+        
+        if(absoluteFilePathCache.get(context+relativePath) != null) {
+            return absoluteFilePathCache.get(context+relativePath);
+        }
+        
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
@@ -441,6 +449,8 @@ public class Parade {
             relativePath = relativePath.substring(0, relativePath.length() - 1);
         absolutePath = entryRow.getRowpath() + java.io.File.separator
                 + relativePath.replace('/', java.io.File.separatorChar);
+        
+        absoluteFilePathCache.put(context+relativePath, absolutePath);
 
         return absolutePath;
 
