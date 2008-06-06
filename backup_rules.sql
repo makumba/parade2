@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: parade
 -- ------------------------------------------------------
--- Server version	5.0.51a-3ubuntu5
+-- Server version	5.0.51a-3ubuntu5.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -30,6 +30,8 @@ CREATE TABLE `InitialPercolationRule` (
   `initialLevel` int(11) default NULL,
   `percolationMode` int(11) default NULL,
   `active` bit(1) default NULL,
+  `focusProgressionCurve` varchar(255) default NULL,
+  `nimbusProgressionCurve` varchar(255) default NULL,
   PRIMARY KEY  (`initialpercolationrule`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
@@ -40,7 +42,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `InitialPercolationRule` WRITE;
 /*!40000 ALTER TABLE `InitialPercolationRule` DISABLE KEYS */;
-INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'');
+INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'','1-ln(t/10+1)','1-t^2+t');
 /*!40000 ALTER TABLE `InitialPercolationRule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -136,7 +138,7 @@ CREATE TABLE `RelationQuery` (
   `description` text,
   `arguments` varchar(255) default NULL,
   PRIMARY KEY  (`relationquery`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -145,7 +147,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `RelationQuery` WRITE;
 /*!40000 ALTER TABLE `RelationQuery` DISABLE KEYS */;
-INSERT INTO `RelationQuery` VALUES (1,'SELECT concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))) as fromURL, \'versionOf\' as type, f.cvsURL as toURL FROM File f JOIN f.row r WHERE concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))) = :fromURL AND f.cvsURL is not null and :percolationPath not like \'%cvs://%\'','file:// , versionOf, cvs:// - all the files that have a not-null CVS URL','fromURL, percolationPath'),(4,'SELECT f.cvsURL as fromURL, \'checkedOutAs\' as type, concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))) as toURL FROM File f JOIN f.row r WHERE f.cvsURL = :fromURL AND r.rowname is not :rowName','cvs://, checkedOutAs, file:// - all the checked out files of a cvs file that have a CVS URL set except the ones of the previous row','fromURL, rowName'),(5,'SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL from org.makumba.devel.relations.Relation r where r.toURL = :fromURL','fromURL, type, toURL - all the files that depend on this file (through the computed relations)','');
+INSERT INTO `RelationQuery` VALUES (1,'SELECT concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))) as fromURL, \'versionOf\' as type, f.cvsURL as toURL FROM File f JOIN f.row r WHERE concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))) = :fromURL AND f.cvsURL is not null and :percolationPath not like \'%cvs://%\'','file:// , versionOf, cvs:// - all the files that have a not-null CVS URL','fromURL, percolationPath'),(7,'test','test',''),(4,'SELECT f.cvsURL as fromURL, \'checkedOutAs\' as type, concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))) as toURL FROM File f JOIN f.row r WHERE f.cvsURL = :fromURL AND r.rowname is not :rowName','cvs://, checkedOutAs, file:// - all the checked out files of a cvs file that have a CVS URL set except the ones of the previous row','fromURL, rowName'),(5,'SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL from org.makumba.devel.relations.Relation r where r.toURL = :fromURL','fromURL, type, toURL - all the files that depend on this file (through the computed relations)','');
 /*!40000 ALTER TABLE `RelationQuery` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -158,4 +160,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2008-05-26 15:58:59
+-- Dump completed on 2008-06-06 15:23:02
