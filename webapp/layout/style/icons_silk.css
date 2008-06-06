@@ -237,6 +237,10 @@ padding-left: 18; height: 16;
 background: url(../icons/silk/user_add.gif) left center no-repeat;
 padding-left: 18; height: 16;
 }
+.icon_user {
+background: url(../icons/silk/user_suit.gif) left center no-repeat;
+padding-left: 18; height: 16;
+}
 .icon_create_user_na {
 background: url(../icons/silk/create_user_na.gif) left center no-repeat;
 padding-left: 18; height: 16;
@@ -562,4 +566,7 @@ padding-left: 18; height: 16;
 background: url(../icons/silk/computer_add.png) left center no-repeat;
 padding-left: 18; height: 16;
 }
-
+.icon_bug {
+background: url(../icons/silk/bug.gif) left center no-repeat;
+padding-left: 18; height: 16;
+}

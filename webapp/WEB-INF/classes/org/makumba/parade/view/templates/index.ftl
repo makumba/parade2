@@ -10,11 +10,14 @@
 <table width="100%" cellpadding="0" cellspacing="0" >
 <tr>
 <td align="left">
-<a title="All the logs" href="log.jsp?context=all">[Log]</a>&nbsp;&nbsp; <a title="All the action logs" href="actionLog.jsp?context=all">[Action log] (beta)</a>&nbsp;&nbsp;
-<strong><a title="People who were active in the 20 past minutes">Currently online:</a></strong> <#list onlineUsers as user><a href='userView.jsp?user=${user[0]}'>${user[1]}</a>&nbsp;&nbsp;</#list>
+<a class="icon_list" title="All the logs" href="log.jsp?context=all">[Log]</a>&nbsp;&nbsp;
+<a class="icon_project" title="All the action logs" href="actionLog.jsp?context=all">[Action log] (beta)</a>&nbsp;&nbsp;
+<strong><a class="icon_members" title="People who were active in the 20 past minutes">Currently online:</a></strong> <#list onlineUsers as user><a href='userView.jsp?user=${user[0]}'>${user[1]}</a>&nbsp;&nbsp;</#list>
 </td>
 <td align="right">
-<a title="See and modify your profile here" href="userView.jsp">My profile</a>&nbsp;&nbsp;<a href="logout.jsp">Logout</a>
+<a class="icon_user_edit" title="See and modify your profile here" href="userView.jsp">My profile</a>&nbsp;&nbsp;
+<a class="icon_bug" href="mailto:parade-developers@lists.sourceforge.net" title="Report a bug">Report a bug</a>
+<a class="icon_logout" href="logout.jsp">Logout</a>&nbsp;&nbsp;
 </td>
 </tr>
 </table>
