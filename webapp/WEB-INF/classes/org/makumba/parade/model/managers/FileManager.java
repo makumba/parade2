@@ -272,14 +272,14 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         return "Error while trying to delete file " + f.getName();
     }
 
-    public void fileRefresh(Row row, String path) {
-        java.io.File f = new java.io.File(path);
+    public void fileRefresh(Row row, String absolutePath) {
+        java.io.File f = new java.io.File(absolutePath);
         File cacheFile = null;
-        if (!f.exists() && (cacheFile = row.getFiles().get(path)) != null) {
+        if (!f.exists() && (cacheFile = row.getFiles().get(absolutePath)) != null) {
             // file was deleted but cache still exists
             removeFileCache(cacheFile);
             return;
-        } else if (!f.exists() && row.getFiles().get(path) == null) {
+        } else if (!f.exists() && row.getFiles().get(absolutePath) == null) {
             return;
         }
         cacheFile(row, f, false);
