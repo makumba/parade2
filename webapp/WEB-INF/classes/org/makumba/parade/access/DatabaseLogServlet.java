@@ -165,8 +165,7 @@ public class DatabaseLogServlet extends HttpServlet {
                     .setString("path", log.getFile()).setString("rowname", rowName).uniqueResult();
 
             if (f != null) {
-                initialLevelCoefficient = new Double(Math.abs(f.getPreviousLines() - f.getCurrentLines())
-                        / f.getCurrentLines());
+                initialLevelCoefficient = new Double(Math.abs(f.getPreviousLines() - f.getCurrentLines() + 0.00) / (f.getCurrentLines() + 0.00));
             }
 
             tx.commit();
@@ -575,11 +574,11 @@ public class DatabaseLogServlet extends HttpServlet {
     String[] endFilter = { ".ico", ".css", ".gif", ".jpg", ".png", ".js" };
 
     String[] startFilter = { "/logs", "/admin", "/aether", "/playground/", "/logic", "/dataDefinitions",
-            "/scripts/codepress/" };
+            "/scripts/codepress/", "/cewolf", "/servlet/cvscommit"};
 
     String[] equalFilter = { "/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp",
             "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
-            "/Admin.do", "/Command.do", "/User.do", "/servlet/ticker", "/servlet/cvscommit", "/servlet/logs",
+            "/Admin.do", "/Command.do", "/User.do", "/servlet/ticker", "/servlet/logs",
             "/reload", "/unauthorized/index.jsp" };
 
     /**
