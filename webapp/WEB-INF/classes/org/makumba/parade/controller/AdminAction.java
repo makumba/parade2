@@ -9,6 +9,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.makumba.aether.percolation.SimplePercolationStrategy;
 import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Application;
@@ -195,6 +196,27 @@ public class AdminAction extends DispatchAction {
                 request.setAttribute("success", new Boolean(false));
             }
 
+            return mapping.findForward("index");
+
+            
+        } finally {
+            tx.commit();
+            s.close();
+        }
+    }
+    
+    public ActionForward testCurve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        Session s = null;
+        Transaction tx = null;
+        try {
+            s = InitServlet.getSessionFactory().openSession();
+            tx = s.beginTransaction();
+            
+            SimplePercolationStrategy sp = new SimplePercolationStrategy();
+            sp.executeEnergyProgressionUpdate(s);
+            
             return mapping.findForward("index");
 
             

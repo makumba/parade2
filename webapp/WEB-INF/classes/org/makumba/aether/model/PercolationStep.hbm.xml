@@ -12,10 +12,13 @@
 			<generator class="native" />
 		</id>
 
+		<property name="created" />
 		<property name="lastModified" />
 		<property name="previousURL" />
 		<property name="objectURL" />
 		<property name="userGroup" />
+		<property name="initialFocus" />
+		<property name="initialNimbus" />
 		<property name="focus" />
 		<property name="nimbus" />
 		<property name="percolationPath" />

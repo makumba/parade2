@@ -1,6 +1,5 @@
 package org.makumba.aether.percolation;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -8,14 +7,13 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.type.LongType;
-import org.hibernate.type.Type;
 import org.makumba.aether.AetherEvent;
 import org.makumba.aether.PercolationException;
 import org.makumba.aether.UserTypes;
 import org.makumba.aether.model.InitialPercolationRule;
 import org.makumba.aether.model.MatchedAetherEvent;
 import org.makumba.aether.model.PercolationRule;
+import org.makumba.aether.model.PercolationStep;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.aether.ObjectTypes;
 
@@ -42,6 +40,8 @@ public class RuleBasedPercolator implements Percolator {
     private SessionFactory sessionFactory;
 
     private PercolationStrategy strategy;
+
+    static final int MIN_ENERGY_LEVEL = 21;
 
     public void percolate(AetherEvent e) throws PercolationException {
         strategy.percolate(e, sessionFactory);
@@ -184,6 +184,23 @@ public class RuleBasedPercolator implements Percolator {
         }
 
         return 0;
+    }
+    
+    /**
+     * Deletes all the {@link PercolationStep}-s of which the energy is too low.
+     * @param s a Hibernate {@link Session}
+     */
+    private void collectPercolationStepGarbage(Session s) {
+        Query q1 = s.createQuery("delete from PercolationStep ps join ps.matchedAetherEvent mae join mae.initialPercolationRule ipr where ps.nimbus <= :minValue and (ipr.percolationMode = 20 or ipr.percolationMode = 30)");
+        q1.setParameter("minValue", MIN_ENERGY_LEVEL);
+        int d1 = q1.executeUpdate();
+        
+        Query q2 = s.createQuery("delete from PercolationStep ps join ps.matchedAetherEvent mae join mae.initialPercolationRule ipr where ps.focus <= :minValue and (ipr.percolationMode = 10 or ipr.percolationMode = 30)");
+        q2.setParameter("minValue", MIN_ENERGY_LEVEL);
+        int d2 = q2.executeUpdate();
+        
+        logger.info("Garbage-collected "+d1+d2+" percolation steps");
+        
     }
 
 }

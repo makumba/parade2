@@ -1,6 +1,17 @@
 package org.makumba.aether.model;
 
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.makumba.aether.percolation.SimplePercolationStrategy;
+
 public class RelationQuery {
+    
+    private Logger logger = Logger.getLogger(RelationQuery.class);
     
     private long id;
     
@@ -48,6 +59,35 @@ public class RelationQuery {
 
     public void setArguments(String arguments) {
         this.arguments = arguments;
+    }
+
+    public List<String[]> execute(SimplePercolationStrategy simplePercolationStrategy, Map<String, Object> arguments, Session s) {
+        String queryArguments = "fromURL";
+    
+        if (getArguments().length() > 0) {
+            queryArguments = getArguments();
+        }
+    
+        Query q = s.createQuery(getQuery());
+    
+        String args = ""; // for debug
+        StringTokenizer st = new StringTokenizer(queryArguments, ",");
+        while (st.hasMoreTokens()) {
+    
+            String t = st.nextToken().trim();
+    
+            Object value = arguments.get(t);
+            if (value != null) {
+                q.setParameter(t, value);
+                args += t + "=" + value;
+                if (st.hasMoreTokens())
+                    args += ", ";
+            }
+        }
+        
+        logger.debug("Executing relation query: " + this + " with arguments " + args);
+    
+        return q.list();
     }
 
 }

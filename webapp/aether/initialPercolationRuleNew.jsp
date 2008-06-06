@@ -28,6 +28,15 @@
       <th><label for="percolation"><span class="accessKey">M</span>ode</label></th>
       <td><mak:input field="percolationMode" styleId="percolationMode" accessKey="M" /></td>
     </tr>
+    <tr>
+      <th><label for="focusProgressionCurve"></label></th>
+      <td><mak:input field="focusProgressionCurve" /></td>
+    </tr>
+    <tr>
+      <th><label for="nimbusProgressionCurve"></label></th>
+      <td><mak:input field="nimbusProgressionCurve"/></td>
+    </tr>
+    
   <%-- Makumba Generator - END OF NORMAL FIELDS --%>
     <tr>
       <td>  <input type="submit" value="Add" accessKey="A">  <input type="reset" accessKey="R">  <input type="reset" value="Cancel" accessKey="C" onClick="javascript:back();">  </td>

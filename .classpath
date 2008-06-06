@@ -12,5 +12,10 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/log4j-1.2.14.jar" sourcepath="lib/logging-log4j-1.2.14.zip"/>
 	<classpathentry kind="lib" path="lib/ldap.jar" sourcepath="/jldap/com/novell/ldap"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/makumba.jar" sourcepath="/makumba"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/cewolf-1.0.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jcommon-1.0.8.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jfreechart-1.0.9.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/parser.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>

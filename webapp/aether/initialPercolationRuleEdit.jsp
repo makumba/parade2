@@ -32,6 +32,14 @@
         <th><label for="active">active</label></th>
         <td><mak:input field="active" styleId="active" /></td>
       </tr>
+      <tr>
+        <th><label for="focusProgressionCurve">focusProgressionCurve</label></th>
+        <td><mak:input field="focusProgressionCurve" /></td>
+      </tr>
+      <tr>
+        <th><label for="nimbusProgressionCurve">nimbusProgressionCurve</label></th>
+        <td><mak:input field="nimbusProgressionCurve" /></td>
+      </tr>
       <input type="hidden" name="initialPercolationRule" value="<mak:value expr="initialPercolationRule.id"/>"/>
       <tr>
         <td>    <input type="submit" value="Save changes" accessKey="S">    <input type="reset" accessKey="R">    <input type="reset" value="Cancel" accessKey="C" onClick="javascript:back();">    </td>

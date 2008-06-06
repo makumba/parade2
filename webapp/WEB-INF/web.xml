@@ -22,7 +22,7 @@
 		<filter-name>makumba_controller</filter-name>
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
-	
+
 
 	<!-- after all redirections are done, the makumba controller is applied -->
 
@@ -110,6 +110,22 @@
 	</servlet-mapping>
 
 
+	<!-- CEwold servlet for graph generation -->
+	<servlet>
+		<servlet-name>CewolfServlet</servlet-name>
+		<servlet-class>de.laures.cewolf.CewolfRenderer</servlet-class>
+		<load-on-startup>1</load-on-startup>
+		<init-param>
+          <param-name>debug</param-name>
+          <param-value>false</param-value>
+        </init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>CewolfServlet</servlet-name>
+		<url-pattern>/cewolf/*</url-pattern>
+	</servlet-mapping>
+
 	<!-- Struts Action Servlet Configuration -->
 	<servlet>
 		<servlet-name>action</servlet-name>
@@ -134,6 +150,8 @@
 	</servlet-mapping>
 
 
+
+
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
@@ -142,6 +160,12 @@
 		<taglib-uri>/WEB-INF/lib/tiles.tld</taglib-uri>
 		<taglib-location>/WEB-INF/lib/tiles.tld</taglib-location>
 	</taglib>
+	
+	<taglib>
+		<taglib-uri>/WEB-INF/lib/cewolf.tld</taglib-uri>
+		<taglib-location>/WEB-INF/lib/cewolf.tld</taglib-location>
+	</taglib>
+
 
 
 
@@ -231,11 +255,11 @@
 		<servlet-name>dataQuery</servlet-name>
 		<url-pattern>/dataQuery/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
-      <servlet-name>codeGenerator</servlet-name>
-      <servlet-class>org.makumba.devel.CodeGenerator</servlet-class>
-    </servlet>
+		<servlet-name>codeGenerator</servlet-name>
+		<servlet-class>org.makumba.devel.CodeGenerator</servlet-class>
+	</servlet>
 
 	<error-page>
 		<error-code>500</error-code>

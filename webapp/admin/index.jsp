@@ -81,5 +81,12 @@ To make Aether run all RelationComputers relation computations on next startup, 
 <br>
 </form>
 
+<h3>Test the Curve</h3>
+<form action="/Admin.do"><input type="hidden" name="op"
+	value="testCurve" /> <input type="hidden" name="display"
+	value="index" /> <input type="submit" value="Do it!">
+</form>
+<br>
+
 </body>
 </html>

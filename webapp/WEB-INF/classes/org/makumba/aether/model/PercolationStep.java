@@ -12,6 +12,8 @@ public class PercolationStep {
 
     private long id;
     
+    private Date created;
+    
     private Date lastModified;
     
     private String previousURL;
@@ -19,6 +21,10 @@ public class PercolationStep {
     private String objectURL;
 
     private String userGroup;
+    
+    private int initialFocus;
+    
+    private int initialNimbus;
 
     private int focus;
 
@@ -96,21 +102,6 @@ public class PercolationStep {
         this.percolationRule = percolationRule;
     }
 
-    public PercolationStep(String previousURL, String objectURL, String userGroup, int focus, int nimbus, PercolationRule percolationRule,
-            MatchedAetherEvent matchedAetherEvent, PercolationStep previous, int percolationLevel) {
-        super();
-        this.previousURL = previousURL;
-        this.objectURL = objectURL;
-        this.userGroup = userGroup;
-        this.focus = focus;
-        this.nimbus = nimbus;
-        this.percolationRule = percolationRule;
-        this.matchedAetherEvent = matchedAetherEvent;
-        this.previous = previous;
-        this.percolationLevel = percolationLevel;
-        this.lastModified = new Date();
-    }
-
     public String getPercolationPath() {
         return percolationPath;
     }
@@ -159,4 +150,45 @@ public class PercolationStep {
         this.lastModified = lastModified;
     }
 
+    public int getInitialFocus() {
+        return initialFocus;
+    }
+
+    public void setInitialFocus(int initialFocus) {
+        this.initialFocus = initialFocus;
+    }
+
+    public int getInitialNimbus() {
+        return initialNimbus;
+    }
+
+    public void setInitialNimbus(int initialNimbus) {
+        this.initialNimbus = initialNimbus;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public PercolationStep(String previousURL, String objectURL, String userGroup, int focus, int nimbus, PercolationRule percolationRule,
+            MatchedAetherEvent matchedAetherEvent, PercolationStep previous, int percolationLevel) {
+        super();
+        this.previousURL = previousURL;
+        this.objectURL = objectURL;
+        this.userGroup = userGroup;
+        this.initialFocus = focus;
+        this.initialNimbus = nimbus;
+        this.focus = focus;
+        this.nimbus = nimbus;
+        this.percolationRule = percolationRule;
+        this.matchedAetherEvent = matchedAetherEvent;
+        this.previous = previous;
+        this.percolationLevel = percolationLevel;
+        this.created = new Date();
+        this.lastModified = new Date();
+    }
 }
