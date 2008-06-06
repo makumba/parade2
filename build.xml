@@ -37,6 +37,9 @@
 			<include name="freemarker.jar" />
 			<include name="hibernate3.jar" />
 			<include name="struts.jar" />
+			<include name="parser.jar" />
+			<include name="jfreechart-1.0.9.jar" />
+						
 		</fileset>
 		<fileset dir="lib">
 			<include name="*.jar" />
