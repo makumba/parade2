@@ -64,17 +64,6 @@ public class File {
         trackerMgr.directoryRefresh(row, this.getPath(), false);
     }
 
-    /* Calls the refresh() directoryRefresh() on the directory managers locally */
-    public void localRefresh() {
-        FileManager fileMgr = new FileManager();
-        CVSManager CVSMgr = new CVSManager();
-        TrackerManager trackerMgr = new TrackerManager();
-
-        fileMgr.directoryRefresh(row, this.getPath(), true);
-        CVSMgr.directoryRefresh(row, this.getPath(), true);
-        trackerMgr.directoryRefresh(row, this.getPath(), true);
-    }
-
     public void setPath(String p) {
         this.path = p;
     }

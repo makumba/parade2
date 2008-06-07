@@ -44,6 +44,9 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+manu, 07/06/2008
+- fixing bug with CVS recursive update
+
 manu, 06/06/2008
 - improving CVS directory support, also reading status from Entries.Log file
 

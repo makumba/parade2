@@ -123,11 +123,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
     }
 
-    private void refreshFileCache(Row row, File fileCache, java.io.File file, boolean local) {
-        // TODO Auto-generated method stub
-
-    }
-
     /**
      * Creates / updates file cache entries
      * @param row the row this file belongs to
@@ -148,8 +143,9 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
             File dirData = setFileData(row, file, true);
             addFile(row, dirData);
 
-            if (!local)
-                dirData.refresh();
+            if (!local) {
+                directoryRefresh(row, dirData.getPath(), false);
+            }
 
         } else if (file.isFile()) {
             File fileData = setFileData(row, file, false);
@@ -282,7 +278,7 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         } else if (!f.exists() && row.getFiles().get(absolutePath) == null) {
             return;
         }
-        cacheFile(row, f, false);
+        cacheFile(row, f, true);
 
     }
 

@@ -1,6 +1,7 @@
 package org.makumba.parade.model.managers;
 
 import java.io.BufferedReader;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import org.makumba.parade.model.interfaces.CacheRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.Execute;
+import org.makumba.parade.tools.SimpleFileFilter;
 
 public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
@@ -54,6 +56,8 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
     public static Integer CONFLICT = new Integer(6);
 
     public static DateFormat cvsDateFormat;
+    
+    private FileFilter filter = new SimpleFileFilter();
 
     static {
         cvsDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy", Locale.UK);
@@ -78,13 +82,30 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
         // we will go through the CVS entries of the real directory
         if (currDir.isDirectory() && !(currDir.getName() == null)) {
-            // getting the File object mapped to this dir
+            
+            if(local) {
+                refreshDirectory(row, currDir);
+            } else {
+                
+                java.io.File[] dir = currDir.listFiles();
+        
+                for (java.io.File d : dir) {
+                    if (filter.accept(d) && !(d.getName() == null) && d.isDirectory()) {
+                        refreshDirectory(row, currDir);
+                        directoryRefresh(row, d.getAbsolutePath(), false);
+                    }
+                }
+            }
+        }
+    }
+
+    private void refreshDirectory(Row row, java.io.File currDir) {
+        // getting the File object mapped to this dir
             File currFile = row.getFiles().get(currDir.getAbsolutePath());
 
             // you never know
             if (!(currFile == null) && currFile.getIsDir())
                 readFiles(row, currFile);
-        }
     }
 
     /**
@@ -98,6 +119,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
     public void fileRefresh(Row row, String absolutePath) {
         java.io.File f = new java.io.File(absolutePath);
         File currFile = row.getFiles().get(f.getParent());
+        
         if (!(currFile == null) && currFile.getIsDir()) {
             readCVSEntries(row, currFile, f.getName(), f.isDirectory());
             readCVSEntriesLog(row, currFile, f.getName(), f.isDirectory());
@@ -194,33 +216,43 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
     }
 
     private void readFiles(Row r, File f) {
+        
+        Set<String> files = new HashSet<String>();
 
-        readCVSEntries(r, f, null, false);
-        readCVSEntriesLog(r, f, null, false);
+        Set<String> entries = readCVSEntries(r, f, null, false);
+        Set<String> entriesLog = readCVSEntriesLog(r, f, null, false);
+        
+        if(entries != null)
+            files.addAll(entries);
+        if(entriesLog != null)
+            files.addAll(entriesLog);
+        
+        cleanZombieFiles(files, f, r);
+        
         readCVSIgnore(r, f);
     }
 
     /* Reads Entries file and extracts information */
-    private void readCVSEntries(Row r, File file, String entry, boolean entryIsDir) {
+    private Set<String> readCVSEntries(Row r, File file, String entry, boolean entryIsDir) {
         java.io.File f = new java.io.File((file.getPath() + "/" + "CVS/Entries").replace('/',
                 java.io.File.separatorChar));
         if (!f.exists())
-            return;
+            return null;
 
-        readFromEntryFile(r, file, entry, entryIsDir, f);
+        return readFromEntryFile(r, file, entry, entryIsDir, f);
     }
-    
+
     /* Reads Entries.Log file and extracts information */
-    private void readCVSEntriesLog(Row r, File file, String entry, boolean entryIsDir) {
+    private Set<String> readCVSEntriesLog(Row r, File file, String entry, boolean entryIsDir) {
         java.io.File f = new java.io.File((file.getPath() + "/" + "CVS/Entries.Log").replace('/',
                 java.io.File.separatorChar));
         if (!f.exists())
-            return;
+            return null;
 
-        readFromEntryFile(r, file, entry, entryIsDir, f);
+        return readFromEntryFile(r, file, entry, entryIsDir, f);
     }
 
-    private void readFromEntryFile(Row r, File file, String entry, boolean entryIsDir, java.io.File f) {
+    private Set<String> readFromEntryFile(Row r, File file, String entry, boolean entryIsDir, java.io.File f) {
         Set<String> cvsFiles = new HashSet<String>();
 
         boolean updatedSimpleFileCache = false;
@@ -242,7 +274,7 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     if (name.equals("_root_"))
                         continue;
 
-                    if (entry != null && !(updatedSimpleFileCache = (name.equals(entry) && !entryIsDir)))
+                    if (entry != null && !entryIsDir && !(updatedSimpleFileCache = (name.equals(entry))))
                         continue;
 
                     // logger.warn("Looking for CVS file: "+name);
@@ -256,35 +288,9 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     // checking if the file we are looking for is mapped
                     File cvsfile = r.getFiles().get(absoluteFilePath);
 
-                    boolean missing = false;
                     boolean fileOnDisk = currFile.exists();
-                    if (cvsfile == null && !fileOnDisk) {
-                        missing = true;
-                    } else if (cvsfile != null && !fileOnDisk && cvsfile.getOnDisk()) {
-                        // this ain't a virtual file but it's still there
-                        // that's not ok, we have some zombie file info in cache
-                        r.getFiles().remove(absoluteFilePath);
-                        missing = true;
-                    } else if (cvsfile != null && !fileOnDisk && !cvsfile.getOnDisk()) {
-                        // this is a virtual file which isn't on disk
-                        // so either it is missing or it was scheduled for deletion
-                        if (cvsfile.getCvsRevision() != null) {
-                            String cvsRevision = line.substring(1 + name.length() + 1);
-                            if (cvsRevision.startsWith("-")) {
-                                missing = false;
-                            } else {
-                                // file was deleted but is still in repo
-                                missing = true;
-                            }
-                        } else {
-                            missing = true;
-                        }
-                    } else if (cvsfile == null && fileOnDisk) {
-                        // the bloody filemanager didn't do his job. we ask it to do it again
-                        FileManager fileMgr = new FileManager();
-                        fileMgr.cacheFile(r, currFile, true);
-                        missing = false;
-                    }
+                    boolean missing = determineFileMissing(r, line, name, absoluteFilePath, currFile, cvsfile,
+                            fileOnDisk);
 
                     if (missing && cvsfile == null) {
                         cvsfile = FileManager.setVirtualFileData(r, file, name, false);
@@ -388,13 +394,12 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                     int n = line.indexOf('/', 2);
                     if (n == -1)
                         continue;
-                    
+
                     String name = line.substring(2, n);
-                    
+
                     if (entry != null && !(updatedSimpleFileCache = (name.equals(entry) && entryIsDir)))
                         continue;
 
-                    
                     String absoluteDirectoryPath = file.getPath() + java.io.File.separator + name;
 
                     // we add this directory entry to the other entries, for further checking against the cache
@@ -413,21 +418,20 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         cvsfile.setCvsStatus(UP_TO_DATE);
                         cvsfile.setCvsRevision("(dir)");
                     }
-                } else if(line.startsWith("A ")) {
+                } else if (line.startsWith("A ")) {
                     // in Entries.Log you sometimes have stuff like "A D/test8////"
                     // so this means this D was added
                     line = line.substring(2);
-                    if(line.startsWith("D/")) {
+                    if (line.startsWith("D/")) {
                         int n = line.indexOf('/', 2);
                         if (n == -1)
                             continue;
-                        
+
                         String name = line.substring(2, n);
-                        
+
                         if (entry != null && !(updatedSimpleFileCache = (name.equals(entry) && entryIsDir)))
                             continue;
 
-                        
                         String absoluteDirectoryPath = file.getPath() + java.io.File.separator + name;
 
                         // we add this directory entry to the other entries, for further checking against the cache
@@ -443,38 +447,103 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
                         cvsfile.setCvsStatus(UP_TO_DATE);
                         cvsfile.setCvsRevision("(dir)");
                     }
-                }
+                } else if (line.startsWith("R ")) {
+                    // in Entries.Log you sometimes have stuff like "R D/academic////"
+                    // so this means this D was removed
 
+                    line = line.substring(2);
+                    if (line.startsWith("D/")) {
+                        int n = line.indexOf('/', 2);
+                        if (n == -1)
+                            continue;
+
+                        String name = line.substring(2, n);
+
+                        if (entry != null && !(updatedSimpleFileCache = (name.equals(entry) && entryIsDir)))
+                            continue;
+
+                        String absoluteDirectoryPath = file.getPath() + java.io.File.separator + name;
+
+                        // we add this directory entry to the other entries, for further checking against the cache
+                        cvsFiles.add(absoluteDirectoryPath);
+
+                        // checking if the directory we are looking for is mapped
+                        // if it is, we trash its CVS data...
+                        File cvsfile = r.getFiles().get(absoluteDirectoryPath);
+                        if (cvsfile != null) {
+                            if (new java.io.File(cvsfile.getPath()).exists()) {
+                                cvsfile.emptyCvsData();
+                            } else {
+                                r.getFiles().remove(absoluteDirectoryPath);
+                            }
+                        }
+                    }
+                }
             }
             br.close();
-
-            if (entry != null)
-                return;
-
-            // now we check if our cache doesn't contain "zombie" cvsdata elements, i.e. if a file doesn't have
-            // outdated cvs information
-            List<String> cachedFiles = file.getChildrenPaths();
-            Iterator<String> i = cachedFiles.iterator();
-            while (i.hasNext()) {
-                String filePath = i.next();
-                if (!cvsFiles.contains(filePath)) {
-                    // remove zombie entry
-                    File zombie = r.getFiles().get(filePath);
-                    if(zombie == null) {
-                        logger.warn("Couldn't retrieve zombie file "+filePath);
-                        continue;
-                    }
-                    if(zombie.getOnDisk()) {
-                        zombie.emptyCvsData();
-                    } else {
-                        r.getFiles().remove(zombie);
-                    }
-                }
-            }
+            
+            return cvsFiles;
 
         } catch (Throwable t) {
             logger.error("Error while trying to set CVS information for file " + file.getName() + " at path "
                     + file.getPath(), t);
+        }
+        return cvsFiles;
+    }
+
+    private boolean determineFileMissing(Row r, String line, String name, String absoluteFilePath,
+            java.io.File currFile, File cvsfile, boolean fileOnDisk) {
+        boolean missing = false;
+        if (cvsfile == null && !fileOnDisk) {
+            missing = true;
+        } else if (cvsfile != null && !fileOnDisk && cvsfile.getOnDisk()) {
+            // this ain't a virtual file but it's still there
+            // that's not ok, we have some zombie file info in cache
+            r.getFiles().remove(absoluteFilePath);
+            missing = true;
+        } else if (cvsfile != null && !fileOnDisk && !cvsfile.getOnDisk()) {
+            // this is a virtual file which isn't on disk
+            // so either it is missing or it was scheduled for deletion
+            if (cvsfile.getCvsRevision() != null) {
+                String cvsRevision = line.substring(1 + name.length() + 1);
+                if (cvsRevision.startsWith("-")) {
+                    missing = false;
+                } else {
+                    // file was deleted but is still in repo
+                    missing = true;
+                }
+            } else {
+                missing = true;
+            }
+        } else if (cvsfile == null && fileOnDisk) {
+            // the bloody filemanager didn't do his job. we ask it to do it again
+            FileManager fileMgr = new FileManager();
+            fileMgr.cacheFile(r, currFile, true);
+            missing = false;
+        }
+        return missing;
+    }
+    
+    private void cleanZombieFiles(Set<String> cvsFiles, File file, Row r) {
+        // now we check if our cache doesn't contain "zombie" cvsdata elements, i.e. if a file doesn't have
+        // outdated cvs information
+        List<String> cachedFiles = file.getChildrenPaths();
+        Iterator<String> i = cachedFiles.iterator();
+        while (i.hasNext()) {
+            String filePath = i.next();
+            if (!cvsFiles.contains(filePath)) {
+                // remove zombie entry
+                File zombie = r.getFiles().get(filePath);
+                if (zombie == null) {
+                    // zombie file was already removed
+                    continue;
+                }
+                if (zombie.getOnDisk()) {
+                    zombie.emptyCvsData();
+                } else {
+                    r.getFiles().remove(zombie);
+                }
+            }
         }
     }
 
