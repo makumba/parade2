@@ -29,8 +29,8 @@
         <td><mak:input field="percolationMode" styleId="percolationMode" accessKey="p" /></td>
       </tr>
       <tr>
-        <th><label for="active">active</label></th>
-        <td><mak:input field="active" styleId="active" /></td>
+        <th><label for="description">next relations</label></th>
+        <td><mak:input field="relationQueries"><mak:list from="RelationQuery rq" orderBy="rq.description"><mak:option value="rq.id"> <mak:value expr="rq.description"/></mak:option></mak:list></mak:input></td>
       </tr>
       <tr>
         <th><label for="focusProgressionCurve">focusProgressionCurve</label></th>
@@ -39,6 +39,10 @@
       <tr>
         <th><label for="nimbusProgressionCurve">nimbusProgressionCurve</label></th>
         <td><mak:input field="nimbusProgressionCurve" /></td>
+      </tr>
+      <tr>
+        <th><label for="active">active</label></th>
+        <td><mak:input field="active" styleId="active" /></td>
       </tr>
       <input type="hidden" name="initialPercolationRule" value="<mak:value expr="initialPercolationRule.id"/>"/>
       <tr>
@@ -57,23 +61,6 @@
 </fieldset>
 </mak:object>
 
-<br>
-
-<h2>Queries for InitialPercolationRule ${param.initialPercolationRule}</h2>
-<ul>
-<mak:list from="InitialPercolationRule ipr, IN(ipr.relationQueries) rq" where="ipr.id = :initialPercolationRule">
-<li><mak:value expr="rq.query"/></li>
-</mak:list>
-</ul>
-<br>
-
-<h2>Select queries for InitialPercolationRule ${param.initialPercolationRule}</h2>
-<mak:object from="InitialPercolationRule ipr" where="ipr.id = :initialPercolationRule">
-<mak:editForm object="ipr" action="initialPercolationRuleList.jsp">
-<mak:input field="relationQueries"/>
-<input type="submit" value="Save"/>
-</mak:editForm>
-</mak:object>
 <br>
 
 

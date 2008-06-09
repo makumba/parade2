@@ -32,7 +32,7 @@
       </tr>
       <tr>
         <th><label for="description">next relations</label></th>
-        <td><mak:input field="relationQueries" styleId="relationQueries" accessKey="a" /></td>
+        <td><mak:input field="relationQueries"><mak:list from="RelationQuery rq" orderBy="rq.description"><mak:option value="rq.id"> <mak:value expr="rq.description"/></mak:option></mak:list></mak:input></td>
       </tr>
       <tr>
         <th><label for="active">act<span class="accessKey">i</span>ve</label></th>
