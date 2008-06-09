@@ -154,7 +154,16 @@ public class DatabaseLogServlet extends HttpServlet {
             break;
         case FILE:
             objectURL += log.getParadecontext() + log.getFile();
-
+            break;
+        case DIR:
+            objectURL += log.getParadecontext() + log.getFile();
+            break;
+        case CVSFILE:
+            objectURL += log.getParadecontext() + log.getFile();
+            break;
+        }
+        
+        if( log.getAction().equals(ActionTypes.SAVE.action())) {
             Transaction tx = s.beginTransaction();
             String rowName = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
             if (rowName == null)
@@ -169,14 +178,6 @@ public class DatabaseLogServlet extends HttpServlet {
             }
 
             tx.commit();
-
-            break;
-        case DIR:
-            objectURL += log.getParadecontext() + log.getFile();
-            break;
-        case CVSFILE:
-            objectURL += log.getParadecontext() + log.getFile();
-            break;
         }
 
         return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getAction(),
