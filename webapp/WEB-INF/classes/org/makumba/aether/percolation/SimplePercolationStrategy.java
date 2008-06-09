@@ -1,6 +1,7 @@
 package org.makumba.aether.percolation;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,6 +16,7 @@ import org.hibernate.Transaction;
 import org.makumba.aether.AetherEvent;
 import org.makumba.aether.PercolationException;
 import org.makumba.aether.UserTypes;
+import org.makumba.aether.model.Focus;
 import org.makumba.aether.model.InitialPercolationRule;
 import org.makumba.aether.model.MatchedAetherEvent;
 import org.makumba.aether.model.PercolationRule;
@@ -33,7 +35,7 @@ import org.makumba.parade.aether.ObjectTypes;
  */
 public class SimplePercolationStrategy implements PercolationStrategy {
 
-    private static final int MAX_PERCOLATION_TIME = 2000;
+    private static final int MAX_PERCOLATION_TIME = 5000;
 
     private Logger logger = Logger.getLogger(SimplePercolationStrategy.class);
 
@@ -184,6 +186,9 @@ public class SimplePercolationStrategy implements PercolationStrategy {
                 PercolationStep ps = buildPercolationStep(mae, mae.getObjectURL(), mae.getObjectURL(), pr, energy,
                         isFocusPercolation, previousStep, threadLevel);
                 s.save(ps);
+                
+                addOrUpdateFocus(mae.getObjectURL(), mae.getActor(), energy, s);
+                
             }
 
             logger.debug("====== END FOCUS PERCOLATION ======");
@@ -239,7 +244,7 @@ public class SimplePercolationStrategy implements PercolationStrategy {
                             long now = System.currentTimeMillis();
                             if (!(now - start > MAX_PERCOLATION_TIME)) {
                                 // - get the next relations (use a RelationQuery for this)
-                                List<Object[]> nextRelations = getNextRelations(relation, pr, ps, s);
+                                List<Object[]> nextRelations = getNextRelations(pr, ps, s);
 
                                 // do it again, again, again
                                 percolate(mae, s, nextRelations, relationEnergy, isFocusPercolation, ps,
@@ -266,9 +271,6 @@ public class SimplePercolationStrategy implements PercolationStrategy {
 
     /**
      * Retrieves the next relations for nimbus percolation
-     * 
-     * @param relation
-     *            the relation in which we are in the network
      * @param pr
      *            the {@link PercolationRule} having the queries for the next relations
      * @param ps
@@ -278,7 +280,7 @@ public class SimplePercolationStrategy implements PercolationStrategy {
      * 
      * @return a List of relations, of the kind fromURL, relationType, toURL
      */
-    private List<Object[]> getNextRelations(Object[] relation, PercolationRule pr, PercolationStep ps, Session s) {
+    private List<Object[]> getNextRelations(PercolationRule pr, PercolationStep ps, Session s) {
 
         List<Object[]> res = new LinkedList<Object[]>();
 
@@ -286,6 +288,7 @@ public class SimplePercolationStrategy implements PercolationStrategy {
 
             Map<String, Object> arguments = new HashMap<String, Object>();
             arguments.put("fromURL", ps.getObjectURL());
+            arguments.put("cvsURL", ObjectTypes.fileToCVSURL(ps.getObjectURL()));
             arguments.put("rowName", getRowNameFromURL(ps.getPreviousURL()));
             arguments.put("percolationPath", ps.getPercolationPath());
 
@@ -295,74 +298,13 @@ public class SimplePercolationStrategy implements PercolationStrategy {
 
         } else {
             res
-                    .addAll(s
+                    .addAll((Collection<? extends Object[]>) s
                             .createQuery(
                                     "SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL, r.id as relationId from org.makumba.devel.relations.Relation r where r.fromURL = :fromURL")
-                            .setString("fromURL", (String) relation[2]).list());
+                            .setString("fromURL", ps.getPreviousURL()));
         }
 
         return res;
-    }
-    
-    /**
-     * Updates all the focus and nimbus values of {@link PercolationStep}-s according the the progression curves
-     *
-     * @param s a Hibernate {@link Session}
-     */
-    public void executeEnergyProgressionUpdate(Session s) {
-        List<InitialPercolationRule> iprs = s.createQuery("from InitialPercolationRule ipr").list();
-        for (InitialPercolationRule initialPercolationRule : iprs) {
-            executeEnergyProgressionForProgressionCurve(initialPercolationRule, s);
-        }
-    }
-    
-    /**
-     * Updates all the focus and nimbus values of {@link PercolationStep}-s for one {@link InitialPercolationRule}
-     * @param ipr the {@link InitialPercolationRule} containing the progression curves 
-     * @param s a Hibernate {@link Session}
-     */
-    private void executeEnergyProgressionForProgressionCurve(InitialPercolationRule ipr, Session s) {
-        
-        int updatedFocusPercolationSteps = 0;
-        int updatedNimbusPercolationSteps = 0;
-        
-        if(ipr.getFocusProgressionCurve() != null && ipr.getFocusProgressionCurve().trim().length() != 0) {
-            String focusQuery = buildEnergyUpdateStatement(ipr.getFocusProgressionCurve(), true);
-            Query focusUpdate = s.createQuery(focusQuery).setParameter(0, ipr.getId());
-            logger.debug("Now running "+focusQuery);
-            updatedFocusPercolationSteps = focusUpdate.executeUpdate();
-        }
-
-        if(ipr.getNimbusProgressionCurve() != null && ipr.getNimbusProgressionCurve().trim().length() != 0) {
-            String nimbusQuery = buildEnergyUpdateStatement(ipr.getNimbusProgressionCurve(), false);
-            Query nimbusUpdate = s.createQuery(nimbusQuery).setParameter(0, ipr.getId());
-            logger.debug("Now running "+nimbusQuery);
-            updatedNimbusPercolationSteps = nimbusUpdate.executeUpdate();
-        }
-        
-        logger.info("Updated "+updatedFocusPercolationSteps + " percolation steps for for focus and "+updatedNimbusPercolationSteps + " for nimbus");
-    }
-    
-
-    /**
-     * Builds a UPDATE statement that updates all the nimbus or focus values of all PercolationSteps matched by a
-     * {@link InitialPercolationRule}.
-     * 
-     * @param progressionCurve
-     *            the string representing the progression curve. Supports only basic SQL operations
-     * @param isFocusCurve
-     *            whether this is a focus or a nimbus progression curve
-     *            
-     * @return a query string of a UPDATE query that expects as argument the reference to a InitialPercolationRule id (not named parameter)
-     */
-    private String buildEnergyUpdateStatement(String progressionCurve, boolean isFocusCurve) {
-        String query = "UPDATE PercolationStep SET " + (isFocusCurve ? "focus" : "nimbus") + " = " ;
-        
-        // progression curve is something like "1 - t" or "1 - t*t + t - 1/t"
-        query += (isFocusCurve ? "initialFocus" : "initialNimbus") + " * ("+ progressionCurve.replaceAll("t", "TIMESTAMPDIFF(HOUR, created, now())") + ") ";
-        query += "WHERE matchedAetherEvent.id IN (SELECT mae.id FROM MatchedAetherEvent mae JOIN mae.initialPercolationRule ipr WHERE ipr.id = ?)";
-        
-        return query;
     }
 
     /**
@@ -452,9 +394,28 @@ public class SimplePercolationStrategy implements PercolationStrategy {
     private PercolationStep buildPercolationStep(MatchedAetherEvent mae, String previousURL, String objectURL,
             PercolationRule pr, int level, boolean isFocusPercolation, PercolationStep previous, int percolationLevel) {
 
-        return new PercolationStep(previousURL, objectURL, mae.getUserGroup(), (isFocusPercolation ? level : 0),
+        return new PercolationStep(previousURL, objectURL, isFocusPercolation ? mae.getActor() : mae.getUserGroup(), (isFocusPercolation ? level : 0),
                 (!isFocusPercolation ? level : 0), pr, mae, previous, percolationLevel);
 
+    }
+    
+    /**
+     * Adds or updates the total focus of an object for a user
+     * 
+     * @param objectURL the URL to the object
+     * @param user the user 
+     * @param energy the energy to be added
+     * @param s a Hibernate session
+     */
+    private void addOrUpdateFocus(String objectURL, String user, int energy, Session s) {
+        int updated = s.createQuery("update Focus set focus = focus + :energy where user = :user and objectURL = :objectURL").setString("user", user).setString("objectURL", objectURL).setParameter("energy", energy).executeUpdate();
+        if(updated == 0) {
+            Transaction tx = s.beginTransaction();
+            Focus f = new Focus(objectURL, user, energy);
+            s.save(f);
+            tx.commit();
+        }
+        
     }
 
     // very ugly code. but I'm too tired
@@ -472,12 +433,6 @@ public class SimplePercolationStrategy implements PercolationStrategy {
         n++;
         URL = URL.substring(n);
         return URL.substring(0, URL.indexOf("/"));
-    }
-    
-    public static void main(String[] args) {
-        SimplePercolationStrategy s = new SimplePercolationStrategy();
-        System.out.println(s.buildEnergyUpdateStatement("1 - t", false));
-        
     }
 
 }

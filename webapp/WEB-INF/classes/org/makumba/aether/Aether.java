@@ -48,7 +48,7 @@ public class Aether {
         long start = System.currentTimeMillis();
 
         p = new RuleBasedPercolator();
-        p.configure(ctx.getDatabaseName(), ctx.getSessionFactory());
+        p.configure(ctx.getSessionFactory());
         computeAllRelations();
 
         logger.info("AETHER-INIT: Launching Aether finished at " + new java.util.Date());

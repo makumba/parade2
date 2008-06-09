@@ -12,7 +12,7 @@ import org.makumba.aether.PercolationException;
  */
 public interface Percolator {
     
-    public void configure(String databaseName, SessionFactory sessionFactory);
+    public void configure(SessionFactory sessionFactory);
     
     public void percolate(AetherEvent e) throws PercolationException;
     

@@ -81,6 +81,7 @@ public class InitServlet extends HttpServlet implements Runnable {
                 resources.add("org/makumba/aether/model/PercolationStep.hbm.xml");
                 resources.add("org/makumba/aether/model/RelationQuery.hbm.xml");
                 resources.add("org/makumba/aether/model/MatchedAetherEvent.hbm.xml");
+                resources.add("org/makumba/aether/model/Focus.hbm.xml");
                 
             }
             

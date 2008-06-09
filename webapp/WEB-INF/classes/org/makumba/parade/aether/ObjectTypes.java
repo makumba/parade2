@@ -38,5 +38,13 @@ public enum ObjectTypes {
          }
          return "UNKNOWN";
      }
+     
+     public static String fileToCVSURL(String fileURL) {
+         if(fileURL.startsWith(FILE.prefix())) {
+             return CVSFILE.prefix() + fileURL.substring(FILE.prefix().length());
+         } else {
+             return fileURL;
+         }
+     }
 
 }
