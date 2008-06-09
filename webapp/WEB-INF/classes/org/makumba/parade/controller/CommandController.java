@@ -8,11 +8,11 @@ import java.io.IOException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.listeners.ParadeJNotifyListener;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
-import org.makumba.parade.tools.ParadeJNotifyListener;
 import org.makumba.parade.view.managers.CommandViewManager;
 import org.makumba.parade.view.managers.FileDisplay;
 

@@ -17,6 +17,7 @@ import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
+import org.makumba.parade.listeners.ParadeJNotifyListener;
 import org.makumba.parade.model.managers.AntManager;
 import org.makumba.parade.model.managers.ApplicationManager;
 import org.makumba.parade.model.managers.CVSManager;
@@ -24,7 +25,6 @@ import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.MakumbaManager;
 import org.makumba.parade.model.managers.WebappManager;
 import org.makumba.parade.tools.ParadeException;
-import org.makumba.parade.tools.ParadeJNotifyListener;
 
 /**
  * This class holds the methods for handling general ParaDe operations. It also is the starting point of the ParaDe

@@ -5,11 +5,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Vector;
 
+import org.makumba.parade.listeners.ParadeJNotifyListener;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.Execute;
 import org.makumba.parade.tools.HtmlUtils;
-import org.makumba.parade.tools.ParadeJNotifyListener;
 
 public class CvsController {
 

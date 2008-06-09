@@ -1,4 +1,4 @@
-package org.makumba.parade.tools;
+package org.makumba.parade.listeners;
 
 import java.io.IOException;
 import java.util.Date;
@@ -22,6 +22,8 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.User;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.MakumbaManager;
+import org.makumba.parade.tools.SimpleFileFilter;
+import org.makumba.parade.tools.TriggerFilter;
 
 /**
  * Implementation of a JNotifyListener for ParaDe. See {@link http://jnotify.sourceforge.net/} for more information

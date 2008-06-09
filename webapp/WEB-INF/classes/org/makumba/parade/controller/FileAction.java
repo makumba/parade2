@@ -8,10 +8,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.makumba.parade.listeners.ParadeJNotifyListener;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
-import org.makumba.parade.tools.ParadeJNotifyListener;
 
 public class FileAction extends Action {
 

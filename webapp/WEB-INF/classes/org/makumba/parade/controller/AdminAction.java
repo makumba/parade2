@@ -9,7 +9,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.makumba.aether.percolation.SimplePercolationStrategy;
+import org.makumba.aether.percolation.RuleBasedPercolator;
 import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Application;
@@ -214,8 +214,8 @@ public class AdminAction extends DispatchAction {
             s = InitServlet.getSessionFactory().openSession();
             tx = s.beginTransaction();
             
-            SimplePercolationStrategy sp = new SimplePercolationStrategy();
-            sp.executeEnergyProgressionUpdate(s);
+            RuleBasedPercolator r = new RuleBasedPercolator();
+            r.executeEnergyProgressionUpdate(s);
             
             return mapping.findForward("index");
 
