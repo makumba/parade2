@@ -12,6 +12,7 @@
 #               added check for inotify value, so that JNotify works well 1.4 29-Jan-2008 manuel.gay@best.eu.org
 #               increased sleeping time before parade restart 1.5 29-Mar-2008 manuel.gay@best.eu.org
 #               added function that cleans the database cache 1.6 29-Mar-2008 manuel.gay@best.eu.org
+#               added function that cleans the tomcat work and conf dirs 1.7 10-Jun-2008 manuel.gay@best.eu.org
 #
 
 set -e
@@ -82,6 +83,15 @@ d_clean() {
 }
 
 #
+#	Function that cleans tomcat's work and conf directories
+#
+d_cleanTomcat() {
+        echo Cleaning tomcat...
+        su -c "cd $D_PATH; ant cleanTomcat" - "$D_USER"
+        echo Finished cleaning tomcat
+}
+
+#
 #       Function that does the whole process.
 #
 d_all() {
@@ -121,9 +131,12 @@ case "$1" in
         ;;
   clean)
 	echo -n "Cleaning the database"
-	d_stop
 	d_clean
-	d_start
+	echo "."
+	;;
+  cleanTomcat)
+	echo -n "Cleaning tomcat"
+	d_cleanTomcat
 	echo "."
 	;;
   all)

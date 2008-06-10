@@ -72,7 +72,7 @@
 	</path>
 
 	<target name="compile" description="compile the java files">
-		<antcall target="clean" />
+		<!-- antcall target="clean" / -->
 		<javac srcdir="${webapp.path}/WEB-INF/classes" debug="on">
 			<classpath refid="generic.class.path" />
 		</javac>
@@ -92,6 +92,15 @@
 			<fileset dir="globalClasses/" includes="**/*.class" />
 			<fileset dir="${basedir}/jspc" />
 		</delete>
+	</target>
+
+	<target name="cleanTomcat" description="cleans the tomcat, i.e. empties work/ and removes all context descriptors from conf except parade ones">
+		<delete>
+			<fileset dir="${basedir}/tomcat/work" />
+			<fileset dir="${basedir}/tomcat/conf/Catalina/localhost/" excludes="ROOT.xml,manager.xml,tomcat-docs.xml,**/CVS"/>
+		</delete>
+		<mkdir dir="${tomcat.home}/work" />
+
 	</target>
 
 	<target name="compileWar" description="Compile web application">
@@ -164,16 +173,18 @@
 		<tstamp>
 			<format timezone="GMT" property="TSTAMP" pattern="yyyyMMddHHmm"/>
 		</tstamp>
+		<echo>Java home in build: ${java.home}</echo>
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="yes" classpathref="tomcat.class.path" append="true">
 			<jvmarg value="-Dcatalina.home=${tomcat.home}" />
 			<jvmarg value="-Dcatalina.base=tomcat" />
-			<jvmarg value="-Xms70M" />
-			<jvmarg value="-Xmx700M" />
+			<jvmarg value="-Xms512M" />
+			<jvmarg value="-Xmx2048M" />
+                        <jvmarg value="-XX:MaxPermSize=2048M" />
 			<jvmarg value="-Djava.library.path=." />
 			<jvmarg value="-Djava.util.logging.config.file=${basedir}/logging.properties" />
 			<jvmarg value="-Dstartup.tstamp=${TSTAMP}" />
-			<!-- <jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" /> -->
-			
+                        <jvmarg value="-XX:CompileCommand=exclude,com/bbn/openmap/layer/rpf/RpfFrame,decompressSubframe"/>
+                        <jvmarg value="-client"/>
 			<arg value="start" />
 		</java>
 		<!-- give tomcat time to start up -->
