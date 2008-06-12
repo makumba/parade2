@@ -108,7 +108,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
             Map<String, String> arguments = new HashMap<String, String>();
             arguments.put("fromURL", mae.getObjectURL());
             arguments.put("percolationPath", "");
-            res.addAll(query.execute(arguments, s));
+            res.addAll(query.execute(arguments, "fromURL", s));
         }
 
         List<Object[]> initialRelations = res;
@@ -290,7 +290,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
             arguments.put("percolationPath", ps.getPercolationPath());
 
             for (RelationQuery query : pr.getRelationQueries()) {
-                res.addAll(query.execute(arguments, s));
+                res.addAll(query.execute(arguments, "fromURL", s));
             }
 
         } else {

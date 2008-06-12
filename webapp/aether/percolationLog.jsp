@@ -39,7 +39,7 @@
 
 			<mak:list from="PercolationStep subPs"
 				where="subPs.root.id = ps.id and subPs.root.id != subPs.id"
-				orderBy="subPs.percolationPath">
+				orderBy="subPs.percolationPath, subPs.created">
 
 				<mak:value expr="subPs.percolationLevel" var="level" />
 				<tr>

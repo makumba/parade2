@@ -79,9 +79,8 @@ public class RelationQuery {
         this.arguments = arguments;
     }
 
-    public List<String[]> execute(Map<String, String> arguments, Session s) {
-        String queryArguments = "fromURLSet";
-    
+    public List<String[]> execute(Map<String, String> arguments, String defaultArgumentName, Session s) {
+        String queryArguments = defaultArgumentName;
         if (getArguments().length() > 0) {
             queryArguments = getArguments();
         }
