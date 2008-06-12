@@ -47,9 +47,9 @@ public class RuleBasedPercolator implements Percolator {
 
     static final int MIN_ENERGY_LEVEL = 21;
 
-    static final int GARBAGE_COLLECTION_INTERVAL = 1000*120;//1000 * 10 * 60; // 10 mins
+    static final int GARBAGE_COLLECTION_INTERVAL = 1000 * 10 * 60; // 10 mins
 
-    static final int CURVE_UPDATE_INTERVAL = 1000*60;//1000 * 15 * 60; // 15 mins
+    static final int CURVE_UPDATE_INTERVAL = 1000 * 15 * 60; // 15 mins
 
     static final int MAX_PERCOLATION_TIME = 5000000;
 
@@ -270,7 +270,7 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate {@link Session}
      */
     private void collectGarbage(Session s) {
-        /*
+        
         Query q1 = s
                 .createQuery("delete from PercolationStep ps where (ps.nimbus < 20 and ps.focus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 20 or ipr.percolationMode = 30))");
         // q1.setInteger("minValue", MIN_ENERGY_LEVEL);
@@ -281,8 +281,8 @@ public class RuleBasedPercolator implements Percolator {
         // q2.setInteger("minValue", MIN_ENERGY_LEVEL);
         int d2 = q2.executeUpdate();
 
-        logger.info("Garbage-collected " + d1 + d2 + " percolation steps");
-        */
+        logger.debug("Garbage-collected " + d1 + d2 + " percolation steps");
+        
     }
 
     /**
@@ -292,12 +292,12 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate session
      */
     private void updateFocusValues(Session s) {
-        /*
+        
         String q = "update Focus f set f.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = f.objectURL and ps.userGroup like '%*%' and ps.userGroup not like concat(concat('%-',f.user),'%'))";
         int updated = s.createQuery(q).executeUpdate();
 
         logger.debug("Updated " + updated + " focus values");
-        */
+        
     }
 
     /**
@@ -322,7 +322,7 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate {@link Session}
      */
     private void executeEnergyProgressionForProgressionCurve(InitialPercolationRule ipr, Session s) {
-        /*
+        
 
         int updatedFocusPercolationSteps = 0;
         int updatedNimbusPercolationSteps = 0;
@@ -341,9 +341,9 @@ public class RuleBasedPercolator implements Percolator {
             updatedNimbusPercolationSteps = nimbusUpdate.executeUpdate();
         }
 
-        logger.info("Updated " + updatedFocusPercolationSteps + " percolation steps for for focus and "
+        logger.debug("Updated " + updatedFocusPercolationSteps + " percolation steps for for focus and "
                 + updatedNimbusPercolationSteps + " for nimbus");
-                */
+                
     }
 
     /**

@@ -17,7 +17,7 @@ MatchedAetherEvent;Object;Description;Previous object;Focus;Nimbus;<br>
 <mak:value expr="ps.focus" />;
 <mak:value expr="ps.nimbus" />;
 <br>
-<mak:list from="PercolationStep subPs" where="subPs.root.id = ps.id and subPs.root.id != subPs.id" orderBy="subPs.percolationPath">
+<mak:list from="PercolationStep subPs" where="subPs.root.id = ps.id and subPs.root.id != subPs.id" orderBy="subPs.percolationPath, subPs.created">
 
 <mak:value expr="subPs.percolationLevel" var="level" />
 <mak:value expr="mae.eventDate" format="yyyy-MM-dd HH:mm" /> <mak:value expr="mae.actor" /> --(<mak:value expr="mae.action" />)--> <mak:value expr="mae.objectURL"/>
