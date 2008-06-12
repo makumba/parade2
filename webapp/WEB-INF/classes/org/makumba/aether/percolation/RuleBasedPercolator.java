@@ -17,6 +17,7 @@ import org.makumba.aether.model.InitialPercolationRule;
 import org.makumba.aether.model.MatchedAetherEvent;
 import org.makumba.aether.model.PercolationRule;
 import org.makumba.aether.model.PercolationStep;
+import org.makumba.aether.model.RelationQuery;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
@@ -36,7 +37,8 @@ import org.makumba.parade.init.InitServlet;
  * </ul>
  * 
  * The percolator also runs two timers that update focus/nimbus values and perform garbage collection of
- * {@link PercolationStep}-s that are below MIN_ENERGY_LEVEL. The task execution interval is set by GARBAGE_COLLECTION_INTERVAL and CURVE_UPDATE_INTERVAL.
+ * {@link PercolationStep}-s that are below MIN_ENERGY_LEVEL. The task execution interval is set by
+ * GARBAGE_COLLECTION_INTERVAL and CURVE_UPDATE_INTERVAL.
  * 
  * @author Manuel Gay
  * 
@@ -45,9 +47,11 @@ public class RuleBasedPercolator implements Percolator {
 
     static final int MIN_ENERGY_LEVEL = 21;
 
-    static final int GARBAGE_COLLECTION_INTERVAL = 1000 * 10; // 10 mins
+    static final int GARBAGE_COLLECTION_INTERVAL = 1000*120;//1000 * 10 * 60; // 10 mins
 
-    static final int CURVE_UPDATE_INTERVAL = 1000 * 7; // 15 mins
+    static final int CURVE_UPDATE_INTERVAL = 1000*60;//1000 * 15 * 60; // 15 mins
+
+    static final int MAX_PERCOLATION_TIME = 5000000;
 
     private Logger logger = Logger.getLogger(RuleBasedPercolator.class);
 
@@ -59,8 +63,22 @@ public class RuleBasedPercolator implements Percolator {
 
     private Timer curveTimer;
 
+    public static boolean rulesChanged = false;
+    
+    static ThreadLocal<Boolean> percolationLock = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            return false;
+        }
+    };
+
     public void percolate(AetherEvent e) throws PercolationException {
+        int startQueries = RelationQuery.getExecutedQueries();
+        percolationLock.set(true);
         strategy.percolate(e, sessionFactory);
+        percolationLock.set(false);
+        int endQueries = RelationQuery.getExecutedQueries();
+        logger.info("Percolation of event "+e.toString()+" needed "+(endQueries - startQueries)+ " queries to be executed");
     }
 
     private void checkInitialPercolationRules() {
@@ -147,7 +165,7 @@ public class RuleBasedPercolator implements Percolator {
 
     public void configure(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        this.strategy = new SimplePercolationStrategy();
+        this.strategy = new GroupedPercolationStrategy(sessionFactory); //new SimplePercolationStrategy();
 
         logger.info("Starting initialisation of Rule-based percolator");
 
@@ -164,10 +182,9 @@ public class RuleBasedPercolator implements Percolator {
      * Configures the timer that runs garbage collection
      */
     private void configureGarbageCollectionTimer() {
-        // TODO Auto-generated method stub
         garbageTimer = new Timer(true);
         Date runAt = new Date();
-        
+
         garbageTimer.scheduleAtFixedRate(new GarbageTask(), runAt, GARBAGE_COLLECTION_INTERVAL);
     }
 
@@ -184,19 +201,23 @@ public class RuleBasedPercolator implements Percolator {
     /**
      * Computes the ALE (focus + nimbus) of one object for one event
      * 
-     * @param objectURL the object for which the ALE should be computed
-     * @param user the user for which the ALE should be computed
+     * @param objectURL
+     *            the object for which the ALE should be computed
+     * @param user
+     *            the user for which the ALE should be computed
      * @return the sum of focus and nimbus, if there is focus/nimbus match
      */
     public int getALE(String objectURL, String user) {
         return getALEfromPercolationSteps(objectURL, user);
     }
-    
-    
+
     /**
      * Returns the ALE by computing the direct sum of focus and nimbus values
-     * @param objectURL the object for which the ALE should be computed
-     * @param user the user for which the ALE should be computed
+     * 
+     * @param objectURL
+     *            the object for which the ALE should be computed
+     * @param user
+     *            the user for which the ALE should be computed
      * @return the sum of focus and nimbus, if there is focus/nimbus match
      */
     private int getALEfromPercolationSteps(String objectURL, String user) {
@@ -241,8 +262,6 @@ public class RuleBasedPercolator implements Percolator {
 
         return 0;
     }
-    
-    
 
     /**
      * Deletes all the {@link PercolationStep}-s of which the energy is too low.
@@ -251,17 +270,19 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate {@link Session}
      */
     private void collectGarbage(Session s) {
+        /*
         Query q1 = s
-                .createQuery("delete from PercolationStep ps where ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where ps.nimbus <= :minValue and (ipr.percolationMode = 20 or ipr.percolationMode = 30))");
-        q1.setParameter("minValue", MIN_ENERGY_LEVEL);
+                .createQuery("delete from PercolationStep ps where (ps.nimbus < 20 and ps.focus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 20 or ipr.percolationMode = 30))");
+        // q1.setInteger("minValue", MIN_ENERGY_LEVEL);
         int d1 = q1.executeUpdate();
 
         Query q2 = s
-                .createQuery("delete from PercolationStep ps where ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where ps.focus <= :minValue and (ipr.percolationMode = 10 or ipr.percolationMode = 30))");
-        q2.setParameter("minValue", MIN_ENERGY_LEVEL);
+                .createQuery("delete from PercolationStep ps where (ps.focus < 20 and ps.nimbus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 10 or ipr.percolationMode = 30))");
+        // q2.setInteger("minValue", MIN_ENERGY_LEVEL);
         int d2 = q2.executeUpdate();
 
         logger.info("Garbage-collected " + d1 + d2 + " percolation steps");
+        */
     }
 
     /**
@@ -271,10 +292,12 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate session
      */
     private void updateFocusValues(Session s) {
+        /*
         String q = "update Focus f set f.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = f.objectURL and ps.userGroup like '%*%' and ps.userGroup not like concat(concat('%-',f.user),'%'))";
         int updated = s.createQuery(q).executeUpdate();
 
         logger.debug("Updated " + updated + " focus values");
+        */
     }
 
     /**
@@ -299,6 +322,7 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate {@link Session}
      */
     private void executeEnergyProgressionForProgressionCurve(InitialPercolationRule ipr, Session s) {
+        /*
 
         int updatedFocusPercolationSteps = 0;
         int updatedNimbusPercolationSteps = 0;
@@ -319,6 +343,7 @@ public class RuleBasedPercolator implements Percolator {
 
         logger.info("Updated " + updatedFocusPercolationSteps + " percolation steps for for focus and "
                 + updatedNimbusPercolationSteps + " for nimbus");
+                */
     }
 
     /**
@@ -348,14 +373,18 @@ public class RuleBasedPercolator implements Percolator {
 
         @Override
         public void run() {
-            Session s = null;
-            try {
-                s = InitServlet.getSessionFactory().openSession();
-                collectGarbage(s);
-                updateFocusValues(s);
-            } finally {
-                if (s != null) {
-                    s.close();
+
+            if (!percolationLock.get()) {
+
+                Session s = null;
+                try {
+                    s = InitServlet.getSessionFactory().openSession();
+                    collectGarbage(s);
+                    updateFocusValues(s);
+                } finally {
+                    if (s != null) {
+                        s.close();
+                    }
                 }
             }
         }
@@ -365,15 +394,19 @@ public class RuleBasedPercolator implements Percolator {
 
         @Override
         public void run() {
-            Session s = null;
-            try {
-                s = InitServlet.getSessionFactory().openSession();
-                executeEnergyProgressionUpdate(s);
-                collectGarbage(s);
-                updateFocusValues(s);
-            } finally {
-                if (s != null) {
-                    s.close();
+
+            if (!percolationLock.get()) {
+
+                Session s = null;
+                try {
+                    s = InitServlet.getSessionFactory().openSession();
+                    executeEnergyProgressionUpdate(s);
+                    collectGarbage(s);
+                    updateFocusValues(s);
+                } finally {
+                    if (s != null) {
+                        s.close();
+                    }
                 }
             }
         }

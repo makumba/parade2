@@ -26,7 +26,24 @@ public enum ObjectTypes {
          return this.prefix;
      }
      
-     public static String fileFromRow(String fileURL) {
+     // very ugly code. but I'm too tired
+    public static String getRowNameFromURL(String URL) {
+        int n = URL.indexOf(":");
+        if (n == -1) {
+            return "";
+        }
+        if (!(URL.charAt(++n) == '/')) {
+            return "";
+        }
+        if (!(URL.charAt(++n) == '/')) {
+            return "";
+        }
+        n++;
+        URL = URL.substring(n);
+        return URL.substring(0, URL.indexOf("/"));
+    }
+
+    public static String fileFromRow(String fileURL) {
         return "row://"+fileURL.substring("file://".length(), fileURL.substring("file://".length()).indexOf("/"));
      }
      

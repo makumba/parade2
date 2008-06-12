@@ -7,11 +7,12 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.makumba.aether.percolation.SimplePercolationStrategy;
 
 public class RelationQuery {
     
     private Logger logger = Logger.getLogger(RelationQuery.class);
+    
+    private static int executedQueries = 0;
     
     private long id;
     
@@ -40,9 +41,26 @@ public class RelationQuery {
     public RelationQuery() {
         
     }
-    
+
     public String toString() {
-        return query;
+        String niceQuery = "";
+        String localQuery = query;
+        if(localQuery.toLowerCase().startsWith("select")) {
+            niceQuery += "SELECT \n" +
+                         "       ";
+            localQuery = localQuery.substring("select ".length());
+            String[] from = localQuery.split("[ ][f|F][r|R][o|O][m|M][ ]");
+            niceQuery += from[0] + "\n";
+            niceQuery += "FROM \n" + 
+                         "     ";
+            localQuery = from[1];
+            String[] where = localQuery.split("[ ][w|W][h|H][e|E][r|R][e|E][ ]");
+            niceQuery += where[0] + "\n";
+            niceQuery += "WHERE \n" +
+                         "      ";
+            niceQuery += where[1];
+        }
+        return niceQuery;
     }
 
     public String getDescription() {
@@ -61,14 +79,14 @@ public class RelationQuery {
         this.arguments = arguments;
     }
 
-    public List<String[]> execute(SimplePercolationStrategy simplePercolationStrategy, Map<String, Object> arguments, Session s) {
-        String queryArguments = "fromURL";
+    public List<String[]> execute(Map<String, String> arguments, Session s) {
+        String queryArguments = "fromURLSet";
     
         if (getArguments().length() > 0) {
             queryArguments = getArguments();
         }
-    
-        Query q = s.createQuery(getQuery());
+        
+        String localQuery = query;
     
         String args = ""; // for debug
         StringTokenizer st = new StringTokenizer(queryArguments, ",");
@@ -76,18 +94,30 @@ public class RelationQuery {
     
             String t = st.nextToken().trim();
     
-            Object value = arguments.get(t);
+            String value = arguments.get(t);
             if (value != null) {
-                q.setParameter(t, value);
+                // we replace the values by hand since hibernate fucks up for IN() queries
+                localQuery = localQuery.replaceAll(":"+t, value.startsWith("'") ? value : "'" + value + "'");
+//                q.setString(t, value);
                 args += t + "=" + value;
                 if (st.hasMoreTokens())
                     args += ", ";
             }
         }
         
-        logger.debug("Executing relation query: " + this + " with arguments " + args);
+        Query q = s.createQuery(localQuery);
+        
+        logger.debug("Executing relation query:\n\n" + this + "\n\nwith arguments " + args);
+        executedQueries++;
+        
+        List result = q.list();
+        logger.debug("Got "+result.size()+" result(s)");
     
-        return q.list();
+        return result;
+    }
+
+    public static int getExecutedQueries() {
+        return executedQueries;
     }
 
 }

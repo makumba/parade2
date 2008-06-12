@@ -149,7 +149,7 @@ public class InitServlet extends HttpServlet implements Runnable {
             session.save(p);            
         }
         try {
-            p.refreshApplicationsCache();
+            //p.refreshApplicationsCache();
             p.addJNotifyListeners();
         } catch (Throwable e) {
             e.printStackTrace();
