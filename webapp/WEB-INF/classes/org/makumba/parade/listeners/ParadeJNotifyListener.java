@@ -135,7 +135,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
                 Parade p = (Parade) session.get(Parade.class, new Long(1));
                 Transaction tx = session.beginTransaction();
 
-                makMgr.rowRefresh(findRowFromContext(rootPath, p));
+                makMgr.hardRefresh(findRowFromContext(rootPath, p));
 
                 tx.commit();
 

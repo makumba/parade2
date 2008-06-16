@@ -85,7 +85,7 @@ public class RowFromCVSModuleCheckoutHandler extends Thread {
                 rowData.put("webapp", a.getWebappPath());
                 
                 p.registerRow(r, rowData);
-                p.refreshRow(r);
+                p.hardRowRefresh(r);
                 
                 tx.commit();
                 

@@ -38,13 +38,17 @@ public class WebappManager implements RowRefresher, ParadeManager {
         r.addManagerData(webappdata);
     }
 
-    public void rowRefresh(Row row) {
+    public void softRefresh(Row row) {
         logger.debug("Refreshing row information for row " + row.getRowname());
 
         RowWebapp webappdata = (RowWebapp) row.getRowdata().get("webapp");
 
         setWebappInfo(row, webappdata);
         row.addManagerData(webappdata);
+    }
+
+    public void hardRefresh(Row row) {
+        softRefresh(row);
     }
 
     private void loadConfig() {
@@ -215,5 +219,6 @@ public class WebappManager implements RowRefresher, ParadeManager {
         }
         return true;
     }
+
 
 }

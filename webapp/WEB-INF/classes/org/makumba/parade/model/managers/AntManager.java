@@ -30,7 +30,7 @@ public class AntManager implements RowRefresher, ParadeManager {
 
     static Logger logger = Logger.getLogger(AntManager.class.getName());
 
-    public void rowRefresh(Row row) {
+    public void hardRefresh(Row row) {
         logger.debug("Refreshing row information for row " + row.getRowname());
 
         RowAnt antdata = new RowAnt();
@@ -228,5 +228,9 @@ public class AntManager implements RowRefresher, ParadeManager {
         out.println("heap grew with: " + (memSize1 - memSize));
 
         return HtmlUtils.text2html(result.toString(), "", "<br>");
+    }
+
+    public void softRefresh(Row row) {
+
     }
 }

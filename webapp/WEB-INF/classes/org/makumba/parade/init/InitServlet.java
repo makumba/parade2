@@ -143,13 +143,14 @@ public class InitServlet extends HttpServlet implements Runnable {
         if (p == null) {
             p = new Parade();
             p.setId(one);
-            p.refresh();
+            p.hardRefresh();
             session.save(p);
             p.performPostRefreshOperations();
             session.save(p);            
         }
         try {
-            //p.refreshApplicationsCache();
+            p.refreshApplicationsCache();
+            p.softRefresh();
             p.addJNotifyListeners();
         } catch (Throwable e) {
             e.printStackTrace();

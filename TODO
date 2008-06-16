@@ -45,6 +45,7 @@ DONE
 
 manu, 16/07/2008
 - fix the issue with jnotify not watching freshly created directories (ParadeJNotifyListener, FileManager)
+- refacoring row refresh mechanism into soft and hard, running soft refresh at each startup (fixes webapp status inconsistency)
 
 manu, 07/06/2008
 - fixing bug with CVS recursive update

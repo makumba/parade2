@@ -78,7 +78,7 @@ public class Parade {
      * </ol>
      * 
      */
-    public void refresh() {
+    public void hardRefresh() {
         logger.info("Starting ParaDe-wide refresh...");
 
         this.baseDir = ParadeProperties.getParadeBase();
@@ -98,12 +98,19 @@ public class Parade {
 
             // we don't do this for module rows since they do refresh themselves on creation
             if(!r.getModuleRow()) {
-                refreshRow(r);
+                hardRowRefresh(r);
             }
         }
         
         logger.info("ParaDe-wide refresh finished");
 
+    }
+    
+    public void softRefresh() {
+        for(Row row : getRows().values()) {
+            softRowRefresh(row);
+        }
+        
     }
     
     public void performPostRefreshOperations() {
@@ -258,17 +265,31 @@ public class Parade {
     }
 
     /**
-     * Refreshes a row, i.e. calls the refreshRow() method for all the row managers
+     * Performs hard refresh for a row, i.e. calls the softRefrsh() method for all the row managers
      * 
      * @param r
      *            the Row to refresh
      */
-    public void refreshRow(Row r) {
-        fileMgr.rowRefresh(r);
-        CVSMgr.rowRefresh(r);
-        antMgr.rowRefresh(r);
-        webappMgr.rowRefresh(r);
-        makMgr.rowRefresh(r);
+    public void softRowRefresh(Row r) {
+        fileMgr.softRefresh(r);
+        CVSMgr.softRefresh(r);
+        antMgr.softRefresh(r);
+        webappMgr.softRefresh(r);
+        makMgr.softRefresh(r);        
+    }
+    
+    /**
+     * Performs soft refresh for a row, i.e. calls the refreshRow() method for all the row managers
+     * 
+     * @param r
+     *            the Row to refresh
+     */
+    public void hardRowRefresh(Row r) {
+        fileMgr.hardRefresh(r);
+        CVSMgr.hardRefresh(r);
+        antMgr.hardRefresh(r);
+        webappMgr.hardRefresh(r);
+        makMgr.hardRefresh(r);
         
     }
 
@@ -306,7 +327,7 @@ public class Parade {
 
             // we refresh it
             logger.info("Populating cache of row " + r.getRowname());
-            refreshRow(r1);
+            hardRowRefresh(r1);
             
             long end = new Date().getTime();
 
@@ -333,7 +354,7 @@ public class Parade {
                 Row r = buildRow(rowstore.get(name));
 
                 logger.info("Populating cache of row " + r.getRowname());
-                refreshRow(r);
+                hardRowRefresh(r);
                 addJNotifyListener(r);
             }
         }

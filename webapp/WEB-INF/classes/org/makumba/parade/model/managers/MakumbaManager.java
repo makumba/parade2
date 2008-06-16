@@ -24,7 +24,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
     
     private boolean hasMakumba = false;
 
-    public void rowRefresh(Row row) {
+    public void softRefresh(Row row) {
         logger.debug("Refreshing row information for row " + row.getRowname());
 
         RowMakumba makumbadata = new RowMakumba();
@@ -35,10 +35,13 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         makumbadata.setVersion(getMakumbaVersion(root, row));
         makumbadata.setDb(getMakumbaDatabase(root));
         
-        
         makumbadata.setHasMakumba(hasMakumba);
 
         row.addManagerData(makumbadata);
+    }
+
+    public void hardRefresh(Row row) {
+        softRefresh(row);
     }
 
     public String getMakumbaVersion(String p, Row r) {

@@ -6,10 +6,10 @@ import org.makumba.parade.model.AbstractFileData;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.FileTracker;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.interfaces.CacheRefresher;
+import org.makumba.parade.model.interfaces.FileRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 
-public class TrackerManager implements CacheRefresher, ParadeManager {
+public class TrackerManager implements FileRefresher, ParadeManager {
 
     // "Specification"=0,"DesignApproved"=1,"Started"=2,"Developing"=3,"Stable"=4,"Frozen"=5,"Dropped"=6
 

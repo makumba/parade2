@@ -96,7 +96,7 @@ public class AdminAction extends DispatchAction {
 
             Parade p = (Parade) s.get(Parade.class, new Long(1));
 
-            p.refresh();
+            p.hardRefresh();
             try {
                 p.addJNotifyListeners();
             } catch (Throwable e) {

@@ -19,7 +19,7 @@ import org.makumba.parade.model.AbstractFileData;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.interfaces.CacheRefresher;
+import org.makumba.parade.model.interfaces.FileRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.LineNumberCounter;
@@ -33,16 +33,21 @@ import org.makumba.parade.tools.SimpleFileFilter;
  * @author Manuel Gay
  * 
  */
-public class FileManager implements RowRefresher, CacheRefresher, ParadeManager {
+public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
     static Logger logger = Logger.getLogger(FileManager.class.getName());
 
     private FileFilter filter = new SimpleFileFilter();
+    
+    public void softRefresh(Row row) {
+        // TODO Auto-generated method stub
+        
+    }
 
     /*
      * Creates a first File for the row which is its root dir and invokes its refresh() method
      */
-    public void rowRefresh(Row row) {
+    public void hardRefresh(Row row) {
         logger.debug("Refreshing row information for row " + row.getRowname());
 
         File root = new File();
@@ -364,5 +369,6 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
         s.close();
 
     }
+
 
 }

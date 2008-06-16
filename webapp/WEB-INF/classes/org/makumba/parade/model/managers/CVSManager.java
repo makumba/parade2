@@ -27,13 +27,13 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowCVS;
-import org.makumba.parade.model.interfaces.CacheRefresher;
+import org.makumba.parade.model.interfaces.FileRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.Execute;
 import org.makumba.parade.tools.SimpleFileFilter;
 
-public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
+public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
 
     public static Logger logger = Logger.getLogger(CVSManager.class.getName());
 
@@ -125,8 +125,12 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
             readCVSEntriesLog(row, currFile, f.getName(), f.isDirectory());
         }
     }
+    
+    public void softRefresh(Row row) {
+        
+    }
 
-    public void rowRefresh(Row row) {
+    public void hardRefresh(Row row) {
         logger.debug("Refreshing row information for row " + row.getRowname());
 
         RowCVS cvsdata = new RowCVS();
@@ -674,4 +678,5 @@ public class CVSManager implements CacheRefresher, RowRefresher, ParadeManager {
 
         return cvsConflictOnUpdate;
     }
+
 }
