@@ -71,7 +71,11 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                     return "No makumba.jar";
                 } else if (mak.size() > 1) {
                     hasMakumba = true;
-                    return "Two makumba JARs found! Please remove one";
+                    String result ="Error: Two makumba JARs found: ";
+                    for(String m : mak) {
+                        result += m + " ";
+                    }
+                    result += "! Please remove one";
                 } else {
                     hasMakumba = true;
                     String makPath = path + "/WEB-INF/lib/" + mak.get(0).replace('/', java.io.File.separatorChar);

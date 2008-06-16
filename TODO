@@ -19,16 +19,13 @@ BUG (LOW PRIO)
   CVSManager: after Entries parsing check also the log)
 
 ENHANCEMENT (EASY)
-- tell which makumba jars were found if more than 1 was found (MakumbaManager)
-- display errors / incorrect behaviour of MakumbaManager in red in view (RowStoreViewManager, MakumbaManager)
+- paint a row browser of a non-watched row in pink (FileViewManager)
 
 ENHANCEMENT (MEDIUM)
 - display rows that a user uses next to the nick in the parade welcome page (IndexServlet, index.ftl)
-- actionLog JSP (hibernate-mak driven) that displays the 10-20 last things that happened to give a feeling of what's going on
 - improve log view:
   - automatically select view that is more relevant depending on last activity (last hour, day, week...)
     (LogViewManager)
-- also paint a row browser of a non-watched row in pink (FileViewManager)
 - administration: enable easy removal of rows via the admin interface (admin/index.jsp, AdminAction, Parade)
 
 ENHANCEMENT (HARD)
@@ -45,7 +42,10 @@ DONE
 
 manu, 16/07/2008
 - fix the issue with jnotify not watching freshly created directories (ParadeJNotifyListener, FileManager)
-- refacoring row refresh mechanism into soft and hard, running soft refresh at each startup (fixes webapp status inconsistency)
+- refactoring row refresh mechanism into soft and hard, running soft refresh at each startup (fixes webapp status inconsistency)
+- tell which makumba jars were found if more than 1 was found (MakumbaManager)
+- display errors / incorrect behaviour of MakumbaManager in red in view (RowStoreViewManager, MakumbaManager)
+- actionLog JSP (hibernate-mak driven) that displays the 10-20 last things that happened to give a feeling of what's going on
 
 manu, 07/06/2008
 - fixing bug with CVS recursive update

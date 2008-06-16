@@ -19,6 +19,7 @@ public class MakumbaViewManager implements ParadeView {
         RowMakumba makdata = (RowMakumba) r.getRowdata().get("makumba");
 
         makModel.put("version", makdata.getVersion());
+        makModel.put("versionError", makdata.getVersion().startsWith("Error"));
         makModel.put("database", makdata.getDb());
         rowInformation.put("mak", makModel);
     }

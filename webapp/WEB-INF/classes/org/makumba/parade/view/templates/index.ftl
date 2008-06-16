@@ -73,7 +73,7 @@ Hi ${userNickName}! Have a nice time on ParaDe!</div><br><br>
 <a href='/Webapp.do?display=index&context=${row.rowstore.rowname}&path=${row.webapp.path}&op=servletContextInstall'>install</a>
 </#if>
 </td>
-<td>${row.mak.version}<br>
+<td <#if row.mak.versionError>class="error"</#if>>${row.mak.version}<br>
 <font style="font-size:smaller;">${row.mak.database}</font>
 </td>
 </tr>
