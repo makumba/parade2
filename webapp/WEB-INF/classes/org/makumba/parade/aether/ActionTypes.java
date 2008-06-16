@@ -17,6 +17,7 @@ public enum ActionTypes {
     EDIT("edit"),
     SAVE("save"),
     DELETE("delete"),
+    CREATE("create"),
     CVS_CHECK("cvsCheck"),
     CVS_UPDATE_DIR_LOCAL("cvsUpdateDirLocal"),
     CVS_UPDATE_DIR_RECURSIVE("cvsUpdateDirRecursive"),

@@ -269,7 +269,7 @@ public class DatabaseLogServlet extends HttpServlet {
             }
         }
 
-        String actionType = "", op = "", params = "", display = "", path = "", file = "";
+        String actionType = "", op = "", params = "", display = "", path = "", file = "", view="";
 
         if (uri.equals("/") || uri.equals("/index.jsp"))
             actionType = "browseParade";
@@ -291,6 +291,7 @@ public class DatabaseLogServlet extends HttpServlet {
         display = getParam("display", queryString);
         path = getParam("path", queryString);
         file = getParam("file", queryString);
+        view = getParam("view", queryString);
 
         if (op == null)
             op = "";
@@ -302,6 +303,8 @@ public class DatabaseLogServlet extends HttpServlet {
             path = "";
         if (file == null)
             file = "";
+        if(view == null)
+            view = "";
 
         // browse actions
         if (actionType.equals("browseParade")) {
@@ -375,6 +378,20 @@ public class DatabaseLogServlet extends HttpServlet {
             log.setAction(ActionTypes.DELETE.action());
             log.setFile(nicePath(path, params, webapp));
             log.setObjectType(ObjectTypes.FILE);
+        } else
+    
+        if(actionType.equals("file") && op.equals("newFile")) {
+            log.setAction(ActionTypes.CREATE.action());
+            log.setFile(nicePath(path, params, webapp));
+            log.setObjectType(ObjectTypes.FILE);
+            
+        } else
+            
+        if(actionType.equals("file") && op.equals("newDir")) {
+            log.setAction(ActionTypes.CREATE.action());
+            log.setFile(nicePath(path, params, webapp));
+            log.setObjectType(ObjectTypes.DIR);
+            
         } else
 
         // CVS

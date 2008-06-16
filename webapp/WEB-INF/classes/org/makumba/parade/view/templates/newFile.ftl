@@ -1,4 +1,4 @@
-<form target="directory" action="/Command.do" method="POST">
+<form target="directory" action="/Command.do" method="GET">
 <input type=hidden value="${rowName}" name=context>
 <input type=hidden value="newFile" name="op">
 Create new file: <input type="text" name="params">

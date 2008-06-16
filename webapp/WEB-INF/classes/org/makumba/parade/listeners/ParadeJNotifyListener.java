@@ -197,7 +197,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
             Row r = findRowFromContext(rootPath, p);
             Transaction tx = session.beginTransaction();
 
-            // we cache the file, and if it's a directory it will be a local update
+            // we cache the file
             fileMgr.cacheFile(r, f, true);
 
             tx.commit();

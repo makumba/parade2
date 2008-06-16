@@ -149,7 +149,18 @@ public class FileManager implements RowRefresher, CacheRefresher, ParadeManager 
 
         } else if (file.isFile()) {
             File fileData = setFileData(row, file, false);
+            makeParentDirs(row, fileData);
             addFile(row, fileData);
+        }
+    }
+    
+    private void makeParentDirs(Row row, File f) {
+        File parent = row.getFiles().get(f.getParentPath());
+        if(parent == null) {
+            logger.warn("Creating new parent directory cache "+f.getParentPath() + " for file "+f.getPath());
+            parent = setFileData(row, new java.io.File(f.getParentPath()), true);
+            addFile(row, parent);
+            makeParentDirs(row, parent);
         }
     }
 
