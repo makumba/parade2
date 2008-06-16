@@ -200,7 +200,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                     logger.debug("\t == Processing percolation rule match of rule " + pr.toString());
 
                     // record a new percolation step
-                    logger.debug("\t == Recording percolation step with level " + nps.getEnergy());
+                    logger.debug("\t == Registering percolation step with level " + nps.getEnergy());
 
                     PercolationStep ps = buildPercolationStep(mae, mae.getObjectURL(), mae.getObjectURL(), pr, nps
                             .getEnergy(), isFocusPercolation, nps.getPreviousStep(), nps.getLevel());
@@ -269,7 +269,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                         } else {
 
                             // - record a new percolation step
-                            logger.debug("\t == Recording percolation step with level " + relationEnergy);
+                            logger.debug("\t == Registering percolation step with level " + relationEnergy);
                             PercolationStep ps = buildPercolationStep(mae, (String) relation[2], (String) relation[0],
                                     pr, relationEnergy, isFocusPercolation, nps.getPreviousStep(), nps.getLevel());
                             steps.add(ps);
