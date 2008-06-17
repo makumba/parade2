@@ -1,9 +1,7 @@
 package org.makumba.parade.init;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -14,6 +12,8 @@ import org.apache.log4j.Logger;
 public class ParadeProperties {
 
     static String DEFAULT_PROPERTYFILE = "/parade.properties";
+    
+    static String DEFAULT_TOMCATPROPERTYFILE = "/tomcat.properties";
 
     private static Properties paradeConfig;
     
@@ -36,7 +36,7 @@ public class ParadeProperties {
         
         try {
             tomcatConfig = new Properties();
-            tomcatConfig.load(new FileInputStream(new java.io.File(getParadeBase())));
+            tomcatConfig.load(new FileInputStream(new java.io.File(getParadeBase()) + DEFAULT_TOMCATPROPERTYFILE));
 
         } catch (Throwable t) {
             logger
