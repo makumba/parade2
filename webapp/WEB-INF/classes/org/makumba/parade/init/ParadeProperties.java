@@ -1,7 +1,9 @@
 package org.makumba.parade.init;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -13,33 +15,51 @@ public class ParadeProperties {
 
     static String DEFAULT_PROPERTYFILE = "/parade.properties";
 
-    private static Properties config;
-
-    static public String paradeBaseRelativeToTomcatWebapps = ".." + File.separator + ".." + File.separator;
-
+    private static Properties paradeConfig;
+    
+    private static Properties tomcatConfig;
+    
     static Logger logger = Logger.getLogger(ParadeProperties.class.getName());
 
     static {
 
         try {
-            config = new Properties();
-            config.load(ParadeProperties.class.getResourceAsStream(DEFAULT_PROPERTYFILE));
+            paradeConfig = new Properties();
+            paradeConfig.load(ParadeProperties.class.getResourceAsStream(DEFAULT_PROPERTYFILE));
+            
         } catch (Throwable t) {
             logger
                     .error(
                             "Error while loading parade.properties. Make sure you have configured a parade.properties in webapp/WEB-INF/classes (you can copy the example file)",
                             t);
         }
+        
+        try {
+            tomcatConfig = new Properties();
+            tomcatConfig.load(new FileInputStream(new java.io.File(getParadeBase())));
+
+        } catch (Throwable t) {
+            logger
+            .error(
+                    "Error while loading tomcat.properties. Make sure you have configured a tomcat.properties in parade's root dir (you can copy the example file)",
+                    t);
+            
+        }
+        
     }
 
-    public static String getProperty(String configProperty) {
-        return config.getProperty(configProperty);
+    public static String getParadeProperty(String configProperty) {
+        return paradeConfig.getProperty(configProperty);
+    }
+    
+    public static String getTomcatProperty(String configProperty) {
+        return tomcatConfig.getProperty(configProperty);
     }
 
     public static List<String> getElements(String configProperty) {
         List<String> l = new LinkedList<String>();
 
-        String s = getProperty(configProperty);
+        String s = getParadeProperty(configProperty);
         if (s == null)
             return null;
         StringTokenizer st = new StringTokenizer(s, ",");
@@ -55,7 +75,6 @@ public class ParadeProperties {
         try {
             paradeBase = new java.io.File("." + java.io.File.separator).getCanonicalPath();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return paradeBase;

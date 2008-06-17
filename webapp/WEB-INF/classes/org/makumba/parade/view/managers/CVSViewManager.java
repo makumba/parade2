@@ -48,7 +48,7 @@ public class CVSViewManager implements ParadeView {
 
         RowCVS rowcvsdata = (RowCVS) r.getRowdata().get("cvs");
 
-        String cvsweb = ParadeProperties.getProperty("cvs.site");
+        String cvsweb = ParadeProperties.getParadeProperty("cvs.site");
         String webPath = f.getPath().substring(r.getRowpath().length() + 1).replace(java.io.File.separatorChar, '/');
         String cvswebLink = cvsweb + rowcvsdata.getModule() + "/" + webPath;
 

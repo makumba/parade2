@@ -24,25 +24,18 @@ public class TomcatManager implements ServletContainer {
 
     Map<String, Integer> servletContextCache = new HashMap<String, Integer>();
 
-    static Logger logger = Logger.getLogger(TomcatManager.class.getName());
+    static Logger logger = Logger.getLogger(TomcatManager.class);
 
-    // TODO get the server name and port (to build URL)
     public void makeConfig(java.util.Properties config) {
-
-        // config.put("parade.servletContext.tomcatServerName", pc.getRequest().getServerName());
-        // config.put("parade.servletContext.tomcatServerPort", "" + pc.getRequest().getServerPort());
-
-        // dummy
-        // TODO move to parade.properties
-        config.put("parade.servletContext.tomcatServerName", "localhost");
-        config.put("parade.servletContext.tomcatServerPort", ParadeProperties.getProperty("http.port"));
+        config.put("parade.servletContext.tomcatServerName", ParadeProperties.getTomcatProperty("tomcat.server"));
+        config.put("parade.servletContext.tomcatServerPort", ParadeProperties.getTomcatProperty("tomcat.http.port"));
     }
 
     public void init(java.util.Properties config) {
-        managerURL = "http://" + config.get("parade.servletContext.tomcatServerName") + ":"
-                + ParadeProperties.getProperty("http.port") + "/manager/";
-        user = ParadeProperties.getProperty("tomcat.manager.user");
-        pass = ParadeProperties.getProperty("tomcat.manager.pass");
+        managerURL = "http://" + ParadeProperties.getTomcatProperty("tomcat.server") + ":"
+                + ParadeProperties.getTomcatProperty("tomcat.http.port") + "/manager/";
+        user = ParadeProperties.getTomcatProperty("tomcat.manager.username");
+        pass = ParadeProperties.getTomcatProperty("tomcat.manager.password");
     }
 
     protected String makeAccess(String s) {

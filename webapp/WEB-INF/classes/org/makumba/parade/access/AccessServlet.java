@@ -57,11 +57,11 @@ public class AccessServlet extends HttpServlet {
     public void init() {
         context = getServletConfig().getServletContext();
 
-        String authClass = ParadeProperties.getProperty("parade.authorizerClass");
-        String authMessage = ParadeProperties.getProperty("parade.authorizationMessage");
+        String authClass = ParadeProperties.getParadeProperty("parade.authorizerClass");
+        String authMessage = ParadeProperties.getParadeProperty("parade.authorizationMessage");
         if (authClass == null)
             return;
-        String db = ParadeProperties.getProperty("parade.authorizationDB");
+        String db = ParadeProperties.getParadeProperty("parade.authorizationDB");
         Authorizer auth = null;
         try {
             auth = (Authorizer) getClass().getClassLoader().loadClass(authClass).newInstance();

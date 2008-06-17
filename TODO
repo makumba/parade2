@@ -40,6 +40,9 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+manu, 17/06/2008
+- refactoring configuration: tomcat configuration no longer duplicated, moved to tomcat.properties
+
 manu, 16/07/2008
 - fix the issue with jnotify not watching freshly created directories (ParadeJNotifyListener, FileManager)
 - refactoring row refresh mechanism into soft and hard, running soft refresh at each startup (fixes webapp status inconsistency)

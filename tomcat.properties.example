@@ -1,8 +1,8 @@
 # Properties for Tomcat Server
-tomcat.home=..\\tomcat
+tomcat.home=../tomcat
 tomcat.server=localhost
 tomcat.manager.url=http://${tomcat.server}:5050/manager
-tomcat.username=someuser
-tomcat.password=somepass
+tomcat.manager.username=someuser
+tomcat.manager.password=somepass
 tomcat.Xms=512M
 tomcat.Xmx=2048M

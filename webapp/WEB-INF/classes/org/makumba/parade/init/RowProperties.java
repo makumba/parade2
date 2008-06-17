@@ -150,7 +150,7 @@ public class RowProperties {
 
         // if we don't find anything, add as default the ParaDe row
         if (name.equals("")) {
-            this.addRowDefinition("(root)", state.getProperty(name), ParadeProperties.getProperty("webapp.path"),
+            this.addRowDefinition("(root)", state.getProperty(name), ParadeProperties.getParadeProperty("webapp.path"),
                     "ParaDe webapp", "parade");
         } else {
             this.addRowDefinition(name, state.getProperty(name), webapp, obs, user);

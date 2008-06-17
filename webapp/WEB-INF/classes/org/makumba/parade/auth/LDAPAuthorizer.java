@@ -47,9 +47,9 @@ public class LDAPAuthorizer implements Authorizer {
 
     static {
         // read the configuration from the property file
-        ldapHost = ParadeProperties.getProperty("parade.authorization.ldapHost");
-        baseDN = ParadeProperties.getProperty("parade.authorization.baseDN");
-        String encryptionProp = ParadeProperties.getProperty("parade.authorization.encryption");
+        ldapHost = ParadeProperties.getParadeProperty("parade.authorization.ldapHost");
+        baseDN = ParadeProperties.getParadeProperty("parade.authorization.baseDN");
+        String encryptionProp = ParadeProperties.getParadeProperty("parade.authorization.encryption");
         if (encryptionProp != null && encryptionProp.indexOf(",") > -1) {
 
             StringTokenizer st = new StringTokenizer(encryptionProp, ",");

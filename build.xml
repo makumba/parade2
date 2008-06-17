@@ -13,8 +13,8 @@
 
 	<!-- Configure properties to access the Manager application -->
 	<property name="url" value="${tomcat.manager.url}" />
-	<property name="username" value="${tomcat.username}" />
-	<property name="password" value="${tomcat.password}" />
+	<property name="username" value="${tomcat.manager.username}" />
+	<property name="password" value="${tomcat.manager.password}" />
 
 	<!-- Configure the custom Ant tasks for the Manager application 
 	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
