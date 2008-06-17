@@ -57,7 +57,6 @@
 			<include name="rt.jar" />
 		</fileset>
 	</path>
-
 	<path id="tomcat.class.path">
 		<fileset dir="${java.home}/lib/">
 			<include name="rt.jar" />
@@ -178,14 +177,14 @@
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="yes" classpathref="tomcat.class.path" append="true">
 			<jvmarg value="-Dcatalina.home=${tomcat.home}" />
 			<jvmarg value="-Dcatalina.base=tomcat" />
-			<jvmarg value="-Xms512M" />
-			<jvmarg value="-Xmx2048M" />
-                        <jvmarg value="-XX:MaxPermSize=2048M" />
+			<jvmarg value="-Xms${tomcat.Xms}" />
+			<jvmarg value="-Xmx${tomcat.Xmx}" />
+            <jvmarg value="-XX:MaxPermSize=${tomcat.Xmx}" />
 			<jvmarg value="-Djava.library.path=." />
 			<jvmarg value="-Djava.util.logging.config.file=${basedir}/logging.properties" />
 			<jvmarg value="-Dstartup.tstamp=${TSTAMP}" />
-                        <jvmarg value="-XX:CompileCommand=exclude,com/bbn/openmap/layer/rpf/RpfFrame,decompressSubframe"/>
-                        <jvmarg value="-client"/>
+            <jvmarg value="-XX:CompileCommand=exclude,com/bbn/openmap/layer/rpf/RpfFrame,decompressSubframe"/>
+            <jvmarg value="-client"/>
 			<arg value="start" />
 		</java>
 		<!-- give tomcat time to start up -->
