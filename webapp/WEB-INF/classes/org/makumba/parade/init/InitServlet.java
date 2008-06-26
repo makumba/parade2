@@ -49,7 +49,7 @@ public class InitServlet extends HttpServlet implements Runnable {
 
     private static freemarker.template.Configuration freemarkerCfg;
     
-    public static boolean aetherEnabled = ParadeProperties.getParadeProperty("aetherEnabled") != null && ParadeProperties.getParadeProperty("aetherEnabled").equals("true");
+    public static boolean aetherEnabled = ParadeProperties.getParadeProperty("aether.enabled") != null && ParadeProperties.getParadeProperty("aether.enabled").equals("true");
 
     static {
         initSessionFactory();

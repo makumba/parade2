@@ -8,6 +8,8 @@ import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 import java.util.logging.LogRecord;
 
 import javax.servlet.ServletConfig;
@@ -25,6 +27,7 @@ import org.makumba.commons.StringUtils;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.model.File;
@@ -163,6 +166,7 @@ public class DatabaseLogServlet extends HttpServlet {
             break;
         }
         
+        
         if( log.getAction().equals(ActionTypes.SAVE.action())) {
             Transaction tx = s.beginTransaction();
             String rowName = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
@@ -179,9 +183,31 @@ public class DatabaseLogServlet extends HttpServlet {
 
             tx.commit();
         }
+        
+        if(log.getObjectType().equals(ObjectTypes.FILE) && isExcluded(log.getFile())) {
+            initialLevelCoefficient = 0.00;
+            
+        }
+        
 
         return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getAction(),
                 log.getDate(), initialLevelCoefficient);
+    }
+    
+    private Vector<String> aetherExcludedFiles;
+    
+    private boolean isExcluded(String file) {
+        if(aetherExcludedFiles == null) {
+            aetherExcludedFiles = new Vector<String>();
+            String excluded = ParadeProperties.getParadeProperty("aether.excludedFiles");
+            if(excluded != null) {
+                StringTokenizer st = new StringTokenizer(excluded, ",");
+                while(st.hasMoreTokens()) {
+                    aetherExcludedFiles.add(st.nextToken().trim());
+                }
+            }
+        }
+        return aetherExcludedFiles == null ? false : aetherExcludedFiles.contains(file);
     }
 
     private void handleActionLog(HttpServletRequest req, Object record, Session s) {
