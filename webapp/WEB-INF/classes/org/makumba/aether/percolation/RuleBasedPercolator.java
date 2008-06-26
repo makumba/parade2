@@ -293,7 +293,7 @@ public class RuleBasedPercolator implements Percolator {
      */
     private void updateFocusValues(Session s) {
         
-        String q = "update Focus f set f.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = f.objectURL and ps.userGroup like '%*%' and ps.userGroup not like concat(concat('%-',f.user),'%'))";
+        String q = "update Focus f set f.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = f.objectURL)";
         int updated = s.createQuery(q).executeUpdate();
 
         logger.debug("Updated " + updated + " focus values");
