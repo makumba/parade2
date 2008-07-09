@@ -30,6 +30,9 @@ import org.makumba.parade.tools.ParadeException;
  * This class holds the methods for handling general ParaDe operations. It also is the starting point of the ParaDe
  * cache model, and only one instance exists within ParaDe (which is loaded on startup).<br>
  * 
+ * FIXME as soon as Hibernate bug http://opensource.atlassian.com/projects/hibernate/browse/HHH-2146 is fixed, activate
+ * the deletion of old rows
+ * 
  * @author Manuel Gay
  * 
  */
@@ -83,13 +86,7 @@ public class Parade {
 
         this.baseDir = ParadeProperties.getParadeBase();
 
-        // we read the row definitions and perform update/creation
-        Map<String, Map<String, String>> rowstore = rowproperties.getRowDefinitions();
-        if (rowstore.isEmpty()) {
-            logger.warn("No row definitions found, check RowProperties");
-        }
-
-        createOrUpdateRows(rowstore);
+        createOrUpdateRows(getRowstoreDefinition());
 
         Iterator<String> i = rows.keySet().iterator();
         while (i.hasNext()) {
@@ -97,22 +94,24 @@ public class Parade {
             Row r = rows.get(i.next());
 
             // we don't do this for module rows since they do refresh themselves on creation
-            if(!r.getModuleRow()) {
+            if (!r.getModuleRow()) {
                 hardRowRefresh(r);
             }
         }
-        
+
         logger.info("ParaDe-wide refresh finished");
 
     }
-    
+
     public void softRefresh() {
-        for(Row row : getRows().values()) {
+        for (Row row : getRows().values()) {
             softRowRefresh(row);
         }
-        
+
+        removeUnmappedRows(getRowstoreDefinition());
+
     }
-    
+
     public void performPostRefreshOperations() {
         logger.info("Performing post-refresh tasks...");
         applMgr.checkoutAndCreateModuleRows();
@@ -136,17 +135,24 @@ public class Parade {
             buildRow(rowDefinition);
         }
 
-        // removing deleted rows from cache
-        Iterator<String> j = this.getRows().keySet().iterator();
-        while (j.hasNext()) {
-            String key = j.next();
+        removeUnmappedRows(rowstore);
+    }
 
-            // if the new row store definition doesn't contain the row, we trash it
-            if (!rowstore.containsKey(key)) {
-                logger.info("Dropping row " + key + " from cache.");
-                this.getRows().remove(key);
-            }
-        }
+    private void removeUnmappedRows(Map<String, Map<String, String>> rowstore) {
+
+        // does nothing for the moment because of http://opensource.atlassian.com/projects/hibernate/browse/HHH-2146
+        // FIXME uncomment this as soon as fix is released (and adopt new hibernate version)
+        /*
+         * 
+         * // removing deleted rows from cache Iterator<String> j = this.getRows().keySet().iterator(); Vector<String>
+         * toRemove = new Vector<String>(); while (j.hasNext()) { String key = j.next();
+         * 
+         * // if the new row store definition doesn't contain the row, we trash it if (!rowstore.containsKey(key)) {
+         * toRemove.add(key); } }
+         * 
+         * for (String rowName : toRemove) { logger.info("Dropping row " + rowName + " from cache.");
+         * this.getRows().remove(rowName); }
+         */
     }
 
     /**
@@ -230,7 +236,7 @@ public class Parade {
             storedRow.setDescription(rowDefinition.get("desc"));
             logger.warn("The description of row " + rowname + " was updated to " + rowDefinition.get("desc"));
         }
-        
+
         // the webapp path is modified
         if (!rowDefinition.get("webapp").trim().equals(storedRow.getWebappPath())) {
             storedRow.setWebappPath((rowDefinition.get("webapp")));
@@ -275,9 +281,9 @@ public class Parade {
         CVSMgr.softRefresh(r);
         antMgr.softRefresh(r);
         webappMgr.softRefresh(r);
-        makMgr.softRefresh(r);        
+        makMgr.softRefresh(r);
     }
-    
+
     /**
      * Performs soft refresh for a row, i.e. calls the refreshRow() method for all the row managers
      * 
@@ -290,7 +296,7 @@ public class Parade {
         antMgr.hardRefresh(r);
         webappMgr.hardRefresh(r);
         makMgr.hardRefresh(r);
-        
+
     }
 
     /**
@@ -328,7 +334,7 @@ public class Parade {
             // we refresh it
             logger.info("Populating cache of row " + r.getRowname());
             hardRowRefresh(r1);
-            
+
             long end = new Date().getTime();
 
             logger.info("Finished rebuilding cache of row " + rowName + ". Operation took " + (end - start) + " ms");
@@ -341,10 +347,7 @@ public class Parade {
      */
     public void createNewRows() {
 
-        Map<String, Map<String, String>> rowstore = rowproperties.getRowDefinitions();
-        if (rowstore.isEmpty()) {
-            logger.warn("No row definitions found, check RowProperties");
-        }
+        Map<String, Map<String, String>> rowstore = getRowstoreDefinition();
 
         Iterator<String> i = rowstore.keySet().iterator();
         while (i.hasNext()) {
@@ -358,6 +361,14 @@ public class Parade {
                 addJNotifyListener(r);
             }
         }
+    }
+
+    private Map<String, Map<String, String>> getRowstoreDefinition() {
+        Map<String, Map<String, String>> rowstore = rowproperties.getRowDefinitions();
+        if (rowstore.isEmpty()) {
+            logger.warn("No row definitions found, check RowProperties");
+        }
+        return rowstore;
     }
 
     /**
@@ -426,7 +437,7 @@ public class Parade {
             // do nothing. JNotify returns plenty of those.
         }
     }
-    
+
     private static Hashtable<String, String> absoluteFilePathCache = new Hashtable<String, String>();
 
     /**
@@ -439,11 +450,11 @@ public class Parade {
      * @return the absolute path of the file on the file system
      */
     public static String constructAbsolutePath(String context, String relativePath) {
-        
-        if(absoluteFilePathCache.get(context+relativePath) != null) {
-            return absoluteFilePathCache.get(context+relativePath);
+
+        if (absoluteFilePathCache.get(context + relativePath) != null) {
+            return absoluteFilePathCache.get(context + relativePath);
         }
-        
+
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
 
@@ -470,8 +481,8 @@ public class Parade {
             relativePath = relativePath.substring(0, relativePath.length() - 1);
         absolutePath = entryRow.getRowpath() + java.io.File.separator
                 + relativePath.replace('/', java.io.File.separatorChar);
-        
-        absoluteFilePathCache.put(context+relativePath, absolutePath);
+
+        absoluteFilePathCache.put(context + relativePath, absolutePath);
 
         return absolutePath;
 
