@@ -49,8 +49,8 @@ public class ParadeJNotifyListener implements JNotifyListener {
     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
         logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", " + oldName + " -> "
                 + newName);
-        checkSpecialFile(rootPath, oldName);
-        checkSpecialFile(rootPath, newName);
+        //checkSpecialFile(rootPath, oldName);
+        //checkSpecialFile(rootPath, newName);
         
         if (isLocked(rootPath, oldName, JNotify.FILE_RENAMED))
             return;
@@ -68,7 +68,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
     public void fileModified(int wd, String rootPath, String name) {
         logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
-        checkSpecialFile(rootPath, name);
+        //checkSpecialFile(rootPath, name);
         
         if (isLocked(rootPath, name, JNotify.FILE_MODIFIED))
             return;
@@ -83,7 +83,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
     public void fileDeleted(int wd, String rootPath, String name) {
         logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", " + name);
-        checkSpecialFile(rootPath, name);
+        //checkSpecialFile(rootPath, name);
         
         if(InitServlet.aetherEnabled) {
             deleteRelations(rootPath, name);
@@ -98,7 +98,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
     public void fileCreated(int wd, String rootPath, String name) {
         logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", " + name);
-        checkSpecialFile(rootPath, name);
+        //checkSpecialFile(rootPath, name);
         
         if (isLocked(rootPath, name, JNotify.FILE_CREATED))
             return;

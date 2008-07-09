@@ -5,6 +5,7 @@ import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.managers.MakumbaManager;
 import org.makumba.parade.model.managers.WebappManager;
 
 public class WebappController {
@@ -12,6 +13,7 @@ public class WebappController {
     public Object[] onWebappAction(String context, String op) {
 
         WebappManager webappMgr = new WebappManager();
+        MakumbaManager makMgr = new MakumbaManager();
 
         String opResult = "";
 
@@ -26,21 +28,25 @@ public class WebappController {
             entryRow = Row.getRow(p, context);
 
         if (op.equals("servletContextStart")) {
+            makMgr.softRefresh(entryRow);
             opResult = webappMgr.servletContextStartRow(entryRow);
         }
         if (op.equals("servletContextStop")) {
             opResult = webappMgr.servletContextStopRow(entryRow);
         }
         if (op.equals("servletContextReload")) {
+            makMgr.softRefresh(entryRow);
             opResult = webappMgr.servletContextReloadRow(entryRow);
         }
         if (op.equals("servletContextRemove")) {
             opResult = webappMgr.servletContextRemoveRow(entryRow);
         }
         if (op.equals("servletContextInstall")) {
+            makMgr.softRefresh(entryRow);
             opResult = webappMgr.servletContextInstallRow(entryRow);
         }
         if(op.equals("servletContextRedeploy")) {
+            makMgr.softRefresh(entryRow);
             opResult = webappMgr.servletContextRedeployRow(entryRow);
         }
 
