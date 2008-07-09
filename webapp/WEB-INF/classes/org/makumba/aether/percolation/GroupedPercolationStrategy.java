@@ -33,11 +33,11 @@ import org.makumba.parade.aether.ObjectTypes;
  */
 public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
-    private Logger logger = Logger.getLogger(GroupedPercolationStrategy.class);
+    private static Logger logger = Logger.getLogger(GroupedPercolationStrategy.class);
 
     private MultiValueMap initialPercolationRules = new MultiValueMap();
 
-    private MultiValueMap percolationRules = new MultiValueMap();
+    private static MultiValueMap percolationRules = new MultiValueMap();
 
     private SessionFactory sessionFactory;
 
@@ -52,6 +52,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
      */
     @Override
     public void percolate(AetherEvent e, SessionFactory sessionFactory) throws PercolationException {
+        int startQueries = RelationQuery.getExecutedQueries();
         super.percolate(e, sessionFactory);
 
         try {
@@ -60,6 +61,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
             Session s = null;
             Transaction tx = null;
+            boolean shouldCloseSession = true;
             try {
                 s = sessionFactory.openSession();
                 tx = s.beginTransaction();
@@ -75,15 +77,26 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                     }
 
                     for (MatchedAetherEvent mae : matchedEvents) {
-                        percolateMatchedEvent(mae, s);
+                        
+                        if(mae.getInitialPercolationRule().getInteractionType() == InitialPercolationRule.IMMEDIATE_INTERACTION) {
+                            percolateMatchedEvent(mae, s);
+                            int endQueries = RelationQuery.getExecutedQueries();
+                            logger.info("Percolation of event "+e.toString()+" needed "+(endQueries - startQueries)+ " queries to be executed");
+                        } else if(mae.getInitialPercolationRule().getInteractionType() == InitialPercolationRule.DIFFERED_INTERACTION) {
+                           shouldCloseSession = false;
+                           PercolationThread t = new PercolationThread(mae, s, tx, startQueries);
+                           t.start();
+                           
+                        }
                     }
-
+                }
+                
+                if(shouldCloseSession) {
+                    tx.commit();
                 }
 
-                tx.commit();
-
             } finally {
-                if (s != null) {
+                if (s != null && shouldCloseSession) {
                     s.close();
                 }
             }
@@ -92,6 +105,28 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             throw new PercolationException(ex);
         }
 
+    }
+    
+    public class PercolationThread extends Thread {
+        
+        private MatchedAetherEvent mae;
+        private Session s;
+        private Transaction tx;
+        private int startQueries;
+        
+        @Override
+        public void run() {
+            percolateMatchedEvent(mae, s);
+            tx.commit();
+            s.close();
+        }
+        
+        public PercolationThread(MatchedAetherEvent mae, Session s, Transaction tx, int startQueries) {
+            this.mae = mae;
+            this.s = s;
+            this.tx = tx;
+            this.startQueries = startQueries;
+        }
     }
 
     /**
@@ -108,7 +143,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
      * @param s
      *            a Hibernate {@link Session}
      */
-    private void percolateMatchedEvent(MatchedAetherEvent mae, Session s) {
+    private static void percolateMatchedEvent(MatchedAetherEvent mae, Session s) {
         logger.debug("Starting percolation of matched event \"" + mae.toString() + "\"");
 
         List<Object[]> initialRelations = new LinkedList<Object[]>();
@@ -174,7 +209,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
      * @param groupedPercolationInfo
      *            TODO
      */
-    private void percolate(MatchedAetherEvent mae, Session s, boolean isFocusPercolation, long startTime,
+    private static void percolate(MatchedAetherEvent mae, Session s, boolean isFocusPercolation, long startTime,
             List<Object[]> relations, Map<String, NodePercolationStatus> previousNodePercolationStatuses, Vector<PercolationStep> steps) {
 
         if (isFocusPercolation) {
@@ -207,7 +242,6 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                     steps.add(ps);
 
                     addOrUpdateFocus(mae.getObjectURL(), mae.getActor(), nps.getEnergy(), s);
-
                 }
 
                 logger.debug("====== END FOCUS PERCOLATION ======");
@@ -291,6 +325,12 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                                 for (RelationQuery rq : pr.getRelationQueries()) {
                                     groupedQueries.put(rq, ps);
                                 }
+                                
+                                // TODO at this level we will add the virtual relation queries
+                                // we will have to provide them with the previous step, or so, in order to compute
+                                // the adequate level
+                                // adding a virtual query will make it possible to later on retrieve additional
+                                // percolationSteps to be written to the db
 
                                 // register the status of the node after this percolation
                                 nodePercolationStatuses.put((String) relation[0], new NodePercolationStatus(
@@ -336,7 +376,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
      * 
      * @return a List of relations of the kind fromURL, relationType, toURL
      */
-    private List<Object[]> retrieveNextRelations(MultiValueMap groupedQueries, Session s) {
+    private static List<Object[]> retrieveNextRelations(MultiValueMap groupedQueries, Session s) {
 
         List<Object[]> results = new ArrayList<Object[]>();
 
@@ -371,7 +411,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
     public static String[] supportedArguments = { "fromURLSet", "cvsURLSet", "rowNameSet", "percolationPathSet",
             "fromURLAndTraversedCVSSet" };
 
-    private void addSetArgument(Map<String, String> arguments, String key, String value) {
+    private static void addSetArgument(Map<String, String> arguments, String key, String value) {
         if (value == null || value.trim().length() == 0) {
             return;
         }
@@ -432,41 +472,5 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
         }
         c.add(value);
         map.putAll(key, c);
-    }
-
-    public class NodePercolationStatus {
-
-        private String key;
-
-        private int energy;
-
-        private int level;
-
-        private PercolationStep previousStep;
-
-        public String getKey() {
-            return key;
-        }
-
-        public int getEnergy() {
-            return energy;
-        }
-
-        public int getLevel() {
-            return level;
-        }
-
-        public PercolationStep getPreviousStep() {
-            return previousStep;
-        }
-
-        public NodePercolationStatus(String key, int energy, int level, PercolationStep previousStep) {
-            super();
-            this.key = key;
-            this.energy = energy;
-            this.level = level;
-            this.previousStep = previousStep;
-        }
-
     }
 }

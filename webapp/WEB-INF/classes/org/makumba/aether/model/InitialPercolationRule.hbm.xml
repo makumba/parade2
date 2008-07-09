@@ -4,6 +4,7 @@
       "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.makumba.aether.model">
+
 	<class name="InitialPercolationRule">
 
 		<cache usage="read-write" />
@@ -15,17 +16,21 @@
 		<property name="objectType" />
 		<property name="action" />
 		<property name="userType" />
-		<property name="percolationMode" >
-  			<column name="percolationMode" default="0" />
+		<property name="percolationMode">
+			<column name="percolationMode" default="0" />
 		</property>
 
 		<property name="initialLevel" />
 		<property name="focusProgressionCurve" />
 		<property name="nimbusProgressionCurve" />
 		
-		<property name="active" />
+		<property name="interactionType" />
 		
-		<bag name="relationQueries" table="InitialPercolationRule__relationQueries" lazy="false" cascade="all" inverse="false">
+		<property name="active" />
+
+		<bag name="relationQueries"
+			table="InitialPercolationRule__relationQueries" lazy="false"
+			cascade="all" inverse="false">
 			<key column="id_initialpercolationrule" />
 			<many-to-many class="RelationQuery" />
 		</bag>

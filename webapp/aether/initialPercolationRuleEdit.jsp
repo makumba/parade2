@@ -29,6 +29,10 @@
         <td><mak:input field="percolationMode" styleId="percolationMode" accessKey="p" /></td>
       </tr>
       <tr>
+        <th><label for="interactionType"><span class="accessKey">i</span>nteractionType</th>
+        <td><mak:input field="interactionType" styleId="interactionType" accessKey="i" /></td>
+      </tr>
+      <tr>
         <th><label for="description">next relations</label></th>
         <td><mak:input field="relationQueries"><mak:list from="RelationQuery rq" orderBy="rq.description"><mak:option value="rq.id"> <mak:value expr="rq.description"/></mak:option></mak:list></mak:input></td>
       </tr>

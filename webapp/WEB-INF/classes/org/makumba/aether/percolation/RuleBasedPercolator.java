@@ -73,12 +73,9 @@ public class RuleBasedPercolator implements Percolator {
     };
 
     public void percolate(AetherEvent e) throws PercolationException {
-        int startQueries = RelationQuery.getExecutedQueries();
         percolationLock.set(true);
         strategy.percolate(e, sessionFactory);
         percolationLock.set(false);
-        int endQueries = RelationQuery.getExecutedQueries();
-        logger.info("Percolation of event "+e.toString()+" needed "+(endQueries - startQueries)+ " queries to be executed");
     }
 
     private void checkInitialPercolationRules() {

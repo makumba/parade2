@@ -29,6 +29,10 @@
       <td><mak:input field="percolationMode" styleId="percolationMode" accessKey="M" /></td>
     </tr>
     <tr>
+      <th><label for="interactionType"><span class="accessKey">i</span>nteractionType</th>
+      <td><mak:input field="interactionType" styleId="interactionType" accessKey="i" /></td>
+    </tr>
+    <tr>
       <th><label for="focusProgressionCurve"></label></th>
       <td><mak:input field="focusProgressionCurve" /></td>
     </tr>

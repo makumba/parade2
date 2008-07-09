@@ -5,8 +5,6 @@ import java.util.List;
 /**
  * Initial percolation rule for rule-based percolation
  * 
- * TODO introduce curve
- * 
  * @author Manuel Gay
  * 
  */
@@ -20,6 +18,10 @@ public class InitialPercolationRule implements AetherRule {
 
     public static final int FOCUS_NIMBUS_PERCOLATION = 30;
 
+    public static final int IMMEDIATE_INTERACTION = 10;
+    
+    public static final int DIFFERED_INTERACTION = 20;
+    
     private long id;
 
     private String objectType;
@@ -37,6 +39,8 @@ public class InitialPercolationRule implements AetherRule {
     private String nimbusProgressionCurve;
 
     private List<RelationQuery> relationQueries;
+    
+    private int interactionType;
 
     private boolean active = true;
 
@@ -107,6 +111,30 @@ public class InitialPercolationRule implements AetherRule {
     public void setPercolationMode(int percolationMode) {
         this.percolationMode = percolationMode;
     }
+    
+    public String getFocusProgressionCurve() {
+        return focusProgressionCurve;
+    }
+
+    public void setFocusProgressionCurve(String focusProgressionCurve) {
+        this.focusProgressionCurve = focusProgressionCurve;
+    }
+
+    public String getNimbusProgressionCurve() {
+        return nimbusProgressionCurve;
+    }
+
+    public void setNimbusProgressionCurve(String nimbusProgressionCurve) {
+        this.nimbusProgressionCurve = nimbusProgressionCurve;
+    }
+
+    public int getInteractionType() {
+        return interactionType;
+    }
+
+    public void setInteractionType(int interactionType) {
+        this.interactionType = interactionType;
+    }
 
     public String toString() {
         return "oType: " + objectType + " action: " + action + " uType: " + userType + " initLevel: " + initialLevel
@@ -124,22 +152,6 @@ public class InitialPercolationRule implements AetherRule {
         default:
             return "Should not be here";
         }
-    }
-
-    public String getFocusProgressionCurve() {
-        return focusProgressionCurve;
-    }
-
-    public void setFocusProgressionCurve(String focusProgressionCurve) {
-        this.focusProgressionCurve = focusProgressionCurve;
-    }
-
-    public String getNimbusProgressionCurve() {
-        return nimbusProgressionCurve;
-    }
-
-    public void setNimbusProgressionCurve(String nimbusProgressionCurve) {
-        this.nimbusProgressionCurve = nimbusProgressionCurve;
     }
 
 }

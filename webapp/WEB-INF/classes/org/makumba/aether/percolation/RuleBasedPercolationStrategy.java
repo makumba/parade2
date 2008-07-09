@@ -123,7 +123,7 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
      *            TODO
      * @return a {@link PercolationStep} corresponding to this part of the percolation
      */
-    protected PercolationStep buildPercolationStep(MatchedAetherEvent mae, String previousURL, String objectURL, PercolationRule pr, int level,
+    protected static PercolationStep buildPercolationStep(MatchedAetherEvent mae, String previousURL, String objectURL, PercolationRule pr, int level,
             boolean isFocusPercolation, PercolationStep previous, int percolationLevel) {
             
                 return new PercolationStep(previousURL, objectURL, isFocusPercolation ? mae.getActor() : mae.getUserGroup(), (isFocusPercolation ? level : 0),
@@ -139,7 +139,7 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
      * @param energy the energy to be added
      * @param s a Hibernate session
      */
-    protected void addOrUpdateFocus(String objectURL, String user, int energy, Session s) {
+    protected static void addOrUpdateFocus(String objectURL, String user, int energy, Session s) {
         int updated = s.createQuery("update Focus set focus = focus + :energy where user = :user and objectURL = :objectURL").setString("user", user).setString("objectURL", objectURL).setParameter("energy", energy).executeUpdate();
         if(updated == 0) {
             Focus f = new Focus(objectURL, user, energy);

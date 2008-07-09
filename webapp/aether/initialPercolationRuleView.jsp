@@ -32,6 +32,10 @@
       <td><mak:value expr="initialPercolationRule.percolationMode"/></td>
     </tr>
     <tr>
+      <th>interactionType</th>
+      <td><mak:value expr="initialPercolationRule.interactionType"/></td>
+    </tr>
+    <tr>
       <th>active</th>
       <td><mak:value expr="initialPercolationRule.active"/></td>
     </tr>
@@ -72,32 +76,32 @@ pageContext.setAttribute("nimbusCurveProvider", nimbus);
 <input type="submit" value="Change"/>
 </form></td>
 </tr>
-    <tr>
-      <th>Focus progression curve</th>
-      <td>
-        <mak:value expr="initialPercolationRule.focusProgressionCurve"/><br><br>
-        <cewolf:chart id="focusGraph" title="Focus progression curve" type="xy" xaxislabel="Time (hours)" yaxislabel="Energy">
-          <cewolf:data>
-            <cewolf:producer id="focusCurveProvider"/>
-          </cewolf:data>
-        </cewolf:chart>
-        <cewolf:img chartid="focusGraph" renderer="/cewolf" width="400" height="300"/>
-      </td>
-    </tr>
-    <tr>
-      <th>Nimbus progression curve</th>
-      <td>
-        <mak:value expr="initialPercolationRule.nimbusProgressionCurve" /><br><br>
-        <cewolf:chart id="nimbusGraph" title="Nimbus progression curve" type="xy" xaxislabel="Time (hours)" yaxislabel="Energy">
-          <cewolf:data>
-            <cewolf:producer id="nimbusCurveProvider"/>
-          </cewolf:data>
-        </cewolf:chart>
-        <cewolf:img chartid="nimbusGraph" renderer="/cewolf" width="400" height="300"/>
-      </td>
-    </tr>
+<tr>
+  <th>Focus progression curve</th>
+  <td>
+    <mak:value expr="initialPercolationRule.focusProgressionCurve"/><br><br>
+    <cewolf:chart id="focusGraph" title="Focus progression curve" type="xy" xaxislabel="Time (hours)" yaxislabel="Energy">
+      <cewolf:data>
+        <cewolf:producer id="focusCurveProvider"/>
+      </cewolf:data>
+    </cewolf:chart>
+    <cewolf:img chartid="focusGraph" renderer="/cewolf" width="400" height="300"/>
+  </td>
+</tr>
+<tr>
+  <th>Nimbus progression curve</th>
+  <td>
+    <mak:value expr="initialPercolationRule.nimbusProgressionCurve" /><br><br>
+    <cewolf:chart id="nimbusGraph" title="Nimbus progression curve" type="xy" xaxislabel="Time (hours)" yaxislabel="Energy">
+      <cewolf:data>
+        <cewolf:producer id="nimbusCurveProvider"/>
+      </cewolf:data>
+    </cewolf:chart>
+    <cewolf:img chartid="nimbusGraph" renderer="/cewolf" width="400" height="300"/>
+  </td>
+</tr>
 
-  </table>
+</table>
 </fieldset>
   <%-- Makumba Generator - END OF NORMAL FIELDS --%>
 
