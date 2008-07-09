@@ -204,26 +204,4 @@ public class AdminAction extends DispatchAction {
             s.close();
         }
     }
-    
-    public ActionForward testCurve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        Session s = null;
-        Transaction tx = null;
-        try {
-            s = InitServlet.getSessionFactory().openSession();
-            tx = s.beginTransaction();
-            
-            RuleBasedPercolator r = new RuleBasedPercolator();
-            r.executeEnergyProgressionUpdate(s);
-            
-            return mapping.findForward("index");
-
-            
-        } finally {
-            tx.commit();
-            s.close();
-        }
-    }
-
 }
