@@ -16,11 +16,11 @@ exactly what you are doing, because otherwise you may harm the system
 and an army of mad developers will come kick your bottom.</div>
 </p>
 
-<h2>User management</h2>
-<p>Here you can manage things in relation to parade users.</p>
+<h2>Row management</h2>
+<p>Here you can manage things in relation to parade rows.</p>
 
 <h3>Users and Rows</h3>
-<p>If a user owns a row, parade needs to know this.</p>
+<p>Here you can configure who owns a row, and who does Unison (or synchronisation in general) on it (also temporarily!)</p>
 <a href="rowList.jsp">Edit the row-user relations</a><br>
 
 <h2>Cache management</h2>
@@ -80,13 +80,6 @@ To make Aether run all RelationComputers relation computations on next startup, 
 (enter the exact name of the row, e.g. manu-k).<br>
 <br>
 </form>
-
-<h3>Test the Curve</h3>
-<form action="/Admin.do"><input type="hidden" name="op"
-	value="testCurve" /> <input type="hidden" name="display"
-	value="index" /> <input type="submit" value="Do it!">
-</form>
-<br>
 
 </body>
 </html>
