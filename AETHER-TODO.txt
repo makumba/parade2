@@ -1,0 +1,116 @@
+AETHER TO-DO LIST
+=================
+
+WELL-DEFINED
+============
+
+= tasks needed for better performance and improved Aether usage (10h20)
+  - optimise the Makumba relation crawler, and/or make the relation update a thread (4h)
+  - optimise the percolation mechanism even further (3h)
+    - make an interface for java-based percolation rules
+    - implement a CVS percolation rule that does one query and returns two percolation steps (checkedOutAs, versionOf)
+    - integrate it into the existing percolation algorithm in an efficient way
+    -> add to PercolationRule a getVirtualRelationQueries
+    -> this virtualRelationQuery should be an interface? we need to persist it, too
+    -> we have to add an initialisation step to the percolation strategy configuration which basically persists
+       all these virtual relation queries. virtual relation queries have the power to add some percolationSteps,
+       which are then virtual in fact. thus we need to provide them with appropriate information when calling them
+
+  - improved Aether configuration interface
+    - row-by-row event percolation configuration, simple global percolation activation / deactivation via web interface (1h)
+    - nicer interface, tool-tips and explanatory text for creation / modification of InitialPercolationRules and PercolationRules (1h)
+    - make a "export rules" button in the interface and run the script via an ant target (20 min)
+
+= separated / independent Aether engine production environment (9h)
+  - mysql master-to-master replication (4h)
+  - implement a standalone mechanism on replicated server (5h)
+    - refactor the Aether engine startup into a standalone process (2h) 
+      - build.xml target for relation computation of all contexts
+      - build.xml + java standlone class for Aether statup
+    - figure a way to notify the Aether engine of new events (2h)
+      - trigger at db level?
+      - socket-based approach?
+      - servlet-based approach?
+
+NEEDS DESIGN
+============
+
+= F/N value normalisation and ALE "forumla" problem
+  - for focus, use maximum per user in order to normalise, e.g. (focus / max(focus)) * 100
+  - for nimbus - is using the max making sense?
+  - ALE - how to combine F and N ? sum seems to need some normalisation, i.e. take into account the focus strength.
+    e.g. F=10, N=5000 is not the same as F=1000, N=5000. so "sum" seems not to be the solution
+
+= user-interface
+  - dashboard view: what should it contain? where should it be accessible from? (top-menu link?)
+  - file-editor: how and where to visualise the impact of a "save" action?
+  - file-browser: how to display "focused" objects? how to take into account focus strength? how to normalise this value (max per user?)
+  - all the other UI elements
+
+= for future: with the introduction of makumba it is now possible to compute many views (lists) via makumba, instead of the templating engine.
+  however, the templating offerst the advantage of M/V separation, which in the case of complex servlets such as the file browser view seems to
+  be a must if one wants to keep overview of what is actually being displayed on the page. how should this be addressed?
+  is using a Java Bean in order to get some of the computed values making sense here? and, is the investment of time in this rather big refactoring
+  worth it? (PRO: makes the modification of views easier for ITD / CON: takes a lot of time, may introduce bugs,
+  breaks the modularity of the viewManagers (but those should anyway go away, since the common view template already brakes this modularity)
+
+
+
+IDEA
+====
+
+- anticipated percolation
+
+DONE
+====
+
+manu, 26/06/2008
+- Unison multi-user issue: implement a way for users to select who does unison on the row (30 min)
+- add different kinds of percolation to InitialPercolationRule (40 min, real: 1h):
+  immediate, which lets the user wait, or differed, i.e. run in a thread in the background
+  - modify InitialPercolationRule (model, UI)
+  - adapt event registration mechanism
+
+
+
+manu (past)
+
+- timer for garbage collection
+- timer for percolation curve update
+- introduce focus table and update it after each percolation and after each percolation curve update
+- cvs repository context crawler
+  - always kept up to date
+  - implement checkout (application manager?)
+    - implement automatic update by hook for this context. should it be a context? probably, because
+      that way it can be used against generic features in the future (diff etc) but it should not be visible
+      to the users in the list of rows.
+- implement relation computers
+  - makumba context relation computer
+  - mdd - jsp - java
+    - only for files that are not UP_TO_DATE
+  - cvs repository context crawler
+- startup, relation crawler start
+- jnotify action logs
+  - created -> new & saved
+  - modified -> saved
+  - renamed -> deleted -> deleted
+  - trigger percolator
+- implement aether
+  - connection to parade
+    - aether single file update
+    - event notification
+  - implement percolation
+    - rule backup mechanism
+- percolation log
+  - use a link to previous + a link to the row to order by thread (check e-mail archive)
+- filter webapp actions as well (manager deploy, undeploy)
+- display duration of percolation
+- percolation should stop after x seconds (if in loop or so)
+- make a diff of save and set initial percolation level to it
+  - save number of lines as metadata to File
+  - initial level = 1 + diff / total lines of file or so
+    - needs also to be normalised in relation to other initial levels...
+  - AetherEvent: initialLevelCoefficient
+    - set on AetherEvent creation, default = 1
+- implement coefficient limitation for single files via properties
+- check why Focus update fails (list over it)
