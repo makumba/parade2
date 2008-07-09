@@ -1,11 +1,12 @@
-rowname=char[255]
-rowpath=char[255]
-webappPath=char[255]
-description=char[255]
+rowname=char[255] ;name of the row
+rowpath=char[255] ;absolute path to the row root directoriy
+webappPath=char[255] ;relative path to the webapp root (from the row root)
+description=char[255] ;short description of the row
 parade=ptr Parade ;needs to have column id_parade
-application=ptr Application
-user=ptr User
-automaticCvsUpdate=int{"No"=10, "Yes"=20}
+application=ptr Application ;application ran on this row
+user=ptr User ;the main user of this row
+externalUser= ptr User ;who is doing Unison or external synchronisation on the row
+automaticCvsUpdate=int{"No"=10, "Yes"=20} ;whether unmodified files should be automatically updated if they are updated on CVS
 #files=set parade.File
 #rowdata=set AbstractRowData ;inheritance...
-moduleRow=boolean
+moduleRow=boolean ;whether this is a normal row, or a "hidden" row that represents one CVS module / application

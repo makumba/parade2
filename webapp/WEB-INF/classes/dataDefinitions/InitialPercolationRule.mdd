@@ -1,9 +1,10 @@
-objectType=char[255]
-action=char[255]
-userType=char[255]
-initialLevel=int
-focusProgressionCurve=char[255]
-nimbusProgressionCurve=char[255]
-percolationMode=int {"None"=0, "Focus"=10, "Nimbus"=20, "Focus/Nimbus"=30}
-relationQueries = set RelationQuery
-active=boolean
+objectType=char[255] ;type of the object to be matched
+action=char[255] ;the action to be matched
+userType=char[255] ;the user type that should be concerned by this rule
+interactionType=int {"Immediate (user waits)"=10, "Differed (happens in background)"=20} ;the way in which the percolation process should interact with the user
+initialLevel=int ;the initial energy level given to the event to propagate
+focusProgressionCurve=char[255] ;the formula of the focus progression curve
+nimbusProgressionCurve=char[255] ;the formula of the nimbus progression curve
+percolationMode=int {"None"=0, "Focus"=10, "Nimbus"=20, "Focus/Nimbus"=30} ;the percolation mode
+relationQueries = set RelationQuery ;the queries that provide the next relations to percolate through
+active=boolean ;whether this rule is active or not
