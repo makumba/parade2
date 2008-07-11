@@ -40,6 +40,10 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+manu, 11/07/2008
+- moving from frames to DIVs
+- AJAXing links and form submittals
+
 manu, 17/06/2008
 - refactoring configuration: tomcat configuration no longer duplicated, moved to tomcat.properties
 
