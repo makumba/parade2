@@ -10,7 +10,7 @@ if(context == null)
 <jsp:include page="/layout/header.jsp" flush="false" />
 
 <div class="log-header">
-  <% String header =  "/logHeader.jspf?logtype=log&context=" + context + "&year=" + request.getParameter("year") + "&month=" + request.getParameter("month") + "&day=" + request.getParameter("day"); %>
+  <% String header =  "/logHeader.jspf?logtype=actionlog&context=" + context + "&year=" + request.getParameter("year") + "&month=" + request.getParameter("month") + "&day=" + request.getParameter("day"); %>
   <jsp:include page="<%=header %>" />
 </div>
 <div id="logview" class="log-view">
