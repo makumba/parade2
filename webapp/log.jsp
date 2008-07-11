@@ -7,10 +7,16 @@ if(context == null)
       context = "all";
 %>
 
-<HTML><HEAD><TITLE><%=context %> logs</TITLE>
-</HEAD>
-<FRAMESET rows="30,*">  
-  <FRAME name="logmenu" marginwidth="1" marginheight="1" noresize="noresize" src="/logHeader.jsp?logtype=log&context=<%=context %>&year=<%=request.getParameter("year")%>&month=<%=request.getParameter("month")%>&day=<%=request.getParameter("day")%>">
-  <FRAME name="logview" src="/servlet/logs?view=log&context=<%=context %>&year=<%=request.getParameter("year")%>&month=<%=request.getParameter("month")%>&day=<%=request.getParameter("day")%>" marginwidth="1" marginheight="1">
-</FRAMESET>
-</HTML>
+<jsp:include page="/layout/header.jsp" flush="false" />
+
+<div class="log-header">
+  <% String header =  "/logHeader.jspf?logtype=log&context=" + context + "&year=" + request.getParameter("year") + "&month=" + request.getParameter("month") + "&day=" + request.getParameter("day"); %>
+  <jsp:include page="<%=header %>" />
+</div>
+<div id="logview" class="log-view">
+  <% String view = "/servlet/logs?view=log&context=" + context + "&year=" + request.getParameter("year") + "&month=" + request.getParameter("month") + "&day=" + request.getParameter("day"); %>
+  <jsp:include page="<%=view %>" />
+</div>
+
+<jsp:include page="/layout/footer.jsp" flush="false" />
+

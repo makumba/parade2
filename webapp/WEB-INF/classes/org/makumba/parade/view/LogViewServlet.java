@@ -61,27 +61,16 @@ public class LogViewServlet extends HttpServlet {
 
         LogViewManager logV = new LogViewManager();
         
-        RequestDispatcher header = null;
-        RequestDispatcher footer = super.getServletContext().getRequestDispatcher("/layout/footer.jsp");
-
         if (view.equals("logmenu")) {
-            header =  super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=header&pageTitle=Log%20menu%20for%20context%20"+context);
-            header.include(req, resp);
             out.println(logV.getLogMenuView(s, context, filter, Integer.parseInt(years),
                     (Integer.parseInt(months)) - 1, (Integer.parseInt(days))));
         } else if (view.equals("actionlog")) {
-            header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=logs&pointToBottom=true&pageTitle=Logs%20for%20"+context);
-            header.include(req, resp);
             out.println(logV.getActionLogView(s, context));
         } else {
-            header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=logs&pointToBottom=true&pageTitle=Logs%20for%20"+context);
-            header.include(req, resp);
             out.println(logV.getLogView(s, context, filter, Integer.parseInt(years), (Integer.parseInt(months)) - 1,
                     (Integer.parseInt(days))));
         }
         
-        footer.include(req, resp);
-
         s.close();
 
     }

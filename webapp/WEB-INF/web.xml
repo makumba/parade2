@@ -23,7 +23,6 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
-
 	<!-- after all redirections are done, the makumba controller is applied -->
 
 	<!-- ============  DEFINE servlets to handle ============== -->
@@ -184,7 +183,7 @@
 
 	<servlet-mapping>
 		<servlet-name>mddLinker</servlet-name>
-		<url-pattern>*.jspxp</url-pattern>
+		<url-pattern>*.jspx</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

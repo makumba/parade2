@@ -112,14 +112,22 @@ function setModified(){
 
 </head>
 <body bgcolor="#dddddd" TOPMARGIN=0 LEFTMARGIN=0 RIGHTMARGIN=0 BOTTOMMARGIN=0 marginwidth=0 marginheight=0 STYLE="margin: 0px" onload="javascript:onLoad();" onresize="javascript:onResize();">
-<form name="sourceEdit" method="post" action="/File.do?op=saveFile&context=${rowName}&path=${path}&file=${fileName}&editor=old" style="margin:0px;">
+<form name="sourceEdit" method="post" action="#" style="margin:0px;">
 
-<input type="submit" name="Submit" value="(S)ave!" ACCESSKEY="S" disabled onclick="javascript:setBunload(false);">
-<a href="browse.jsp?context=${rowName}" target="_top" title="${rowName}">${rowName}</a>:<a href="/servlet/browse?display=file&context=${rowName}&path=${path}">${path}</a>/<b>${fileName}</b>
-| <a href="/File.do?op=editFile&context=${rowName}&path=${path}&file=${fileName}&editor=old" title="get the file from disk again, undo all changes since last save">Revert</a> 
-| <input type="text" value="Loading..." name="pagestatus" disabled size="10" style="border:0px; background-color:#dddddd; font-color:red;">
+<button type="button" onclick="
+$('progress').innerHTML = '<b>(S)aving...</b>';
+new Ajax.Request('/File.do', {
+  method: 'get',
+  parameters: 'source='+$('source').getValue()+'&op=saveFile&path=${path}&context=${rowName}&file=${fileName}&editor=old',
+  onComplete: function(transport) {
+    $('progress').innerHTML = '(S)ave!';
+  }
+});"><span id="progress">(S)ave!</span></button>
+
+<a href="browse.jsp?context=${rowName}" title="${rowName}">${rowName}</a>:<a href="javascript:ajaxpage('/servlet/browse?display=file&context=${rowName}&path=${path}','directory');">${path}</a>/<b>${fileName}</b>
+| <a href="javascript:ajaxpage('/File.do?op=editFile&context=${rowName}&path=${path}&file=${fileName}&editor=old','directory');" title="get the file from disk again, undo all changes since last save">Revert</a> 
 <br>
 
-<textarea name="source" style="width:100%;height:92%" cols="90" rows="23" wrap="virtual" onKeypress="setModified()" STYLE="font-face:Lucida Console; font-size:8pt">${content}</textarea>
+<textarea id="source" style="width:100%;height:92%" cols="90" rows="23" wrap="virtual" onkeypress="javascript:setModified()" STYLE="font-face:Lucida Console; font-size:8pt">${content}</textarea>
 
 </form>

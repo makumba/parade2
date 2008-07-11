@@ -1,7 +1,6 @@
 <%@page import="java.util.Calendar"%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
-<jsp:include page="/layout/header.jsp?class=header"/>
 
 <c:set var="year" value="${param.year}" />
 <c:set var="month" value="${param.month}" />
@@ -19,7 +18,7 @@
 
 <a href="/" target="_top" title="back to front page">&lt;</a>
 
-<form class="nobreak" target="logview" action="<c:choose><c:when test="${logtype == 'log'}">/logs?logtype=log&view=log</c:when><c:when test="${logtype == 'actionlog'}">/actionLog.jsp?logtype=actionlog</c:when></c:choose>&context=${context}&years=${year}&months=${month}&days=${day}&filter=${filter}>
+<form id="filterForm" class="nobreak" action="">
 <script language="JavaScript">
 <!--
 var cal = new CalendarPopup();
@@ -52,7 +51,23 @@ Quick filter: <select size="1" name="filter">
 <option value="week"<c:if test="${filter == 'week'}"> selected</c:if>>Last week</option>
 </select>
 
-<input type="submit" value="Filter">
-</form>
+<input type="hidden" name="context" value="${rowName}">
+<input type="hidden" name="logtype">
+  <c:choose>
+    <c:when test="${logtype == 'log'}">log</c:when>
+    <c:when test="${logtype == 'actionlog'}">actionlog</c:when>
+  </c:choose>
+</input>
 
-<jsp:include page="/layout/footer.jsp"/>
+<button type="button" onclick="
+$('progress').innerHTML = '<b>Filtering...</b>';
+new Ajax.Request('/logs', {
+  method: 'get',
+  parameters: $('filterForm').serialize(true),
+  onComplete: function(transport) {
+    $('progress').innerHTML = 'Filter'
+    setAndEvalResponse('logview', transport)
+    pointToBottom()
+  }
+});"><span id="progress">Filter</span></button>
+</form>

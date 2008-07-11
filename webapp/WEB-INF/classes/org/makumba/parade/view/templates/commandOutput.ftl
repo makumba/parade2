@@ -1,7 +1,5 @@
 <script language='JavaScript'>
-<!--
-top.frames["directory"].document.location.href='/servlet/browse?display=file&context=${rowName}&path=${pathURI}'
-// -->
+ajaxpage("/servlet/browse?display=file&context=${rowName}&path=${pathURI}","directory");
 </script>
 
 ${opResult}
