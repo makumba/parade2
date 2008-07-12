@@ -2,7 +2,7 @@
 <tr><td>
 <font size="+1"><b>Did you know...</b></font><br>
 </td><td align="right">
-<a href="/tipOfTheDay.jsp">more wisdom</a>
+<a href="ajaxpage('/tipOfTheDay.jsp','command');">more wisdom</a>
 </td>
 <tr><td colspan=2>
 <img src="/images/litebulb.gif" align="left">
