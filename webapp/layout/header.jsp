@@ -22,17 +22,18 @@
 <link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/tree.css" type="text/css">
 <link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/rowstore.css" type="text/css">
 <link rel="StyleSheet" href="${pageContext.request.contextPath}/scripts/tickertape/tickertape.css">
+<link rel="StyleSheet" href="${pageContext.request.contextPath}/style/log.css" type="text/css">
+<link rel='StyleSheet' href='${pageContext.request.contextPath}/style/header.css' type='text/css'>
 
 <script src="${pageContext.request.contextPath}/scripts/codepress/codepress.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/treeMenu/sniffer.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/treeMenu/TreeMenu.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/CalendarPopup.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/utils.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/prototype.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/treeMenu/sniffer.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/treeMenu/TreeMenu.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/CalendarPopup.js"></script>
 
 <script type="text/javascript">
 function pointToBottom(){
   window.location=window.location.href.replace( /(#.*)?$/,'')+'#bottomlink';
+document.getElementById('myInput').value='';
 }
 </script>
 
@@ -42,9 +43,10 @@ function pointToBottom(){
 
 <body<c:if test="${not empty param.class}"> class="${param.class}"</c:if><c:if test="${not empty param.pointToBottom}"> onLoad="pointToBottom();"</c:if>>
 <div id="container">
-<div>
+<div id="header">
 <a name="topOfthePage"></a>
 <% if (request.getAttribute("makumba.response") != null && !request.getAttribute("makumba.response").equals("")) { %>
 <div class="mak_response"><mak:response/></div>
 <% } %>
 </div>
+<div id="content">

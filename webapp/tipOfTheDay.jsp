@@ -1,8 +1,15 @@
+<html>
+<head>
+<meta http-equiv="refresh" content="30;URL=/tipOfTheDay.jsp">
+<title>Parade tip of the day</title>
+<link rel='StyleSheet' href='/style/parade.css' type='text/css'>
+</head>
+<body>
 <table width="100%">
 <tr><td>
 <font size="+1"><b>Did you know...</b></font><br>
 </td><td align="right">
-<a href="ajaxpage('/tipOfTheDay.jsp','command');">more wisdom</a>
+<a href="/tipOfTheDay.jsp">more wisdom</a>
 </td>
 <tr><td colspan=2>
 <img src="/images/litebulb.gif" align="left">
@@ -62,3 +69,5 @@ case 99: {
 
 </td></tr>
 </table>
+
+</body>

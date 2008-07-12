@@ -361,11 +361,6 @@
         <servlet-name>jsp</servlet-name>
         <url-pattern>*.jspx</url-pattern>
     </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>jsp</servlet-name>
-        <url-pattern>*.jspf</url-pattern>
-    </servlet-mapping>
 
     <!-- The mapping for the SSI servlet -->
 <!--
@@ -1004,7 +999,6 @@
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.htm</welcome-file>
         <welcome-file>index.jsp</welcome-file>
-        <welcome-file>welcome.jsp</welcome-file>
     </welcome-file-list>
     
     

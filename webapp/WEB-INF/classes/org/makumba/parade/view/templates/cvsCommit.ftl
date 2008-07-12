@@ -1,21 +1,12 @@
 <table border="0"><tr><td>
-<form id="commitForm" style="display: inline;" action="#" method="GET">
+<form style="display: inline;" target="command" action="/Cvs.do" method="GET">
 <input type=hidden value="${rowName}" name="context">
 <input type=hidden value="commit" name="op">
 <input type=hidden value="${path}" name="params">
 <input type=hidden value="${file}" name="params">
 Committing <strong>${fileName}</strong> with message:<br>
 <textarea rows="3" cols="40" name="params"></textarea><br>
-<button type="button" onclick="
-$('progress').innerHTML = '<b>Commiting...</b>';
-new Ajax.Request('/Cvs.do', {
-  method: 'get',
-  parameters: $('commitForm').serialize(true),
-  onComplete: function(transport) {
-    setAndEvalResponse('command', transport);
-  }
-});"><span id="progress">Commit</span></button>
-
+<input type=submit value=Commit>
 </form>
 </td><td>&nbsp;</td>
 <td>

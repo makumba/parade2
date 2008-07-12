@@ -1,12 +1,10 @@
-<%@ page buffer="64kb" %>
-
 <%  String context = request.getParameterValues("context")[0];
-  if(context == null)
-      context = (String) request.getAttribute("context");
-  String opResult = request.getParameter("opResult");
-  if(opResult == null)
-      opResult = (String) request.getAttribute("opResult");
-  
+	if(context == null)
+	    context = (String) request.getAttribute("context");
+	String opResult = request.getParameter("opResult");
+	if(opResult == null)
+	    opResult = (String) request.getAttribute("opResult");
+	
     String path = null;
     String getPathFromSession = request.getParameter("getPathFromSession");
     if(getPathFromSession != null) {
@@ -20,57 +18,16 @@
         path = "/";
 %>
 
-<jsp:include page="/layout/header.jsp" flush="false" />
-
-<div id="browse-header">
-  <%String header = "/servlet/browse?display=header&getPathFromSession=true&context=" + context; %>
-  <jsp:include page="<%=header %>"/>
-</div>
-<div>
-  <div id="tree">
-    <% String tree = "/servlet/browse?display=tree&context=" + context; %>
-    <jsp:include page="<%=tree %>" />
-  </div>
-  <div>
-    <div id="directory">
-      <% String directory = "/servlet/browse?display=file&getPathFromSession=true&context=" + context + "&opResult=" + opResult + "&path=" + path; %>
-      <jsp:include page="<%=directory %>"/>
-    </div>
-    <div id="command">
-      <script type="text/javascript">
-      ajaxinclude('/servlet/browse?display=command&context=<%=context %>');
-      </script>
-    </div>
-  </div>
-</div>
-
-<jsp:include page="/layout/footer.jsp" flush="false" />
-
-<%--
-
-<div id="browse-header">
-  <script type="text/javascript">
-  ajaxinclude('/servlet/browse?display=header&context=<%=context %>&getPathFromSession=true');
-  </script>
-</div>
-<div>
-  <div id="tree">
-    <script type="text/javascript">
-    ajaxinclude('/servlet/browse?display=tree&context=<%=context %>');
-    </script>
-  </div>
-  <div>
-    <div id="directory">
-      <script type="text/javascript">
-      ajaxinclude('/servlet/browse?display=file&context=<%=context %>&opResult=<%=opResult %>&path=<%=path %>&getPathFromSession=true');
-      </script>
-    </div>
-    <div id="command">
-      <script type="text/javascript">
-      ajaxinclude('/servlet/browse?display=command&context=<%=context %>');
-      </script>
-    </div>
-  </div>
-</div>
-
---%>
+<HTML><HEAD><TITLE><%=context %> browser</TITLE>
+</HEAD>
+<FRAMESET rows="30,*">  
+	<FRAME name="header" src="/servlet/browse?display=header&context=<%=context %>&getPathFromSession=true" marginwidth="1" marginheight="1">
+	<FRAMESET cols="190,*">
+		<FRAME name="tree" src="/servlet/browse?display=tree&context=<%=context %>" marginwidth="0" marginheight="5">
+		<FRAMESET rows="*,20%">      
+			<FRAME name="directory" src="/servlet/browse?display=file&context=<%=context %>&opResult=<%=opResult %>&path=<%=path %>&getPathFromSession=true">
+			<FRAME name="command" src="/servlet/browse?display=command&context=<%=context %>" marginwidth="1" marginheight="1">
+		</FRAMESET>
+	</FRAMESET>
+</FRAMESET>
+</HTML>
