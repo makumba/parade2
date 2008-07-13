@@ -1,6 +1,7 @@
 package org.makumba.parade.init;
 
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -30,6 +31,8 @@ import freemarker.template.DefaultObjectWrapper;
 public class InitServlet extends HttpServlet implements Runnable {
 
     private static final long serialVersionUID = 1L;
+    
+    public static Date startupDate = new Date();
 
     static Logger logger = Logger.getLogger(InitServlet.class.getName());
 

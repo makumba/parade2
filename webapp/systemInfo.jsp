@@ -2,7 +2,8 @@
 <%@page import="java.util.*" %>
 <%@page import="java.text.DateFormat"%>
 <%@page import="java.text.SimpleDateFormat"%>
-<h1>System Information</h1>
+
+<%@page import="org.makumba.parade.init.InitServlet"%><h1>System Information</h1>
 
 <h2>Client info</h2>
 Browser: <%=request.getHeader("User-Agent")%><br>
@@ -10,8 +11,7 @@ Host (IP): <%=request.getRemoteHost() %> (<%=request.getRemoteAddr() %>)<br>
 
 <h2>Server info</h2>
 <%
-DateFormat df = new SimpleDateFormat("yyyyMMddhhmm");
-Date stamp = df.parse(System.getProperty("startup.tstamp"));
+Date stamp = InitServlet.startupDate;
 %>Server is up since: <b><%=stamp %> GMT</b> (<%=org.makumba.parade.tools.DisplayFormatter.readableTime( (new Date()).getTime() - stamp.getTime())%> ago)
 <br>
 

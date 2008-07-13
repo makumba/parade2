@@ -170,9 +170,6 @@
 	</target>
 
 	<target name="tomcat-start" depends="prepareTomcat">
-		<tstamp>
-			<format timezone="GMT" property="TSTAMP" pattern="yyyyMMddHHmm"/>
-		</tstamp>
 		<echo>Java home in build: ${java.home}</echo>
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="yes" classpathref="tomcat.class.path" append="true">
 			<jvmarg value="-Dcatalina.home=${tomcat.home}" />
@@ -182,8 +179,7 @@
             <jvmarg value="-XX:MaxPermSize=${tomcat.Xmx}" />
 			<jvmarg value="-Djava.library.path=." />
 			<jvmarg value="-Djava.util.logging.config.file=${basedir}/logging.properties" />
-			<jvmarg value="-Dstartup.tstamp=${TSTAMP}" />
-            <jvmarg value="-XX:CompileCommand=exclude,com/bbn/openmap/layer/rpf/RpfFrame,decompressSubframe"/>
+			<jvmarg value="-XX:CompileCommand=exclude,com/bbn/openmap/layer/rpf/RpfFrame,decompressSubframe"/>
             <jvmarg value="-client"/>
 			<arg value="start" />
 		</java>
