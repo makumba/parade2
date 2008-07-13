@@ -18,5 +18,7 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jfreechart-1.0.9.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/parser.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="/mak-demo/WebContent/WEB-INF/lib/jstl-standard.jar"/>
+	<classpathentry kind="lib" path="/mak-demo/WebContent/WEB-INF/lib/jstl.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
