@@ -621,7 +621,7 @@ public class DatabaseLogServlet extends HttpServlet {
             "/scripts/codepress/", "/cewolf", "/servlet/cvscommit"};
 
     String[] equalFilter = { "/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp",
-            "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
+            "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "browserHeader.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
             "/Admin.do", "/Command.do", "/User.do", "/servlet/ticker", "/servlet/logs",
             "/reload", "/unauthorized/index.jsp" };
 
@@ -644,8 +644,8 @@ public class DatabaseLogServlet extends HttpServlet {
 
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
-                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1) || (log
-                        .getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
+                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
+                        || (log.getUrl().equals("File.do") && log.getQueryString().indexOf("display=command&view=new") > -1)
 
                 )
 

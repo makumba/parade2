@@ -1,0 +1,31 @@
+<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
+
+<c:set var="display" value="${param.display}" />
+<c:if test="${empty display}"><c:set var="display" value="${requestScope.display}" /></c:if>
+
+<c:set var="context" value="${param.context}" />
+<c:if test="${empty context}"><c:set var="context" value="${requestScope.context}" /></c:if>
+
+<c:set var="view" value="${param.view}" />
+<c:if test="${empty view}"><c:set var="view" value="${requestScope.view}" /></c:if>
+
+<c:set var="order" value="${param.order}" />
+<c:if test="${empty order}"><c:set var="order" value="${requestScope.order}" /></c:if>
+
+<c:set var="file" value="${param.file}" />
+<c:if test="${empty file}"><c:set var="file" value="${requestScope.file}" /></c:if>
+
+<c:choose>
+  <c:when test="${not empty param.getPathFromSession and param.getPathFromSession}"><c:set var="path" value="${sessionScope.path}" /></c:when>
+  <c:otherwise>
+    <c:set var="path" value="${param.path}" />
+    <c:if test="${empty path}"><c:set var="path" value="${requestScope.path}" /></c:if>
+  </c:otherwise>
+</c:choose>
+
+<c:if test="${not empty path and path neq ''}"><c:set var="path" value="${path}" scope="session"/></c:if>
+
+<c:set var="result" value="${requestScope.result}" />
+<c:set var="success" value="${requestScope.success}" />
+<c:if test="${empty success}"><c:set var="success" value="${false}" /></c:if>
+

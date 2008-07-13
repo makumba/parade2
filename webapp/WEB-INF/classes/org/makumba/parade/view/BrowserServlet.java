@@ -18,7 +18,6 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.view.managers.CommandViewManager;
 import org.makumba.parade.view.managers.FileDisplay;
 import org.makumba.parade.view.managers.FileViewManager;
-import org.makumba.parade.view.managers.HeaderDisplay;
 
 public class BrowserServlet extends HttpServlet {
 
@@ -103,7 +102,6 @@ public class BrowserServlet extends HttpServlet {
                 Hibernate.initialize(r.getApplication());
         
                 // initialising the displays
-                HeaderDisplay hdrV = new HeaderDisplay();
                 CommandViewManager cmdV = new CommandViewManager();
                 FileViewManager fileV = new FileViewManager();
                 FileDisplay filebrowserV = new FileDisplay();
@@ -116,7 +114,7 @@ public class BrowserServlet extends HttpServlet {
                 if (display.equals("header")) {
                     header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=header&baseTarget=command");
                     // FIXME - path in here is null always, but should actually be equal to the currently browsed path
-                    page = hdrV.getHeaderView(r, path);
+                    page = "jsp:/browserHeader.jsp";
 
                 }
                 if (display.equals("tree")) {
@@ -140,6 +138,7 @@ public class BrowserServlet extends HttpServlet {
                     String url = page.substring(page.indexOf(":") + 1);
                     RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher(url);
                     dispatcher.forward(req, resp);
+                    
                 } else {
                     header.include(req, resp);
                     out.println(page);
