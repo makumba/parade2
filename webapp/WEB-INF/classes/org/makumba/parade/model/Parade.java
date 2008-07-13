@@ -429,13 +429,13 @@ public class Parade {
             r.setWatchedByJNotify(true);
 
         } catch (JNotifyException e) {
-            e.printStackTrace();
+            logger.error(e);
             r.setWatchedByJNotify(false);
             throw new ParadeException("Row " + r.getRowname()
                     + " not properly watched by JNotify! Are you having two rows that use the same directory?");
         } catch (NullPointerException npe) {
             // do nothing. JNotify returns plenty of those.
-        }
+            r.setWatchedByJNotify(true);        }
     }
 
     private static Hashtable<String, String> absoluteFilePathCache = new Hashtable<String, String>();
