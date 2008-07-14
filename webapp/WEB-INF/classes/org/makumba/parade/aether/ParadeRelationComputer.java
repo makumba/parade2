@@ -10,6 +10,7 @@ import org.makumba.Transaction;
 import org.makumba.aether.RelationComputationException;
 import org.makumba.aether.RelationComputer;
 import org.makumba.db.hibernate.HibernateTransactionProvider;
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.providers.TransactionProvider;
 
 /**
@@ -25,7 +26,7 @@ public class ParadeRelationComputer implements RelationComputer {
 
     public static final String PARADE_RELATION_TABLE = "org.makumba.devel.relations.Relation";
     
-    public static final String PARADE_DATABASE_NAME = "localhost_mysql_parade";
+    public static final String PARADE_DATABASE_NAME = ParadeProperties.getParadeProperty("aether.databaseName");
 
     private Logger logger = Logger.getLogger(ParadeRelationComputer.class);
     
