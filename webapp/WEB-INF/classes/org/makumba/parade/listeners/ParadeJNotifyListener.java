@@ -16,6 +16,7 @@ import org.makumba.aether.RelationComputationException;
 import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
@@ -314,13 +315,16 @@ public class ParadeJNotifyListener implements JNotifyListener {
      
         if((name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) && InitServlet.aetherEnabled) {
             logger.debug("Updating relations for file "+name+" in "+rootPath);
-            try {
-                InitServlet.getContextRelationComputer(rootPath).updateRelation(rootPath + (rootPath.endsWith(java.io.File.separator) || name.startsWith(java.io.File.separator) ? "" : "/")  + name);
-            } catch (RelationComputationException e) {
-                logger.warn("Failed updating relations for file "+name+" in "+rootPath+": "+e.getMessage());
-            }
-            logger.debug("Finished updating relations for file "+name+" in "+rootPath);
+            if(!rootPath.startsWith(ParadeProperties.getParadeBase())) {
+                try {
+                    InitServlet.getContextRelationComputer(rootPath).updateRelation(rootPath + (rootPath.endsWith(java.io.File.separator) || name.startsWith(java.io.File.separator) ? "" : "/")  + name);
+                } catch (RelationComputationException e) {
+                    logger.warn("Failed updating relations for file "+name+" in "+rootPath+": "+e.getMessage());
+                }
+                logger.debug("Finished updating relations for file "+name+" in "+rootPath);
+            }            
         }
+
     }
     
     public static void deleteRelations(String rootPath, String name) {
