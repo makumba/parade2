@@ -296,8 +296,10 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
                     // retrieve the NodePercolationStatus of the previous node
                     NodePercolationStatus nps = previousNodePercolationStatuses.get(relation[2]);
-
-                    if (nps.getEnergy() < RuleBasedPercolator.MIN_ENERGY_LEVEL) {
+                    
+                    if(nps == null) {
+                        logger.warn("null nodePercolationStatus when trying to fetch status of relation "+relation[2]);
+                    } else if (nps.getEnergy() < RuleBasedPercolator.MIN_ENERGY_LEVEL) {
                         logger.debug("NIMBUS-PERCOLATION: Not percolating any further because energy too low: "
                                 + nps.getEnergy());
                     } else {
