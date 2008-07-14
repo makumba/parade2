@@ -1,0 +1,4 @@
+objectURL=char[255]
+user=char[255]
+focus=int
+nimbus=int

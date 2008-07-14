@@ -1,6 +1,6 @@
 package org.makumba.aether.model;
 
-public class Focus {
+public class ALE {
     
     private long id;
     
@@ -9,6 +9,16 @@ public class Focus {
     private String user;
     
     private int focus;
+    
+    private int nimbus;
+
+    public int getNimbus() {
+        return nimbus;
+    }
+
+    public void setNimbus(int nimbus) {
+        this.nimbus = nimbus;
+    }
 
     public long getId() {
         return id;
@@ -42,11 +52,12 @@ public class Focus {
         this.user = user;
     }
 
-    public Focus(String objectURL, String user, int focus) {
+    public ALE(String objectURL, String user, int focus, int nimbus) {
         super();
         this.objectURL = objectURL;
         this.user = user;
         this.focus = focus;
+        this.nimbus = nimbus;
     }
 
 }

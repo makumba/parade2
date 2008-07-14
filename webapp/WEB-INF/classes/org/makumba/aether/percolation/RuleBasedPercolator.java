@@ -17,7 +17,6 @@ import org.makumba.aether.model.InitialPercolationRule;
 import org.makumba.aether.model.MatchedAetherEvent;
 import org.makumba.aether.model.PercolationRule;
 import org.makumba.aether.model.PercolationStep;
-import org.makumba.aether.model.RelationQuery;
 import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
@@ -32,8 +31,7 @@ import org.makumba.parade.init.InitServlet;
  * through, i.e. calculates consumption</li>
  * <li>percolation step table: stores each step of one event percolation</li>
  * <li>relation table: table holding relations between objects</li>
- * <li>focus table: table holding focus values per object and user. there's no nimbus equivalent because this is much
- * more complicated to re-compute after percolation (only one focus value is set per percolation vs. many nimbus values)</li>
+ * <li>ALE table: table holding focus and nimbus values per object and user.</li>
  * </ul>
  * 
  * The percolator also runs two timers that update focus/nimbus values and perform garbage collection of
@@ -283,17 +281,18 @@ public class RuleBasedPercolator implements Percolator {
     }
 
     /**
-     * Recomputes the focus values
+     * Recomputes the focus and nimbus values
      * 
      * @param s
      *            a Hibernate session
      */
-    private void updateFocusValues(Session s) {
+    private void updateALEValues(Session s) {
         
-        String q = "update Focus f set f.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = f.objectURL)";
+        String q = "update ALE a set a.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.matchedAetherEvent.actor = a.user), " +
+        		"a.nimbus = (select sum(ps.nimbus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.userGroup like '%*%' and ps.userGroup not like concat(concat(concat('%','-'), a.user), '%'))";
         int updated = s.createQuery(q).executeUpdate();
 
-        logger.debug("Updated " + updated + " focus values");
+        logger.debug("Updated " + updated + " ALE values");
         
     }
 
@@ -377,7 +376,7 @@ public class RuleBasedPercolator implements Percolator {
                 try {
                     s = InitServlet.getSessionFactory().openSession();
                     collectGarbage(s);
-                    updateFocusValues(s);
+                    updateALEValues(s);
                 } finally {
                     if (s != null) {
                         s.close();
@@ -399,7 +398,7 @@ public class RuleBasedPercolator implements Percolator {
                     s = InitServlet.getSessionFactory().openSession();
                     executeEnergyProgressionUpdate(s);
                     collectGarbage(s);
-                    updateFocusValues(s);
+                    updateALEValues(s);
                 } finally {
                     if (s != null) {
                         s.close();

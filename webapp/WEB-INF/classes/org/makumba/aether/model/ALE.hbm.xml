@@ -4,7 +4,7 @@
       "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.makumba.aether.model">
-	<class name="Focus">
+	<class name="ALE">
 
 		<cache usage="read-write" />
 
@@ -15,6 +15,9 @@
 		<property name="objectURL" />
 		<property name="user" />
 		<property name="focus" />
+        <property name="nimbus" />
+    
+    
 		
 	</class>
 </hibernate-mapping>

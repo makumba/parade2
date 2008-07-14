@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -167,6 +169,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
         Map<String, NodePercolationStatus> nodePercolationStatuses = new HashMap<String, NodePercolationStatus>();
         Vector<PercolationStep> steps = new Vector<PercolationStep>();
+        Hashtable<String, Integer> nimbusContributions = new Hashtable<String, Integer>(); 
 
         int initialEnergy = new Long(Math.round(mae.getInitialPercolationLevel()
                 * (0.5 + mae.getInitialLevelCoefficient()))).intValue();
@@ -178,16 +181,24 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
         nodePercolationStatuses.put(mae.getObjectURL(), init);
 
         if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.FOCUS_PERCOLATION) {
-            percolate(mae, s, true, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps);
+            percolate(mae, s, true, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps, nimbusContributions);
         } else if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.NIMBUS_PERCOLATION) {
-            percolate(mae, s, false, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps);
+            percolate(mae, s, false, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps, nimbusContributions);
         } else if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.FOCUS_NIMBUS_PERCOLATION) {
-            percolate(mae, s, true, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps);
-            percolate(mae, s, false, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps);
+            percolate(mae, s, true, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps, nimbusContributions);
+            percolate(mae, s, false, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps, nimbusContributions);
         }
 
+        // save all the percolation steps
         for (PercolationStep ps : steps) {
             s.save(ps);
+        }
+        
+        // save all the nimbus contributions
+        Iterator<String> ni = nimbusContributions.keySet().iterator();
+        while(ni.hasNext()) {
+            String objectURL = ni.next();
+            addOrUpdateNimbus(objectURL, mae.getUserGroup(), nimbusContributions.get(objectURL), s);
         }
     }
 
@@ -206,11 +217,12 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
      *            the relations (fromURL, type, toURL) to percolate through
      * @param steps
      *            TODO
+     * @param nimbusContributions TODO
      * @param groupedPercolationInfo
      *            TODO
      */
     private static void percolate(MatchedAetherEvent mae, Session s, boolean isFocusPercolation, long startTime,
-            List<Object[]> relations, Map<String, NodePercolationStatus> previousNodePercolationStatuses, Vector<PercolationStep> steps) {
+            List<Object[]> relations, Map<String, NodePercolationStatus> previousNodePercolationStatuses, Vector<PercolationStep> steps, Hashtable<String, Integer> nimbusContributions) {
 
         if (isFocusPercolation) {
 
@@ -307,7 +319,15 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                             PercolationStep ps = buildPercolationStep(mae, (String) relation[2], (String) relation[0],
                                     pr, relationEnergy, isFocusPercolation, nps.getPreviousStep(), nps.getLevel());
                             steps.add(ps);
-
+                            
+                            // add the energy to the nimbus contributions of this percolation step so we can do an update afterwards
+                            Integer currentSum = nimbusContributions.get(ps.getObjectURL());
+                            if(currentSum == null) {
+                                nimbusContributions.put(ps.getObjectURL(), ps.getNimbus());
+                            } else {
+                                nimbusContributions.put(ps.getObjectURL(), currentSum + ps.getNimbus());
+                            }
+                            
                             // now we can set the threadPath
                             // basically this goes like parent-threadPath + parentId + thisUID
                             ps.setPercolationPath(nps.getPreviousStep() == null ? ps.hashCode() + "_"
@@ -358,7 +378,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
             // if something is left, move to the next step
             if (relations.size() > 0 && nodePercolationStatuses.size() > 0) {
-                percolate(mae, s, isFocusPercolation, startTime, relations, nodePercolationStatuses, steps);
+                percolate(mae, s, isFocusPercolation, startTime, relations, nodePercolationStatuses, steps, nimbusContributions);
             }
 
         }

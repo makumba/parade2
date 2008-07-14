@@ -121,6 +121,7 @@
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextInstall&getPathFromSession=true">install</a>
       </c:if></td>
       <td valign="top" style="float: right;" align="right">&nbsp;<a href="/systemInfo.jsp" target="directory">System</a></td>
+      <td valign="top" style="float:right;" align="right"></td>
 
     </tr>
   </table>
