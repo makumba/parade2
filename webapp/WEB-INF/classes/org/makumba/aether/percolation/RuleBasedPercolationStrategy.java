@@ -25,7 +25,8 @@ import org.makumba.parade.aether.ObjectTypes;
  */
 public class RuleBasedPercolationStrategy implements PercolationStrategy {
 
-    public void percolate(AetherEvent e, SessionFactory sessionFactory) throws PercolationException {
+    public void percolate(AetherEvent e, boolean virtualPercolation, SessionFactory sessionFactory)
+            throws PercolationException {
         if (RuleBasedPercolator.rulesChanged) {
             configure();
         }
@@ -48,12 +49,14 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
      *            the {@link AetherEvent} to match
      * @param ipr
      *            the {@link InitialPercolationRule} to match it against
+     * @param virtualPercolation
+     *            TODO
      * @param s
      *            a hibernate {@link Session} useful to do queries
-     * 
      * @return a {@link MatchedAetherEvent} if anything was matched, null otherwise
      */
-    protected MatchedAetherEvent buildMatchedAetherEvent(AetherEvent e, InitialPercolationRule ipr, Session s) {
+    protected MatchedAetherEvent buildMatchedAetherEvent(AetherEvent e, InitialPercolationRule ipr,
+            boolean virtualPercolation, Session s) {
 
         String userGroup = "";
 
@@ -103,7 +106,7 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
         }
 
         if (userGroup.length() > 0) {
-            return new MatchedAetherEvent(e, userGroup, ipr);
+            return new MatchedAetherEvent(e, userGroup, ipr, virtualPercolation);
         }
 
         return null;
@@ -142,17 +145,36 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
      *            the user
      * @param energy
      *            the energy to be added
+     * @param virtualPercolation
+     *            TODO
      * @param s
      *            a Hibernate session
      */
-    protected static void addOrUpdateFocus(String objectURL, String user, int energy, Session s) {
-        int updated = s.createQuery(
-                "update ALE set focus = focus + :energy where user = :user and objectURL = :objectURL").setString(
-                "user", user).setString("objectURL", objectURL).setParameter("energy", energy).executeUpdate();
-        if (updated == 0) {
-            ALE f = new ALE(objectURL, user, energy, 0);
-            s.save(f);
+    protected static void addOrUpdateFocus(String objectURL, String user, int energy, boolean virtualPercolation,
+            Session s) {
+
+        if (!virtualPercolation) {
+
+            int updated = s.createQuery(
+                    "update ALE set focus = focus + :energy where user = :user and objectURL = :objectURL").setString(
+                    "user", user).setString("objectURL", objectURL).setParameter("energy", energy).executeUpdate();
+            if (updated == 0) {
+                ALE f = new ALE(objectURL, user, energy, 0);
+                s.save(f);
+            }
+        } else {
+            int updated = s.createQuery(
+                    "update ALE set virtualFocus = focus + :energy where user = :user and objectURL = :objectURL")
+                    .setString("user", user).setString("objectURL", objectURL).setParameter("energy", energy)
+                    .executeUpdate();
+            if (updated == 0) {
+                ALE f = new ALE(objectURL, user);
+                f.setVirtualFocus(energy);
+                s.save(f);
+
+            }
         }
+
     }
 
     /**
@@ -164,30 +186,48 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
      *            the userGroup this nimbus update affects
      * @param energy
      *            the energy to be added
+     * @param virtualPercolation
+     *            TODO
      * @param s
      *            a Hibernate session
      */
-    protected static void addOrUpdateNimbus(String objectURL, String userGroup, int energy, Session s) {
+    protected static void addOrUpdateNimbus(String objectURL, String userGroup, int energy, boolean virtualPercolation,
+            Session s) {
         if (userGroup.indexOf("*") > -1) {
             String minusUser = "";
             if (userGroup.indexOf("-") > -1) {
                 minusUser = userGroup.substring(userGroup.indexOf("-") + 1);
             }
-            int updated = s.createQuery(
-                    "update ALE set nimbus = nimbus + :energy where user != :minusUser and objectURL = :objectURL")
-                    .setString("minusUser", minusUser).setString("objectURL", objectURL).setParameter("energy", energy)
-                    .executeUpdate();
-            if (updated == 0) {
-                List<String> users = s.createQuery("select login from User u where u.login != :minusUser").setString(
-                        "minusUser", minusUser).list();
-                for (String login : users) {
-                    ALE f = new ALE(objectURL, login, 0, energy);
-                    s.save(f);
+
+            if (!virtualPercolation) {
+
+                int updated = s.createQuery(
+                        "update ALE set nimbus = nimbus + :energy where user != :minusUser and objectURL = :objectURL")
+                        .setString("minusUser", minusUser).setString("objectURL", objectURL).setParameter("energy",
+                                energy).executeUpdate();
+                if (updated == 0) {
+                    List<String> users = s.createQuery("select login from User u where u.login != :minusUser")
+                            .setString("minusUser", minusUser).list();
+                    for (String login : users) {
+                        ALE f = new ALE(objectURL, login, 0, energy);
+                        s.save(f);
+                    }
+                }
+            } else {
+                int updated = s.createQuery(
+                        "update ALE set virtualNimbus = nimbus + :energy where user != :minusUser and objectURL = :objectURL")
+                        .setString("minusUser", minusUser).setString("objectURL", objectURL).setParameter("energy",
+                                energy).executeUpdate();
+                if (updated == 0) {
+                    List<String> users = s.createQuery("select login from User u where u.login != :minusUser")
+                            .setString("minusUser", minusUser).list();
+                    for (String login : users) {
+                        ALE f = new ALE(objectURL, login);
+                        f.setVirtualNimbus(energy);
+                        s.save(f);
+                    }
                 }
             }
-
         }
-
     }
-
 }

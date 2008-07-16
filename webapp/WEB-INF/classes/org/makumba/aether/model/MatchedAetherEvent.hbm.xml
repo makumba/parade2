@@ -23,6 +23,9 @@
 		
 		<many-to-one name="initialPercolationRule" class="InitialPercolationRule"/>
 
+        <property name="virtualPercolation"/>
+
+
 	</class>
 
 </hibernate-mapping>

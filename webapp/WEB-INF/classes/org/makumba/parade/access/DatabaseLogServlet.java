@@ -115,7 +115,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         AetherEvent e = buildAetherEventFromLog(a, s);
 
                         if (e != null) {
-                            InitServlet.getAether().registerEvent(e);
+                            InitServlet.getAether().registerEvent(e, false);
                         }
                     }
                 }

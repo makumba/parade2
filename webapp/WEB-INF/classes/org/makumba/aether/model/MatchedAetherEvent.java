@@ -19,12 +19,15 @@ public class MatchedAetherEvent extends AetherEvent {
     private String userType;
     
     private InitialPercolationRule initialPercolationRule;
+    
+    private boolean virtualPercolation;
 
-    public MatchedAetherEvent(AetherEvent e, String userGroup, InitialPercolationRule ipr) {
+    public MatchedAetherEvent(AetherEvent e, String userGroup, InitialPercolationRule ipr, boolean virtualPercolation) {
         super(e);
         this.userType = ipr.getUserType();
         this.userGroup = userGroup;
         this.initialPercolationRule = ipr;
+        this.virtualPercolation = virtualPercolation;
     }
     
     // for hibernate
@@ -71,6 +74,14 @@ public class MatchedAetherEvent extends AetherEvent {
     public String toString() {
         return this.actor + " (" + this.userType + ") --(" + this.action + ")--> " + this.objectURL + " ("
                 + this.objectType + ") ===> " + initialPercolationRule.getInitialLevel() + " (coef. "+ this.initialLevelCoefficient+ ") on group " + this.userGroup;
+    }
+
+    public void setVirtualPercolation(boolean virtualPercolation) {
+        this.virtualPercolation = virtualPercolation;
+    }
+
+    public boolean getVirtualPercolation() {
+        return virtualPercolation;
     }
 
 }

@@ -70,9 +70,9 @@ public class RuleBasedPercolator implements Percolator {
         }
     };
 
-    public void percolate(AetherEvent e) throws PercolationException {
+    public void percolate(AetherEvent e, boolean virtualPercolation) throws PercolationException {
         percolationLock.set(true);
-        strategy.percolate(e, sessionFactory);
+        strategy.percolate(e, virtualPercolation, sessionFactory);
         percolationLock.set(false);
     }
 
@@ -406,6 +406,24 @@ public class RuleBasedPercolator implements Percolator {
                 }
             }
         }
+    }
+
+    public void cleanVirtualPercolations() {
+        Session s = null;
+        try {
+           s = sessionFactory.openSession();
+           Transaction tx = s.beginTransaction();
+           s.createQuery("delete from PercolationStep ps where ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae where ps.matchedAetherEvent.id = mae.id and mae.virtualPercolation = true)").executeUpdate();
+           s.createQuery("delete from MatchedAetherEvent mae where mae.virtualPercolation = true").executeUpdate();
+           s.createQuery("update ALE set virtualFocus = 0, virtualNimbus = 0").executeUpdate();
+           tx.commit();
+            
+        } finally {
+            if(s!= null) s.close();
+        }
+        
+        
+        
     }
 
 }

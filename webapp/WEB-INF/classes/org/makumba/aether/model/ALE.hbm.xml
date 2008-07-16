@@ -8,16 +8,24 @@
 
 		<cache usage="read-write" />
 
-		<id name="id" column="percolationstep">
+		<id name="id" column="ale">
 			<generator class="native" />
 		</id>
 
 		<property name="objectURL" />
 		<property name="user" />
-		<property name="focus" />
-        <property name="nimbus" />
-    
-    
+		<property name="focus">
+        <column name="focus" default="0" />
+        </property>
+        <property name="nimbus">
+        <column name="nimbus" default="0" />
+        </property>
+        <property name="virtualFocus">
+        <column name="virtualFocus" default="0" />
+        </property>
+        <property name="virtualNimbus">
+        <column name="virtualNimbus" default="0" />
+        </property>
 		
 	</class>
 </hibernate-mapping>

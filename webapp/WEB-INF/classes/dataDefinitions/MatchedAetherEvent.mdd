@@ -7,3 +7,4 @@ action=char[255]
 eventDate=date
 initialPercolationRule=ptr InitialPercolationRule
 initialLevelCoefficient=real
+virtualPercolation=boolean

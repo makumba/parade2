@@ -11,6 +11,26 @@ public class ALE {
     private int focus;
     
     private int nimbus;
+    
+    private int virtualFocus;
+    
+    public int getVirtualFocus() {
+        return virtualFocus;
+    }
+
+    public void setVirtualFocus(int virtualFocus) {
+        this.virtualFocus = virtualFocus;
+    }
+
+    public int getVirtualNimbus() {
+        return virtualNimbus;
+    }
+
+    public void setVirtualNimbus(int virtualNimbus) {
+        this.virtualNimbus = virtualNimbus;
+    }
+
+    private int virtualNimbus;
 
     public int getNimbus() {
         return nimbus;
@@ -49,6 +69,11 @@ public class ALE {
     }
 
     public void setUser(String user) {
+        this.user = user;
+    }
+    
+    public ALE(String objectURL, String user) {
+        this.objectURL = objectURL;
         this.user = user;
     }
 

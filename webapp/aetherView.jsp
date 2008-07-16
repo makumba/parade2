@@ -8,13 +8,13 @@
 <script type="text/javascript">
 
 getMyWork = function() {
-  new Ajax.Updater('mywork', '/aetherMyWork.jsp');
+  new Ajax.Updater('mywork', '/aetherMyWork.jsp', {evalScripts: true});
 }
 getWorkOfOthers = function() {
-    new Ajax.Updater('workofothers', '/aetherWorkOfOthers.jsp');
-  }
+    new Ajax.Updater('workofothers', '/aetherWorkOfOthers.jsp', {evalScripts: true});
+}
 
-new PeriodicalExecuter(getMyWork, 5);
+new PeriodicalExecuter(getMyWork, 10);
 new PeriodicalExecuter(getWorkOfOthers, 10);
 
 </script>

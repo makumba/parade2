@@ -14,9 +14,11 @@ public interface Percolator {
     
     public void configure(SessionFactory sessionFactory);
     
-    public void percolate(AetherEvent e) throws PercolationException;
+    public void percolate(AetherEvent e, boolean virtualPercolation) throws PercolationException;
     
     public int getALE(String objectURL, String user);
+    
+    public void cleanVirtualPercolations();
     
     
 }

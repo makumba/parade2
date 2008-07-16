@@ -6,6 +6,6 @@ import org.makumba.aether.PercolationException;
 
 public interface PercolationStrategy {
     
-    public void percolate(AetherEvent e, SessionFactory sessionFactory) throws PercolationException;
+    public void percolate(AetherEvent e, boolean virtualPercolation, SessionFactory sessionFactory) throws PercolationException;
 
 }

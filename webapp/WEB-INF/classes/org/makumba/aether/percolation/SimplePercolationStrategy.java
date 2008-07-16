@@ -38,7 +38,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
      * percolation rules
      */
     @Override
-    public void percolate(AetherEvent e, SessionFactory sessionFactory) throws PercolationException {
+    public void percolate(AetherEvent e, boolean virtualPercolation, SessionFactory sessionFactory) throws PercolationException {
         
         try {
 
@@ -57,7 +57,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
 
                 List<InitialPercolationRule> iprs = q.list();
                 for (InitialPercolationRule ipr : iprs) {
-                    MatchedAetherEvent mae = buildMatchedAetherEvent(e, ipr, s);
+                    MatchedAetherEvent mae = buildMatchedAetherEvent(e, ipr, false, s);
                     s.save(mae);
                     matchedEvents.add(mae);
                 }
@@ -184,7 +184,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
                         isFocusPercolation, previousStep, threadLevel);
                 s.save(ps);
                 
-                addOrUpdateFocus(mae.getObjectURL(), mae.getActor(), energy, s);
+                addOrUpdateFocus(mae.getObjectURL(), mae.getActor(), energy, false, s);
                 
             }
 

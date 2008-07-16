@@ -75,12 +75,12 @@ public class Aether {
         }
     }
 
-    public void registerEvent(AetherEvent e) {
+    public void registerEvent(AetherEvent e, boolean virtualPercolation) {
         
         long start = System.currentTimeMillis();
 
         try {
-            p.percolate(e);
+            p.percolate(e, virtualPercolation);
         } catch (PercolationException e1) {
             logger.warn("Exception while percolating event \""+e.toString()+"\": "+e1.getMessage());
             StringWriter sw = new StringWriter();
@@ -97,6 +97,10 @@ public class Aether {
         long refresh = end - start;
         logger.info("AETHER: percolation of event " + e.toString() + " took " + refresh + " ms");
         
+    }
+    
+    public void cleanVirtualPercolations() {
+        p.cleanVirtualPercolations();
     }
     
     public int getALE(String objectURL, String user) {
