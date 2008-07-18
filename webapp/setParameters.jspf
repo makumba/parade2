@@ -23,7 +23,7 @@
   </c:otherwise>
 </c:choose>
 
-<c:if test="${not empty path and path neq ''}"><c:set var="path" value="${path}" scope="session"/></c:if>
+<c:if test="${not empty path and path ne ''}"><c:set var="path" value="${path}" scope="session"/></c:if>
 
 <c:set var="result" value="${requestScope.result}" />
 <c:set var="success" value="${requestScope.success}" />

@@ -45,7 +45,7 @@
 <mak:object from="Row row" where="row.rowname = :context">
   <mak:value expr="row.rowname" printVar="rowName" />
 
-  <table class='header'>
+  <table class="header">
 
     <form action="/browse.jsp?getPathFromSession=true" target="_top" style="margin: 0px;">
     <tr>

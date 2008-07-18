@@ -621,7 +621,7 @@ public class DatabaseLogServlet extends HttpServlet {
             "/scripts/codepress/", "/cewolf", "/servlet/cvscommit"};
 
     String[] equalFilter = { "/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp",
-            "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "browserHeader.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
+            "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "browserHeader.jsp", "fileBrowser.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
             "/Admin.do", "/Command.do", "/User.do", "/servlet/ticker", "/servlet/logs",
             "/reload", "/unauthorized/index.jsp" };
 
