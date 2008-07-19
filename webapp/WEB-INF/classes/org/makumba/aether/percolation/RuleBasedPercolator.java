@@ -45,9 +45,9 @@ public class RuleBasedPercolator implements Percolator {
 
     static final int MIN_ENERGY_LEVEL = 21;
 
-    static final int GARBAGE_COLLECTION_INTERVAL = 1000 *  60; // 10 * 10 mins
+    static final int GARBAGE_COLLECTION_INTERVAL = 1000 * 10 *  60; // 10 mins
 
-    static final int CURVE_UPDATE_INTERVAL = 1000 *  60; // 15 * 15 mins
+    static final int CURVE_UPDATE_INTERVAL = 1000 * 15 *  60; // 15 mins
 
     static final int MAX_PERCOLATION_TIME = 5000000;
 
