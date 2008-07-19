@@ -12,6 +12,7 @@ import org.makumba.parade.listeners.ParadeJNotifyListener;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
+import org.makumba.parade.tools.ParadeException;
 
 public class FileAction extends Action {
 
@@ -43,6 +44,10 @@ public class FileAction extends Action {
         if (op != null && op.startsWith("saveFile")) {
             String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + file;
             ParadeJNotifyListener.createFileLock(absoluteFilePath);
+            
+            if(source == null) {
+                throw new ParadeException("Cannot save file: ParaDe did not receive any contents from your browser. If you use the Codepress editor, make sure that JavaScript is enabled and try reloading the edit page.");
+            }
 
             FileController.saveFile(absoluteFilePath, source);
             
