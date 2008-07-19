@@ -120,6 +120,10 @@ public class LDAPAuthorizer implements Authorizer {
             String returnAttrs[] = { "displayName", "givenName", "employeeType", "sn", "mail", "cn", "jpegPhoto" };
 
             LDAPEntry entry = lc.read(loginDN, returnAttrs);
+            
+            if(entry == null) {
+                throw new LDAPException();
+            }
 
             LDAPAttributeSet attributeSet = entry.getAttributeSet();
 
