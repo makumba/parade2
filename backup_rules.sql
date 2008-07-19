@@ -33,6 +33,7 @@ CREATE TABLE `InitialPercolationRule` (
   `focusProgressionCurve` varchar(255) default NULL,
   `nimbusProgressionCurve` varchar(255) default NULL,
   `interactionType` varchar(255) default NULL,
+  `description` varchar(255) default NULL,
   PRIMARY KEY  (`initialpercolationrule`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
@@ -43,7 +44,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `InitialPercolationRule` WRITE;
 /*!40000 ALTER TABLE `InitialPercolationRule` DISABLE KEYS */;
-INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'','1-ln(t/10+1)','1-t*t+t','20'),(2,'DIR','view','all_but_actor',50,30,'','1-t/2','1-t/2','20');
+INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'','1-ln(t/10+1)','1-t*t+t','20',NULL),(2,'DIR','view','all_but_actor',50,30,'','1-t/2','1-t/2','20',NULL);
 /*!40000 ALTER TABLE `InitialPercolationRule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,7 +149,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `RelationQuery` WRITE;
 /*!40000 ALTER TABLE `RelationQuery` DISABLE KEYS */;
-INSERT INTO `RelationQuery` VALUES (1,'SELECT f.cvsURL as fromURL, \'checkedOutAs\' as type, concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))) as toURL FROM File f JOIN f.row r WHERE concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))) in(:fromURLSet) AND f.cvsURL is not null and concat(concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))), \'True\') not in(:fromURLAndTraversedCVSSet)','cvs:// , checkedOutAs, file:// - all the cvs files that are a version of a repository version (not-null CVS version) and where the percolationPath has no cvs:// prefix','fromURLSet, fromURLAndTraversedCVSSet'),(4,'SELECT concat(\'file://\', concat(r.rowname, substring(f.path, length(r.rowpath) + 1 + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)))) as fromURL, \'versionOf\' as type, f.cvsURL as toURL FROM File f JOIN f.row r WHERE f.cvsURL in(:cvsURLSet) AND r.rowname not in(:rowNameSet)','file://, versionOf, cvs:// - all the checked out files of a cvs file that have a CVS URL set except the ones of the previous row','cvsURLSet, rowNameSet'),(5,'SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL from org.makumba.devel.relations.Relation r where r.toURL in(:fromURLSet)','fromURL, type, toURL - all the files that depend on this file (through the computed relations)','fromURLSet');
+INSERT INTO `RelationQuery` VALUES (1,'SELECT f.cvsURL as fromURL, \'checkedOutAs\' as type, f.fileURL() as toURL FROM File f WHERE f.fileURL() in(:fromURLSet) AND f.cvsURL is not null and concat(f.fileURL(), \'True\') not in(:fromURLAndTraversedCVSSet)','cvs:// , checkedOutAs, file:// - all the cvs files that are a version of a repository version (not-null CVS version) and where the percolationPath has no cvs:// prefix','fromURLSet, fromURLAndTraversedCVSSet'),(4,'SELECT f.fileURL() as fromURL, \'versionOf\' as type, f.cvsURL as toURL FROM File f JOIN f.row r WHERE f.cvsURL in(:cvsURLSet) AND r.rowname not in(:rowNameSet)','file://, versionOf, cvs:// - all the checked out files of a cvs file that have a CVS URL set except the ones of the previous row','cvsURLSet, rowNameSet'),(5,'SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL from org.makumba.devel.relations.Relation r where r.toURL in(:fromURLSet)','fromURL, type, toURL - all the files that depend on this file (through the computed relations)','fromURLSet');
 /*!40000 ALTER TABLE `RelationQuery` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -161,4 +162,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2008-07-19 15:35:13
+-- Dump completed on 2008-07-19 17:35:51
