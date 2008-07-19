@@ -1,5 +1,6 @@
 package org.makumba.parade.view.beans;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -64,6 +65,22 @@ public class FileBrowserBean {
         }
         
         return pathEncoded;
+    }
+    
+    public String getAbsolutePath() {
+        String absolutePath = "";
+        if (path.equals("/"))
+            absolutePath = row.getRowpath();
+        else
+            absolutePath = row.getRowpath() + java.io.File.separator + path.replace('/', java.io.File.separatorChar);
+        if (absolutePath.endsWith(java.io.File.separator))
+            absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
+        
+        return absolutePath.replace(File.separator, "/");
+    }
+    
+    public String getAbsoluteRowPath() {
+        return (new java.io.File(row.getRowpath()).getAbsolutePath()).replace(File.separator, "/");
     }
 
     public List<HashMap<String, String>> getParentDirs() {

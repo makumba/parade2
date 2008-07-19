@@ -1,6 +1,8 @@
 package org.makumba.parade.aether;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -11,40 +13,46 @@ import java.util.Set;
  */
 public enum ActionTypes {
 
-    LOGIN("login"),
-    VIEW("view"),
-    EXECUTE("execute"),
-    EDIT("edit"),
-    SAVE("save"),
-    DELETE("delete"),
-    CREATE("create"),
-    CVS_CHECK("cvsCheck"),
-    CVS_UPDATE_DIR_LOCAL("cvsUpdateDirLocal"),
-    CVS_UPDATE_DIR_RECURSIVE("cvsUpdateDirRecursive"),
-    CVS_COMMIT("paradeCvsCommit"),
-    CVS_DIFF("cvsDiff"),
-    CVS_ADD("cvsAdd"),
-    CVS_UPDATE_FILE("cvsUpdateFile"),
-    CVS_OVERRIDE_FILE("cvsOverrideFile"),
-    CVS_DELETE_FILE("cvsDeleteFile"),
-    WEBAPP_INSTALL("webappInstall"),
-    WEBAPP_UNINSTALL("webappUninstall"),
-    WEBAPP_REDEPLOY("webappRedeploy"),
-    WEBAPP_RELOAD("webappReload"),
-    WEBAPP_STOP("webappStop"),
-    WEBAPP_START("webappStart")
-    ;
+    LOGIN("login", "logged in"),
+    VIEW("view", "looked at"),
+    EXECUTE("execute", "executed"),
+    EDIT("edit", "edited"),
+    SAVE("save", "saved"),
+    DELETE("delete", "deleted"),
+    CREATE("create", "created"),
+    CVS_CHECK("cvsCheck", "checked the CVS status"),
+    CVS_UPDATE_DIR_LOCAL("cvsUpdateDirLocal", "performed a local CVS update"),
+    CVS_UPDATE_DIR_RECURSIVE("cvsUpdateDirRecursive", "performed a recursive CVS update"),
+    CVS_COMMIT("paradeCvsCommit", "commited"),
+    CVS_DIFF("cvsDiff", "made a CVS diff"),
+    CVS_ADD("cvsAdd", "added to CVS"),
+    CVS_UPDATE_FILE("cvsUpdateFile", "CVS updated"),
+    CVS_OVERRIDE_FILE("cvsOverrideFile", "overrode"),
+    CVS_DELETE_FILE("cvsDeleteFile", "deleted from CVS"),
+    WEBAPP_INSTALL("webappInstall", "installed"),
+    WEBAPP_UNINSTALL("webappUninstall", "uninstalled"),
+    WEBAPP_REDEPLOY("webappRedeploy", "redeployed"),
+    WEBAPP_RELOAD("webappReload", "reloaded"),
+    WEBAPP_STOP("webappStop", "stopped"),
+    WEBAPP_START("webappStart", "started");
 
     private String action;
 
-    ActionTypes(String action) {
+    private String readableAction;
+
+    ActionTypes(String action, String readableAction) {
         this.action = action;
+        this.readableAction = readableAction;
     }
 
     public String action() {
         return this.action;
     }
-    
+
+    public String readableAction() {
+        return this.readableAction;
+    }
+
     public static Set<String> getActions() {
         ActionTypes[] v = values();
         Set<String> res = new HashSet<String>();
@@ -53,11 +61,32 @@ public enum ActionTypes {
         }
         return res;
     }
-    
-    public static boolean isFileAction(String a) {
-        return a.equals(VIEW.action()) || a.equals(EDIT.action()) || a.equals(SAVE.action()) || a.equals(DELETE.action());
+
+    private static Map<String, String> actionToReadableAction;
+
+    private static Map<String, String> getActionToReadableAction() {
+
+        if (actionToReadableAction == null) {
+
+            ActionTypes[] v = values();
+            Map<String, String> res = new HashMap<String, String>();
+            for (int i = 0; i < v.length; i++) {
+                res.put(v[i].action(), v[i].readableAction());
+            }
+
+            actionToReadableAction = res;
+
+        }
+        return actionToReadableAction;
     }
 
-    
+    public static boolean isFileAction(String a) {
+        return a.equals(VIEW.action()) || a.equals(EDIT.action()) || a.equals(SAVE.action())
+                || a.equals(DELETE.action());
+    }
+
+    public static String getReadableAction(String action) {
+        return getActionToReadableAction().get(action);
+    }
 
 }

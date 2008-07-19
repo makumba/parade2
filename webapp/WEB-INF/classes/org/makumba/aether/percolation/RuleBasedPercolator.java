@@ -45,9 +45,9 @@ public class RuleBasedPercolator implements Percolator {
 
     static final int MIN_ENERGY_LEVEL = 21;
 
-    static final int GARBAGE_COLLECTION_INTERVAL = 1000 * 10 * 60; // 10 mins
+    static final int GARBAGE_COLLECTION_INTERVAL = 1000 *  60; // 10 * 10 mins
 
-    static final int CURVE_UPDATE_INTERVAL = 1000 * 15 * 60; // 15 mins
+    static final int CURVE_UPDATE_INTERVAL = 1000 *  60; // 15 * 15 mins
 
     static final int MAX_PERCOLATION_TIME = 5000000;
 
@@ -291,7 +291,11 @@ public class RuleBasedPercolator implements Percolator {
         String q = "update ALE a set a.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.matchedAetherEvent.actor = a.user), " +
         		"a.nimbus = (select sum(ps.nimbus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.userGroup like '%*%' and ps.userGroup not like concat(concat(concat('%','-'), a.user), '%'))";
         int updated = s.createQuery(q).executeUpdate();
-
+        
+        // if no steps are found in the previous inner select, the sum is null so we have to fix this here
+        s.createQuery("update ALE set focus = 0 where focus is null").executeUpdate();
+        s.createQuery("update ALE set nimbus = 0 where nimbus is null").executeUpdate();
+        
         logger.debug("Updated " + updated + " ALE values");
         
     }

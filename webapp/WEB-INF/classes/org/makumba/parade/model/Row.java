@@ -3,6 +3,11 @@ package org.makumba.parade.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.makumba.parade.aether.ObjectTypes;
+import org.makumba.parade.init.InitServlet;
+
 /**
  * Representation of a ParaDe row.<br>
  * A Row has a number of basic attributes (rowname, rowpath, description, ...) and more specific data stored in the
@@ -167,6 +172,25 @@ public class Row {
 
     public void setWebappPath(String webappPath) {
         this.webappPath = webappPath;
+    }
+
+    public static String getModule(String fileURL) {
+        // fetch cvs module of row
+        Session s = null;
+        String module = "";
+        try {
+            s = InitServlet.getSessionFactory().openSession();
+            Transaction tx = s.beginTransaction();
+    
+            module = (String) s.createQuery("select module from RowCVS where row.rowname = :context").setString(
+                    "context", ObjectTypes.rowNameFromURL(fileURL)).uniqueResult();
+    
+            tx.commit();
+        } finally {
+            if (s != null)
+                s.close();
+        }
+        return module;
     }
 
 }

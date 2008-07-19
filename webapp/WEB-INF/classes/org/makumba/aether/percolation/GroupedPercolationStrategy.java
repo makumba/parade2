@@ -157,7 +157,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             Map<String, String> arguments = new HashMap<String, String>();
             addSetArgument(arguments, "fromURLSet", mae.getObjectURL());
             addSetArgument(arguments, "cvsURLSet", ObjectTypes.fileToCVSURL(mae.getObjectURL()));
-            addSetArgument(arguments, "rowNameSet", ObjectTypes.getRowNameFromURL(mae.getObjectURL()));
+            addSetArgument(arguments, "rowNameSet", ObjectTypes.rowNameFromURL(mae.getObjectURL()));
             addSetArgument(arguments, "percolationPathSet", "");
             addSetArgument(arguments, "fromURLAndTraversedCVSSet", mae.getObjectURL() + "False");
 
@@ -419,7 +419,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
                 addSetArgument(arguments, "fromURLSet", ps.getObjectURL());
                 addSetArgument(arguments, "cvsURLSet", ObjectTypes.fileToCVSURL(ps.getObjectURL()));
-                addSetArgument(arguments, "rowNameSet", ObjectTypes.getRowNameFromURL(ps.getPreviousURL()));
+                addSetArgument(arguments, "rowNameSet", ObjectTypes.rowNameFromURL(ps.getPreviousURL()));
                 addSetArgument(arguments, "percolationPathSet", ps.getPercolationPath());
                 addSetArgument(arguments, "fromURLAndTraversedCVSSet",
                         ps.getPercolationPath().indexOf("cvs://") > 0 ? ps.getObjectURL() + "True" : ps.getObjectURL()

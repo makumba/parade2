@@ -6,11 +6,26 @@ This checkout provides you with two things:
 - one way to run ParaDe from Eclipse
 - one way to run ParaDe on a server
 
-== Setting up ParaDe for Eclipse
-In the first case, you need to specify your 'catalina.home' variable so that Eclipse knows where is a tomcat
-it can use to run ParaDe. Go to "Run->Run->Arguments", then click on "variables" in the lower box, and create a new
-"catalina.home" var that points to a fresh tomcat checkout. Make sure that after creating the variable, you
-did not alter the launch parameters (by default Eclipse inserts selected vars in the parameters).
+== Setting up ParaDe for Eclipse, with Aether
 
-Now need to go to webapp/WEB-INF/classes and rename parade-eclipse.properties to parade.properties.
-This property file contains the properties corresponding to the folder structure used in Eclipse
+1/ checkout parade2
+
+2/ copy webapp/WEB-INF/classes/parade.properties.example to webapp/WEB-INF/classes/parade.properties and make sure you have the dummyAuthorizer enabled (so u can login as anyone)
+
+3/ configure /tomcat.properties (port, manager password, ...)
+
+4/ create a "parade" database, and if necessary configure password in webapp/WEB-INF/classes/localhost_mysql_parade.properties AND webapp/WEB-INF/classes/localhost_mysql_parade.cfg.xml
+
+5/ configure the parade2-tomcat runner (i.e. set the catalina_home var, if it's not already set)
+
+6/ run parade2-tomcat
+
+7/ stop it again :) now you have a webapp/WEB-INF/classes/rows.properties
+
+8/ configure your rows in rows.properties
+
+9/ in parade.properties, uncomment the aether.enabled line and the aether.databaseName
+
+10/ run parade again. this time it will compute all the relationships
+
+11/ that's it!

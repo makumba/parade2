@@ -84,5 +84,9 @@ public class ALE {
         this.focus = focus;
         this.nimbus = nimbus;
     }
+    
+    public ALE() {
+        
+    }
 
 }
