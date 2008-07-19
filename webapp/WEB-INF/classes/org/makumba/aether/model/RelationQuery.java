@@ -7,6 +7,8 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.makumba.providers.QueryAnalysisProvider;
+import org.makumba.providers.QueryProvider;
 
 public class RelationQuery {
     
@@ -21,6 +23,8 @@ public class RelationQuery {
     private String description;
     
     private String arguments;
+    
+    private QueryAnalysisProvider qap = QueryProvider.getQueryAnalzyer("hql");
     
     public long getId() {
         return id;
@@ -41,8 +45,12 @@ public class RelationQuery {
     public RelationQuery() {
         
     }
-
+    
     public String toString() {
+        return niceQuery(query);
+    }
+
+    public static String niceQuery(String query) {
         String niceQuery = "";
         String localQuery = query;
         if(localQuery.toLowerCase().startsWith("select")) {
@@ -85,7 +93,8 @@ public class RelationQuery {
             queryArguments = getArguments();
         }
         
-        String localQuery = query;
+        //inline all makumba query functions
+        String localQuery = qap.inlineFunctions(query);
     
         String args = ""; // for debug
         StringTokenizer st = new StringTokenizer(queryArguments, ",");

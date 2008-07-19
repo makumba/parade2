@@ -278,6 +278,13 @@ public class RuleBasedPercolator implements Percolator {
 
         logger.debug("Garbage-collected " + d1 + d2 + " percolation steps");
         
+        Query q3 = s.createQuery("delete from MatchedAetherEvent mae where not exists (from PercolationStep ps where mae.id = ps.matchedAetherEvent.id)");
+        
+        int d3 = q3.executeUpdate();
+        
+        logger.debug("Garbage-collected " + d3 + " MatchedAetherEvents");
+        
+        
     }
 
     /**

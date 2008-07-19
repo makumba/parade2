@@ -25,6 +25,7 @@ import org.makumba.aether.model.PercolationRule;
 import org.makumba.aether.model.PercolationStep;
 import org.makumba.aether.model.RelationQuery;
 import org.makumba.parade.aether.ObjectTypes;
+import org.makumba.parade.model.Row;
 
 /**
  * Percolation strategy that tries to group as many queries together during the percolation process, in order to
@@ -156,7 +157,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
         for (RelationQuery query : mae.getInitialPercolationRule().getRelationQueries()) {
             Map<String, String> arguments = new HashMap<String, String>();
             addSetArgument(arguments, "fromURLSet", mae.getObjectURL());
-            addSetArgument(arguments, "cvsURLSet", ObjectTypes.fileToCVSURL(mae.getObjectURL()));
+            addSetArgument(arguments, "cvsURLSet", fileToCVSURL(mae.getObjectURL()));
             addSetArgument(arguments, "rowNameSet", ObjectTypes.rowNameFromURL(mae.getObjectURL()));
             addSetArgument(arguments, "percolationPathSet", "");
             addSetArgument(arguments, "fromURLAndTraversedCVSSet", mae.getObjectURL() + "False");
@@ -204,7 +205,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             addOrUpdateNimbus(objectURL, mae.getUserGroup(), nimbusContributions.get(objectURL), virtualPercolation, s);
         }
     }
-
+    
     /**
      * The main percolation algorithm, taking care of both focus and nimbus percolation. In case of nimbus percolation,
      * leads to recursive calls until either no more energy is left, or the percolation process timed out
@@ -418,7 +419,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             for (PercolationStep ps : percolationSteps) {
 
                 addSetArgument(arguments, "fromURLSet", ps.getObjectURL());
-                addSetArgument(arguments, "cvsURLSet", ObjectTypes.fileToCVSURL(ps.getObjectURL()));
+                addSetArgument(arguments, "cvsURLSet", fileToCVSURL(ps.getObjectURL()));
                 addSetArgument(arguments, "rowNameSet", ObjectTypes.rowNameFromURL(ps.getPreviousURL()));
                 addSetArgument(arguments, "percolationPathSet", ps.getPercolationPath());
                 addSetArgument(arguments, "fromURLAndTraversedCVSSet",
@@ -450,6 +451,21 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             } else {
                 arguments.put(key, "'" + argumentSet + "'" + "," + "'" + value + "'");
             }
+        }
+    }
+    
+    /**
+     * file://rudi-k/lbg/member.jsp -> cvs://karamba/lbg/member.jsp
+     */
+
+    public static String fileToCVSURL(String fileURL) {
+
+        String module = Row.getModule(fileURL);
+
+        if (fileURL.startsWith(ObjectTypes.FILE.prefix())) {
+            return ObjectTypes.CVSFILE.prefix() + module + "/" + fileURL.substring(ObjectTypes.FILE.prefix().length());
+        } else {
+            return fileURL;
         }
     }
 

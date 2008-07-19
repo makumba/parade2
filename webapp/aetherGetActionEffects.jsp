@@ -12,6 +12,13 @@
 <%@page import="java.util.Hashtable"%>
 <%@page import="org.hibernate.Query"%>
 <%@page import="java.util.Iterator"%><script src="${pageContext.request.contextPath}/scripts/prototype.js"></script>
+
+<html><head><title>Notified people</title></head>
+
+<body>
+
+<h3>People notified for "${param.user} --(${param.action})--> ${param.objectURL}"</h3>
+
 <% 
 AetherEvent ae = new AetherEvent(request.getParameter("objectURL"), request.getParameter("objectType"), request.getParameter("user"), request.getParameter("action"), new Date(), 1.00);
 InitServlet.getAether().registerEvent(ae, true);
@@ -22,6 +29,10 @@ try {
   Transaction tx = s.beginTransaction();
   Query q = s.createQuery("select user as user, objectURL as objectURL, virtualNimbus as virtualNimbus, focus as focus, nimbus as nimbus, (virtualNimbus - nimbus) as contribution from ALE a where (virtualNimbus != 0) and (focus > 20) order by (virtualNimbus-nimbus) desc");
   List results = q.list();
+  
+  if(results.size() == 0) {
+   out.println("Changing this file won't lead to any special notification."); 
+  } else {
   Iterator i = results.iterator();
   while(i.hasNext()) {
     Object[] resultRow = (Object[])i.next();
@@ -32,8 +43,9 @@ try {
     int nimbus = (Integer)resultRow[4];
     int contribution = (Integer)resultRow[5];
     
-    out.println(user + " ("+objectURL+") "+contribution+ " (current focus: "+focus +")<br>") ;
-    
+    out.println(user + " ("+objectURL+") "+contribution+ " (current focus: "+focus +")<br>");
+  }
+  
   }
   
   tx.commit();
@@ -42,9 +54,9 @@ try {
 } finally {
  if(s!= null) s.close(); 
 }
-
-
-
 %>
+
+</body>
+</html>
 
 <% InitServlet.getAether().cleanVirtualPercolations(); %>

@@ -43,6 +43,8 @@ public class InitialPercolationRule implements AetherRule {
     private int interactionType;
 
     private boolean active = true;
+    
+    private String description;
 
     public InitialPercolationRule() {
 
@@ -152,6 +154,14 @@ public class InitialPercolationRule implements AetherRule {
         default:
             return "Should not be here";
         }
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 }

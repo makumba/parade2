@@ -94,19 +94,4 @@ public enum ObjectTypes {
         return "UNKNOWN";
     }
 
-    /**
-     * file://rudi-k/lbg/member.jsp -> cvs://karamba/lbg/member.jsp
-     */
-
-    public static String fileToCVSURL(String fileURL) {
-
-        String module = Row.getModule(fileURL);
-
-        if (fileURL.startsWith(FILE.prefix())) {
-            return CVSFILE.prefix() + module + "/" + fileURL.substring(FILE.prefix().length());
-        } else {
-            return fileURL;
-        }
-    }
-
 }

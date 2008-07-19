@@ -285,7 +285,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
 
             Map<String, String> arguments = new HashMap<String, String>();
             arguments.put("fromURL", ps.getObjectURL());
-            arguments.put("cvsURL", ObjectTypes.fileToCVSURL(ps.getObjectURL()));
+            arguments.put("cvsURL", GroupedPercolationStrategy.fileToCVSURL(ps.getObjectURL()));
             arguments.put("rowName", ObjectTypes.rowNameFromURL(ps.getPreviousURL()));
             arguments.put("percolationPath", ps.getPercolationPath());
 

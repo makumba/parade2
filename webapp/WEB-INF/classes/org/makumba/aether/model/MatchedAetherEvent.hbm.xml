@@ -25,7 +25,6 @@
 
         <property name="virtualPercolation"/>
 
-
 	</class>
 
 </hibernate-mapping>

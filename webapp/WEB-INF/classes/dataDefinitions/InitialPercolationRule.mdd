@@ -8,3 +8,4 @@ nimbusProgressionCurve=char[255] ;the formula of the nimbus progression curve
 percolationMode=int {"None"=0, "Focus"=10, "Nimbus"=20, "Focus/Nimbus"=30} ;the percolation mode
 relationQueries = set RelationQuery ;the queries that provide the next relations to percolate through
 active=boolean ;whether this rule is active or not
+description=text ;textual description of the rule

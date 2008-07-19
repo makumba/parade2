@@ -37,6 +37,7 @@ public class Logic {
     }
 
     public void on_editPercolationRule(Pointer p, Dictionary d, Attributes a, Database db) throws LogicException {
+        RuleBasedPercolator.rulesChanged = true;
     }
 
     public void on_deletePercolationRule(Pointer p, Attributes a, Database db) throws LogicException {

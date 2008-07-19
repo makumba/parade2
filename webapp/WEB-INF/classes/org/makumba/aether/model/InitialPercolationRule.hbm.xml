@@ -27,6 +27,9 @@
 		<property name="interactionType" />
 		
 		<property name="active" />
+    
+        <property name="description" />
+    
 
 		<bag name="relationQueries"
 			table="InitialPercolationRule__relationQueries" lazy="false"
