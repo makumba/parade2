@@ -32,8 +32,9 @@ CREATE TABLE `InitialPercolationRule` (
   `active` bit(1) default NULL,
   `focusProgressionCurve` varchar(255) default NULL,
   `nimbusProgressionCurve` varchar(255) default NULL,
+  `interactionType` varchar(255) default NULL,
   PRIMARY KEY  (`initialpercolationrule`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -42,7 +43,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `InitialPercolationRule` WRITE;
 /*!40000 ALTER TABLE `InitialPercolationRule` DISABLE KEYS */;
-INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'','1-ln(t/10+1)','1-t*t+t');
+INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'','1-ln(t/10+1)','1-t*t+t','20'),(2,'DIR','view','all_but_actor',50,30,'','1-t/2','1-t/2','20');
 /*!40000 ALTER TABLE `InitialPercolationRule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -160,4 +161,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2008-06-12  0:40:07
+-- Dump completed on 2008-07-19 15:35:13
