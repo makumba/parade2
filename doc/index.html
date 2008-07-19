@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"><title>ParaDe developer documentation</title>
+
+</head><body>
+<h1>ParaDe developer documentation</h1>
+<pre>$Id$<br><br></pre>
+<h2>Introduction</h2>
+<p>Welcome to the ParaDe developer documentation. This is an
+attempt to give an overview of how ParaDe works and where are the
+different elements that compose the various ParaDe mechanisms.</p>
+<h2>Contents</h2>
+<ol>
+<li>Package overview</li>
+<ol>
+<li>ParaDe packages</li>
+<li>Aether engine packages</li>
+</ol>
+<li>MVC components</li>
+<ol>
+<li>ParaDe model</li>
+<ol>
+<li>Model</li>
+<li>Model managers</li>
+</ol>
+<li>ParaDe controller</li>
+<ol>
+<li>Struts configuration</li>
+<li>ParaDe controllers</li>
+</ol>
+<li>ParaDe view</li>
+<ol>
+<li>View servlets</li>
+</ol>
+</ol>
+<li>Specific ParaDe mechanisms</li>
+<ol>
+<li>Startup</li>
+<li>JNotify</li>
+<li>Logging</li>
+</ol>
+<li>Aether within ParaDe</li>
+<ol>
+<li>Startup</li>
+</ol>
+</ol>
+<br>
+<h2>1. Package overview</h2>
+<h3>1.1 ParaDe packages</h3><pre><span style="font-weight: bold;">Location                               Description</span><br>org.makumba.parade.access              The classes that handle access to the ParaDe server<br>                                       (logging to the database, triggering of access control)<br>org.makumba.parade.auth                The classes for access control (HTTP Authorizer and<br>                                       LDAP implementation)<br>org.makumba.parade.aether              The implementation of Aether interfaces for ParaDe,<br>                                       and other classes needed for the Aether engine<br>                                       integration<br>org.makumba.parade.controller          The controller classes (Struts Actions and ParaDe<br>                                       controller classes)<br>org.makumba.parade.init                The classes needed for initialisation, amongst which<br>                                       the InitServlet (ran at start-up) and the classes that<br>                                       read configuration files<br>org.makumba.parade.listeners           ParaDe listeners, such as the CVS commit listener<br>org.makumba.parade.model               The ParaDe model classes and Hibernate mappings<br>org.makumba.parade.model.interfaces    The interfaces for model managers<br>org.makumba.parade.model.managers      The implementation of model managers<br>org.makumba.parade.tools               Various utility classes, amongst which the<br>                                       TriggerFilter that filters each access to ParaDe<br>org.makumba.parade.view                The servlets used to display the main views<br>org.makumba.parade.view.interfaces     The interfaces for view managers<br>org.makumba.parade.view.managers       The view managers, populating the templates<br>org.makumba.parade.view.templates      The Freemarker templates used to display the ParaDe<br>                                       view<br>org.makumba.parade.view.beans          A number of java beans used by the JSPs to render the view<br>webapp                                 Various JSPs for displaying pages<br>webapp/admin                           JSPs for ParaDe configuration<br>webapp/WEB-INF/classes/dataDefinitions The Makumba Data Definitions that make it possible<br>                                       to use Makumba with ParaDe
+</pre><h3>1.2 Aether packages</h3>
+<pre><span style="font-weight: bold;">Location                               Description</span><br>org.makumba.aether                     The main classes of the Aether engine<br>org.makumba.aether.model               The Ather model classes and Hibernate mappings,<br>                                       including the classes of the percolator<br>org.makumba.aether.percolation         The classes that handle Aether event percolation<br>webapp/aether                          The JSPs used to configure the Aether engine at<br>                                       runtime<br>webapp/WEB-INF/classes/dataDefinitions The Makumba Data Definitions that make it possible<br>                                       to use Makumba with ParaDe<br></pre><h2>2. MVC components</h2>ParaDe
+uses Hibernate in order to drive the model, and Struts as a controller.
+Aditionally it also uses Makumba in order to render the view, together
+with a number of Java beans.<br><h3>2.1 Model</h3><br><br>
+</body></html>
