@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -91,7 +93,7 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
         
                 for (java.io.File d : dir) {
                     if (filter.accept(d) && !(d.getName() == null) && d.isDirectory()) {
-                        refreshDirectory(row, currDir);
+                        refreshDirectory(row, d);
                         directoryRefresh(row, d.getAbsolutePath(), false);
                     }
                 }
@@ -635,11 +637,30 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         Row r = Row.getRow(p, context);
         Transaction tx = s.beginTransaction();
+        
         cvsMgr.fileRefresh(r, absolutePath);
+        
         tx.commit();
         s.close();
         logger.debug("Finished refreshing CVS cache for file " + absolutePath + " of row " + context);
     }
+    
+    /**
+     * Updates the CVS cache for a number of files in the same row.
+     * 
+     * @param context
+     *            the context in which the operation takes place
+     * @param files
+     *            a collection of {@link File}-s of which the CVS status should be updated
+     */
+    public synchronized static void updateMultipleCvsCache(String context, Collection<File> files) {
+        CVSManager cvsMgr = new CVSManager();
+        
+        for(File f : files) {
+            cvsMgr.fileRefresh(f.getRow(), f.getPath());
+        }
+    }
+    
 
     /**
      * Checks if there will be a cvs conflict if this file is updated
