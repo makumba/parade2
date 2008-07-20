@@ -54,7 +54,8 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
      * percolation rules
      */
     @Override
-    public void percolate(AetherEvent e, boolean virtualPercolation, SessionFactory sessionFactory) throws PercolationException {
+    public void percolate(AetherEvent e, boolean virtualPercolation, SessionFactory sessionFactory)
+            throws PercolationException {
         int startQueries = RelationQuery.getExecutedQueries();
         super.percolate(e, virtualPercolation, sessionFactory);
 
@@ -80,21 +81,23 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                     }
 
                     for (MatchedAetherEvent mae : matchedEvents) {
-                        
-                        if(mae.getInitialPercolationRule().getInteractionType() == InitialPercolationRule.IMMEDIATE_INTERACTION || virtualPercolation) {
+
+                        if (mae.getInitialPercolationRule().getInteractionType() == InitialPercolationRule.IMMEDIATE_INTERACTION
+                                || virtualPercolation) {
                             percolateMatchedEvent(mae, virtualPercolation, s);
                             int endQueries = RelationQuery.getExecutedQueries();
-                            logger.debug("Percolation of event "+e.toString()+" needed "+(endQueries - startQueries)+ " queries to be executed");
-                        } else if(mae.getInitialPercolationRule().getInteractionType() == InitialPercolationRule.DIFFERED_INTERACTION) {
-                           shouldCloseSession = false;
-                           PercolationThread t = new PercolationThread(mae, s, tx, startQueries);
-                           t.start();
-                           
+                            logger.debug("Percolation of event " + e.toString() + " needed "
+                                    + (endQueries - startQueries) + " queries to be executed");
+                        } else if (mae.getInitialPercolationRule().getInteractionType() == InitialPercolationRule.DIFFERED_INTERACTION) {
+                            shouldCloseSession = false;
+                            PercolationThread t = new PercolationThread(mae, s, tx, startQueries);
+                            t.start();
+
                         }
                     }
                 }
-                
-                if(shouldCloseSession) {
+
+                if (shouldCloseSession) {
                     tx.commit();
                 }
 
@@ -109,28 +112,32 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
         }
 
     }
-    
+
     public class PercolationThread extends Thread {
-        
+
         private MatchedAetherEvent mae;
+
         private Session s;
+
         private Transaction tx;
+
         private int startQueries;
-       
-        
+
         @Override
         public void run() {
+
             percolateMatchedEvent(mae, false, s);
             tx.commit();
             s.close();
+
         }
-        
+
         public PercolationThread(MatchedAetherEvent mae, Session s, Transaction tx, int startQueries) {
             this.mae = mae;
             this.s = s;
             this.tx = tx;
             this.startQueries = startQueries;
-            
+
         }
     }
 
@@ -145,12 +152,14 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
      * 
      * @param mae
      *            the {@link MatchedAetherEvent} that should be percolated
-     * @param virtualPercolation TODO
+     * @param virtualPercolation
+     *            TODO
      * @param s
      *            a Hibernate {@link Session}
      */
     private static void percolateMatchedEvent(MatchedAetherEvent mae, boolean virtualPercolation, Session s) {
-        logger.debug("Starting " + (virtualPercolation?"virtual ":"") + "percolation of matched event \"" + mae.toString() + "\"");
+        logger.debug("Starting " + (virtualPercolation ? "virtual " : "") + "percolation of matched event \""
+                + mae.toString() + "\"");
 
         List<Object[]> initialRelations = new LinkedList<Object[]>();
 
@@ -173,7 +182,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
         Map<String, NodePercolationStatus> nodePercolationStatuses = new HashMap<String, NodePercolationStatus>();
         Vector<PercolationStep> steps = new Vector<PercolationStep>();
-        Hashtable<String, Integer> nimbusContributions = new Hashtable<String, Integer>(); 
+        Hashtable<String, Integer> nimbusContributions = new Hashtable<String, Integer>();
 
         int initialEnergy = new Long(Math.round(mae.getInitialPercolationLevel()
                 * (0.5 + mae.getInitialLevelCoefficient()))).intValue();
@@ -185,27 +194,31 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
         nodePercolationStatuses.put(mae.getObjectURL(), init);
 
         if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.FOCUS_PERCOLATION) {
-            percolate(mae, s, true, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps, nimbusContributions, virtualPercolation);
+            percolate(mae, s, true, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps,
+                    nimbusContributions, virtualPercolation);
         } else if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.NIMBUS_PERCOLATION) {
-            percolate(mae, s, false, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps, nimbusContributions, virtualPercolation);
+            percolate(mae, s, false, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps,
+                    nimbusContributions, virtualPercolation);
         } else if (mae.getInitialPercolationRule().getPercolationMode() == InitialPercolationRule.FOCUS_NIMBUS_PERCOLATION) {
-            percolate(mae, s, true, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps, nimbusContributions, virtualPercolation);
-            percolate(mae, s, false, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps, nimbusContributions, virtualPercolation);
+            percolate(mae, s, true, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps,
+                    nimbusContributions, virtualPercolation);
+            percolate(mae, s, false, System.currentTimeMillis(), initialRelations, nodePercolationStatuses, steps,
+                    nimbusContributions, virtualPercolation);
         }
 
         // save all the percolation steps
         for (PercolationStep ps : steps) {
             s.save(ps);
         }
-        
+
         // save all the nimbus contributions
         Iterator<String> ni = nimbusContributions.keySet().iterator();
-        while(ni.hasNext()) {
+        while (ni.hasNext()) {
             String objectURL = ni.next();
             addOrUpdateNimbus(objectURL, mae.getUserGroup(), nimbusContributions.get(objectURL), virtualPercolation, s);
         }
     }
-    
+
     /**
      * The main percolation algorithm, taking care of both focus and nimbus percolation. In case of nimbus percolation,
      * leads to recursive calls until either no more energy is left, or the percolation process timed out
@@ -216,18 +229,23 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
      *            a Hibernate {@link Session}
      * @param isFocusPercolation
      *            whether this is focus or nimbus percolation
-     * @param startTime TODO
+     * @param startTime
+     *            TODO
      * @param relations
      *            the relations (fromURL, type, toURL) to percolate through
      * @param steps
+     *            a Vector that will get filled with the {@link PercolationStep}-s that are generated along the
+     *            percolation
+     * @param nimbusContributions
      *            TODO
-     * @param nimbusContributions TODO
-     * @param virtualPercolation TODO
+     * @param virtualPercolation
+     *            <code>true</code> if this is a virtual relation
      * @param groupedPercolationInfo
      *            TODO
      */
     private static void percolate(MatchedAetherEvent mae, Session s, boolean isFocusPercolation, long startTime,
-            List<Object[]> relations, Map<String, NodePercolationStatus> previousNodePercolationStatuses, Vector<PercolationStep> steps, Hashtable<String, Integer> nimbusContributions, boolean virtualPercolation) {
+            List<Object[]> relations, Map<String, NodePercolationStatus> previousNodePercolationStatuses,
+            Vector<PercolationStep> steps, Hashtable<String, Integer> nimbusContributions, boolean virtualPercolation) {
 
         if (isFocusPercolation) {
 
@@ -255,7 +273,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                     logger.debug("\t == Registering percolation step with level " + nps.getEnergy());
 
                     PercolationStep ps = buildPercolationStep(mae, mae.getObjectURL(), mae.getObjectURL(), pr, nps
-                            .getEnergy(), isFocusPercolation, nps.getPreviousStep(), nps.getLevel());
+                            .getEnergy(), isFocusPercolation, nps.getPreviousStep(), nps.getLevel(), virtualPercolation);
                     steps.add(ps);
 
                     addOrUpdateFocus(mae.getObjectURL(), mae.getActor(), nps.getEnergy(), virtualPercolation, s);
@@ -301,12 +319,19 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
                     // retrieve the NodePercolationStatus of the previous node
                     NodePercolationStatus nps = previousNodePercolationStatuses.get(relation[2]);
-                    
-                    if(nps == null) {
-                        logger.warn("null nodePercolationStatus when trying to fetch status of relation "+relation[2]);
+
+                    if (nps == null) {
+                        logger
+                                .warn("null nodePercolationStatus when trying to fetch status of relation "
+                                        + relation[2]);
                     } else if (nps.getEnergy() < RuleBasedPercolator.MIN_ENERGY_LEVEL) {
                         logger.debug("NIMBUS-PERCOLATION: Not percolating any further because energy too low: "
                                 + nps.getEnergy());
+                    } else if (nps.getLevel() == pr.getPropagationDepthLimit()) {
+                        logger
+                                .debug("NIMBUS-PERCOLATION: Not percolating any further because percolation depth limit of "
+                                        + pr.getPropagationDepthLimit() + " was reached");
+
                     } else {
 
                         // ///// BEGIN to write the PercolationStep of the previous node //////
@@ -324,17 +349,19 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                             // - record a new percolation step
                             logger.debug("\t == Registering percolation step with level " + relationEnergy);
                             PercolationStep ps = buildPercolationStep(mae, (String) relation[2], (String) relation[0],
-                                    pr, relationEnergy, isFocusPercolation, nps.getPreviousStep(), nps.getLevel());
+                                    pr, relationEnergy, isFocusPercolation, nps.getPreviousStep(), nps.getLevel(),
+                                    virtualPercolation);
                             steps.add(ps);
-                            
-                            // add the energy to the nimbus contributions of this percolation step so we can do an update afterwards
+
+                            // add the energy to the nimbus contributions of this percolation step so we can do an
+                            // update afterwards
                             Integer currentSum = nimbusContributions.get(ps.getObjectURL());
-                            if(currentSum == null) {
+                            if (currentSum == null) {
                                 nimbusContributions.put(ps.getObjectURL(), ps.getNimbus());
                             } else {
                                 nimbusContributions.put(ps.getObjectURL(), currentSum + ps.getNimbus());
                             }
-                            
+
                             // now we can set the threadPath
                             // basically this goes like parent-threadPath + parentId + thisUID
                             ps.setPercolationPath(nps.getPreviousStep() == null ? ps.hashCode() + "_"
@@ -352,7 +379,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                                 for (RelationQuery rq : pr.getRelationQueries()) {
                                     groupedQueries.put(rq, ps);
                                 }
-                                
+
                                 // TODO at this level we will add the virtual relation queries
                                 // we will have to provide them with the previous step, or so, in order to compute
                                 // the adequate level
@@ -385,7 +412,8 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
             // if something is left, move to the next step
             if (relations.size() > 0 && nodePercolationStatuses.size() > 0) {
-                percolate(mae, s, isFocusPercolation, startTime, relations, nodePercolationStatuses, steps, nimbusContributions, virtualPercolation);
+                percolate(mae, s, isFocusPercolation, startTime, relations, nodePercolationStatuses, steps,
+                        nimbusContributions, virtualPercolation);
             }
 
         }
@@ -453,7 +481,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             }
         }
     }
-    
+
     /**
      * file://rudi-k/lbg/member.jsp -> cvs://karamba/lbg/member.jsp
      */

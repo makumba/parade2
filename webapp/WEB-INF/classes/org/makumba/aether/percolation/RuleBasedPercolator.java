@@ -1,9 +1,12 @@
 package org.makumba.aether.percolation;
 
+import java.util.AbstractList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -23,7 +26,9 @@ import org.makumba.parade.init.InitServlet;
 
 /**
  * A rule-based percolator.<br>
- * 
+ * <br>
+ * WARNING: this class is thread-safe, changing the order of methods may result in deadlocks.<br>
+ * <br>
  * This percolator uses 5 tables in order to perform percolation and provide ALE:
  * <ul>
  * <li>initial percolation rule table: set of rules to match an event and attribute an initial strength to it</li>
@@ -45,9 +50,9 @@ public class RuleBasedPercolator implements Percolator {
 
     static final int MIN_ENERGY_LEVEL = 21;
 
-    static final int GARBAGE_COLLECTION_INTERVAL = 1000 * 10 *  60; // 10 mins
+    static final int GARBAGE_COLLECTION_INTERVAL = 1000 * 10 * 60; // 10 mins
 
-    static final int CURVE_UPDATE_INTERVAL = 1000 * 15 *  60; // 15 mins
+    static final int CURVE_UPDATE_INTERVAL = 1000 * 15 * 60; // 15 mins
 
     static final int MAX_PERCOLATION_TIME = 5000000;
 
@@ -62,18 +67,61 @@ public class RuleBasedPercolator implements Percolator {
     private Timer curveTimer;
 
     public static boolean rulesChanged = false;
-    
-    static ThreadLocal<Boolean> percolationLock = new ThreadLocal<Boolean>() {
-        @Override
-        protected Boolean initialValue() {
-            return false;
+
+    public static Object mutex = new Object();
+
+    private boolean startup = true;
+
+    class PercolationData {
+
+        private AetherEvent aetherEvent;
+
+        public PercolationData(AetherEvent aetherEvent, boolean virtualPercolation) {
+            super();
+            this.aetherEvent = aetherEvent;
+            this.virtualPercolation = virtualPercolation;
         }
-    };
+
+        private boolean virtualPercolation;
+
+        public void setVirtualPercolation(boolean virtualPercolation) {
+            this.virtualPercolation = virtualPercolation;
+        }
+
+        public boolean isVirtualPercolation() {
+            return virtualPercolation;
+        }
+
+        public void setAetherEvent(AetherEvent aetherEvent) {
+            this.aetherEvent = aetherEvent;
+        }
+
+        public AetherEvent getAetherEvent() {
+            return aetherEvent;
+        }
+    }
+
+    private Vector<PercolationData> percolationQueue = new Vector<PercolationData>();
+
+    private void addToPercolationQueue(AetherEvent e, boolean virtualPercolation) throws PercolationException {
+
+        synchronized (mutex) {
+            
+            percolationQueue.add(new PercolationData(e, virtualPercolation));
+            Iterator<PercolationData> i = ((AbstractList<PercolationData>) percolationQueue.clone()).iterator();
+            while (i.hasNext()) {
+                PercolationData d = i.next();
+                strategy.percolate(d.getAetherEvent(), d.isVirtualPercolation(), sessionFactory);
+                percolationQueue.remove(d);
+
+            }
+            mutex.notifyAll();
+
+        }
+    }
 
     public void percolate(AetherEvent e, boolean virtualPercolation) throws PercolationException {
-        percolationLock.set(true);
-        strategy.percolate(e, virtualPercolation, sessionFactory);
-        percolationLock.set(false);
+        addToPercolationQueue(e, virtualPercolation);
     }
 
     private void checkInitialPercolationRules() {
@@ -160,15 +208,15 @@ public class RuleBasedPercolator implements Percolator {
 
     public void configure(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        this.strategy = new GroupedPercolationStrategy(sessionFactory); //new SimplePercolationStrategy();
+        this.strategy = new GroupedPercolationStrategy(sessionFactory); // new SimplePercolationStrategy();
 
         logger.info("Starting initialisation of Rule-based percolator");
 
         checkInitialPercolationRules();
         checkPercolationRules();
 
-        configureProgressionCurveTimer();
         configureGarbageCollectionTimer();
+        configureProgressionCurveTimer();
 
         logger.info("Finished initialisation of Rule-based percolator");
     }
@@ -265,7 +313,11 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate {@link Session}
      */
     private void collectGarbage(Session s) {
-        
+
+        Query q0 = s.createQuery("delete from PercolationStep ps where ps.virtualPercolation = true");
+
+        int d0 = q0.executeUpdate();
+
         Query q1 = s
                 .createQuery("delete from PercolationStep ps where (ps.nimbus < 20 and ps.focus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 20 or ipr.percolationMode = 30))");
         // q1.setInteger("minValue", MIN_ENERGY_LEVEL);
@@ -276,15 +328,21 @@ public class RuleBasedPercolator implements Percolator {
         // q2.setInteger("minValue", MIN_ENERGY_LEVEL);
         int d2 = q2.executeUpdate();
 
-        logger.debug("Garbage-collected " + d1 + d2 + " percolation steps");
-        
-        Query q3 = s.createQuery("delete from MatchedAetherEvent mae where not exists (from PercolationStep ps where mae.id = ps.matchedAetherEvent.id)");
-        
+        logger.debug("Garbage-collected " + d0 + d1 + d2 + " percolation steps");
+
+        Query q3 = s
+                .createQuery("delete from MatchedAetherEvent mae where not exists (from PercolationStep ps where mae.id = ps.matchedAetherEvent.id)");
+
         int d3 = q3.executeUpdate();
-        
+
         logger.debug("Garbage-collected " + d3 + " MatchedAetherEvents");
-        
-        
+
+        Query q4 = s.createQuery("delete from ALE ale where focus < 20 and nimbus < 20");
+
+        int d4 = q4.executeUpdate();
+
+        logger.debug("Garbage-collected " + d4 + " ALE values");
+
     }
 
     /**
@@ -294,17 +352,17 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate session
      */
     private void updateALEValues(Session s) {
-        
-        String q = "update ALE a set a.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.matchedAetherEvent.actor = a.user), " +
-        		"a.nimbus = (select sum(ps.nimbus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.userGroup like '%*%' and ps.userGroup not like concat(concat(concat('%','-'), a.user), '%'))";
-        int updated = s.createQuery(q).executeUpdate();
-        
-        // if no steps are found in the previous inner select, the sum is null so we have to fix this here
-        s.createQuery("update ALE set focus = 0 where focus is null").executeUpdate();
-        s.createQuery("update ALE set nimbus = 0 where nimbus is null").executeUpdate();
-        
-        logger.debug("Updated " + updated + " ALE values");
-        
+
+            String q = "update ALE a set a.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.matchedAetherEvent.actor = a.user), "
+                    + "a.nimbus = (select sum(ps.nimbus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.userGroup like '%*%' and ps.userGroup not like concat(concat(concat('%','-'), a.user), '%'))";
+            int updated = s.createQuery(q).executeUpdate();
+
+            // if no steps are found in the previous inner select, the sum is null so we have to fix this here
+            s.createQuery("update ALE set focus = 0 where focus is null").executeUpdate();
+            s.createQuery("update ALE set nimbus = 0 where nimbus is null").executeUpdate();
+
+            logger.debug("Updated " + updated + " ALE values");
+
     }
 
     /**
@@ -314,10 +372,12 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate {@link Session}
      */
     public void executeEnergyProgressionUpdate(Session s) {
+
         List<InitialPercolationRule> iprs = s.createQuery("from InitialPercolationRule ipr").list();
         for (InitialPercolationRule initialPercolationRule : iprs) {
             executeEnergyProgressionForProgressionCurve(initialPercolationRule, s);
         }
+
     }
 
     /**
@@ -329,7 +389,6 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate {@link Session}
      */
     private void executeEnergyProgressionForProgressionCurve(InitialPercolationRule ipr, Session s) {
-        
 
         int updatedFocusPercolationSteps = 0;
         int updatedNimbusPercolationSteps = 0;
@@ -350,7 +409,7 @@ public class RuleBasedPercolator implements Percolator {
 
         logger.debug("Updated " + updatedFocusPercolationSteps + " percolation steps for for focus and "
                 + updatedNimbusPercolationSteps + " for nimbus");
-                
+
     }
 
     /**
@@ -381,20 +440,40 @@ public class RuleBasedPercolator implements Percolator {
         @Override
         public void run() {
 
-            if (!percolationLock.get()) {
+            synchronized (mutex) {
 
-                Session s = null;
-                try {
-                    s = InitServlet.getSessionFactory().openSession();
-                    collectGarbage(s);
-                    updateALEValues(s);
-                } finally {
-                    if (s != null) {
-                        s.close();
+                if (startup) {
+                    startup = false;
+                } else {
+
+                    try {
+                        System.out.println("wait collectGC");
+                        mutex.wait();
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
+
+                runGC();
+
+                mutex.notifyAll();
             }
         }
+    }
+
+    private void runGC() {
+        Session s = null;
+        try {
+            s = InitServlet.getSessionFactory().openSession();
+            collectGarbage(s);
+            updateALEValues(s);
+        } finally {
+            if (s != null) {
+                s.close();
+            }
+        }
+
     }
 
     private class CurveTask extends TimerTask {
@@ -402,7 +481,15 @@ public class RuleBasedPercolator implements Percolator {
         @Override
         public void run() {
 
-            if (!percolationLock.get()) {
+            synchronized (mutex) {
+
+                try {
+                    System.out.println("wait energycurve");
+                    mutex.wait();
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 Session s = null;
                 try {
@@ -415,6 +502,8 @@ public class RuleBasedPercolator implements Percolator {
                         s.close();
                     }
                 }
+                mutex.notifyAll();
+
             }
         }
     }
@@ -422,19 +511,21 @@ public class RuleBasedPercolator implements Percolator {
     public void cleanVirtualPercolations() {
         Session s = null;
         try {
-           s = sessionFactory.openSession();
-           Transaction tx = s.beginTransaction();
-           s.createQuery("delete from PercolationStep ps where ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae where ps.matchedAetherEvent.id = mae.id and mae.virtualPercolation = true)").executeUpdate();
-           s.createQuery("delete from MatchedAetherEvent mae where mae.virtualPercolation = true").executeUpdate();
-           s.createQuery("update ALE set virtualFocus = 0, virtualNimbus = 0").executeUpdate();
-           tx.commit();
-            
+            s = sessionFactory.openSession();
+            Transaction tx = s.beginTransaction();
+            s
+                    .createQuery(
+                            "delete from PercolationStep ps where ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae where ps.matchedAetherEvent.id = mae.id and mae.virtualPercolation = true)")
+                    .executeUpdate();
+            s.createQuery("delete from MatchedAetherEvent mae where mae.virtualPercolation = true").executeUpdate();
+            s.createQuery("update ALE set virtualFocus = 0, virtualNimbus = 0").executeUpdate();
+            tx.commit();
+
         } finally {
-            if(s!= null) s.close();
+            if (s != null)
+                s.close();
         }
-        
-        
-        
+
     }
 
 }

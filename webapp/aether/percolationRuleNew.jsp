@@ -26,6 +26,10 @@
       <td><mak:input field="consumption" styleId="consumption" accessKey="n" /></td>
     </tr>
     <tr>
+      <th><label for="propagationDepthLimit">propagation depth limit (-1 if none)</label></th>
+      <td><mak:input field="propagationDepthLimit" /></td>
+    </tr>
+    <tr>
       <th><label for="description"><span class="accessKey">d</span>escription</label></th>
       <td><mak:input field="description" styleId="description" accessKey="d" /></td>
     </tr>

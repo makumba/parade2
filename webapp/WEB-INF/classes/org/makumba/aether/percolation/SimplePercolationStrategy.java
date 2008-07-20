@@ -181,7 +181,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
                 logger.debug("\t == Recording percolation step with level " + energy);
 
                 PercolationStep ps = buildPercolationStep(mae, mae.getObjectURL(), mae.getObjectURL(), pr, energy,
-                        isFocusPercolation, previousStep, threadLevel);
+                        isFocusPercolation, previousStep, threadLevel, false);
                 s.save(ps);
                 
                 addOrUpdateFocus(mae.getObjectURL(), mae.getActor(), energy, false, s);
@@ -219,7 +219,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
                         // - record a new percolation step
                         logger.debug("\t == Recording percolation step with level " + relationEnergy);
                         PercolationStep ps = buildPercolationStep(mae, (String) relation[2], (String) relation[0], pr,
-                                relationEnergy, isFocusPercolation, previousStep, threadLevel);
+                                relationEnergy, isFocusPercolation, previousStep, threadLevel, false);
                         s.save(ps);
 
                         // now we can set the threadPath

@@ -13,7 +13,7 @@
 %>
 
 <mak:list from="MatchedAetherEvent mae, PercolationStep ps"
-  where="ps.matchedAetherEvent = mae AND ps.objectURL in (select ale.objectURL from ALE ale where ale.user = :user_login and ale.nimbus > 20)"
+  where="ps.matchedAetherEvent = mae and ps.objectURL in (select ale.objectURL from ALE ale where ale.user = :user_login and ale.nimbus > 20)"
   groupBy="mae.id" id="0">
   <mak:value expr="sum(ps.nimbus)" printVar="maxNimb" />
   <%
@@ -34,7 +34,7 @@
 %>
 
 <mak:list from="MatchedAetherEvent mae, PercolationStep ps "
-  where="ps.matchedAetherEvent = mae AND ps.objectURL in (select ale.objectURL from ALE ale where ale.user = :user_login and ale.nimbus > 20)"
+  where="ps.matchedAetherEvent = mae and ps.objectURL in (select ale.objectURL from ALE ale where ale.user = :user_login and ale.nimbus > 20)"
   groupBy="mae.id" orderBy="sum(ps.nimbus) desc">
   <mak:value expr="mae.eventDate" var="eventDate" />
   <mak:value expr="sum(ps.nimbus)" var="sumNimbus" />

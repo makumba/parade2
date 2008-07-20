@@ -123,16 +123,17 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
      *            <code>true</code> if this is focus percolation, <code>false</code> if it's nimbus percolation
      * @param percolationLevel
      *            TODO
+     * @param virtualPercolation TODO
      * @param percolationPath
      *            TODO
      * @return a {@link PercolationStep} corresponding to this part of the percolation
      */
     protected static PercolationStep buildPercolationStep(MatchedAetherEvent mae, String previousURL, String objectURL,
-            PercolationRule pr, int level, boolean isFocusPercolation, PercolationStep previous, int percolationLevel) {
+            PercolationRule pr, int level, boolean isFocusPercolation, PercolationStep previous, int percolationLevel, boolean virtualPercolation) {
 
         return new PercolationStep(previousURL, objectURL, isFocusPercolation ? mae.getActor() : mae.getUserGroup(),
                 (isFocusPercolation ? level : 0), (!isFocusPercolation ? level : 0), pr, mae, previous,
-                percolationLevel);
+                percolationLevel, virtualPercolation);
 
     }
 

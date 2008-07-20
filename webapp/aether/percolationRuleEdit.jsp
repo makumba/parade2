@@ -27,11 +27,15 @@
         <td><mak:input field="consumption" styleId="consumption" accessKey="m" /></td>
       </tr>
       <tr>
+        <th><label for="propagationDepthLimit">propagation depth limit (-1 if none)</label></th>
+        <td><mak:input field="propagationDepthLimit" /></td>
+      </tr>
+      <tr>
         <th><label for="description">Descrip<span class="accessKey">t</span>ion</label></th>
         <td><mak:input field="description" styleId="description" accessKey="t" /></td>
       </tr>
       <tr>
-        <th><label for="description">next relations</label></th>
+        <th><label for="relations">next relations</label></th>
         <td><mak:input field="relationQueries"><mak:list from="RelationQuery rq" orderBy="rq.description"><mak:option value="rq.id"> <mak:value expr="rq.description"/></mak:option></mak:list></mak:input></td>
       </tr>
       <tr>

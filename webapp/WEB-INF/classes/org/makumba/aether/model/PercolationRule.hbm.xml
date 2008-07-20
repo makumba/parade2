@@ -16,6 +16,7 @@
 		<property name="predicate" />
 		<property name="object" />
 		<property name="consumption" />
+        <property name="propagationDepthLimit" />
 		<property name="description" />
 		<property name="active" />
 		

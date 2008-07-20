@@ -8,9 +8,13 @@
 
 <mak:object from="InitialPercolationRule initialPercolationRule" where="initialPercolationRule.id=:initialPercolationRule">
   <fieldset style="text-align:right;">
-  <legend>InitialPercolationRule <i><mak:value expr="initialPercolationRule.objectType" /></i></legend
+  <legend>InitialPercolationRule <i><mak:value expr="initialPercolationRule.action" /> <mak:value expr="initialPercolationRule.objectType" /></i></legend>
   <table>
   <%-- Makumba Generator - START OF NORMAL FIELDS --%>
+    <tr>
+      <th><label for="description">description</label></th>
+      <td><mak:value expr="initialPercolationRule.description"/></td>
+    </tr>
     <tr>
       <th>objectType</th>
       <td><mak:value expr="initialPercolationRule.objectType"/></td>
@@ -40,8 +44,8 @@
       <td><mak:value expr="initialPercolationRule.active"/></td>
     </tr>
     <tr>
-      <th>relationQueries</th>
-      <td><mak:list from="IN(initialPercolationRule.relationQueries) rq"><mak:value expr="rq.query"/></mak:list></td>
+      <th><a href="/aether/relationQuery.jsp">relationQueries for next relations</a></th>
+      <td><mak:list from="IN(initialPercolationRule.relationQueries) rq"><a href="/aether/relationQueryEdit.jsp?relationQuery=<mak:value expr="rq.id"/>"><mak:value expr="rq.description"/></a></mak:list></td>
     </tr>
     
 <mak:value expr="initialPercolationRule.focusProgressionCurve" printVar="focusCurve"/>

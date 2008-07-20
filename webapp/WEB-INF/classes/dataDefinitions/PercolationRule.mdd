@@ -1,7 +1,8 @@
-subject=char[255]
-predicate=char[255]
-object=char[255]
-consumption=int;
-description=text;
-relationQueries = set RelationQuery
-active=boolean
+subject=char[255] ;subject of the relation
+predicate=char[255] ;predicate / type of the relation
+object=char[255] ; object of the relation
+consumption=int; how much energy is consumed on traversal
+propagationDepthLimit=int ;how many levels of relations can be traversed
+description=text; humanly readable description of this propagation rule
+relationQueries = set RelationQuery ;the queries used to fetch the next relations
+active=boolean ;whether this rule is active or not

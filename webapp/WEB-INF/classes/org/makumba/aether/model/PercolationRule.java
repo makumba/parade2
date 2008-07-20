@@ -19,6 +19,8 @@ public class PercolationRule implements AetherRule {
     private String object;
 
     private int consumption;
+    
+    private int propagationDepthLimit;
 
     private String description;
 
@@ -96,6 +98,14 @@ public class PercolationRule implements AetherRule {
     
     public String toString() {
         return this.subject +" --("+this.predicate+")--> "+object+" (consumes "+consumption+") - "+description;
+    }
+
+    public void setPropagationDepthLimit(int propagationDepthLimit) {
+        this.propagationDepthLimit = propagationDepthLimit;
+    }
+
+    public int getPropagationDepthLimit() {
+        return propagationDepthLimit;
     }
 
 }

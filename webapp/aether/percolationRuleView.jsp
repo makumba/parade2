@@ -4,7 +4,7 @@
 <%-- Makumba Generator - START OF  *** OBJECT ***  PAGE FOR OBJECT PercolationRule --%>
 <mak:object from="PercolationRule percolationRule" where="percolationRule.id=:percolationRule">
   <fieldset style="text-align:right;">
-  <legend>PercolationRule <i><mak:value expr="percolationRule.subject" /></i></legend
+  <legend>PercolationRule <i><mak:value expr="percolationRule.subject" /></i></legend>
   <table>
   <%-- Makumba Generator - START OF NORMAL FIELDS --%>
     <tr>
@@ -24,6 +24,10 @@
       <td><mak:value expr="percolationRule.consumption"/></td>
     </tr>
     <tr>
+      <th>propagation depth limit</th>
+      <td><mak:value expr="percolationRule.propagationDepthLimit"/></td>
+    </tr>
+    <tr>
       <th>description</th>
       <td><mak:value expr="percolationRule.description"/></td>
     </tr>
@@ -32,7 +36,7 @@
       <td><mak:value expr="percolationRule.active"/></td>
     </tr>
     <tr>
-      <th>next relations</th>
+      <th><a href="/aether/relationQuery.jsp">relationQueries for next relations</a></th>
       <td><ul><mak:list from="IN(percolationRule.relationQueries) rq"><li><a href="relationQueryEdit.jsp?relationQuery=<mak:value expr="rq.id"/>"><mak:value expr="rq.description"/></a></li></mak:list></ul></td>
     </tr>
   </table>

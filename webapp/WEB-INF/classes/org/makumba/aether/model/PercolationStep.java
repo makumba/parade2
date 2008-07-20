@@ -41,6 +41,8 @@ public class PercolationStep {
     private String percolationPath;
     
     private int percolationLevel;
+    
+    private boolean virtualPercolation;
 
     public PercolationStep() {
 
@@ -175,7 +177,7 @@ public class PercolationStep {
     }
 
     public PercolationStep(String previousURL, String objectURL, String userGroup, int focus, int nimbus, PercolationRule percolationRule,
-            MatchedAetherEvent matchedAetherEvent, PercolationStep previous, int percolationLevel) {
+            MatchedAetherEvent matchedAetherEvent, PercolationStep previous, int percolationLevel, boolean virtualPercolation) {
         super();
         this.previousURL = previousURL;
         this.objectURL = objectURL;
@@ -190,5 +192,14 @@ public class PercolationStep {
         this.percolationLevel = percolationLevel;
         this.created = new Date();
         this.lastModified = new Date();
+        this.setVirtualPercolation(virtualPercolation);
+    }
+
+    public void setVirtualPercolation(boolean virtualPercolation) {
+        this.virtualPercolation = virtualPercolation;
+    }
+
+    public boolean getVirtualPercolation() {
+        return virtualPercolation;
     }
 }

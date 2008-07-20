@@ -23,8 +23,8 @@
 		<property name="nimbus" />
 		<property name="percolationPath" />
 		<property name="percolationLevel" />
-		
-		
+        <property name="virtualPercolation" />
+ 		
 		<many-to-one name="previous" class="PercolationStep" />
 		<many-to-one name="root" class="PercolationStep" />
 		<many-to-one name="matchedAetherEvent" class="MatchedAetherEvent" />

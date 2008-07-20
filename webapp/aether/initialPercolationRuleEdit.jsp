@@ -4,11 +4,15 @@
 <%-- Makumba Generator - START OF  *** EDIT ***  PAGE FOR OBJECT InitialPercolationRule --%>
 <mak:object from="InitialPercolationRule initialPercolationRule" where="initialPercolationRule.id=:initialPercolationRule">
   <fieldset style="text-align:right;">
-  <legend>Edit InitialPercolationRule <i><mak:value expr="initialPercolationRule.objectType" /></i></legend>
+  <legend>Edit InitialPercolationRule <i><mak:value expr="initialPercolationRule.action" /> <mak:value expr="initialPercolationRule.objectType" /></i></legend>
   <mak:editForm object="initialPercolationRule" action="initialPercolationRuleView.jsp" method="post">
     <table>
     <%-- Makumba Generator - START OF NORMAL FIELDS --%>
       <tr>
+      <th><label for="description">description</label></th>
+      <td><mak:input field="description"/></td>
+    </tr>
+    <tr>
         <th><label for="objectType"><span class="accessKey">o</span>bjectType</label></th>
         <td><mak:input field="objectType" styleId="objectType" accessKey="o" /></td>
       </tr>

@@ -9,6 +9,10 @@
   <table>
   <%-- Makumba Generator - START OF NORMAL FIELDS --%>
     <tr>
+      <th><label for="description">description</label></th>
+      <td><mak:input field="description"/></td>
+    </tr>
+    <tr>
       <th><label for="objectType"><span class="accessKey">o</span>bjectType</label></th>
       <td><mak:input field="objectType" styleId="objectType" accessKey="o" /></td>
     </tr>
@@ -33,11 +37,11 @@
       <td><mak:input field="interactionType" styleId="interactionType" accessKey="i" /></td>
     </tr>
     <tr>
-      <th><label for="focusProgressionCurve"></label></th>
+      <th><label for="focusProgressionCurve">focusProgressionCurve</label></th>
       <td><mak:input field="focusProgressionCurve" /></td>
     </tr>
     <tr>
-      <th><label for="nimbusProgressionCurve"></label></th>
+      <th><label for="nimbusProgressionCurve">nimbusProgressionCurve</label></th>
       <td><mak:input field="nimbusProgressionCurve"/></td>
     </tr>
     

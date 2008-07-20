@@ -1,5 +1,6 @@
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
+<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 
 <%@page import="org.makumba.aether.Aether"%>
 <%@page import="org.makumba.parade.init.InitServlet"%>
@@ -11,16 +12,22 @@
 <%@page import="org.makumba.aether.model.ALE"%>
 <%@page import="java.util.Hashtable"%>
 <%@page import="org.hibernate.Query"%>
-<%@page import="java.util.Iterator"%><script src="${pageContext.request.contextPath}/scripts/prototype.js"></script>
+<%@page import="java.util.Iterator"%>
 
-<html><head><title>Notified people</title></head>
+
+<html><head><title>Notified people</title>
+
+<script src="${pageContext.request.contextPath}/scripts/prototype.js"></script>
+
+</head>
 
 <body>
 
 <h3>People notified for "${param.user} --(${param.action})--> ${param.objectURL}"</h3>
 
+<cache:cache key="${param.objectURL} ${param.action}" time="120" scope="application">
 <% 
-AetherEvent ae = new AetherEvent(request.getParameter("objectURL"), request.getParameter("objectType"), request.getParameter("user"), request.getParameter("action"), new Date(), 1.00);
+AetherEvent ae = new AetherEvent(request.getParameter("objectURL"), request.getParameter("objectType"), request.getParameter("user"), request.getParameter("action"), new Date(), 0.5);
 InitServlet.getAether().registerEvent(ae, true);
 
 Session s = null;
@@ -55,7 +62,7 @@ try {
  if(s!= null) s.close(); 
 }
 %>
-
+</cache:cache>
 </body>
 </html>
 

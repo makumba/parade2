@@ -69,7 +69,8 @@ public enum ObjectTypes {
     public static String pathFromFileURL(String fileURL) {
         String path = fileURL.substring("file://".length());
         path = path.substring(path.indexOf("/") + 1);
-        path = path.substring(0, path.lastIndexOf("/"));
+        if(path.indexOf("/") > -1)
+            path = path.substring(0, path.lastIndexOf("/"));
         return path;
     }
 
