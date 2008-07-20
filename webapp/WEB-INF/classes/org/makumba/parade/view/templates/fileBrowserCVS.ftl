@@ -53,7 +53,7 @@
 <a href='${file.cvsWebLink}' title='CVS log'>(dir)</a>
 <#else>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
-<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit (place new file version on repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.fileURIEncoded}&display=command&view=commit' title='CVS commit (place new file version on repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 </#if>
 <#break>

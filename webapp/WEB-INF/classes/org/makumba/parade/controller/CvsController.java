@@ -3,15 +3,25 @@ package org.makumba.parade.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.Vector;
 
+import org.apache.commons.collections.map.MultiValueMap;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.listeners.ParadeJNotifyListener;
+import org.makumba.parade.model.File;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.Execute;
 import org.makumba.parade.tools.HtmlUtils;
+import org.makumba.providers.QueryAnalysisProvider;
+import org.makumba.providers.QueryProvider;
 
 public class CvsController {
+    
+    private static QueryAnalysisProvider qap = QueryProvider.getQueryAnalzyer("hql");
 
     public static Object[] onCheck(String context, String[] params) {
         String absolutePath = params[0];
@@ -101,32 +111,59 @@ public class CvsController {
         return res;
     }
 
-    public static Object[] onCommit(String context, String[] params) {
-        String absolutePath = params[0];
-        String absoluteFilePath = params[1];
-        String message = params[2];
-        java.io.File f = new java.io.File(absoluteFilePath);
-        java.io.File p = new java.io.File(absolutePath);
-
-        Vector<String> cmd = new Vector<String>();
-        cmd.add("cvs");
-        cmd.add("commit");
-        cmd.add("-m");
-        cmd.add("\"" + message + "\"");
-        cmd.add(f.getName());
-
+    public static Object[] onCommit(String context, String[] files, String message) {
+        
+        String resultString = "";
+        
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
+        
+        MultiValueMap modelFiles = new MultiValueMap();
+        
+        Session s = null;
+        try {
+            s = InitServlet.getSessionFactory().openSession();
+            Transaction tx = s.beginTransaction();
+                        
+            // retrieve the File objects for each file based on its URL
+            for (int i = 0; i < files.length; i++) {
+                String query = "select f.row.rowpath as rowpath, f as file from File f where f.fileURL() = :fileURL";
+                Object res = s.createQuery(qap.inlineFunctions(query)).setString("fileURL", files[i]).uniqueResult();
+                Object[] data = (Object[]) res;
+                modelFiles.put((String)data[0], (File)data[1]);
+            }
+            
+            for(Object rowPath : modelFiles.keySet()) {
+                Collection<File> filesInRow = modelFiles.getCollection(rowPath);
+                
+                Vector<String> cmd = new Vector<String>();
+                cmd.add("cvs");
+                cmd.add("commit");
+                cmd.add("-m");
+                cmd.add("\"" + message + "\"");
+                
+                for(File f : filesInRow) {
+                    cmd.add(f.getPath().substring(f.getRow().getRowpath().length() + 1));
+                }
+                
+                Execute.exec(cmd, new java.io.File((String)rowPath), getPrintWriterCVS(out));
+                resultString +="\n" + result.toString();
 
-        Execute.exec(cmd, p, getPrintWriterCVS(out));
+                CVSManager.updateMultipleCvsCache(context, filesInRow);
 
-        CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
-
-        // in case of a cvs commit that leads to the deletion of a file of the repository
-        // we need to make sure that the file gets removed from the cache or it will appear as "zombie"
-
-        FileManager.checkShouldCache(context, absolutePath, absoluteFilePath);
-        Object[] res = { result.toString(), new Boolean(true) };
+                // in case of a cvs commit that leads to the deletion of a file of the repository
+                // we need to make sure that the file gets removed from the cache or it will appear as "zombie"
+                FileManager.checkShouldCache(context, filesInRow);
+                
+                tx.commit();
+                
+            }
+            
+        } finally {
+            if(s!=null) s.close();
+        }
+        
+        Object[] res = { resultString, new Boolean(true) };
 
         return res;
     }

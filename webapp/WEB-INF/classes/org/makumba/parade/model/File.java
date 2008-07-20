@@ -28,9 +28,9 @@ public class File {
     private Long date;
 
     private Long size;
-    
+
     private Integer currentLines;
-    
+
     private Integer previousLines;
 
     private Map<String, AbstractFileData> filedata = new HashMap<String, AbstractFileData>();
@@ -46,13 +46,13 @@ public class File {
     private Integer cvsStatus;
 
     private String cvsRevision;
-    
+
     private String cvsCheckedOutRevision;
 
     private Date cvsDate;
-    
+
     private boolean crawled = false;
-    
+
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
         FileManager fileMgr = new FileManager();
@@ -187,7 +187,7 @@ public class File {
     public void setCvsDate(Date cvsDate) {
         this.cvsDate = cvsDate;
     }
-    
+
     public boolean getCrawled() {
         return crawled;
     }
@@ -195,11 +195,12 @@ public class File {
     public void setCrawled(boolean crawled) {
         this.crawled = crawled;
     }
-    
+
     public String getFileURI() {
-        return "file://" + row.getRowname() + path.substring(row.getRowpath().length()).replace(java.io.File.separator, "/");
+        return "file://" + row.getRowname()
+                + path.substring((row.getRowpath() + row.getWebappPath()).length()).replace(java.io.File.separator, "/");
     }
-    
+
     public String getCvsPath() {
         return row.getApplication().getName() + path.substring(row.getRowpath().length());
     }
@@ -249,7 +250,7 @@ public class File {
         while (i.hasNext()) {
             File f = i.next();
             Hibernate.initialize(f.getFiledata());
-            if(f.getRow().getApplication() != null) {
+            if (f.getRow().getApplication() != null) {
                 Hibernate.initialize(f.getRow().getApplication().getCvsfiles());
             }
         }
@@ -304,10 +305,10 @@ public class File {
     public void setPreviousLines(Integer previousLines) {
         this.previousLines = previousLines;
     }
-    
-    public String toString() {
-        return this.path + "("+this.row.getRowname()+"), "+(onDisk?"on disk" : "virtual")+", cvs revision"+this.cvsRevision+" cvs status "+this.cvsStatus;
-    }
 
+    public String toString() {
+        return this.path + "(" + this.row.getRowname() + "), " + (onDisk ? "on disk" : "virtual") + ", cvs revision"
+                + this.cvsRevision + " cvs status " + this.cvsStatus;
+    }
 
 }

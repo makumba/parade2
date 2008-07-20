@@ -44,6 +44,9 @@ public class BrowserServlet extends HttpServlet {
         String context = req.getParameter("context");
         if (context == null)
             context = (String) req.getAttribute("context");
+        
+        // we cache the context in the session
+        ((HttpServletRequest) req).getSession().setAttribute("currentContext", context);
 
         String view = req.getParameter("view");
         if (view == null)
@@ -56,6 +59,10 @@ public class BrowserServlet extends HttpServlet {
         String file = req.getParameter("file");
         if (file == null)
             file = (String) req.getAttribute("file");
+        
+        String refreshBrowser = req.getParameter("refreshBrowser");
+        if (refreshBrowser == null)
+            refreshBrowser = (String) req.getAttribute("refreshBrowser");
 
         String path = null;
 
@@ -129,7 +136,7 @@ public class BrowserServlet extends HttpServlet {
                 }
                 if (display.equals("command")) {
                     header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=command");
-                    page = cmdV.getCommandView(view, r, path, file, opResult);
+                    page = cmdV.getCommandView(view, r, path, file, opResult, refreshBrowser);
                     
                 }
         

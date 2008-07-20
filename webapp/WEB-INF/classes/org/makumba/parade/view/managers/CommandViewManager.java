@@ -16,7 +16,7 @@ import freemarker.template.TemplateException;
 
 public class CommandViewManager implements CommandView {
 
-    public String getCommandView(String view, Row r, String path, String file, String opResult) {
+    public String getCommandView(String view, Row r, String path, String file, String opResult, String refreshBrowser) {
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
         String template = "";
@@ -47,7 +47,7 @@ public class CommandViewManager implements CommandView {
         else if (view != null && view.equals("commandOutput"))
             template = "commandOutput.ftl";
         else if (view != null && view.equals("commit"))
-            template = "cvsCommit.ftl";
+            return "jsp:/cvsCommit.jsp";
         else
             return "No such view defined for Command";
 
@@ -65,6 +65,7 @@ public class CommandViewManager implements CommandView {
         root.put("path", path);
         root.put("pathURI", pathEncoded);
         root.put("opResult", opResult);
+        root.put("refreshBrowser", refreshBrowser == null);
 
         if (file != null) {
             java.io.File f = new java.io.File(file);

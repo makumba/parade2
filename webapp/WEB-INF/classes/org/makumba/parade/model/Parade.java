@@ -172,7 +172,6 @@ public class Parade {
 
             return updateRow(rowDefinition, rowname);
         } else {
-
             return createRow(rowDefinition);
         }
     }

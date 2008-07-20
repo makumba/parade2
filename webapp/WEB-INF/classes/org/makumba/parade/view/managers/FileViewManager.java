@@ -38,17 +38,20 @@ public class FileViewManager implements FileView, TreeView {
 
         String pathEncoded = "";
         String nameEncoded = "";
+        String fileURIEncoded = "";
         try {
             // we encode the path twice, because of the javascript that uses it
             pathEncoded = URLEncoder.encode(URLEncoder.encode(f.getPath().substring(r.getRowpath().length() + 1),
                     "UTF-8"), "UTF-8");
             nameEncoded = URLEncoder.encode(f.getName(), "UTF-8");
+            fileURIEncoded = URLEncoder.encode(f.getFileURI(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         fileView.put("path", f.getPath().substring(r.getRowpath().length() + 1));
+        fileView.put("fileURIEncoded", fileURIEncoded);
         fileView.put("pathEncoded", pathEncoded);
         fileView.put("nameEncoded", nameEncoded);
         fileView.put("name", f.getName());

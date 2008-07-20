@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,10 +39,10 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     static Logger logger = Logger.getLogger(FileManager.class.getName());
 
     private FileFilter filter = new SimpleFileFilter();
-    
+
     public void softRefresh(Row row) {
         // TODO Auto-generated method stub
-        
+
     }
 
     /*
@@ -111,8 +112,9 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
                         if (dirContent.contains(child.getPath())) {
                             continue;
-                        // if the file is not on disk but it was scheduled for CVS deletion, we keep it
-                        } else if (!dirContent.contains(child.getPath()) && child.getCvsStatus() != null && child.getCvsStatus() == CVSManager.DELETED) {
+                            // if the file is not on disk but it was scheduled for CVS deletion, we keep it
+                        } else if (!dirContent.contains(child.getPath()) && child.getCvsStatus() != null
+                                && child.getCvsStatus() == CVSManager.DELETED) {
                             child.setOnDisk(false);
                             continue;
                         } else {
@@ -130,9 +132,13 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
     /**
      * Creates / updates file cache entries
-     * @param row the row this file belongs to
-     * @param file the java.io.File to extract metadata from
-     * @param local whether this is a local or a recursive cache update
+     * 
+     * @param row
+     *            the row this file belongs to
+     * @param file
+     *            the java.io.File to extract metadata from
+     * @param local
+     *            whether this is a local or a recursive cache update
      */
     public void cacheFile(Row row, java.io.File file, boolean local) {
         if (!file.exists() || file == null) {
@@ -158,11 +164,11 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             addFile(row, fileData);
         }
     }
-    
+
     private void makeParentDirs(Row row, File f) {
         File parent = row.getFiles().get(f.getParentPath());
-        if(parent == null) {
-            logger.warn("Creating new parent directory cache "+f.getParentPath() + " for file "+f.getPath());
+        if (parent == null) {
+            logger.warn("Creating new parent directory cache " + f.getParentPath() + " for file " + f.getPath());
             parent = setFileData(row, new java.io.File(f.getParentPath()), true);
             addFile(row, parent);
             makeParentDirs(row, parent);
@@ -349,26 +355,15 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
     // checks if a file should still be cached or if it's a zombie
     // FIXME should probably be in a more general CacheManager or so
-    public static void checkShouldCache(String context, String absolutePath, String absoluteFilePath) {
-        Session s = InitServlet.getSessionFactory().openSession();
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
-        Row r = Row.getRow(p, context);
-        Transaction tx = s.beginTransaction();
+    public static void checkShouldCache(String context, Collection<File> files) {
 
-        java.io.File f = new java.io.File(absoluteFilePath);
-        if (!f.exists()) {
-            File cachedFile = r.getFiles().get(absoluteFilePath);
-            if (cachedFile != null) {
-                if (cachedFile.getCvsStatus() != null && cachedFile.getCvsStatus().equals(CVSManager.DELETED)) {
-                    r.getFiles().remove(absoluteFilePath);
+        for (File file : files) {
+            java.io.File f = new java.io.File(file.getPath());
+            if (!f.exists()) {
+                if (file.getCvsStatus() != null && file.getCvsStatus().equals(CVSManager.DELETED)) {
+                    file.getRow().getFiles().remove(file.getPath());
                 }
             }
         }
-
-        tx.commit();
-        s.close();
-
     }
-
-
 }

@@ -3,8 +3,6 @@ package org.makumba.parade.aether;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.makumba.parade.model.Row;
-
 public enum ObjectTypes {
 
     FILE("file://"), DIR("dir://"), ROW("row://"), USER("user://"), CVSFILE("cvs://"), PARADE("parade://");

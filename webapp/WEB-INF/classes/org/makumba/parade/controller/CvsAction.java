@@ -80,16 +80,19 @@ public class CvsAction extends DispatchAction {
     public ActionForward commit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
+        String[] files = request.getParameterValues("file");
         String context = request.getParameter("context");
-        String[] params = request.getParameterValues("params");
-        String path = params[0];
-        String file = params[1];
+        if(files.length > 1) {
+            context = (String)request.getSession().getAttribute("currentContext");
+        }
+        String path = request.getParameter("path");
+        String message = request.getParameter("message");
+        
 
         // we reconstruct the absolute paths (the ones passed as params are relative)
-        params[0] = Parade.constructAbsolutePath(context, path);
-        params[1] = Parade.constructAbsolutePath(context, file);
+        path = Parade.constructAbsolutePath(context, path);
 
-        Object[] result = CvsController.onCommit(context, params);
+        Object[] result = CvsController.onCommit(context, files, message);
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
