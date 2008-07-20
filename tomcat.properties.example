@@ -1,8 +1,13 @@
 # Properties for Tomcat Server
+# You only need to configure the location of tomcat, the rest should work automatically
+# (it is configured in parade's "tomcat/conf" directory
 tomcat.home=../tomcat
+tomcat.Xms=512M
+tomcat.Xmx=2048M
+
+# Standard ParaDe configuration - usually, no need to change this unless you need another port
+# (in this case, also configure tomcat/server.xml)
 tomcat.server=localhost
 tomcat.manager.url=http://${tomcat.server}:5050/manager
 tomcat.manager.username=someuser
 tomcat.manager.password=somepass
-tomcat.Xms=512M
-tomcat.Xmx=2048M
