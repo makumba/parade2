@@ -88,6 +88,7 @@ CREATE TABLE `PercolationRule` (
   `consumption` int(11) default NULL,
   `description` varchar(255) default NULL,
   `active` bit(1) default NULL,
+  `propagationDepthLimit` int(11) default NULL,
   PRIMARY KEY  (`percolationrule`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
@@ -98,7 +99,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `PercolationRule` WRITE;
 /*!40000 ALTER TABLE `PercolationRule` DISABLE KEYS */;
-INSERT INTO `PercolationRule` VALUES (1,'FILE','versionOf','CVSFILE',5,'is a version of',''),(2,'FILE','dependsOn','FILE',20,'depends on the file that was acted upon',''),(3,'USER','save','FILE',0,'User watched file',''),(4,'CVSFILE','dependsOn','CVSFILE',20,'A cvs file depends on another cvs file','\0'),(5,'CVSFILE','checkedOutAs','FILE',5,'is checked out as','');
+INSERT INTO `PercolationRule` VALUES (1,'FILE','versionOf','CVSFILE',5,'is a version of','',-1),(2,'FILE','dependsOn','FILE',20,'depends on the file that was acted upon','',1),(3,'USER','save','FILE',0,'User watched file','',-1),(4,'CVSFILE','dependsOn','CVSFILE',20,'A cvs file depends on another cvs file','\0',-1),(5,'CVSFILE','checkedOutAs','FILE',5,'is checked out as','',-1);
 /*!40000 ALTER TABLE `PercolationRule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -162,4 +163,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2008-07-19 17:35:51
+-- Dump completed on 2008-07-20 15:19:52
