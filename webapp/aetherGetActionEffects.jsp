@@ -27,7 +27,7 @@
 
 <cache:cache key="${param.objectURL} ${param.action}" time="120" scope="application">
 <% 
-AetherEvent ae = new AetherEvent(request.getParameter("objectURL"), request.getParameter("objectType"), request.getParameter("user"), request.getParameter("action"), new Date(), 0.5);
+AetherEvent ae = new AetherEvent(request.getParameter("objectURL"), request.getParameter("objectType"), request.getParameter("user"), request.getParameter("action"), new Date(), 0.2);
 InitServlet.getAether().registerEvent(ae, true);
 
 Session s = null;

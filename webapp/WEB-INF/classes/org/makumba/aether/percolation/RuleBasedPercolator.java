@@ -50,9 +50,9 @@ public class RuleBasedPercolator implements Percolator {
 
     static final int MIN_ENERGY_LEVEL = 21;
 
-    static final int GARBAGE_COLLECTION_INTERVAL = 1000 * 10 * 60; // 10 mins
+    static final int GARBAGE_COLLECTION_INTERVAL = 1000 *  60; // 10 mins
 
-    static final int CURVE_UPDATE_INTERVAL = 1000 * 15 * 60; // 15 mins
+    static final int CURVE_UPDATE_INTERVAL = 1000 * 60; // 15 mins
 
     static final int MAX_PERCOLATION_TIME = 5000000;
 
@@ -69,8 +69,6 @@ public class RuleBasedPercolator implements Percolator {
     public static boolean rulesChanged = false;
 
     public static Object mutex = new Object();
-
-    private boolean startup = true;
 
     class PercolationData {
 
@@ -251,59 +249,7 @@ public class RuleBasedPercolator implements Percolator {
      * @return the sum of focus and nimbus, if there is focus/nimbus match
      */
     public int getALE(String objectURL, String user) {
-        return getALEfromPercolationSteps(objectURL, user);
-    }
-
-    /**
-     * Returns the ALE by computing the direct sum of focus and nimbus values
-     * 
-     * @param objectURL
-     *            the object for which the ALE should be computed
-     * @param user
-     *            the user for which the ALE should be computed
-     * @return the sum of focus and nimbus, if there is focus/nimbus match
-     */
-    private int getALEfromPercolationSteps(String objectURL, String user) {
-        Session s = null;
-        Transaction tx = null;
-        try {
-            s = sessionFactory.openSession();
-            tx = s.beginTransaction();
-
-            String query = "select sum(ps.focus), sum(ps.nimbus) from PercolationStep ps where ps.objectURL = :objectURL and ps.userGroup like '%*%' and ps.userGroup not like :minusUser";
-
-            Query q = s.createQuery(query).setString("objectURL", objectURL).setString("minusUser", "%-" + user + "%");
-
-            List<Object> list = q.list();
-
-            for (Object object : list) {
-
-                Object[] pair = (Object[]) object;
-
-                if (pair[0] == null || pair[1] == null) {
-                    return 0;
-                }
-
-                Long nimbus = (Long) pair[0];
-                Long focus = (Long) pair[1];
-
-                if (nimbus != 0 && focus != 0) {
-                    return new Long(nimbus + focus).intValue();
-                } else {
-                    return 0;
-                }
-
-            }
-
-            tx.commit();
-
-        } finally {
-            if (s != null) {
-                s.close();
-            }
-        }
-
-        return 0;
+        return -1;
     }
 
     /**
@@ -328,7 +274,7 @@ public class RuleBasedPercolator implements Percolator {
         // q2.setInteger("minValue", MIN_ENERGY_LEVEL);
         int d2 = q2.executeUpdate();
 
-        logger.debug("Garbage-collected " + d0 + d1 + d2 + " percolation steps");
+        logger.debug("Garbage-collected " + (d0 + d1 + d2) + " percolation steps");
 
         Query q3 = s
                 .createQuery("delete from MatchedAetherEvent mae where not exists (from PercolationStep ps where mae.id = ps.matchedAetherEvent.id)");
@@ -442,21 +388,7 @@ public class RuleBasedPercolator implements Percolator {
 
             synchronized (mutex) {
 
-                if (startup) {
-                    startup = false;
-                } else {
-
-                    try {
-                        System.out.println("wait collectGC");
-                        mutex.wait();
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
                 runGC();
-
                 mutex.notifyAll();
             }
         }
@@ -482,15 +414,7 @@ public class RuleBasedPercolator implements Percolator {
         public void run() {
 
             synchronized (mutex) {
-
-                try {
-                    System.out.println("wait energycurve");
-                    mutex.wait();
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
+                
                 Session s = null;
                 try {
                     s = InitServlet.getSessionFactory().openSession();
@@ -503,6 +427,7 @@ public class RuleBasedPercolator implements Percolator {
                     }
                 }
                 mutex.notifyAll();
+
 
             }
         }
