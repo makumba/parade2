@@ -106,19 +106,19 @@
       </c:forEach></td>
       <td valign="top">&nbsp; webapp: <c:if test="${requestScope.status == 2}">
         <a
-          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextReload&getPathFromSession=true">reload</a>
+          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextReload&getPathFromSession=true" target="command">reload</a>
         <a
-          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextStop&getPathFromSession=true">stop</a>
+          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextStop&getPathFromSession=true" target="command">stop</a>
       </c:if> <c:if test="${requestScope.status == 1}">
         <a
-          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextStart&getPathFromSession=true">start</a>
+          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextStart&getPathFromSession=true" target="command">start</a>
       </c:if> <c:if test="${requestScope.status != 0}">
         <a href="/Webapp.do?display=index&context=${rowName}&path=${path}&op=servletContextRedeploy">redeploy</a>
         <a
-          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextRemove&getPathFromSession=true">uninstall</a>
+          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextRemove&getPathFromSession=true" target="command">uninstall</a>
       </c:if> <c:if test="${requestScope.status == 0}">
         <a
-          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextInstall&getPathFromSession=true">install</a>
+          href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextInstall&getPathFromSession=true" target="command">install</a>
       </c:if></td>
       <td valign="top" style="float: right;" align="right">&nbsp;<a href="/systemInfo.jsp" target="directory">System</a></td>
       <td valign="top" style="float:right;" align="right"></td>
