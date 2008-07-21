@@ -35,7 +35,7 @@
 
 <mak:list from="MatchedAetherEvent mae, PercolationStep ps "
   where="ps.matchedAetherEvent = mae and mae.actor != :user_login and ps.virtualPercolation = false and ps.objectURL in (select ale.objectURL from ALE ale where ale.user = :user_login and ale.nimbus > 20)"
-  groupBy="mae.id" orderBy="sum(ps.nimbus) desc">
+  groupBy="mae.id" orderBy="mae.eventDate desc">
   <mak:value expr="mae.eventDate" var="eventDate" />
   <mak:value expr="sum(ps.nimbus)" var="sumNimbus" />
   <c:choose>
