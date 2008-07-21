@@ -29,9 +29,9 @@ public class File {
 
     private Long size;
 
-    private Integer currentLines;
+    private Integer currentChars;
 
-    private Integer previousLines;
+    private Integer previousChars;
 
     private Map<String, AbstractFileData> filedata = new HashMap<String, AbstractFileData>();
 
@@ -197,6 +197,15 @@ public class File {
     }
 
     public String getFileURI() {
+        
+        if(path.startsWith(row.getRowpath() + "/" + row.getWebappPath())) {
+            return "file://" + row.getRowname()
+            + path.substring((row.getRowpath() + row.getWebappPath()).length()).replace(java.io.File.separator, "/");
+        } else if(path.startsWith(row.getRowpath())) {
+            return "file://" + row.getRowname()
+            + path.substring((row.getRowpath()).length()).replace(java.io.File.separator, "/");
+        }
+        
         return "file://" + row.getRowname()
                 + path.substring((row.getRowpath() + row.getWebappPath()).length()).replace(java.io.File.separator, "/");
     }
@@ -290,20 +299,20 @@ public class File {
         return children;
     }
 
-    public Integer getCurrentLines() {
-        return currentLines;
+    public Integer getCurrentChars() {
+        return currentChars;
     }
 
-    public void setCurrentChars(Integer lines) {
-        this.currentLines = lines;
+    public void setCurrentChars(Integer chars) {
+        this.currentChars = chars;
     }
 
-    public Integer getPreviousLines() {
-        return previousLines;
+    public Integer getPreviousChars() {
+        return previousChars;
     }
 
-    public void setPreviousChars(Integer previousLines) {
-        this.previousLines = previousLines;
+    public void setPreviousChars(Integer previousChars) {
+        this.previousChars = previousChars;
     }
 
     public String toString() {

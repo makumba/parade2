@@ -3,7 +3,7 @@
 
 <%-- Makumba Generator - START OF  *** LIST ***  PAGE FOR OBJECT PercolationRule --%>
 <fieldset style="text-align:right;">
-  <legend>List PercolationRules</legend
+  <legend>List PercolationRules</legend>
 
 <c:choose>
   <c:when test="${!empty param.sortBy}">
@@ -38,5 +38,8 @@
 </table>
 </fieldset>
 <a href="percolationRuleNew.jsp">[New]</a>
+
+<br><br>
+<a href="index.jsp">Back to index</a>
 
 <%-- Makumba Generator - END OF *** LIST ***  PAGE FOR OBJECT PercolationRule --%>

@@ -159,7 +159,7 @@ public class DatabaseLogServlet extends HttpServlet {
             objectURL += log.getParadecontext() + log.getFile();
             break;
         case DIR:
-            objectURL += log.getParadecontext() + log.getFile();
+            objectURL += log.getParadecontext() + (log.getFile().length() > 0 ? log.getFile() : "/");
             break;
         case CVSFILE:
             objectURL += log.getParadecontext() + log.getFile();
@@ -178,7 +178,7 @@ public class DatabaseLogServlet extends HttpServlet {
                     .setString("path", log.getFile()).setString("rowname", rowName).uniqueResult();
 
             if (f != null) {
-                initialLevelCoefficient = new Double(Math.abs(f.getPreviousLines() - f.getCurrentLines() + 0.00) / ((f.getCurrentLines() + f.getPreviousLines())/2 + 0.00));
+                initialLevelCoefficient = new Double(Math.abs(f.getPreviousChars() - f.getCurrentChars() + 0.00) / ((f.getCurrentChars() + f.getPreviousChars())/2 + 0.00));
             }
 
             tx.commit();
@@ -565,7 +565,7 @@ public class DatabaseLogServlet extends HttpServlet {
 
             // file starts with /
             file = file.indexOf("%") > -1 ? URLDecoder.decode(file, "UTF-8") : file;
-            file = file.startsWith("/") ? file : file.length() == 0 ? "" : "/" + file;
+            file = file.startsWith("/") ? file : (file.length() == 0 ? "" : "/" + file);
 
             // remove webapp path
             if (webapp.length() > 0) {
@@ -578,7 +578,7 @@ public class DatabaseLogServlet extends HttpServlet {
             // shouldn't happen
         }
 
-        return path + file;
+        return (path.endsWith("/") && file.startsWith("/") ? path + file.substring(1) : path + file);
     }
 
     private String getParam(String paramName, String queryString) {
@@ -647,6 +647,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
+                        || (log.getUrl().equals("/File.do") && log.getQueryString().indexOf("display=command") > -1 && log.getQueryString().indexOf("view=new")>-1)
 
                 )
 

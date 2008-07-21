@@ -27,3 +27,6 @@ Supported arguments: Supported arguments: <%for(String a : GroupedPercolationStr
 <a href="relationQueryEdit.jsp?relationQuery=<mak:value expr="rq.id"/>">[Edit]</a>&nbsp;<mak:deleteLink object="rq" action="relationQuery.jsp">[Trash]</mak:deleteLink><br>
 <hr>
 </mak:list>
+
+<br><br>
+<a href="index.jsp">Back to index</a>

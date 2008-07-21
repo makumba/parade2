@@ -4,3 +4,13 @@ focus=int
 nimbus=int
 virtualFocus=int
 virtualNimbus=int
+
+isFileProj() { case when objectURL like 'file://%' then true else false end }
+isDirProj() { case when objectURL like 'dir://%' then true else false end }
+isRowProj() { case when objectURL like 'row://%' then true else false end }
+isUserProj() { case when objectURL like 'user://%' then true else false end } 
+
+isFile() { objectURL like 'file://%' }
+isDir() { objectURL like 'dir://%' }
+isRow() { objectURL like 'row://%'  }
+isUser() { objectURL like 'user://%' } 

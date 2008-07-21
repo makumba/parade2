@@ -10,57 +10,78 @@ import org.makumba.parade.model.managers.ServletContainer;
 public class AetherBean {
 
     public String getResourceLink(String actionObject, boolean editLink) {
+
         String resourceLink = "";
+        String context = ObjectTypes.rowNameFromURL(actionObject);
+        String relativePath = ObjectTypes.pathFromFileOrDirURL(actionObject);
+
         
-        String webappPath = "";
-        int status = 0;
-        Session s = null;
-        try {
-            s = InitServlet.getSessionFactory().openSession();
-            Transaction tx = s.beginTransaction();
+        switch (ObjectTypes.getObjectType(actionObject)) {
 
-            Row r = (Row) s.createQuery("from Row r where r.rowname = :context").setString("context", ObjectTypes.rowNameFromURL(actionObject))
-                    .uniqueResult();
-            
-            webappPath = r.getWebappPath();
+        case FILE:
 
-            RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
+            String webappPath = "";
+            int status = 0;
+            Session s = null;
+            try {
+                s = InitServlet.getSessionFactory().openSession();
+                Transaction tx = s.beginTransaction();
 
-            status = data.getStatus().intValue();
+                Row r = (Row) s.createQuery("from Row r where r.rowname = :context").setString("context",
+                        context).uniqueResult();
 
-            tx.commit();
+                webappPath = r.getWebappPath();
 
-        } finally {
-            if (s != null)
-                s.close();
-        }
-        
-        boolean isContextRunning = status == ServletContainer.RUNNING;
-        
-        
-        
-        if (isContextRunning && !editLink) {
+                RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
 
-            if (actionObject.endsWith(".mdd")) {
-                resourceLink = "/"
-                        + ObjectTypes.rowNameFromURL(actionObject) + (webappPath.length() > 0 ? "/"+webappPath : "")
-                        + "/dataDefinitions/"
-                        + ObjectTypes.objectNameFromURL(actionObject).substring(0,
-                                ObjectTypes.objectNameFromURL(actionObject).indexOf("."));
-            } else if (actionObject.endsWith(".java")) {
-                resourceLink = "/" + ObjectTypes.rowNameFromURL(actionObject) + (webappPath.length() > 0 ? "/"+webappPath : "") + "/classes/"
-                        + ObjectTypes.filePathFromFileURL(actionObject).substring(0, "WEB-INF/classes/".length());
+                status = data.getStatus().intValue();
 
-            } else {
-                resourceLink = "/" + ObjectTypes.rowNameFromURL(actionObject) + "/"
-                        + ObjectTypes.filePathFromFileURL(actionObject) + (actionObject.endsWith(".jsp") ? "x" : "");
+                tx.commit();
+
+            } finally {
+                if (s != null)
+                    s.close();
             }
-        } else {
-            resourceLink = "/File.do?op=editFile&context=" + ObjectTypes.rowNameFromURL(actionObject) + "&path=" +  (webappPath.length() > 0 ? webappPath + "/" : "")
-                    + ObjectTypes.pathFromFileURL(actionObject) + "&file="
-                    + ObjectTypes.objectNameFromURL(actionObject) + "&editor=codepress";
-        }
 
+            boolean isContextRunning = status == ServletContainer.RUNNING;
+
+            if (isContextRunning && !editLink) {
+
+                if (actionObject.endsWith(".mdd")) {
+                    resourceLink = "/"
+                            + context
+                            + (webappPath.length() > 0 ? "/" + webappPath : "")
+                            + "/dataDefinitions/"
+                            + ObjectTypes.objectNameFromURL(actionObject).substring(0,
+                                    ObjectTypes.objectNameFromURL(actionObject).indexOf("."));
+                } else if (actionObject.endsWith(".java")) {
+                    resourceLink = "/" + context
+                            + (webappPath.length() > 0 ? "/" + webappPath : "") + "/classes/"
+                            + ObjectTypes.fileOrDirPathFromFileOrDirURL(actionObject).substring(0, "WEB-INF/classes/".length());
+
+                } else {
+                    resourceLink = "/" + context + "/"
+                            + ObjectTypes.fileOrDirPathFromFileOrDirURL(actionObject)
+                            + (actionObject.endsWith(".jsp") ? "x" : "");
+                }
+            } else {
+                
+                resourceLink = "/File.do?op=editFile&context=" + context + "&path="
+                        + (webappPath.length() > 0 ? webappPath + "/" : "") + relativePath
+                        + "&file=" + ObjectTypes.objectNameFromURL(actionObject) + "&editor=codepress";
+            }
+
+            break;
+
+        case DIR:
+            resourceLink = "/File.do?browse&display=file&context="+context + "&path=" + relativePath;
+            break;
+
+        case ROW:
+            resourceLink = "/browse.jsp?context="+context;
+            break;
+
+        }
         return resourceLink;
     }
 

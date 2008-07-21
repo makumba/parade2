@@ -5,7 +5,7 @@ import java.util.Set;
 
 public enum ObjectTypes {
 
-    FILE("file://"), DIR("dir://"), ROW("row://"), USER("user://"), CVSFILE("cvs://"), PARADE("parade://");
+    FILE("file://", "file"), DIR("dir://", "directory"), ROW("row://", "row"), USER("user://", "user"), CVSFILE("cvs://", "cvs file"), PARADE("parade://", "parade");
 
     public static Set<String> getObjectTypes() {
         ObjectTypes[] v = values();
@@ -17,13 +17,20 @@ public enum ObjectTypes {
     }
 
     private String prefix;
+    
+    private String readableType;
 
-    ObjectTypes(String prefix) {
+    ObjectTypes(String prefix, String readableType) {
         this.prefix = prefix;
+        this.readableType = readableType;
     }
 
     public String prefix() {
         return this.prefix;
+    }
+    
+    public String readableType() {
+        return this.readableType;
     }
 
     /**
@@ -44,7 +51,7 @@ public enum ObjectTypes {
         }
         n++;
         URL = URL.substring(n);
-        return URL.substring(0, URL.indexOf("/"));
+        return (URL.indexOf("/") > -1 ? URL.substring(0, URL.indexOf("/")) : URL);
     }
 
     /**
@@ -56,16 +63,18 @@ public enum ObjectTypes {
 
     /**
      * file://rudi-k/lbg/member.jsp -> member.jsp
+     * dir://rudi-k/ --> /
      */
     public static String objectNameFromURL(String objectURL) {
-        return objectURL.substring(objectURL.lastIndexOf("/") + 1);
+        String name = objectURL.substring(objectURL.lastIndexOf("/") + 1);
+        return name.length() > 0 ? name : "/";
     }
 
     /**
      * file://rudi-k/lbg/member.jsp -> lbg/
      */
-    public static String pathFromFileURL(String fileURL) {
-        String path = fileURL.substring("file://".length());
+    public static String pathFromFileOrDirURL(String fileOrDirURL) {
+        String path = fileOrDirURL.substring( (fileOrDirURL.startsWith(ObjectTypes.FILE.prefix()) ? ObjectTypes.FILE.prefix().length() : ObjectTypes.DIR.prefix().length()));
         path = path.substring(path.indexOf("/") + 1);
         if(path.indexOf("/") > -1)
             path = path.substring(0, path.lastIndexOf("/"));
@@ -75,8 +84,8 @@ public enum ObjectTypes {
     /**
      * file://rudi-k/lbg/member.jsp -> lbg/member.jsp
      */
-    public static String filePathFromFileURL(String fileURL) {
-        String path = fileURL.substring("file://".length());
+    public static String fileOrDirPathFromFileOrDirURL(String fileOrDirURL) {
+        String path = fileOrDirURL.substring( (fileOrDirURL.startsWith(ObjectTypes.FILE.prefix()) ? ObjectTypes.FILE.prefix().length() : ObjectTypes.DIR.prefix().length()));
         path = path.substring(path.indexOf("/") + 1);
         return path;
     }
@@ -91,6 +100,15 @@ public enum ObjectTypes {
             }
         }
         return "UNKNOWN";
+    }
+    
+    public static ObjectTypes getObjectType(String objectURL) {
+        for(ObjectTypes objectType : values()) {
+            if(objectURL.startsWith(objectType.prefix())) {
+                return objectType;
+            }
+        }
+        return null;
     }
 
 }

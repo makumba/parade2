@@ -42,16 +42,16 @@
     <c:when test="${(sumNimbus / max) * 100 == 100}">
       <c:set var="objectWeight" value="large" />
     </c:when>
-    <c:when test="${((sumNimbus / max) * 100) > 75 and ((nimbus / maxNimbus) * 100) < 100}">
+    <c:when test="${((sumNimbus / max) * 100) > 75 and ((sumNimbus / maxNimbus) * 100) < 100}">
       <c:set var="objectWeight" value="medium" />
     </c:when>
-    <c:when test="${((sumNimbus / max) * 100) > 50 and ((nimbus / maxNimbus) * 100) < 75}">
+    <c:when test="${((sumNimbus / max) * 100) > 50 and ((sumNimbus / maxNimbus) * 100) < 75}">
       <c:set var="objectWeight" value="small" />
     </c:when>
-    <c:when test="${((sumNimbus / max) * 100) > 25 and ((nimbus / maxNimbus) * 100 )< 50}">
+    <c:when test="${((sumNimbus / max) * 100) > 25 and ((sumNimbus / maxNimbus) * 100 )< 50}">
       <c:set var="objectWeight" value="x-small" />
     </c:when>
-    <c:when test="${((sumNimbus / max) * 100) >= 0 and ((nimbus / maxNimbus) * 100) < 25}">
+    <c:when test="${((sumNimbus / max) * 100) >= 0 and ((sumNimbus / maxNimbus) * 100) < 25}">
       <c:set var="objectWeight" value="xx-small" />
     </c:when>
 
@@ -69,7 +69,7 @@
       ${actorNickname}
     </mak:object> <mak:value expr="mae.action" printVar="action" /><%=ActionTypes.getReadableAction(action)%> <mak:value
     expr="mae.objectURL" printVar="actionObject" /> <a target="directory"
-    href="<%=aetherBean.getResourceLink(actionObject, false)%>"><%=ObjectTypes.objectNameFromURL(actionObject)%></a> <br>
+    href="<%=aetherBean.getResourceLink(actionObject, false)%>"><%=ObjectTypes.objectNameFromURL(actionObject)%></a> (<a target="command" href="aetherNimbusHistory.jsp?mae=<mak:value expr="mae.id"/>" title="What does ${sumNimbus} mean?">${sumNimbus}</a>)<br>
   </font>
 </mak:list>
 

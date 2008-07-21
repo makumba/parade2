@@ -200,7 +200,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
             fileData.setOnDisk(true);
-            fileData.setPreviousChars(fileData.getCurrentLines());
+            fileData.setPreviousChars(fileData.getCurrentChars());
             fileData.setCurrentChars(WordCount.count(file.getAbsolutePath()));
 
             // otherwise we make a new file
