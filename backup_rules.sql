@@ -35,7 +35,7 @@ CREATE TABLE `InitialPercolationRule` (
   `interactionType` varchar(255) default NULL,
   `description` varchar(255) default NULL,
   PRIMARY KEY  (`initialpercolationrule`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -44,7 +44,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `InitialPercolationRule` WRITE;
 /*!40000 ALTER TABLE `InitialPercolationRule` DISABLE KEYS */;
-INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'','1-ln(t/10+1)','1-t*t+t','20',NULL),(2,'DIR','view','all_but_actor',50,30,'','1-t/2','1-t/2','20',NULL);
+INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'','1-ln(t/10+1)','1-t*t+t','20',NULL),(2,'DIR','view','actor',5,30,'','1-t/2','1-t/2','20',''),(3,'FILE','create','actor',100,10,'','1-ln(t/10+1)','0','10','Setting a focus when creating a new file'),(4,'ROW','view','actor',5,10,'','1-t','1-t','10','user watches row');
 /*!40000 ALTER TABLE `InitialPercolationRule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +90,7 @@ CREATE TABLE `PercolationRule` (
   `active` bit(1) default NULL,
   `propagationDepthLimit` int(11) default NULL,
   PRIMARY KEY  (`percolationrule`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -99,7 +99,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `PercolationRule` WRITE;
 /*!40000 ALTER TABLE `PercolationRule` DISABLE KEYS */;
-INSERT INTO `PercolationRule` VALUES (1,'FILE','versionOf','CVSFILE',5,'is a version of','',-1),(2,'FILE','dependsOn','FILE',20,'depends on the file that was acted upon','',1),(3,'USER','save','FILE',0,'User watched file','',-1),(4,'CVSFILE','dependsOn','CVSFILE',20,'A cvs file depends on another cvs file','\0',-1),(5,'CVSFILE','checkedOutAs','FILE',5,'is checked out as','',-1);
+INSERT INTO `PercolationRule` VALUES (1,'FILE','versionOf','CVSFILE',5,'is a version of','',-1),(2,'FILE','dependsOn','FILE',20,'depends on the file that was acted upon','',1),(3,'USER','save','FILE',0,'User watched file','',-1),(4,'CVSFILE','dependsOn','CVSFILE',20,'A cvs file depends on another cvs file','\0',-1),(5,'CVSFILE','checkedOutAs','FILE',5,'is checked out as','',-1),(6,'USER','create','FILE',0,'a user created a file','',-1),(7,'USER','view','DIR',0,'user watches directory','',-1),(8,'USER','view','ROW',0,'user watches row','',-1);
 /*!40000 ALTER TABLE `PercolationRule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,4 +163,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2008-07-20 15:19:52
+-- Dump completed on 2008-07-21 16:14:15
