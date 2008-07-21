@@ -1,7 +1,7 @@
 name=char[255]
 size=int
-currentLines=int
-previousLines=int
+currentChars=int
+previousChars=int
 path=char[255]
 parentPath=char[255]
 cvsURL=char[255]

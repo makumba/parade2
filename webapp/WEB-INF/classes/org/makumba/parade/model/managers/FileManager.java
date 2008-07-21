@@ -25,6 +25,7 @@ import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.LineNumberCounter;
 import org.makumba.parade.tools.SimpleFileFilter;
+import org.makumba.parade.tools.WordCount;
 
 /**
  * This class manages the cache for the files in ParaDe.
@@ -199,8 +200,8 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
             fileData.setOnDisk(true);
-            fileData.setPreviousLines(fileData.getCurrentLines());
-            fileData.setCurrentLines(LineNumberCounter.countLineNumbers(file));
+            fileData.setPreviousChars(fileData.getCurrentLines());
+            fileData.setCurrentChars(WordCount.count(file.getAbsolutePath()));
 
             // otherwise we make a new file
         } else {
@@ -217,8 +218,8 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             fileData.setName(file.getName());
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
-            fileData.setCurrentLines(LineNumberCounter.countLineNumbers(file));
-            fileData.setPreviousLines(LineNumberCounter.countLineNumbers(file));
+            fileData.setCurrentChars(WordCount.count(file.getAbsolutePath()));
+            fileData.setPreviousChars(WordCount.count(file.getAbsolutePath()));
             fileData.setOnDisk(true);
         }
         return fileData;
@@ -234,8 +235,8 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         virtualFile.setRow(r);
         virtualFile.setDate(new Long((new Date()).getTime()));
         virtualFile.setSize(new Long(0));
-        virtualFile.setCurrentLines(0);
-        virtualFile.setPreviousLines(0);
+        virtualFile.setCurrentChars(0);
+        virtualFile.setPreviousChars(0);
         virtualFile.setFiledata(new HashMap<String, AbstractFileData>());
         return virtualFile;
     }

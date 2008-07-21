@@ -83,7 +83,7 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
             }
 
         }
-        if (ipr.getUserType().equals(UserTypes.OWNER)) {
+        if (ipr.getUserType().equals(UserTypes.OWNER.type())) {
 
             if (ActionTypes.isFileAction(e.getAction())) {
                 List<String> own = s
@@ -100,7 +100,7 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
                 }
             }
         }
-        if (ipr.getUserType().equals(UserTypes.ACTOR)) {
+        if (ipr.getUserType().equals(UserTypes.ACTOR.type())) {
             userGroup = e.getActor();
         }
 

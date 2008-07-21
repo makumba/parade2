@@ -19,8 +19,8 @@
 		<property name="parentPath" />
 		<property name="isDir" />
 		<property name="onDisk" />
-		<property name="currentLines" />
-		<property name="previousLines" />
+		<property name="currentChars" />
+		<property name="previousChars" />
 		<property name="cvsURL" />
 		<property name="cvsStatus" />
 		<property name="cvsRevision" />

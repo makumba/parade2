@@ -174,10 +174,6 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             initialRelations.addAll(query.execute(arguments, "fromURLSet", s));
         }
 
-        if (initialRelations.size() == 0) {
-            return;
-        }
-
         logger.debug("Going to percolate along " + initialRelations.size() + " initial relations");
 
         Map<String, NodePercolationStatus> nodePercolationStatuses = new HashMap<String, NodePercolationStatus>();
@@ -406,18 +402,19 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                     break;
                 }
             }
+            
+            if(relations.size() > 0) {
 
-            // get all the next queries
-            relations = retrieveNextRelations(groupedQueries, s);
-
-            // if something is left, move to the next step
-            if (relations.size() > 0 && nodePercolationStatuses.size() > 0) {
-                percolate(mae, s, isFocusPercolation, startTime, relations, nodePercolationStatuses, steps,
-                        nimbusContributions, virtualPercolation);
+                // get all the next queries
+                relations = retrieveNextRelations(groupedQueries, s);
+    
+                // if something is left, move to the next step
+                if (relations.size() > 0 && nodePercolationStatuses.size() > 0) {
+                    percolate(mae, s, isFocusPercolation, startTime, relations, nodePercolationStatuses, steps,
+                            nimbusContributions, virtualPercolation);
+                }
             }
-
         }
-
     }
 
     /**

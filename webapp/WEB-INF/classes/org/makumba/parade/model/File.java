@@ -294,7 +294,7 @@ public class File {
         return currentLines;
     }
 
-    public void setCurrentLines(Integer lines) {
+    public void setCurrentChars(Integer lines) {
         this.currentLines = lines;
     }
 
@@ -302,7 +302,7 @@ public class File {
         return previousLines;
     }
 
-    public void setPreviousLines(Integer previousLines) {
+    public void setPreviousChars(Integer previousLines) {
         this.previousLines = previousLines;
     }
 
