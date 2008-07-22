@@ -51,8 +51,8 @@ public class ApplicationManager implements ParadeManager {
 
         // first let's see if everything went fine
         if (result.toString().indexOf("exit value: 1") > -1) {
-            logger.error("Could not retrieve CVS list for application " + a.getName()
-                    + ". Result of the operation was:\n" + result.toString());
+            logger.warn("Could not retrieve CVS list for application " + a.getName() + ". Increase the log level to debug in order to see what the error was");
+            logger.debug(result.toString());
         } else {
 
             Map<String, String> cvsfiles = new HashMap<String, String>();
