@@ -11,6 +11,10 @@
 </head>
 <body>
 
+<% Set<String> ALEs = new HashSet<String>();%>
+<mak:list from="ALE a" where="a.user = :user_login"><mak:value expr="a.objectURL" printVar="URL"/><% ALEs.add(URL); %></mak:list>
+
+
 <h4>Relation of the action <i><mak:value expr="m.actor"/> --(<mak:value expr="m.action"/>)--> <mak:value expr="m.objectURL"/></i> to my work</h4>
 
 <table>
@@ -21,12 +25,11 @@
       <th>Focus</th>
       <th>Nimbus</th>
     </thead>
-    <mak:list from="PercolationStep ps" where="ps.matchedAetherEvent.id = m.id and ps.previous = null" countVar="psCount">
+    <mak:list from="PercolationStep ps" where="ps.focus = 0 and ps.matchedAetherEvent.id = m.id and ps.previous = null" countVar="psCount">
       <tr>
-        <td><mak:value expr="ps.objectURL" /></td>
-        <td><a
-          href="percolationRuleEdit.jsp?percolationRule=<mak:value expr="ps.percolationRule.id"/>"><mak:value
-          expr="ps.percolationRule.description" /></a></td>
+        <td><mak:value expr="ps.objectURL" printVar="objectURL" /><%if(ALEs.contains(objectURL)) { %><strong><%} %>${objectURL}<%if(ALEs.contains(objectURL)) { %></strong><%} %></td>
+        <td><mak:value
+          expr="ps.percolationRule.description" /></td>
         <td><mak:value expr="ps.previousURL" /></td>
         <td><mak:value expr="ps.focus" /></td>
         <td><mak:value expr="ps.nimbus" /></td>
@@ -39,10 +42,8 @@
         <mak:value expr="subPs.percolationLevel" var="level" />
         <tr>
           <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<c:if
-            test="${level > 1}"><c:forEach begin="1" end="${level-1}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</c:forEach></c:if><mak:value expr="subPs.objectURL" /></td>
-          <td><a
-            href="percolationRuleEdit.jsp?percolationRule=<mak:value expr="subPs.percolationRule.id"/>"><mak:value
-            expr="subPs.percolationRule.description" /></a></td>
+            test="${level > 1}"><c:forEach begin="1" end="${level-1}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</c:forEach></c:if><mak:value expr="subPs.objectURL" printVar="subPsURL" /><%if(ALEs.contains(subPsURL)) { %><strong><%} %>${subPsURL}<%if(ALEs.contains(subPsURL)) { %></strong><%} %></td>
+          <td><mak:value expr="subPs.percolationRule.description" /></td>
           <td><mak:value expr="subPs.previousURL" /></td>
           <td><mak:value expr="subPs.focus" /></td>
           <td><mak:value expr="subPs.nimbus" /></td>
@@ -53,4 +54,6 @@
 </mak:object>
 
 </body>
-</html>
+
+<%@page import="java.util.Set"%>
+<%@page import="java.util.HashSet"%></html>

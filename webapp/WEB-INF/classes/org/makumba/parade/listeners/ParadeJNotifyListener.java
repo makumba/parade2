@@ -57,7 +57,6 @@ public class ParadeJNotifyListener implements JNotifyListener {
             return;
         
         if(InitServlet.aetherEnabled) {
-            
             deleteRelations(rootPath, oldName);
             updateRelations(rootPath, newName);
         }
@@ -143,9 +142,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
             } finally {
                 session.close();
             }
-
         }
-
     }
 
     private synchronized void cacheNew(String rootPath, String fileName) {

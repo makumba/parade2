@@ -30,7 +30,9 @@
 		<many-to-one name="application" class="Application" />
 
 		<many-to-one name="user" class="User" column="user" />
-
+    
+        <many-to-one name="externalUser" class="User" column="externalUser" />
+    
 		<map name="files" cascade="all-delete-orphan" inverse="true"
 			access="field" order-by="name" lazy="true">
 			<cache usage="read-write" />

@@ -1,7 +1,6 @@
 package org.makumba.parade.listeners;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Vector;
 
 import org.hibernate.Session;
@@ -36,9 +35,7 @@ public class CommitHandler extends Thread {
         
         try {
         
-            Iterator<Commit> it = commits.iterator();
-            while (it.hasNext()) {
-                Commit commit = it.next();
+            for(Commit commit : commits) {
                 updateRepositoryCache(commit.getModule(), commit.getFile(), commit.getNewRevision(), s);
                 updateRowFiles(commit.getModule(), commit.getFile(), commit.getNewRevision(), commit.getOldRevision().equals("NONE"), s);
             }

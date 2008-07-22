@@ -2,7 +2,6 @@ package org.makumba.parade.listeners;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -97,7 +96,7 @@ public class CVSCommitListenerServlet extends HttpServlet {
 
     private void handleFileCommit(Session s) {
         
-        CommitHandler ch = new CommitHandler(commitQueue, s);
+        CommitHandler ch = new CommitHandler((Vector<Commit>) commitQueue.clone(), s);
         ch.start();
         commitQueue.clear();
         
@@ -111,7 +110,7 @@ public class CVSCommitListenerServlet extends HttpServlet {
         log.setUser(user);
         log.setFile(file);
         log.setQueryString("&module=" + module + "&newVersion=" + newRevision);
-
+        
         TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
     }
     
@@ -139,7 +138,5 @@ public class CVSCommitListenerServlet extends HttpServlet {
             this.newRevision = newRevision;
             this.oldRevision = oldRevision;
         }
-        
     }
-
 }

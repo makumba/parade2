@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -60,15 +61,13 @@ public class DatabaseLogServlet extends HttpServlet {
     private Logger logger = Logger.getLogger(DatabaseLogServlet.class);
 
     private RowProperties rp;
-
-    private ActionLogDTO lastCommit;
-
-    private String lastCommitId;
-
+    
+    private HashMap<String, ActionLogDTO> commits = new HashMap<String, ActionLogDTO>();
+    
     public void init(ServletConfig conf) {
         rp = new RowProperties();
     }
-    
+
     private final static boolean STRICT_ACTIONLOG_FILTER = true;
 
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -88,42 +87,7 @@ public class DatabaseLogServlet extends HttpServlet {
             if (record == null)
                 return;
 
-            // first check if this should be logged at all
-            if (record instanceof ActionLogDTO) {
-                if (!shouldLog((ActionLogDTO) record))
-                    return;
-            }
-
-            // open a new session, which we need to perform extraction
-            Session s = null;
-            try {
-
-                s = InitServlet.getSessionFactory().openSession();
-
-                if (record instanceof ActionLogDTO) {
-                    handleActionLog(req, record, s);
-                } else {
-                    handleLog(req, record, s);
-                }
-
-                // now we pass the event to Aether
-                if (record instanceof ActionLogDTO && InitServlet.aetherEnabled) {
-
-                    ActionLogDTO a = (ActionLogDTO) record;
-
-                    if (!a.getAction().equals(ActionTypes.LOGIN.action())) {
-                        AetherEvent e = buildAetherEventFromLog(a, s);
-
-                        if (e != null) {
-                            InitServlet.getAether().registerEvent(e, false);
-                        }
-                    }
-                }
-
-            } finally {
-                // close the session in any case
-                s.close();
-            }
+            handleIncomingLog(record);
 
         } catch (NullPointerException npe) {
             // throw(npe);
@@ -135,6 +99,48 @@ public class DatabaseLogServlet extends HttpServlet {
                     + "NPE in database log servlet. please tell developers!\n" + "error message is:\n" + sw.toString()
                     + "***********************************************************************");
 
+        }
+    }
+
+    public void handleIncomingLog(Object record) {
+        // first check if this should be logged at all
+        if (record instanceof ActionLogDTO) {
+            if (!shouldLog((ActionLogDTO) record))
+                return;
+        }
+
+        // open a new session, which we need to perform extraction
+        Session s = null;
+        try {
+
+            s = InitServlet.getSessionFactory().openSession();
+
+            boolean further = true;
+            
+            
+            if (record instanceof ActionLogDTO) {
+                further = handleActionLog(record, s);
+            } else {
+                handleLog(record, s);
+            }
+
+            // now we pass the event to Aether
+            if (further && record instanceof ActionLogDTO && InitServlet.aetherEnabled) {
+
+                ActionLogDTO a = (ActionLogDTO) record;
+
+                if (!a.getAction().equals(ActionTypes.LOGIN.action())) {
+                    AetherEvent e = buildAetherEventFromLog(a, s);
+
+                    if (e != null) {
+                        InitServlet.getAether().registerEvent(e, false);
+                    }
+                }
+            }
+
+        } finally {
+            // close the session in any case
+            s.close();
         }
     }
 
@@ -165,9 +171,8 @@ public class DatabaseLogServlet extends HttpServlet {
             objectURL += log.getParadecontext() + log.getFile();
             break;
         }
-        
-        
-        if( log.getAction().equals(ActionTypes.SAVE.action())) {
+
+        if (log.getAction().equals(ActionTypes.SAVE.action())) {
             Transaction tx = s.beginTransaction();
             String rowName = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
             if (rowName == null)
@@ -178,31 +183,34 @@ public class DatabaseLogServlet extends HttpServlet {
                     .setString("path", log.getFile()).setString("rowname", rowName).uniqueResult();
 
             if (f != null) {
-                initialLevelCoefficient = new Double(Math.abs(f.getPreviousChars() - f.getCurrentChars() + 0.00) / ((f.getCurrentChars() + f.getPreviousChars())/2 + 0.00));
+                initialLevelCoefficient = new Double(Math.abs(f.getPreviousChars() - f.getCurrentChars() + 0.00)
+                        / ((f.getCurrentChars() + f.getPreviousChars()) / 2 + 0.00));
+                
+                if(initialLevelCoefficient == Double.NaN)
+                    initialLevelCoefficient = 0.00;
             }
 
             tx.commit();
         }
-        
-        if(log.getObjectType().equals(ObjectTypes.FILE) && isExcluded(log.getFile())) {
+
+        if (log.getObjectType().equals(ObjectTypes.FILE) && isExcluded(log.getFile())) {
             initialLevelCoefficient = 0.00;
-            
+
         }
-        
 
         return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getAction(),
                 log.getDate(), initialLevelCoefficient);
     }
-    
+
     private Vector<String> aetherExcludedFiles;
-    
+
     private boolean isExcluded(String file) {
-        if(aetherExcludedFiles == null) {
+        if (aetherExcludedFiles == null) {
             aetherExcludedFiles = new Vector<String>();
             String excluded = ParadeProperties.getParadeProperty("aether.excludedFiles");
-            if(excluded != null) {
+            if (excluded != null) {
                 StringTokenizer st = new StringTokenizer(excluded, ",");
-                while(st.hasMoreTokens()) {
+                while (st.hasMoreTokens()) {
                     aetherExcludedFiles.add(st.nextToken().trim());
                 }
             }
@@ -210,7 +218,7 @@ public class DatabaseLogServlet extends HttpServlet {
         return aetherExcludedFiles == null ? false : aetherExcludedFiles.contains(file);
     }
 
-    private void handleActionLog(HttpServletRequest req, Object record, Session s) {
+    private boolean handleActionLog(Object record, Session s) {
         ActionLogDTO log = (ActionLogDTO) record;
 
         // filter the log, generate additional information and give some meaning
@@ -218,7 +226,7 @@ public class DatabaseLogServlet extends HttpServlet {
 
         // sometimes we just don't log (like for commits)
         if (log.getAction().equals("paradeCvsCommit"))
-            return;
+            return false;
 
         // let's see if we have already someone. if not, we create one
         Transaction tx = s.beginTransaction();
@@ -248,6 +256,8 @@ public class DatabaseLogServlet extends HttpServlet {
         // finally we also need to update the ActionLog in the thread
         log.setId(actionLog.getId());
         TriggerFilter.actionLog.set(log);
+        
+        return true;
 
     }
 
@@ -258,10 +268,11 @@ public class DatabaseLogServlet extends HttpServlet {
      *            the original log to be altered
      */
     private void filterLog(ActionLogDTO log, Session s) {
-
+        
         String queryString = log.getQueryString();
+        
         String uri = log.getUrl();
-
+        
         if (uri == null)
             uri = "";
 
@@ -295,7 +306,7 @@ public class DatabaseLogServlet extends HttpServlet {
             }
         }
 
-        String actionType = "", op = "", params = "", display = "", path = "", file = "", view="";
+        String actionType = "", op = "", params = "", display = "", path = "", file = "", view = "";
 
         if (uri.equals("/") || uri.equals("/index.jsp"))
             actionType = "browseParade";
@@ -331,7 +342,7 @@ public class DatabaseLogServlet extends HttpServlet {
             path = "";
         if (file == null)
             file = "";
-        if(view == null)
+        if (view == null)
             view = "";
 
         // browse actions
@@ -407,19 +418,19 @@ public class DatabaseLogServlet extends HttpServlet {
             log.setFile(nicePath(path, params, webapp));
             log.setObjectType(ObjectTypes.FILE);
         } else
-    
-        if(actionType.equals("command") && op.equals("newFile")) {
+
+        if (actionType.equals("command") && op.equals("newFile")) {
             log.setAction(ActionTypes.CREATE.action());
             log.setFile(nicePath(path, params, webapp));
             log.setObjectType(ObjectTypes.FILE);
-            
+
         } else
-            
-        if(actionType.equals("command") && op.equals("newDir")) {
+
+        if (actionType.equals("command") && op.equals("newDir")) {
             log.setAction(ActionTypes.CREATE.action());
             log.setFile(nicePath(path, params, webapp));
             log.setObjectType(ObjectTypes.DIR);
-            
+
         } else
 
         // CVS
@@ -442,22 +453,37 @@ public class DatabaseLogServlet extends HttpServlet {
                 log.setObjectType(ObjectTypes.CVSFILE);
             }
             if (op.equals("commit")) {
+                
                 // this action won't get logged, since we will get another log from the cvs hook
                 // we just store it in a variable
-                log.setAction("paradeCvsCommit");
-                String[] commitParams = getParamValues("params", queryString, null, 0);
-                log.setFile(nicePath(commitParams[1], "", ""));
-                log.setObjectType(ObjectTypes.CVSFILE);
-
-                // for some weird reason, commit gets logged twice (maybe because of struts?)
-                // so since we don't want this, we do a check
-
-                if (lastCommitId != null && lastCommitId.equals(log.getFile() + log.getQueryString())) {
-                    lastCommitId = null;
-                    // we ignore that log
-                } else {
-                    lastCommit = log;
+                // since we can have multiple commits we generate one new log per file
+                
+                try {
+                    queryString = URLDecoder.decode(queryString, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
+                
+                String[] fileURLs = getParamValues("file", queryString, null, 0);
+                for (String URL : fileURLs) {
+                    if(URL == null)
+                        break;
+                    ActionLogDTO dto = new ActionLogDTO();
+                    dto.setUser(log.getUser());
+                    dto.setParadecontext(ObjectTypes.rowNameFromURL(URL));
+                    dto.setContext(log.getContext());
+                    dto.setAction(ActionTypes.CVS_COMMIT.action());
+                    dto.setDate(log.getDate());
+                    dto.setFile(ObjectTypes.fileOrDirPathFromFileOrDirURL(URL));
+                    dto.setObjectType(ObjectTypes.CVSFILE);
+                    
+                    commits.put(ObjectTypes.pathFromFileOrDirURL(URL), dto);
+                }
+                
+                // "paradeCvsCommit" is not logged
+                log.setAction("paradeCvsCommit");
+
             }
             if (op.equals("diff")) {
                 log.setAction(ActionTypes.CVS_DIFF.action());
@@ -490,25 +516,12 @@ public class DatabaseLogServlet extends HttpServlet {
         if (log.getAction().equals("cvsCommitRepository")) {
             log.setAction(ActionTypes.CVS_COMMIT.action());
 
-            if (lastCommit != null && lastCommit.getFile() != null) {
+            if (commits.get(log.getFile()) != null) {
                 // the user commited through parade
-
-                // we just check if it's the same file that has been commited through parade so we don't log it twice
-                // (it will be logged anyway after this)
-                // and we also add other useful info
-                if (lastCommit.getFile().equals(log.getFile())) {
-                    lastCommitId = lastCommit.getFile() + lastCommit.getQueryString();
-                    log.setQueryString(lastCommit.getQueryString() + log.getQueryString());
-                    log.setContext(lastCommit.getContext());
-                    log.setParadecontext(lastCommit.getParadecontext());
-                    log.setUser(lastCommit.getUser());
-                    log.setObjectType(ObjectTypes.CVSFILE);
-                    lastCommit = null;
-                } else {
-                    logger.error("***********************************************************************\n"
-                            + "Unrecognised parade commit. please tell developers!\n"
-                            + "***********************************************************************");
-                }
+                // we can enrich the file with information
+                log = commits.get(log.getFile());
+                commits.remove(log.getFile());
+                
             } else {
                 // this is an external commit that doesn't come thru parade
                 // let's try to see if we know the user who did the commit
@@ -520,10 +533,13 @@ public class DatabaseLogServlet extends HttpServlet {
                     User u = results.get(0);
                     if (u != null) {
                         log.setUser(u.getLogin());
+                    } else {
+                        log.setUser(User.getUnknownUser().getLogin());
                     }
+                } else {
+                    log.setUser(User.getUnknownUser().getLogin());
                 }
                 tx.commit();
-
             }
         }
 
@@ -596,7 +612,7 @@ public class DatabaseLogServlet extends HttpServlet {
     private String[] getParamValues(String paramName, String queryString, String[] paramValues, int pos) {
 
         if (pos == 0) {
-            paramValues = new String[5];
+            paramValues = new String[15];
         }
 
         int n = queryString.indexOf(paramName + "=");
@@ -620,11 +636,11 @@ public class DatabaseLogServlet extends HttpServlet {
     String[] endFilter = { ".ico", ".css", ".gif", ".jpg", ".png", ".js" };
 
     String[] startFilter = { "/logs", "/admin", "/aether", "/playground/", "/logic", "/dataDefinitions",
-            "/scripts/codepress/", "/cewolf", "/servlet/cvscommit"};
+            "/scripts/codepress/", "/cewolf", "/servlet/cvscommit" };
 
     String[] equalFilter = { "/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp",
-            "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "browserHeader.jsp", "fileBrowser.jsp", "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp",
-            "/Admin.do", "/User.do", "/servlet/ticker", "/servlet/logs",
+            "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "browserHeader.jsp", "fileBrowser.jsp",
+            "/todo.jsp", "/error.jsp", "/tipOfTheDay.jsp", "/Admin.do", "/User.do", "/servlet/ticker", "/servlet/logs",
             "/reload", "/unauthorized/index.jsp", "/cvsCommit.jsp" };
 
     /**
@@ -646,8 +662,10 @@ public class DatabaseLogServlet extends HttpServlet {
 
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
-                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1)
-                        || (log.getUrl().equals("/File.do") && log.getQueryString().indexOf("display=command") > -1 && log.getQueryString().indexOf("view=new")>-1)
+                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=command") > -1) 
+                        || (log.getUrl().equals("/File.do")
+                        && log.getQueryString().indexOf("display=command") > -1 && log.getQueryString().indexOf(
+                        "view=new") > -1)
 
                 )
 
@@ -663,16 +681,16 @@ public class DatabaseLogServlet extends HttpServlet {
         return true;
     }
 
-    private void handleLog(HttpServletRequest req, Object record, Session s) {
+    private void handleLog(Object record, Session s) {
         // extract useful information from the record
 
         Log log = new Log();
         ActionLog actionLog = retrieveActionLog(s);
-        
-        if(actionLog == null) {
+
+        if (actionLog == null) {
             return;
         }
-        
+
         log.setActionLog(actionLog);
 
         // this is a java.util.logging.LogRecord
@@ -717,16 +735,18 @@ public class DatabaseLogServlet extends HttpServlet {
 
     /**
      * Retrieves the current ActionLog and persists if it necessary.
-     * @param s a Hibernate {@link Session}
+     * 
+     * @param s
+     *            a Hibernate {@link Session}
      * @return the current {@link ActionLog}, null if it should not be persisted.
      */
     private ActionLog retrieveActionLog(Session s) {
         ActionLogDTO actionLogDTO = TriggerFilter.actionLog.get();
-        
-        if(!shouldLog(actionLogDTO) && STRICT_ACTIONLOG_FILTER) {
+
+        if (!shouldLog(actionLogDTO) && STRICT_ACTIONLOG_FILTER) {
             return null;
         }
-        
+
         ActionLog actionLog = new ActionLog();
         actionLogDTO.populate(actionLog);
 

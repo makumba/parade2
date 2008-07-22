@@ -32,6 +32,16 @@ Here you can edit your user information.<br><br>
   <td>CVS user</td>
   <td><mak:input field="cvsuser"/></td>
 </tr>
+<tr>
+  <td>Mentor</td>
+  <td>
+  <mak:input field="mentor"> 
+      <mak:list from="User m" orderBy="m.name, m.surname">
+        <mak:option value="m.id"> <mak:value expr="m.name"/>  <mak:value expr="m.surname"/> (<mak:value expr="m.nickname"/>) </mak:option> 
+      </mak:list> 
+  </mak:input>
+</td>
+</tr>
 <mak:list from="Row r" where="r.user = u">
 <mak:editForm object="r">
 <tr>

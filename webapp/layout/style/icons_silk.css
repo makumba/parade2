@@ -354,6 +354,10 @@ padding-left: 18; height: 16;
 background: url(../icons/silk/file.gif) left center no-repeat;
 padding-left: 18; height: 16;
 }
+.icon_file_small {
+background: url(../icons/silk/file.gif) left center no-repeat;
+padding-left: 18; height: 16;
+}
 .icon_euro {
 background: url(../icons/silk/euro.gif) left center no-repeat;
 padding-left: 18; height: 16;

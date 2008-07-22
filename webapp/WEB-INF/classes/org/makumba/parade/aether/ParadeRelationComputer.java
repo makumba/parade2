@@ -38,6 +38,33 @@ public class ParadeRelationComputer implements RelationComputer {
 
         Transaction t = tp.getConnectionTo(PARADE_DATABASE_NAME);
 
+        computeRowUserRelations(t);
+        
+        // trainee-mentor relations
+        // we populate the relations table with those relations
+        
+        // first we remove all the previous relations
+        
+        Vector<Dictionary<String, Object>> old = t.executeQuery("SELECT rel.id AS rel FROM org.makumba.devel.relations.Relation rel WHERE rel.type = 'traineeOf'", null);
+        for (Dictionary<String, Object> dictionary : old) {
+            t.delete((Pointer)dictionary.get("rel"));
+        }
+        
+        Vector<Dictionary<String, Object>> users = t.executeQuery("SELECT u.login as trainee, u.mentor.login as mentor FROM User u WHERE u.mentor != null", null);
+        logger.info("Found "+users.size() + " trainee to mentor relations");
+        
+        for (Dictionary<String, Object> dic : users) {
+            Dictionary<String, Object> rel = buildTraineeToMentorRelation(dic);
+            t.insert(PARADE_RELATION_TABLE, rel);
+         }
+        
+        t.close();
+        
+        logger.debug("Finished computing all relations of "+getName());
+
+    }
+
+    private void computeRowUserRelations(Transaction t) {
         // row-user relations
         // we populate the relations table with those relations
         
@@ -54,11 +81,6 @@ public class ParadeRelationComputer implements RelationComputer {
             Dictionary<String, Object> rel = buildUserRowRelation(d);
             t.insert(PARADE_RELATION_TABLE, rel);
         }
-
-        t.close();
-        
-        logger.debug("Finished computing all relations of "+getName());
-
     }
 
     private Dictionary<String, Object> buildUserRowRelation(Dictionary<String, Object> d) {
@@ -66,6 +88,14 @@ public class ParadeRelationComputer implements RelationComputer {
         rel.put("fromURL", "user://" + d.get("user"));
         rel.put("toURL", "row://" + d.get("row"));
         rel.put("type", "owns");
+        return rel;
+    }
+    
+    private Dictionary<String, Object> buildTraineeToMentorRelation(Dictionary<String, Object> d) {
+        Dictionary<String, Object> rel = new Hashtable<String, Object>();
+        rel.put("fromURL", "user://" + d.get("trainee"));
+        rel.put("toURL", "user://" + d.get("mentor"));
+        rel.put("type", "traineeOf");
         return rel;
     }
 

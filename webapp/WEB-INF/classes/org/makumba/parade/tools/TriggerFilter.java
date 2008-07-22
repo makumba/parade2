@@ -131,13 +131,15 @@ public class TriggerFilter implements Filter {
             checkCrossContext(req, beforeContext);
         } else {
 
+            // then we proceed
+            if (beforeServlet != null)
+                invokeServlet(beforeServlet, ctx, dummyReq, resp);
+
+            
             // first, we ask the db servlet to log our actionlog
             dummyReq.setAttribute("org.makumba.parade.servletParam", log);
             invokeServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", ctx, dummyReq, resp);
             
-            // then we proceed
-            if (beforeServlet != null)
-                invokeServlet(beforeServlet, ctx, dummyReq, resp);
             
             // now we have the user gracefully provided by the beforeServlet so we can set the prefix
             TriggerFilter.setPrefix();

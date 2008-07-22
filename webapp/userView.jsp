@@ -54,6 +54,10 @@ Here's the information ParaDe knows about you.
 					<td style="font-weight: bold;">CVS user</td>
 					<td><mak:value expr="u.cvsuser" /></td>
 				</tr>
+                <tr>
+                  <td style="font-weight: bold;">Mentor</td>
+                  <td><mak:value expr="u.mentor.name" /> <mak:value expr="u.mentor.surname" /></td>
+                </tr>
 				<mak:list from="Row r" where="r.user = u" separator=" and ">
 				<c:if test="${mak:maxCount() > 0}">
 				<c:if test="${mak:count()==1}"><tr></tr><td colspan="2">&nbsp;</td><tr><td colspan="2" style="font-weight: bold;">Proud owner of row</c:if>

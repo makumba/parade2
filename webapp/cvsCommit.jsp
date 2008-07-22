@@ -14,6 +14,7 @@
 <c:if test="${empty context}">
   <c:set var="context" value="${requestScope.context}" />
 </c:if>
+<c:if test="${empty context}"><c:set var="context" value="${sessionScope.currentContext }"/></c:if>
 
 
 <c:choose>
@@ -39,7 +40,7 @@
 <table border="0">
   <tr>
     <td>
-    <form style="display: inline;" target="command" action="/Cvs.do" method="POST">
+    <form style="display: inline;" target="command" action="/Cvs.do" method="GET">
 
 <input type="hidden" value="${context}" name="context">
 <input type="hidden" value="commit" name="op">

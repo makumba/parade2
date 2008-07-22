@@ -19,6 +19,8 @@ public class User {
     private Parade parade;
 
     private String cvsuser;
+    
+    private User mentor;
 
     public String getName() {
         return name;
@@ -129,6 +131,14 @@ public class User {
 
     public void setCvsuser(String cvsuser) {
         this.cvsuser = cvsuser;
+    }
+
+    public void setMentor(User mentor) {
+        this.mentor = mentor;
+    }
+
+    public User getMentor() {
+        return mentor;
     }
 
 }

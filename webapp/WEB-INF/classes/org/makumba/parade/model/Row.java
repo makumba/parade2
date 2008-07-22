@@ -43,6 +43,8 @@ public class Row {
     private Application application;
 
     private User user;
+    
+    private User externalUser;
 
     // 10 = No, 20 = Yes
     private int automaticCvsUpdate = AUTO_CVS_UPDATE_DISABLED;
@@ -191,6 +193,14 @@ public class Row {
                 s.close();
         }
         return module;
+    }
+
+    public void setExternalUser(User externalUser) {
+        this.externalUser = externalUser;
+    }
+
+    public User getExternalUser() {
+        return externalUser;
     }
 
 }
