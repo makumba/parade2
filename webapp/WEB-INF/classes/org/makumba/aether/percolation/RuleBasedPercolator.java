@@ -72,10 +72,9 @@ public class RuleBasedPercolator implements Percolator {
 
     class PercolationData {
 
-        private AetherEvent aetherEvent;
+        private AetherEvent aetherEvent = null;
 
         public PercolationData(AetherEvent aetherEvent, boolean virtualPercolation) {
-            super();
             this.aetherEvent = aetherEvent;
             this.virtualPercolation = virtualPercolation;
         }

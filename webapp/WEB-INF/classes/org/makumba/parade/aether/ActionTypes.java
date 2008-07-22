@@ -23,7 +23,7 @@ public enum ActionTypes {
     CVS_CHECK("cvsCheck", "checked the CVS status"),
     CVS_UPDATE_DIR_LOCAL("cvsUpdateDirLocal", "performed a local CVS update"),
     CVS_UPDATE_DIR_RECURSIVE("cvsUpdateDirRecursive", "performed a recursive CVS update"),
-    CVS_COMMIT("paradeCvsCommit", "commited"),
+    CVS_COMMIT("commit", "commited"),
     CVS_DIFF("cvsDiff", "made a CVS diff"),
     CVS_ADD("cvsAdd", "added to CVS"),
     CVS_UPDATE_FILE("cvsUpdateFile", "CVS updated"),

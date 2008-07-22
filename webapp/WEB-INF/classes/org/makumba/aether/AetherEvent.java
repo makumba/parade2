@@ -7,7 +7,7 @@ import java.util.Date;
  * @author Manuel Gay
  *
  */
-public class AetherEvent {
+public class AetherEvent implements Cloneable{
     
     protected String objectURL;
     protected String objectType;

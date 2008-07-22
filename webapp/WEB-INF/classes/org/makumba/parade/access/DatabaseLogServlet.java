@@ -183,10 +183,9 @@ public class DatabaseLogServlet extends HttpServlet {
                     .setString("path", log.getFile()).setString("rowname", rowName).uniqueResult();
 
             if (f != null) {
-                initialLevelCoefficient = new Double(Math.abs(f.getPreviousChars() - f.getCurrentChars() + 0.00)
-                        / ((f.getCurrentChars() + f.getPreviousChars()) / 2 + 0.00));
+                initialLevelCoefficient = Math.abs(f.getPreviousChars() - f.getCurrentChars() + 0.00) / ((f.getCurrentChars() + f.getPreviousChars()) / 2 + 0.00);
                 
-                if(initialLevelCoefficient == Double.NaN)
+                if(Double.isNaN(initialLevelCoefficient))
                     initialLevelCoefficient = 0.00;
             }
 
@@ -472,13 +471,13 @@ public class DatabaseLogServlet extends HttpServlet {
                     ActionLogDTO dto = new ActionLogDTO();
                     dto.setUser(log.getUser());
                     dto.setParadecontext(ObjectTypes.rowNameFromURL(URL));
-                    dto.setContext(log.getContext());
+                    dto.setContext(ObjectTypes.rowNameFromURL(URL));
                     dto.setAction(ActionTypes.CVS_COMMIT.action());
                     dto.setDate(log.getDate());
                     dto.setFile(ObjectTypes.fileOrDirPathFromFileOrDirURL(URL));
                     dto.setObjectType(ObjectTypes.CVSFILE);
                     
-                    commits.put(ObjectTypes.pathFromFileOrDirURL(URL), dto);
+                    commits.put("/" + ObjectTypes.pathFromFileOrDirURL(URL), dto);
                 }
                 
                 // "paradeCvsCommit" is not logged
