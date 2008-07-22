@@ -200,8 +200,10 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
             fileData.setOnDisk(true);
-            fileData.setPreviousChars(fileData.getCurrentChars());
-            fileData.setCurrentChars(WordCount.count(file.getAbsolutePath()));
+            if(!isDir) {
+                fileData.setPreviousChars(fileData.getCurrentChars());
+                fileData.setCurrentChars(WordCount.count(file.getAbsolutePath()));
+            }
 
             // otherwise we make a new file
         } else {
@@ -218,8 +220,10 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             fileData.setName(file.getName());
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
-            fileData.setCurrentChars(WordCount.count(file.getAbsolutePath()));
-            fileData.setPreviousChars(WordCount.count(file.getAbsolutePath()));
+            if(!isDir) {
+                fileData.setCurrentChars(WordCount.count(file.getAbsolutePath()));
+                fileData.setPreviousChars(WordCount.count(file.getAbsolutePath()));
+            }
             fileData.setOnDisk(true);
         }
         return fileData;
