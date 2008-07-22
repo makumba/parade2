@@ -8,6 +8,7 @@ tomcat.Xmx=2048M
 # Standard ParaDe configuration - usually, no need to change this unless you need another port
 # (in this case, also configure tomcat/server.xml)
 tomcat.server=localhost
+tomcat.http.port=5050
 tomcat.manager.url=http://${tomcat.server}:5050/manager
 tomcat.manager.username=someuser
 tomcat.manager.password=somepass
