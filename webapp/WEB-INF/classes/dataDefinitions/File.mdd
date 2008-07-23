@@ -13,4 +13,10 @@ row = ptr Row
 isDir=boolean
 crawled=boolean
 
+# composes the URL of this file
+URL() { case when isDir then fileURL() else dirURL() end } 
+
 fileURL() { concat('file://', concat(row.rowname, substring(path, length(row.rowpath) + 1 + length(row.webappPath) + case when length(row.webappPath) = 0 then 0 else 1 end, length(path)))) } 
+dirURL() { concat('dir://', concat(row.rowname, substring(path, indexForURL(), length(path)))) } 
+parentURL() { concat('dir://', concat(row.rowname, substring(parentPath, indexForURL(), length(parentPath)))) } 
+indexForURL() { case when (path = row.rowpath) then length(row.rowpath) else (length(row.rowpath) + 1 + length(row.webappPath) + case when length(row.webappPath) = 0 then 0 else 1 end) end}
