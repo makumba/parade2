@@ -7,7 +7,7 @@
 <mak:newForm type="RelationQuery" action="relationQuery.jsp">
 Description: <mak:input field="description" cols="100"/><br><br>
 Query: <mak:input field="query" cols="100" rows="5"/><br>
-Arguments (comma-separated): <mak:input field="arguments"/> (if none, fromURL is default)<br>
+Arguments (comma-separated): <mak:input field="arguments"/> (if none, fromURLSet is default)<br>
 Supported arguments: Supported arguments: <%for(String a : GroupedPercolationStrategy.supportedArguments) {%><%=a%>, <%}%><br>
 <br>
 <input type="submit" value="Save"/>
