@@ -101,7 +101,7 @@
 
       <td valign="top">&nbsp; ant: <c:forEach var="target" items="${requestScope.allowedOps}"
         varStatus="allowedOpsListStatus">
-        <a href="/Ant.do?getPathFromSession=true&display=command&context=${rowName}&path=&op=${target}">${target}</a>
+        <a target="command" href="/Ant.do?getPathFromSession=true&display=command&context=${rowName}&path=&op=${target}">${target}</a>
         <c:if test="${not allowedOpsListStatus.last}">, </c:if>
       </c:forEach></td>
       <td valign="top">&nbsp; webapp: <c:if test="${requestScope.status == 2}">
