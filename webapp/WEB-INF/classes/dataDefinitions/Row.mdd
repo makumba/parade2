@@ -10,3 +10,5 @@ automaticCvsUpdate=int{"No"=10, "Yes"=20} ;whether unmodified files should be au
 #files=set parade.File
 #rowdata=set AbstractRowData ;inheritance...
 moduleRow=boolean ;whether this is a normal row, or a "hidden" row that represents one CVS module / application
+
+rowURL() {concat('row://', rowname)}
