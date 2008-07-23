@@ -35,7 +35,8 @@ Here you can edit your user information.<br><br>
 <tr>
   <td>Mentor</td>
   <td>
-  <mak:input field="mentor"> 
+  <mak:input field="mentor">
+      <mak:option>--Pick one--</mak:option>
       <mak:list from="User m" orderBy="m.name, m.surname">
         <mak:option value="m.id"> <mak:value expr="m.name"/>  <mak:value expr="m.surname"/> (<mak:value expr="m.nickname"/>) </mak:option> 
       </mak:list> 
