@@ -63,48 +63,15 @@
         title='Tomcat documentation' target='directory'>Tomcat</a> <a href='http://www.makumba.org'
         title='Makumba documentation' target='directory'>Makumba</a></td>
 
-      <mak:value expr="row.id" var="rowId" />
-      <%
-      	// Fetching the necessary data from the Hibernate model. This can't be done yet by Makumba, since the model uses inheritance, and this is not supported by Makumba.
-      		Session s = null;
-      		try {
-      			// Creating a new Hibernate Session, which needs to be closed in any case at the end (in the finally block)
-      			s = InitServlet.getSessionFactory().openSession();
-      			// Starting a new transaction
-      			Transaction tx = s.beginTransaction();
-
-      			// We fetch the row
-      			Row r = (Row) s.get(Row.class, new Long(
-      					((HibernatePointer) rowId).getId()));
-
-      			// Ant data - allowed operations
-      			List<String> allowedOps = ((RowAnt) r.getRowdata().get(
-      					"ant")).getAllowedOperations();
-
-      			request.setAttribute("allowedOps", allowedOps);
-
-      			// Webapp status data
-      			RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
-
-      			int status = data.getStatus().intValue();
-
-      			if (r.getRowpath().equals(r.getParade().getBaseDir())) {
-      				data.setStatus(new Integer(ServletContainer.RUNNING));
-      				status = ServletContainer.RUNNING;
-      			}
-
-      			request.setAttribute("status", status);
-
-      			// we commit the transaction
-      			tx.commit();
-      %>
-
-      <td valign="top">&nbsp; ant: <c:forEach var="target" items="${requestScope.allowedOps}"
+      <jsp:useBean id="browserHeaderBean" class="org.makumba.parade.view.beans.BrowserHeaderBean" />
+      <mak:value expr="row.id" printVar="rowId"/>
+      <jsp:setProperty name="browserHeaderBean" property="rowId" value="<%=rowId %>"/>
+      <td valign="top">&nbsp; ant: <c:forEach var="target" items="${browserHeaderBean.antOperations}"
         varStatus="allowedOpsListStatus">
         <a target="command" href="/Ant.do?getPathFromSession=true&display=command&context=${rowName}&path=&op=${target}">${target}</a>
         <c:if test="${not allowedOpsListStatus.last}">, </c:if>
       </c:forEach></td>
-      <td valign="top">&nbsp; webapp: <c:if test="${requestScope.status == 2}">
+      <td valign="top">&nbsp; webapp: <c:if test="${browserHeaderBean.webappStatus == 2}">
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextReload&getPathFromSession=true" target="command">reload</a>
         <a
@@ -125,16 +92,6 @@
 
     </tr>
   </table>
-
-  <%
-    // finally, we close the Hibernate Session
-  	} finally {
-  			if (s != null) {
-  				s.close();
-  			}
-  		}
-  %>
-
 
 </mak:object>
 

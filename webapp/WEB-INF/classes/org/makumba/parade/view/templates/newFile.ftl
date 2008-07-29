@@ -4,5 +4,5 @@
 Create new file: <input type="text" name="params">
 <input type=hidden value="${path}" name="params">
 <input type=submit value=Create>
-<br><font style="font-size: smaller;">(in ${rowName}${path})</font>
+<br><font style="font-size: smaller;">(in ${rowName}/${path})</font>
 </form>

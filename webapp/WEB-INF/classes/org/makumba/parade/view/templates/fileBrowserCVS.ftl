@@ -82,19 +82,19 @@
 <!-- ADDED -->
 <#case 4>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
-<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit to repository (will add file to repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.fileURIEncoded}&display=command&view=commit' title='CVS commit to repository (will add file to repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 <#break>
 
 <!-- DELETED -->
 <#case 5>
 <a href='${file.cvsWebLink}' title='CVS log'>${file.cvsRevision}</a>
-<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit to repository (will delete file from repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.fileURIEncoded}&display=command&view=commit' title='CVS commit to repository (will delete file from repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 <#break>
 
 <!-- CONFLICT -->
 <#case 6>
 <a href='${file.cvsWebLink}' title='CVS log'><b><font color='red'>Conflict</font></b></a>
-<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.path}&display=command&view=commit' title='CVS commit to repository'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/servlet/browse?context=${rowName}&path=${path}&file=${file.fileURIEncoded}&display=command&view=commit' title='CVS commit to repository'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=overridefile' title='Override local changes and replace with file from repository'><img src='/images/cvs-override.gif' alt='Override local changes and replace with file from repository'></a>
 <a target='command' href='/Cvs.do?context=${rowName}&path=${path}&file=${file.path}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 <#break>

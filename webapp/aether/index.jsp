@@ -25,11 +25,6 @@
 <li><a href="percolationLog.jsp">log</a></li>
 </ul>
 
-<h2>Percolation steps</h2>
-<ul>
-<li><a href="percolationStepList.jsp">list</a></li>
-</ul>
-
 
 </body>
 </html>
