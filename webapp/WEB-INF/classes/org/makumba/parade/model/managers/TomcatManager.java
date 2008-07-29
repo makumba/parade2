@@ -110,6 +110,9 @@ public class TomcatManager implements ServletContainer {
 
             if (!f.exists())
                 throw new RuntimeException("cannot find common root to context");
+            
+            if(contextName == null)
+                throw new RuntimeException("cannot install context, context name was null");
 
             File deployer = File.createTempFile("parade-deploy", ".xml");
             BufferedWriter out = new BufferedWriter(new FileWriter(deployer));
