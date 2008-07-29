@@ -1,5 +1,6 @@
 package org.makumba.aether.model;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -11,21 +12,21 @@ import org.makumba.providers.QueryAnalysisProvider;
 import org.makumba.providers.QueryProvider;
 
 public class RelationQuery {
-    
+
     private Logger logger = Logger.getLogger(RelationQuery.class);
-    
+
     private static int executedQueries = 0;
-    
+
     private long id;
-    
+
     private String query;
-    
+
     private String description;
-    
+
     private String arguments;
-    
+
     private QueryAnalysisProvider qap = QueryProvider.getQueryAnalzyer("hql");
-    
+
     public long getId() {
         return id;
     }
@@ -41,11 +42,11 @@ public class RelationQuery {
     public void setQuery(String query) {
         this.query = query;
     }
-    
+
     public RelationQuery() {
-        
+
     }
-    
+
     public String toString() {
         return niceQuery(query);
     }
@@ -53,19 +54,16 @@ public class RelationQuery {
     public static String niceQuery(String query) {
         String niceQuery = "";
         String localQuery = query;
-        if(localQuery.toLowerCase().startsWith("select")) {
-            niceQuery += "SELECT \n" +
-                         "       ";
+        if (localQuery.toLowerCase().startsWith("select")) {
+            niceQuery += "SELECT \n" + "       ";
             localQuery = localQuery.substring("select ".length());
             String[] from = localQuery.split("[ ][f|F][r|R][o|O][m|M][ ]");
             niceQuery += from[0] + "\n";
-            niceQuery += "FROM \n" + 
-                         "     ";
+            niceQuery += "FROM \n" + "     ";
             localQuery = from[1];
             String[] where = localQuery.split("[ ][w|W][h|H][e|E][r|R][e|E][ ]");
             niceQuery += where[0] + "\n";
-            niceQuery += "WHERE \n" +
-                         "      ";
+            niceQuery += "WHERE \n" + "      ";
             niceQuery += where[1];
         }
         return niceQuery;
@@ -92,35 +90,40 @@ public class RelationQuery {
         if (getArguments().length() > 0) {
             queryArguments = getArguments();
         }
-        
-        //inline all makumba query functions
+
+        // inline all makumba query functions
         String localQuery = qap.inlineFunctions(query);
-    
+
         String args = ""; // for debug
         StringTokenizer st = new StringTokenizer(queryArguments, ",");
         while (st.hasMoreTokens()) {
-    
+
             String t = st.nextToken().trim();
-    
+
             String value = arguments.get(t);
             if (value != null) {
                 // we replace the values by hand since hibernate fucks up for IN() queries
-                localQuery = localQuery.replaceAll(":"+t, value.startsWith("'") ? value : "'" + value + "'");
-//                q.setString(t, value);
+                localQuery = localQuery.replaceAll(":" + t, value.startsWith("'") ? value : "'" + value + "'");
+                // q.setString(t, value);
                 args += t + "=" + value;
                 if (st.hasMoreTokens())
                     args += ", ";
             }
         }
-        
-        Query q = s.createQuery(localQuery);
-        
+
         logger.debug("Executing relation query:\n\n" + this + "\n\nwith arguments " + args);
-        executedQueries++;
-        
-        List result = q.list();
-        logger.debug("Got "+result.size()+" result(s)");
-    
+        List result = new LinkedList();
+        Query q = null;
+        try {
+            q = s.createQuery(localQuery);
+            result = q.list();
+            executedQueries++;
+            logger.debug("Got " + result.size() + " result(s)");
+        } catch (NullPointerException e) {
+            logger.error("Aether RelationQuery execution failed due to error:");
+            logger.error(e);
+        }
+
         return result;
     }
 
