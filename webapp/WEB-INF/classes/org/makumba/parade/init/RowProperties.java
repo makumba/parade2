@@ -95,7 +95,8 @@ public class RowProperties {
                 state.store(new FileOutputStream(new java.io.File(ParadeProperties.getClassesPath()
                         + java.io.File.separator + "rows.properties")), "rows\n" + "# example:\n"
                         + "# <name_appl>=<path, e.g. ..\\iplabWeb>\n" + "# rowdata.<name_appl>.obs=<space for notes>\n"
-                        + "# rowdata.<name_appl>.webapp=<relative path to the context, e.g. 'public_html'>\n");
+                        + "# rowdata.<name_appl>.webapp=<relative path to the context, e.g. 'public_html'>\n"
+                        + "# rowdata.<name_appl>.user=<user login, e.g. manuel.gay'>\n");
 
             } catch (FileNotFoundException e1) {
                 e1.printStackTrace();
