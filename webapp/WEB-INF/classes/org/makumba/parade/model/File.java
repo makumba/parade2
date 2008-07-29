@@ -199,15 +199,12 @@ public class File {
     public String getFileURI() {
         
         if(path.startsWith(row.getRowpath() + "/" + row.getWebappPath())) {
-            return "file://" + row.getRowname()
-            + path.substring((row.getRowpath() + row.getWebappPath()).length()).replace(java.io.File.separator, "/");
+            return "file://" + row.getRowname() + path.substring((row.getRowpath() + "/" + row.getWebappPath()).length()).replace(java.io.File.separator, "/");
         } else if(path.startsWith(row.getRowpath())) {
-            return "file://" + row.getRowname()
-            + path.substring((row.getRowpath()).length()).replace(java.io.File.separator, "/");
+            return "file://" + row.getRowname() + path.substring((row.getRowpath()).length()).replace(java.io.File.separator, "/");
         }
         
-        return "file://" + row.getRowname()
-                + path.substring((row.getRowpath() + row.getWebappPath()).length()).replace(java.io.File.separator, "/");
+        return "file://" + row.getRowname() + path.substring((row.getRowpath() + "/" + row.getWebappPath()).length()).replace(java.io.File.separator, "/");
     }
 
     public String getCvsPath() {
