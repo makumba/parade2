@@ -44,7 +44,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `InitialPercolationRule` WRITE;
 /*!40000 ALTER TABLE `InitialPercolationRule` DISABLE KEYS */;
-INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'','1-ln(t/10+1)','1-t*t+t','20',NULL),(2,'DIR','view','actor',5,30,'','1-t/2','1-t/2','20',''),(3,'FILE','create','actor',100,10,'','1-ln(t/10+1)','0','10','Setting a focus when creating a new file'),(4,'ROW','view','actor',5,10,'','1-t','1-t','10','user watches row');
+INSERT INTO `InitialPercolationRule` VALUES (1,'FILE','save','all_but_actor',100,30,'','1-ln(t/10+1)','1-t*t+t','20',''),(2,'DIR','view','actor',5,30,'','1-t/2','1-t/2','20',''),(3,'FILE','create','actor',100,10,'','1-ln(t/10+1)','0','10','Setting a focus when creating a new file'),(4,'ROW','view','actor',5,10,'','1-t','1-t','10','user watches row');
 /*!40000 ALTER TABLE `InitialPercolationRule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -69,7 +69,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `InitialPercolationRule__relationQueries` WRITE;
 /*!40000 ALTER TABLE `InitialPercolationRule__relationQueries` DISABLE KEYS */;
-INSERT INTO `InitialPercolationRule__relationQueries` VALUES (1,5),(1,1);
+INSERT INTO `InitialPercolationRule__relationQueries` VALUES (1,5),(1,9),(1,1);
 /*!40000 ALTER TABLE `InitialPercolationRule__relationQueries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +90,7 @@ CREATE TABLE `PercolationRule` (
   `active` bit(1) default NULL,
   `propagationDepthLimit` int(11) default NULL,
   PRIMARY KEY  (`percolationrule`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -99,7 +99,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `PercolationRule` WRITE;
 /*!40000 ALTER TABLE `PercolationRule` DISABLE KEYS */;
-INSERT INTO `PercolationRule` VALUES (1,'FILE','versionOf','CVSFILE',5,'is a version of','',-1),(2,'FILE','dependsOn','FILE',20,'depends on the file that was acted upon','',1),(3,'USER','save','FILE',0,'User watched file','',-1),(4,'CVSFILE','dependsOn','CVSFILE',20,'A cvs file depends on another cvs file','\0',-1),(5,'CVSFILE','checkedOutAs','FILE',5,'is checked out as','',-1),(6,'USER','create','FILE',0,'a user created a file','',-1),(7,'USER','view','DIR',0,'user watches directory','',-1),(8,'USER','view','ROW',0,'user watches row','',-1);
+INSERT INTO `PercolationRule` VALUES (1,'FILE','versionOf','CVSFILE',5,'is a version of','',-1),(2,'FILE','dependsOn','FILE',20,'depends on the file that was acted upon','',1),(3,'USER','save','FILE',0,'User watched file','',-1),(4,'CVSFILE','dependsOn','CVSFILE',20,'A cvs file depends on another cvs file','\0',-1),(5,'CVSFILE','checkedOutAs','FILE',5,'is checked out as','',-1),(6,'USER','create','FILE',0,'a user created a file','',-1),(7,'USER','view','DIR',0,'user watches directory','',-1),(8,'USER','view','ROW',0,'user watches row','',-1),(9,'DIR','parentOf','FILE',-100,'a directory is the parent of a file','',-1),(10,'ROW','havingAsRoot','DIR',-100,'a row has as root a directory','',-1),(11,'DIR','parentOf','DIR',-100,'a directory is the parent of another directory','',-1);
 /*!40000 ALTER TABLE `PercolationRule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -124,7 +124,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `PercolationRule__relationQueries` WRITE;
 /*!40000 ALTER TABLE `PercolationRule__relationQueries` DISABLE KEYS */;
-INSERT INTO `PercolationRule__relationQueries` VALUES (2,5),(2,1),(5,4),(4,5),(4,4),(1,5);
+INSERT INTO `PercolationRule__relationQueries` VALUES (2,5),(2,1),(5,4),(4,5),(4,4),(1,5),(9,9),(9,17),(11,9),(11,17);
 /*!40000 ALTER TABLE `PercolationRule__relationQueries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,7 +141,7 @@ CREATE TABLE `RelationQuery` (
   `description` text,
   `arguments` varchar(255) default NULL,
   PRIMARY KEY  (`relationquery`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -150,7 +150,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `RelationQuery` WRITE;
 /*!40000 ALTER TABLE `RelationQuery` DISABLE KEYS */;
-INSERT INTO `RelationQuery` VALUES (1,'SELECT f.cvsURL as fromURL, \'checkedOutAs\' as type, f.fileURL() as toURL FROM File f WHERE f.fileURL() in(:fromURLSet) AND f.cvsURL is not null and concat(f.fileURL(), \'True\') not in(:fromURLAndTraversedCVSSet)','cvs:// , checkedOutAs, file:// - all the cvs files that are a version of a repository version (not-null CVS version) and where the percolationPath has no cvs:// prefix','fromURLSet, fromURLAndTraversedCVSSet'),(4,'SELECT f.fileURL() as fromURL, \'versionOf\' as type, f.cvsURL as toURL FROM File f JOIN f.row r WHERE f.cvsURL in(:cvsURLSet) AND r.rowname not in(:rowNameSet)','file://, versionOf, cvs:// - all the checked out files of a cvs file that have a CVS URL set except the ones of the previous row','cvsURLSet, rowNameSet'),(5,'SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL from org.makumba.devel.relations.Relation r where r.toURL in(:fromURLSet)','fromURL, type, toURL - all the files that depend on this file (through the computed relations)','fromURLSet');
+INSERT INTO `RelationQuery` VALUES (1,'SELECT f.cvsURL as fromURL, \'checkedOutAs\' as type, f.fileURL() as toURL FROM File f WHERE f.fileURL() in(:fromURLSet) AND f.cvsURL is not null and concat(f.fileURL(), \'True\') not in(:fromURLAndTraversedCVSSet)','cvs:// , checkedOutAs, file:// - all the cvs files that are a version of a repository version (not-null CVS version) and where the percolationPath has no cvs:// prefix','fromURLSet, fromURLAndTraversedCVSSet'),(9,'SELECT f.parentURL() as toURL, \'parentOf\' as type, f.URL() as fromURL FROM File f WHERE f.URL() IN(:fromURLSet)','dir:// parentOf dir:// | file:// - finds the parent directory of the files in the initial fromURLSet','fromURLSet'),(4,'SELECT f.fileURL() as fromURL, \'versionOf\' as type, f.cvsURL as toURL FROM File f JOIN f.row r WHERE f.cvsURL in(:cvsURLSet) AND r.rowname not in(:rowNameSet)','file://, versionOf, cvs:// - all the checked out files of a cvs file that have a CVS URL set except the ones of the previous row','cvsURLSet, rowNameSet'),(17,'SELECT r.rowURL() as toURL, \'havingAsRoot\' as type, f.URL() as fromURL FROM File f, Row r WHERE f.path = r.rowpath and f.URL() IN(:fromURLSet)','row:// havingAsRoot dir:// - finds the row that has as root folder a directory',''),(5,'SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL from org.makumba.devel.relations.Relation r where r.toURL in(:fromURLSet)','fromURL, type, toURL - all the files that depend on this file (through the computed relations)','fromURLSet');
 /*!40000 ALTER TABLE `RelationQuery` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -163,4 +163,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2008-07-21 16:14:15
+-- Dump completed on 2008-07-27 22:55:53
