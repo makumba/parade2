@@ -101,23 +101,6 @@ public class CvsAction extends DispatchAction {
         String path = request.getParameter("path");
         String message = request.getParameter("message");
         
-
-        // here we need to send out an action log on our own since the real one will come only too late
-        /*
-        ActionLogDTO dto = new ActionLogDTO();
-        dto.setDate(new Date());
-        
-        String file = "";
-        for(String f : request.getParameterValues("file")) {
-            file +="&"+f;
-        }
-        
-        dto.setUrl("/Cvs.do");
-        dto.setQueryString("?context="+context+"&op=commit"+"&path="+path+"&file="+file+"&message="+message);
-        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", dto);
-        //dbs.handleIncomingLog(dto);
-         */
-        
         // we reconstruct the absolute paths (the ones passed as params are relative)
         path = Parade.constructAbsolutePath(context, path);
 
