@@ -38,14 +38,10 @@ public class AntManager implements RowRefresher, ParadeManager {
 
         File buildFile = setBuildFile(row, antdata);
         if (buildFile == null || !buildFile.exists()) {
-            logger
-                    .warn("AntManager: no build file found for row " + row.getRowname() + " at path "
-                            + row.getRowpath());
+            logger.warn("AntManager: no build file found for row " + row.getRowname() + " at path " + row.getRowpath());
         } else {
             Project p = getInitProject(buildFile, row, antdata);
-            if (p == null) {
-                logger.error("AntManager: couldn't initialise the project");
-            } else {
+            if (p != null) {
                 setTargets(antdata, p);
             }
         }
@@ -129,9 +125,8 @@ public class AntManager implements RowRefresher, ParadeManager {
             } else {
                 targets.add(currentTarget.getName());
             }
-
-            Collections.sort(antdata.getTargets());
         }
+        Collections.sort(antdata.getTargets());
     }
 
     public void newRow(String name, Row r, Map<String, String> m) {
@@ -231,6 +226,6 @@ public class AntManager implements RowRefresher, ParadeManager {
     }
 
     public void softRefresh(Row row) {
-
+        hardRefresh(row);
     }
 }
