@@ -80,7 +80,7 @@
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextStart&getPathFromSession=true" target="command">start</a>
       </c:if> <c:if test="${requestScope.status != 0}">
-        <a href="/Webapp.do?display=index&context=${rowName}&path=${path}&op=servletContextRedeploy">redeploy</a>
+        <a href="/Webapp.do?display=index&context=${rowName}&path=${path}&op=servletContextRedeploy" target="command">redeploy</a>
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextRemove&getPathFromSession=true" target="command">uninstall</a>
       </c:if> <c:if test="${requestScope.status == 0}">
