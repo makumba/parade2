@@ -19,7 +19,7 @@
 
 <a href="/" target="_top" title="back to front page">&lt;</a>
 
-<form class="nobreak" target="logview" action="<c:choose><c:when test="${logtype == 'log'}">/logs?logtype=log&view=log</c:when><c:when test="${logtype == 'actionlog'}">/actionLog.jsp?logtype=actionlog</c:when></c:choose>&context=${context}&years=${year}&months=${month}&days=${day}&filter=${filter}>
+<form class="nobreak" target="logview" action="<c:choose><c:when test="${logtype == 'log'}">/logs?logtype=log&view=log</c:when><c:when test="${logtype == 'actionlog'}">/actionLog.jsp?logtype=actionlog</c:when></c:choose>&years=${year}&months=${month}&days=${day}&filter=${filter}>
 <script language="JavaScript">
 <!--
 var cal = new CalendarPopup();
@@ -37,10 +37,10 @@ Show logs since:
 <input name="year" value="${year}" size="5" type="text">
 <a href="#" onclick="cal.showCalendar('calanchor'); return false;" title="cal.showCalendar('calanchor'); return false;" name="calanchor" id="calanchor">select</a>
 &nbsp;&nbsp;in context <select SIZE='1' NAME='context'>
-<option value="all"<c:if test="${'all' == context}"> selected</c:if>>all</option>
+<option value="all"<c:if test="${'all' == param.context}"> selected</c:if>>all</option>
 <mak:list from="Row r" where="r.moduleRow = false" orderBy="r.rowname">
 <c:set var="rowName"><mak:value expr="r.rowname"/></c:set>
-<option value="${rowName} }"<c:if test="${rowName == context}"> selected</c:if>><mak:value expr="r.rowname"/></option>
+<option value="${rowName} }"<c:if test="${rowName == param.context}"> selected</c:if>><mak:value expr="r.rowname"/></option>
 </mak:list>
 </select>
 &nbsp;&nbsp;
