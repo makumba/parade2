@@ -14,6 +14,10 @@ parade.authorization.baseDN=ou=Members,dc=BEST,dc=eu,dc=org
 # e.g. DIGEST-MD5,RSA-SHA1
 parade.authorization.encryption=
 
+# Application configuration
+# If CVS modules should not be checked out automatically then enable the following option
+# parade.applications.disabled=true
+
 ant.displayedOps=compile, clean, getTaglibs, getMakumba, getLocalMakumba, copyLocalMakumba, doc, applets
 
 makumba.site=http://download.makumba.org/makumba/download/
