@@ -366,9 +366,11 @@ public class DatabaseLogServlet extends HttpServlet {
         // view actions
         if (uri.endsWith(".jspx")) {
             log.setAction(ActionTypes.VIEW.action());
+            log.setObjectType(ObjectTypes.FILE);
             if (webapp.length() > 0) {
                 log.setFile("/" + webapp + uri.substring(0, uri.length() - 1));
-                log.setObjectType(ObjectTypes.FILE);
+            } else {
+                log.setFile("/" + uri.substring(0, uri.length() - 1));
             }
         } else
 
