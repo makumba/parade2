@@ -19,15 +19,15 @@ public class PercolationRule implements AetherRule {
     private String object;
 
     private int consumption;
-    
+
     private int propagationDepthLimit;
 
     private String description;
 
     private boolean active = true;
-    
+
     private List<RelationQuery> relationQueries;
-    
+
     public PercolationRule() {
 
     }
@@ -95,9 +95,11 @@ public class PercolationRule implements AetherRule {
     public void setRelationQueries(List<RelationQuery> relationQueries) {
         this.relationQueries = relationQueries;
     }
-    
+
+    @Override
     public String toString() {
-        return this.subject +" --("+this.predicate+")--> "+object+" (consumes "+consumption+") - "+description;
+        return this.subject + " --(" + this.predicate + ")--> " + object + " (consumes " + consumption + ") - "
+                + description;
     }
 
     public void setPropagationDepthLimit(int propagationDepthLimit) {

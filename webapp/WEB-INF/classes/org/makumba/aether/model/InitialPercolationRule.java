@@ -9,7 +9,7 @@ import java.util.List;
  * 
  */
 public class InitialPercolationRule implements AetherRule {
-    
+
     public static final int NO_PERCOLATION = 0;
 
     public static final int FOCUS_PERCOLATION = 10;
@@ -19,9 +19,9 @@ public class InitialPercolationRule implements AetherRule {
     public static final int FOCUS_NIMBUS_PERCOLATION = 30;
 
     public static final int IMMEDIATE_INTERACTION = 10;
-    
+
     public static final int DIFFERED_INTERACTION = 20;
-    
+
     private long id;
 
     private String objectType;
@@ -33,17 +33,17 @@ public class InitialPercolationRule implements AetherRule {
     private int percolationMode;
 
     private int initialLevel;
-    
+
     private String focusProgressionCurve;
-    
+
     private String nimbusProgressionCurve;
 
     private List<RelationQuery> relationQueries;
-    
+
     private int interactionType;
 
     private boolean active = true;
-    
+
     private String description;
 
     public InitialPercolationRule() {
@@ -113,7 +113,7 @@ public class InitialPercolationRule implements AetherRule {
     public void setPercolationMode(int percolationMode) {
         this.percolationMode = percolationMode;
     }
-    
+
     public String getFocusProgressionCurve() {
         return focusProgressionCurve;
     }
@@ -138,6 +138,7 @@ public class InitialPercolationRule implements AetherRule {
         this.interactionType = interactionType;
     }
 
+    @Override
     public String toString() {
         return "oType: " + objectType + " action: " + action + " uType: " + userType + " initLevel: " + initialLevel
                 + " percolationMode: " + percolationMode(this.percolationMode);

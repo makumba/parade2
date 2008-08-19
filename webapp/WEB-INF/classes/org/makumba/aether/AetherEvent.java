@@ -4,18 +4,24 @@ import java.util.Date;
 
 /**
  * A aether event that can be processed by the percolation engine
+ * 
  * @author Manuel Gay
- *
+ * 
  */
-public class AetherEvent implements Cloneable{
-    
+public class AetherEvent implements Cloneable {
+
     protected String objectURL;
+
     protected String objectType;
+
     protected String actor;
+
     protected String action;
+
     protected Date eventDate;
-    protected Double initialLevelCoefficient; 
-    
+
+    protected Double initialLevelCoefficient;
+
     public void setObjectURL(String objectURL) {
         this.objectURL = objectURL;
     }
@@ -51,12 +57,13 @@ public class AetherEvent implements Cloneable{
     public String getAction() {
         return action;
     }
-    
+
     public Date getEventDate() {
         return eventDate;
     }
 
-    public AetherEvent(String objectURL, String objectType, String user, String action, Date eventDate, Double initialLevelCoefficient) {
+    public AetherEvent(String objectURL, String objectType, String user, String action, Date eventDate,
+            Double initialLevelCoefficient) {
         super();
         this.objectURL = objectURL;
         this.objectType = objectType;
@@ -65,7 +72,7 @@ public class AetherEvent implements Cloneable{
         this.eventDate = eventDate;
         this.initialLevelCoefficient = initialLevelCoefficient;
     }
-    
+
     // for MatchedAetherEvent
     protected AetherEvent(AetherEvent e) {
         this.objectURL = e.getObjectURL();
@@ -75,14 +82,15 @@ public class AetherEvent implements Cloneable{
         this.eventDate = e.getEventDate();
         this.initialLevelCoefficient = e.getInitialLevelCoefficient();
     }
-    
+
     // for MatchedAetherEvent
     protected AetherEvent() {
-        
+
     }
-    
+
+    @Override
     public String toString() {
-        return this.actor +" --(" + this.action + ")--> " + this.objectURL + " ("+this.objectType + ")";
+        return this.actor + " --(" + this.action + ")--> " + this.objectURL + " (" + this.objectType + ")";
     }
 
     public Double getInitialLevelCoefficient() {

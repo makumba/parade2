@@ -1,19 +1,19 @@
 package org.makumba.aether.model;
 
 public class ALE {
-    
+
     private long id;
-    
+
     private String objectURL;
-    
+
     private String user;
-    
+
     private int focus;
-    
+
     private int nimbus;
-    
+
     private int virtualFocus;
-    
+
     public int getVirtualFocus() {
         return virtualFocus;
     }
@@ -71,7 +71,7 @@ public class ALE {
     public void setUser(String user) {
         this.user = user;
     }
-    
+
     public ALE(String objectURL, String user) {
         this.objectURL = objectURL;
         this.user = user;
@@ -84,9 +84,9 @@ public class ALE {
         this.focus = focus;
         this.nimbus = nimbus;
     }
-    
+
     public ALE() {
-        
+
     }
 
 }

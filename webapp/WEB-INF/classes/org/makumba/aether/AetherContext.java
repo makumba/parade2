@@ -12,9 +12,9 @@ import org.hibernate.SessionFactory;
  * 
  */
 public class AetherContext {
-    
+
     private String databaseName;
-    
+
     private SessionFactory sessionFactory;
 
     private List<RelationComputer> relationComputers = new LinkedList<RelationComputer>();

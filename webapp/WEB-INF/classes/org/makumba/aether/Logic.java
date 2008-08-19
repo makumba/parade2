@@ -46,19 +46,18 @@ public class Logic {
     public void after_deletePercolationRule(Pointer p, Attributes a, Database db) throws LogicException {
         RuleBasedPercolator.rulesChanged = true;
     }
-    
+
     public void on_newRelationQuery(Dictionary d, Attributes a, Database db) throws LogicException {
     }
 
-    public void after_newRelationQuery(Pointer p, Dictionary d, Attributes a, Database db)
-            throws LogicException {
+    public void after_newRelationQuery(Pointer p, Dictionary d, Attributes a, Database db) throws LogicException {
         RuleBasedPercolator.rulesChanged = true;
     }
-    
+
     public void on_editRelationQuery(Pointer p, Dictionary d, Attributes a, Database db) throws LogicException {
         RuleBasedPercolator.rulesChanged = true;
     }
-    
+
     public void on_deleteRelationQuery(Pointer p, Attributes a, Database db) throws LogicException {
     }
 

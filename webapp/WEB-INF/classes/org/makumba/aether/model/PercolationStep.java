@@ -11,19 +11,19 @@ import java.util.Date;
 public class PercolationStep {
 
     private long id;
-    
+
     private Date created;
-    
+
     private Date lastModified;
-    
+
     private String previousURL;
 
     private String objectURL;
 
     private String userGroup;
-    
+
     private int initialFocus;
-    
+
     private int initialNimbus;
 
     private int focus;
@@ -31,17 +31,17 @@ public class PercolationStep {
     private int nimbus;
 
     private PercolationRule percolationRule;
-    
+
     private MatchedAetherEvent matchedAetherEvent;
 
     private PercolationStep previous;
-    
+
     private PercolationStep root;
-    
+
     private String percolationPath;
-    
+
     private int percolationLevel;
-    
+
     private boolean virtualPercolation;
 
     public PercolationStep() {
@@ -176,8 +176,9 @@ public class PercolationStep {
         this.created = created;
     }
 
-    public PercolationStep(String previousURL, String objectURL, String userGroup, int focus, int nimbus, PercolationRule percolationRule,
-            MatchedAetherEvent matchedAetherEvent, PercolationStep previous, int percolationLevel, boolean virtualPercolation) {
+    public PercolationStep(String previousURL, String objectURL, String userGroup, int focus, int nimbus,
+            PercolationRule percolationRule, MatchedAetherEvent matchedAetherEvent, PercolationStep previous,
+            int percolationLevel, boolean virtualPercolation) {
         super();
         this.previousURL = previousURL;
         this.objectURL = objectURL;

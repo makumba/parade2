@@ -11,15 +11,15 @@ import org.makumba.aether.AetherEvent;
  * 
  */
 public class MatchedAetherEvent extends AetherEvent {
-    
+
     private long id;
 
     private String userGroup;
-    
+
     private String userType;
-    
+
     private InitialPercolationRule initialPercolationRule;
-    
+
     private boolean virtualPercolation;
 
     public MatchedAetherEvent(AetherEvent e, String userGroup, InitialPercolationRule ipr, boolean virtualPercolation) {
@@ -29,7 +29,7 @@ public class MatchedAetherEvent extends AetherEvent {
         this.initialPercolationRule = ipr;
         this.virtualPercolation = virtualPercolation;
     }
-    
+
     // for hibernate
     public MatchedAetherEvent() {
         super();
@@ -54,15 +54,15 @@ public class MatchedAetherEvent extends AetherEvent {
     public void setUserGroup(String userGroup) {
         this.userGroup = userGroup;
     }
-    
+
     public String getUserGroup() {
         return userGroup;
     }
-    
+
     public InitialPercolationRule getInitialPercolationRule() {
         return initialPercolationRule;
     }
-    
+
     public void setInitialPercolationRule(InitialPercolationRule initialPercolationRule) {
         this.initialPercolationRule = initialPercolationRule;
     }
@@ -71,9 +71,11 @@ public class MatchedAetherEvent extends AetherEvent {
         return initialPercolationRule.getInitialLevel();
     }
 
+    @Override
     public String toString() {
         return this.actor + " (" + this.userType + ") --(" + this.action + ")--> " + this.objectURL + " ("
-                + this.objectType + ") ===> " + initialPercolationRule.getInitialLevel() + " (coef. "+ this.initialLevelCoefficient+ ") on group " + this.userGroup;
+                + this.objectType + ") ===> " + initialPercolationRule.getInitialLevel() + " (coef. "
+                + this.initialLevelCoefficient + ") on group " + this.userGroup;
     }
 
     public void setVirtualPercolation(boolean virtualPercolation) {
