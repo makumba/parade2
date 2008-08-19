@@ -1,4 +1,5 @@
 name=char[255]
+date=int
 size=int
 currentChars=int
 previousChars=int
@@ -11,6 +12,7 @@ cvsCheckedOutRevision=char[255]
 cvsDate=date
 row = ptr Row
 isDir=boolean
+onDisk=boolean
 crawled=boolean
 
 # composes the URL of this file
