@@ -13,19 +13,24 @@ import org.hibernate.type.TypeFactory;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
-
 /**
  * http://www.hibernate.org/272.html
  */
 public class EnumUserType implements UserType, ParameterizedType {
     private static final String DEFAULT_IDENTIFIER_METHOD_NAME = "name";
+
     private static final String DEFAULT_VALUE_OF_METHOD_NAME = "valueOf";
 
     private Class<? extends Enum> enumClass;
+
     private Class<?> identifierType;
+
     private Method identifierMethod;
+
     private Method valueOfMethod;
+
     private NullableType type;
+
     private int[] sqlTypes;
 
     public void setParameterValues(Properties parameters) {
@@ -33,7 +38,7 @@ public class EnumUserType implements UserType, ParameterizedType {
         try {
             enumClass = Class.forName(enumClassName).asSubclass(Enum.class);
         } catch (ClassNotFoundException cfne) {
-            throw new HibernateException("Enum class "+ enumClassName +" not found", cfne);
+            throw new HibernateException("Enum class " + enumClassName + " not found", cfne);
         }
 
         String identifierMethodName = parameters.getProperty("identifierMethod", DEFAULT_IDENTIFIER_METHOD_NAME);
@@ -65,17 +70,17 @@ public class EnumUserType implements UserType, ParameterizedType {
         return enumClass;
     }
 
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {  
+    public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
         Object identifier = type.get(rs, names[0]);
         if (rs.wasNull()) {
             return null;
         }
-        
+
         try {
             return valueOfMethod.invoke(enumClass, new Object[] { identifier });
         } catch (Exception e) {
-            throw new HibernateException("Exception while invoking valueOf method '" + valueOfMethod.getName() + "' of " +
-                    "enumeration class '" + enumClass + "'", e);
+            throw new HibernateException("Exception while invoking valueOf method '" + valueOfMethod.getName()
+                    + "' of " + "enumeration class '" + enumClass + "'", e);
         }
     }
 
@@ -88,8 +93,8 @@ public class EnumUserType implements UserType, ParameterizedType {
                 type.set(st, identifier, index);
             }
         } catch (Exception e) {
-            throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName() + "' of " +
-                    "enumeration class '" + enumClass + "'", e);
+            throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName()
+                    + "' of " + "enumeration class '" + enumClass + "'", e);
         }
     }
 

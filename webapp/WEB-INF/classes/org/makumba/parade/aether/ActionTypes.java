@@ -56,8 +56,8 @@ public enum ActionTypes {
     public static Set<String> getActions() {
         ActionTypes[] v = values();
         Set<String> res = new HashSet<String>();
-        for (int i = 0; i < v.length; i++) {
-            res.add(v[i].action());
+        for (ActionTypes element : v) {
+            res.add(element.action());
         }
         return res;
     }
@@ -70,8 +70,8 @@ public enum ActionTypes {
 
             ActionTypes[] v = values();
             Map<String, String> res = new HashMap<String, String>();
-            for (int i = 0; i < v.length; i++) {
-                res.put(v[i].action(), v[i].readableAction());
+            for (ActionTypes element : v) {
+                res.put(element.action(), element.readableAction());
             }
 
             actionToReadableAction = res;

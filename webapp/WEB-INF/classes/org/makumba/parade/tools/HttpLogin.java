@@ -2,7 +2,6 @@ package org.makumba.parade.tools;
 
 import java.util.Date;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -36,27 +35,27 @@ public class HttpLogin {
 
         ((HttpServletResponse) res).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ((HttpServletResponse) res).setHeader("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
-        
+
         return false;
     }
 
     protected boolean checkAuth(String user, String pass, HttpServletRequest req) {
         boolean authenticated = a.auth(user, pass);
-        if(authenticated) {
+        if (authenticated) {
             logUserLogin(user);
         }
-        
+
         return authenticated;
     }
-    
+
     protected static void logUserLogin(String user) {
-        
+
         ActionLogDTO log = new ActionLogDTO();
         log.setAction(ActionTypes.LOGIN.action());
         log.setDate(new Date());
         log.setUser(user);
-        
+
         TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
-        
+
     }
 }

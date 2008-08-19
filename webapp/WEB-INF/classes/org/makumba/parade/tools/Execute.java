@@ -16,7 +16,7 @@ public class Execute {
         String sep = "";
         // scans the arguements for spaces, surrounds with "" if some found (Windows)
         for (int i = 0; i < cmd.length; i++) {
-            cmd[i] = (String) v.elementAt(i);
+            cmd[i] = v.elementAt(i);
             command += sep;
             sep = " ";
             if (cmd[i].indexOf(' ') != -1 && !(cmd[i].startsWith("\"") && cmd[i].endsWith("\"")))

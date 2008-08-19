@@ -1,6 +1,5 @@
 package org.makumba.parade.model;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,10 +52,8 @@ public class RowAnt extends AbstractRowData implements RowData {
     public List<String> getAllowedOperations() {
         List<String> allowedTargets = new LinkedList<String>();
 
-        for (Iterator<String> i = ParadeProperties.getElements("ant.displayedOps").iterator(); i.hasNext();) {
-            String allowed = i.next();
-            for (Iterator<String> j = getTargets().iterator(); j.hasNext();) {
-                String target = j.next();
+        for (String allowed : ParadeProperties.getElements("ant.displayedOps")) {
+            for (String target : getTargets()) {
                 if (target.startsWith("#"))
                     target = target.substring(1);
                 if (!target.equals(allowed))

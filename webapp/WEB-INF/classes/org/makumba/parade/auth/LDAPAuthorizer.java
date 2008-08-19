@@ -1,8 +1,6 @@
 package org.makumba.parade.auth;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.Security;
 import java.util.StringTokenizer;
@@ -120,8 +118,8 @@ public class LDAPAuthorizer implements Authorizer {
             String returnAttrs[] = { "displayName", "givenName", "employeeType", "sn", "mail", "cn", "jpegPhoto" };
 
             LDAPEntry entry = lc.read(loginDN, returnAttrs);
-            
-            if(entry == null) {
+
+            if (entry == null) {
                 throw new LDAPException();
             }
 
@@ -140,9 +138,9 @@ public class LDAPAuthorizer implements Authorizer {
             } else {
                 cn = attributeSet.getAttribute("cn").getStringValue();
             }
-            
+
             LDAPAttribute picture = attributeSet.getAttribute("jpegPhoto");
-            if(picture != null) {
+            if (picture != null) {
                 jpegPhoto = picture.getByteValue();
             }
 
@@ -152,7 +150,7 @@ public class LDAPAuthorizer implements Authorizer {
 
         } catch (LDAPException e) {
             System.err.println("LDAP AUTHORIZER ERROR: login failed for user " + username + ", loginDN " + loginDN);
-            System.err.println("LDAP AURHORIZER ERROR: exception is: "+e.getMessage());
+            System.err.println("LDAP AURHORIZER ERROR: exception is: " + e.getMessage());
             return false;
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block

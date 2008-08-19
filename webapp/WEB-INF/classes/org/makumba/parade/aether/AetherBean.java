@@ -15,7 +15,6 @@ public class AetherBean {
         String context = ObjectTypes.rowNameFromURL(actionObject);
         String relativePath = ObjectTypes.pathFromFileOrDirURL(actionObject);
 
-        
         switch (ObjectTypes.getObjectType(actionObject)) {
 
         case FILE:
@@ -27,8 +26,8 @@ public class AetherBean {
                 s = InitServlet.getSessionFactory().openSession();
                 Transaction tx = s.beginTransaction();
 
-                Row r = (Row) s.createQuery("from Row r where r.rowname = :context").setString("context",
-                        context).uniqueResult();
+                Row r = (Row) s.createQuery("from Row r where r.rowname = :context").setString("context", context)
+                        .uniqueResult();
 
                 webappPath = r.getWebappPath();
 
@@ -55,30 +54,32 @@ public class AetherBean {
                             + ObjectTypes.objectNameFromURL(actionObject).substring(0,
                                     ObjectTypes.objectNameFromURL(actionObject).indexOf("."));
                 } else if (actionObject.endsWith(".java")) {
-                    resourceLink = "/" + context
-                            + (webappPath.length() > 0 ? "/" + webappPath : "") + "/classes/"
-                            + ObjectTypes.fileOrDirPathFromFileOrDirURL(actionObject).substring(0, "WEB-INF/classes/".length());
+                    resourceLink = "/"
+                            + context
+                            + (webappPath.length() > 0 ? "/" + webappPath : "")
+                            + "/classes/"
+                            + ObjectTypes.fileOrDirPathFromFileOrDirURL(actionObject).substring(0,
+                                    "WEB-INF/classes/".length());
 
                 } else {
-                    resourceLink = "/" + context + "/"
-                            + ObjectTypes.fileOrDirPathFromFileOrDirURL(actionObject)
+                    resourceLink = "/" + context + "/" + ObjectTypes.fileOrDirPathFromFileOrDirURL(actionObject)
                             + (actionObject.endsWith(".jsp") ? "x" : "");
                 }
             } else {
-                
-                resourceLink = "/File.do?op=editFile&context=" + context + "&path="
-                        + (webappPath.length() > 0 ? webappPath + "/" : "") + relativePath
-                        + "&file=" + ObjectTypes.objectNameFromURL(actionObject) + "&editor=codepress";
+
+                resourceLink = "/codePressEditor.jsp?context=" + context + "&path="
+                        + (webappPath.length() > 0 ? webappPath + "/" : "") + relativePath + "&file="
+                        + ObjectTypes.objectNameFromURL(actionObject);
             }
 
             break;
 
         case DIR:
-            resourceLink = "/File.do?browse&display=file&context="+context + "&path=" + relativePath;
+            resourceLink = "/File.do?browse&display=file&context=" + context + "&path=" + relativePath;
             break;
 
         case ROW:
-            resourceLink = "/browse.jsp?context="+context;
+            resourceLink = "/browse.jsp?context=" + context;
             break;
 
         }

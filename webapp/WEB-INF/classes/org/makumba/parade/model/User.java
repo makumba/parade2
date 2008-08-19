@@ -19,7 +19,7 @@ public class User {
     private Parade parade;
 
     private String cvsuser;
-    
+
     private User mentor;
 
     public String getName() {

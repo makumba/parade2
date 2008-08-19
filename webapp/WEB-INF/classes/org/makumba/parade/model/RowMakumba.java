@@ -7,9 +7,9 @@ public class RowMakumba extends AbstractRowData implements RowData {
     private String version;
 
     private String db;
-    
+
     private boolean hasMakumba;
-    
+
     public boolean getHasMakumba() {
         return hasMakumba;
     }

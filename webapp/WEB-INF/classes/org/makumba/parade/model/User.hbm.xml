@@ -23,8 +23,6 @@
 		<property name="cvsuser"/>
     
         <many-to-one name="mentor" class="User" />
-        
-		
 		
 		<many-to-one name="parade" class="Parade" column="id_parade" />
 		

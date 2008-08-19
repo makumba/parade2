@@ -20,12 +20,12 @@ public class LineNumberCounter {
             int countRec = lineRead.getLineNumber() - 1;
             fileRead.close();
             lineRead.close();
-            
+
             return countRec;
-            
+
         } catch (IOException e) {
         }
-        
+
         return -1;
 
     }

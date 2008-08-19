@@ -86,9 +86,10 @@ public class IndexServlet extends HttpServlet {
                     RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/browse");
                     dispatcher.forward(req, resp);
                 }
-                RequestDispatcher header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=editor&pageTitle=Welcome%20to%20ParaDe");
+                RequestDispatcher header = super.getServletContext().getRequestDispatcher(
+                        "/layout/header.jsp?class=editor&pageTitle=Welcome%20to%20ParaDe");
                 RequestDispatcher footer = super.getServletContext().getRequestDispatcher("/layout/footer.jsp");
-                
+
                 header.include(req, resp);
                 out.print(getView(p, context, opResult, success, !(successAttr == null), u));
                 footer.include(req, resp);
@@ -155,11 +156,11 @@ public class IndexServlet extends HttpServlet {
 
         Iterator<String> rowIterator = p.getRows().keySet().iterator();
         while (rowIterator.hasNext()) {
-            
+
             String key = rowIterator.next();
             Row r = p.getRows().get(key);
 
-            if(!r.getModuleRow()) {
+            if (!r.getModuleRow()) {
                 SimpleHash rowInformation = new SimpleHash();
 
                 // Each view manager populates the model with the information it needs
@@ -189,39 +190,41 @@ public class IndexServlet extends HttpServlet {
 
         return result.toString();
     }
-    
+
     /**
      * Gets the users active in the past 20 minutes
-     * @return a String array containing the 
+     * 
+     * @return a String array containing the
      */
     public static List<String[]> getActiveUsers() {
         List<String[]> activeUsers = new LinkedList<String[]>();
-        
+
         Session s = null;
         try {
-           s = InitServlet.getSessionFactory().openSession();
-           
-           Query q = s.createQuery("select u.login, u.nickname from ActionLog a, User u where a.user = u.login and a.logDate > :myDate group by u.login");
-           
-           Calendar cal = Calendar.getInstance();
-           cal.setTime(new Date());
-           cal.add(Calendar.MINUTE, -20);
+            s = InitServlet.getSessionFactory().openSession();
 
-           q.setTimestamp("myDate", cal.getTime());
-           
-           for(Object res : q.list()) {
-               Object[] userInfo = (Object[]) res;
-               activeUsers.add(new String[] {(String)userInfo[0], (String)userInfo[1]});
-           }
-           
+            Query q = s
+                    .createQuery("select u.login, u.nickname from ActionLog a, User u where a.user = u.login and a.logDate > :myDate group by u.login");
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.MINUTE, -20);
+
+            q.setTimestamp("myDate", cal.getTime());
+
+            for (Object res : q.list()) {
+                Object[] userInfo = (Object[]) res;
+                activeUsers.add(new String[] { (String) userInfo[0], (String) userInfo[1] });
+            }
+
         } finally {
-            if(s!=null) {
+            if (s != null) {
                 s.close();
             }
         }
-        
+
         return activeUsers;
-        
+
     }
 
 }

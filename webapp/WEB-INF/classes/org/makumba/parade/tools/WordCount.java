@@ -112,8 +112,8 @@ public class WordCount {
         if (args.length == 0) {
             count("stdin", System.in);
         } else {
-            for (int i = 0; i < args.length; i++) {
-                count(args[i]);
+            for (String arg : args) {
+                count(arg);
             }
         }
     }

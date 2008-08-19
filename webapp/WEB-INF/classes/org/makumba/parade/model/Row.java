@@ -43,7 +43,7 @@ public class Row {
     private Application application;
 
     private User user;
-    
+
     private User externalUser;
 
     // 10 = No, 20 = Yes
@@ -164,6 +164,7 @@ public class Row {
         this.watchedByJNotify = watchedByJNotify;
     }
 
+    @Override
     public String toString() {
         return getRowname() + " - " + getDescription();
     }
@@ -183,10 +184,10 @@ public class Row {
         try {
             s = InitServlet.getSessionFactory().openSession();
             Transaction tx = s.beginTransaction();
-    
+
             module = (String) s.createQuery("select module from RowCVS where row.rowname = :context").setString(
                     "context", ObjectTypes.rowNameFromURL(fileURL)).uniqueResult();
-    
+
             tx.commit();
         } finally {
             if (s != null)
