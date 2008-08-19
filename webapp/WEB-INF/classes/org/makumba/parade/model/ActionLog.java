@@ -2,7 +2,6 @@ package org.makumba.parade.model;
 
 import java.util.Date;
 
-import org.makumba.aether.UserTypes;
 import org.makumba.parade.aether.ObjectTypes;
 
 public class ActionLog {
@@ -28,7 +27,7 @@ public class ActionLog {
     private String paradecontext;
 
     private String file;
-    
+
     private ObjectTypes objectType;
 
     public String getAction() {

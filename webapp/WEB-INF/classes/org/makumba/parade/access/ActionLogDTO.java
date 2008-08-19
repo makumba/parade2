@@ -2,7 +2,6 @@ package org.makumba.parade.access;
 
 import java.util.Date;
 
-import org.makumba.aether.UserTypes;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.tools.TriggerFilter;
@@ -176,6 +175,7 @@ public class ActionLogDTO {
 
     }
 
+    @Override
     public String toString() {
         return "id: " + id + " context: " + context + " date: " + date + " post: " + post + " queryString: "
                 + queryString + " url: " + url + " user: " + user + " action: " + action + " origin: " + origin

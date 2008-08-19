@@ -9,11 +9,11 @@ public class Application {
     private String name;
 
     private String repository;
-    
+
     private String webappPath;
 
     private Map<String, String> cvsfiles;
-    
+
     private Parade parade;
 
     public String getName() {

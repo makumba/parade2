@@ -32,18 +32,18 @@ public class CommitHandler extends Thread {
 
     @Override
     public void run() {
-        
+
         try {
-        
-            for(Commit commit : commits) {
+
+            for (Commit commit : commits) {
                 updateRepositoryCache(commit.getModule(), commit.getFile(), commit.getNewRevision(), s);
-                updateRowFiles(commit.getModule(), commit.getFile(), commit.getNewRevision(), commit.getOldRevision().equals("NONE"), s);
+                updateRowFiles(commit.getModule(), commit.getFile(), commit.getNewRevision(), commit.getOldRevision()
+                        .equals("NONE"), s);
             }
-        
+
         } finally {
             s.close();
         }
-       
 
     }
 
@@ -112,7 +112,7 @@ public class CommitHandler extends Thread {
                                 CvsController.onUpdateFile(r.getRowname(), f.getParentPath(), f.getPath());
 
                                 // we also log the action as cvsupdate by user system, if relevant
-                                if(!r.getModuleRow()) {
+                                if (!r.getModuleRow()) {
                                     logUpdate(r.getRowname(), file);
                                 }
 
