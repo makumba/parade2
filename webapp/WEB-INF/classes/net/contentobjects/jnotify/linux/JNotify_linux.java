@@ -85,8 +85,8 @@ public class JNotify_linux {
 
     /* special flags */
     public final static int IN_ISDIR = 0x40000000; /*
-                                                     * event occurred against dir
-                                                     */
+                                                    * event occurred against dir
+                                                    */
 
     public final static int IN_ONESHOT = 0x80000000; /* only send event once */
 
