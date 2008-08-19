@@ -32,6 +32,7 @@ public class UserManager {
                 result = "User with login " + login + " already exists!";
                 success = false;
             } else {
+                u.setParade(p);
                 p.getUsers().put(u.getLogin(), u);
                 success = true;
             }
