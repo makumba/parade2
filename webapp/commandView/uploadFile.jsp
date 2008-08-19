@@ -14,7 +14,7 @@ if(!rurl.endsWith("/")) rurl += "/";
 out.print("http://"+rurl + context); %>" >
 </head>
 <body bgcolor="white">
-<html:form action="/FileUpload" method="post" enctype="multipart/form-data">
+<html:form action="/FileUpload" method="post" enctype="multipart/form-data" target="command">
 Choose file: <html:file property="theFile"/> 
 <input type="hidden" name="context" value="${param.context}"/>
 <input type="hidden" name="path" value="${param.path}"/>

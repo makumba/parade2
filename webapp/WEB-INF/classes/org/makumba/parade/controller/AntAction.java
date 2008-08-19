@@ -30,8 +30,6 @@ public class AntAction extends Action {
         request.setAttribute("success", result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", display);
-        request.setAttribute("view", "commandOutput");
 
         return mapping.findForward(display);
 

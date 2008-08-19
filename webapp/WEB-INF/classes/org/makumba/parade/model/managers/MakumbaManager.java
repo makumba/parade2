@@ -9,32 +9,32 @@ import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
-import org.apache.log4j.Logger;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowMakumba;
 import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
+import org.makumba.parade.tools.ParadeLogger;
 
 public class MakumbaManager implements RowRefresher, ParadeManager {
 
-    private static Logger logger = Logger.getLogger(MakumbaManager.class.getName());
-    
+    private static Logger logger = ParadeLogger.getParadeLogger(MakumbaManager.class.getName());
+
     private boolean hasMakumba = false;
 
     public void softRefresh(Row row) {
-        logger.debug("Refreshing row information for row " + row.getRowname());
+        logger.fine("Refreshing row information for row " + row.getRowname());
 
         RowMakumba makumbadata = new RowMakumba();
         makumbadata.setDataType("makumba");
 
-        String root = row.getRowpath() + File.separator
-                + ((RowWebapp) row.getRowdata().get("webapp")).getWebappPath();
+        String root = row.getRowpath() + File.separator + ((RowWebapp) row.getRowdata().get("webapp")).getWebappPath();
         makumbadata.setVersion(getMakumbaVersion(root, row));
         makumbadata.setDb(getMakumbaDatabase(root));
-        
+
         makumbadata.setHasMakumba(hasMakumba);
 
         row.addManagerData(makumbadata);
@@ -57,7 +57,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                 String[] libs = lib.list();
                 Vector<String> mak = new Vector<String>();
                 if (libs == null) {
-                    logger.warn("No WEB-INF/lib directory found for row " + r.getRowname()
+                    logger.warning("No WEB-INF/lib directory found for row " + r.getRowname()
                             + ". Cannot detected Makumba version.");
                 } else {
                     for (String element : libs) {
@@ -71,8 +71,8 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                     return "No makumba.jar";
                 } else if (mak.size() > 1) {
                     hasMakumba = true;
-                    String result ="Error: Two makumba JARs found: ";
-                    for(String m : mak) {
+                    String result = "Error: Two makumba JARs found: ";
+                    for (String m : mak) {
                         result += m + " ";
                     }
                     result += "! Please remove one";
@@ -86,21 +86,20 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                 }
 
             }
-            
-            hasMakumba=true;
+
+            hasMakumba = true;
 
             try {
-                
-            
-            JarFile jar = new JarFile(fl);
-            Manifest mf = jar.getManifest();
-            Attributes att = mf.getAttributes("Makumba");
-            version = att.getValue("Version");
-            jar.close();
 
-            } catch(ZipException ze) {
-                if(!(ze.getMessage().indexOf("error in opening zip file") > -1)) {
-                    // we ignore it in the other cases, it happens when deleting a mak.jar 
+                JarFile jar = new JarFile(fl);
+                Manifest mf = jar.getManifest();
+                Attributes att = mf.getAttributes("Makumba");
+                version = att.getValue("Version");
+                jar.close();
+
+            } catch (ZipException ze) {
+                if (!(ze.getMessage().indexOf("error in opening zip file") > -1)) {
+                    // we ignore it in the other cases, it happens when deleting a mak.jar
                     ze.printStackTrace();
                 }
             }

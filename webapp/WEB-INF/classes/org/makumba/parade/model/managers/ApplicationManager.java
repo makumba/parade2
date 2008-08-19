@@ -11,14 +11,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Application;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.tools.Execute;
+import org.makumba.parade.tools.ParadeLogger;
 
 /**
  * Manages the applications ParaDe should know about, by building them out of the definitions of the
@@ -29,8 +30,8 @@ import org.makumba.parade.tools.Execute;
  */
 public class ApplicationManager implements ParadeManager {
 
-    private static Logger logger = Logger.getLogger(ApplicationManager.class);
-    
+    private static Logger logger = ParadeLogger.getParadeLogger(ApplicationManager.class.getName());
+
     private List<Application> needsRowCreation = new LinkedList<Application>();
 
     public void buildCVSlist(Application a) {
@@ -51,8 +52,9 @@ public class ApplicationManager implements ParadeManager {
 
         // first let's see if everything went fine
         if (result.toString().indexOf("exit value: 1") > -1) {
-            logger.warn("Could not retrieve CVS list for application " + a.getName() + ". Increase the log level to debug in order to see what the error was");
-            logger.debug(result.toString());
+            logger.warning("Could not retrieve CVS list for application " + a.getName()
+                    + ". Increase the log level to debug in order to see what the error was");
+            logger.fine(result.toString());
         } else {
 
             Map<String, String> cvsfiles = new HashMap<String, String>();
@@ -146,27 +148,28 @@ public class ApplicationManager implements ParadeManager {
     }
 
     public void newRow(String name, Row r, Map<String, String> m) {
-        
-        if(ParadeProperties.getParadeProperty("parade.applications.disabled") != null && ParadeProperties.getParadeProperty("parade.applications.disabled").equals("true")) {
+
+        if (ParadeProperties.getParadeProperty("parade.applications.disabled") != null
+                && ParadeProperties.getParadeProperty("parade.applications.disabled").equals("true")) {
 
             // let's fetch the CVS module of this row
             String module = CVSManager.getCVSModule(r.getRowpath());
 
             if (module == null) {
-                logger.warn("No module for row " + r.getRowname() + ". This means no application is set for it.");
+                logger.warning("No module for row " + r.getRowname() + ". This means no application is set for it.");
             } else if (module.indexOf("parade") == -1) {
                 Application a = r.getParade().getApplications().get(module);
                 if (a == null) {
                     logger.info("Registering new application " + module + " used by row " + r.getRowname());
-                    a = new Application(module, CVSManager.getCVSRepository(r.getRowpath()), ((RowWebapp) r.getRowdata()
-                            .get("webapp")).getWebappPath());
+                    a = new Application(module, CVSManager.getCVSRepository(r.getRowpath()), ((RowWebapp) r
+                            .getRowdata().get("webapp")).getWebappPath());
 
                     buildCVSlist(a);
                     a.setParade(r.getParade());
                     r.getParade().getApplications().put(a.getName(), a);
-                    
+
                     needsRowCreation.add(a);
-                    
+
                 }
                 r.setApplication(a);
             }
@@ -188,8 +191,7 @@ public class ApplicationManager implements ParadeManager {
         RowFromCVSModuleCheckoutHandler mch = new RowFromCVSModuleCheckoutHandler(a, modulePath);
         mch.start();
     }
-    
-    
+
     public void checkoutAndCreateModuleRows() {
         for (Application a : needsRowCreation) {
             checkoutCVSmoduleAndCreateRow(a);

@@ -11,9 +11,9 @@
 <table class='files'>
 <tr><th></th>
 <th colspan='2'>
-<a href='/File.do?display=command&view=newDir&context=${rowName}&path=${path}' target='command' title='Create a new directory'><img src='/images/newfolder.gif' align='right'></a>
-<a href='/uploadFile.jsp?context=${rowName}&path=${path}' target='command' title='Upload a file'><img src='/images/uploadfile.gif' align='right'></a>
-<a href='/File.do?display=command&view=newFile&context=${rowName}&path=${path}' target='command' title='Create a new file'><img src='/images/newfile.gif' align='right'></a>
+<a href='/commandView/newDir.jsp?context=${rowName}&path=${path}' target='command' title='Create a new directory'><img src='/images/newfolder.gif' align='right'></a>
+<a href='/commandView/uploadFile.jsp?context=${rowName}&path=${path}' target='command' title='Upload a file'><img src='/images/uploadfile.gif' align='right'></a>
+<a href='/commandView/newFile.jsp?context=${rowName}&path=${path}' target='command' title='Create a new file'><img src='/images/newfile.gif' align='right'></a>
 <a href='/servlet/browse?display=file&context=${rowName}&path=${path}&order=name' title='Order by name'>Name</a>
 </th>
 <th><a href='/servlet/browse?display=file&context=${rowName}&path=${path}&order=age' title='Order by age'>Age</a></th>

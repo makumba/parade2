@@ -1,6 +1,7 @@
 package org.makumba.parade.access;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -11,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -20,8 +20,10 @@ import org.makumba.parade.auth.DatabaseAuthorizer;
 import org.makumba.parade.auth.LDAPAuthorizer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
+import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.User;
 import org.makumba.parade.tools.HttpLogin;
+import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.tools.TriggerFilter;
 
 /**
@@ -47,7 +49,7 @@ public class AccessServlet extends HttpServlet {
 
     ServletContext context;
 
-    static Logger logger = Logger.getLogger(AccessServlet.class.getName());
+    static Logger logger = ParadeLogger.getParadeLogger(AccessServlet.class.getName());
 
     HttpLogin checker;
 
@@ -96,9 +98,8 @@ public class AccessServlet extends HttpServlet {
                             User u = null;
 
                             if (results.size() > 1) {
-                                logger
-                                        .error("Multiple possibilities for user " + user
-                                                + ". Please contact developers.");
+                                logger.severe("Multiple possibilities for user " + user
+                                        + ". Please contact developers.");
                             } else if (results.size() == 1) {
                                 // we know the guy, let's put more stuff in the session
                                 u = results.get(0);
@@ -110,7 +111,7 @@ public class AccessServlet extends HttpServlet {
                                     u = new User(user, auth.getGivenName(), auth.getSn(), auth.getCn(), auth.getMail());
                                     u.setJpegPhoto(auth.getJpegPhoto());
                                     s.save(u);
-                                    
+
                                     setUserAttributes(req, u);
                                 }
                             }
@@ -144,10 +145,10 @@ public class AccessServlet extends HttpServlet {
             ((HttpServletRequest) req).getSession(true).setAttribute(PARADE_USER, "cvs-hook");
             return false;
         }
-        if(((HttpServletRequest) req).getRequestURI().startsWith("/unauthorized")) {
+        if (((HttpServletRequest) req).getRequestURI().startsWith("/unauthorized")) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -157,7 +158,8 @@ public class AccessServlet extends HttpServlet {
             return new HttpServletRequestWrapper((HttpServletRequest) req) {
                 @Override
                 public String getRemoteUser() {
-                    String user = (String) ((HttpServletRequest) getRequest()).getSession(true).getAttribute(PARADE_USER);
+                    String user = (String) ((HttpServletRequest) getRequest()).getSession(true).getAttribute(
+                            PARADE_USER);
                     return user;
                 }
             };
@@ -176,7 +178,6 @@ public class AccessServlet extends HttpServlet {
         if (nm == null)
             nm = "(unknown user)";
 
-        
         ServletContext ctx = (ServletContext) req.getAttribute("org.eu.best.tools.TriggerFilter.context");
 
         try {
@@ -191,7 +192,6 @@ public class AccessServlet extends HttpServlet {
         } catch (Throwable t) {
             t.printStackTrace();
         }
-        
 
         return nm;
     }
@@ -209,10 +209,10 @@ public class AccessServlet extends HttpServlet {
         if (!shouldLogin(req) || (req1 = checkLogin(req, resp)) != null) {
             // we set the output prefix again, now that we know the user
             String user = setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
-            
+
             // we also set the userObject again and all the necessary attributes
             User u = (User) ((HttpServletRequest) req).getSession(true).getAttribute("org.makumba.parade.userObject");
-            if(u == null) {
+            if (u == null) {
                 Session sess = null;
                 Transaction tx = null;
                 try {
@@ -224,15 +224,15 @@ public class AccessServlet extends HttpServlet {
                     q.setString(0, user);
 
                     List<User> results = q.list();
-                    
+
                     if (results.size() == 1) {
                         // we know the guy, let's put more stuff in the session
                         u = results.get(0);
                         setUserAttributes(req, u);
                     }
-                    
+
                 } finally {
-                    tx.commit();    
+                    tx.commit();
                     sess.close();
                 }
             }
@@ -246,7 +246,7 @@ public class AccessServlet extends HttpServlet {
             origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
             origReq.setAttribute("org.makumba.parade.unauthorizedAccess", new Boolean(true));
         }
-            
+
     }
 
     private void setUserAttributes(ServletRequest req, User u) {

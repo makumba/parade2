@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -25,6 +25,7 @@ import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.MakumbaManager;
 import org.makumba.parade.model.managers.WebappManager;
 import org.makumba.parade.tools.ParadeException;
+import org.makumba.parade.tools.ParadeLogger;
 
 /**
  * This class holds the methods for handling general ParaDe operations. It also is the starting point of the ParaDe
@@ -38,7 +39,7 @@ import org.makumba.parade.tools.ParadeException;
  */
 public class Parade {
 
-    private static Logger logger = Logger.getLogger(Parade.class.getName());
+    private static Logger logger = ParadeLogger.getParadeLogger(Parade.class.getName());
 
     private Long id;
 
@@ -193,7 +194,7 @@ public class Parade {
         try {
             canonicalPath = new java.io.File(path).getCanonicalPath();
         } catch (IOException e) {
-            logger.error("Could not get the canonical path for row " + name + " with path " + path);
+            logger.severe("Could not get the canonical path for row " + name + " with path " + path);
         }
         r.setRowpath(canonicalPath);
         r.setWebappPath(rowDefinition.get("webapp"));
@@ -221,25 +222,25 @@ public class Parade {
         try {
             canonicalPath = new java.io.File(path).getCanonicalPath();
         } catch (IOException e) {
-            logger.error("Could not get the canonical path for row " + rowname + " with path " + path);
+            logger.severe("Could not get the canonical path for row " + rowname + " with path " + path);
         }
 
         // the path is modified
         if (!canonicalPath.equals(storedRow.getRowpath())) {
             storedRow.setRowpath(rowDefinition.get("path"));
-            logger.warn("The path of row " + rowname + " was updated to " + rowDefinition.get("path"));
+            logger.warning("The path of row " + rowname + " was updated to " + rowDefinition.get("path"));
         }
 
         // the description is modified
         if (!rowDefinition.get("desc").trim().equals(storedRow.getDescription())) {
             storedRow.setDescription(rowDefinition.get("desc"));
-            logger.warn("The description of row " + rowname + " was updated to " + rowDefinition.get("desc"));
+            logger.warning("The description of row " + rowname + " was updated to " + rowDefinition.get("desc"));
         }
 
         // the webapp path is modified
         if (!rowDefinition.get("webapp").trim().equals(storedRow.getWebappPath())) {
             storedRow.setWebappPath((rowDefinition.get("webapp")));
-            logger.warn("The webapp path of row " + rowname + " was updated to " + rowDefinition.get("webapp"));
+            logger.warning("The webapp path of row " + rowname + " was updated to " + rowDefinition.get("webapp"));
         }
 
         // updating the specific row data
@@ -323,7 +324,7 @@ public class Parade {
 
         if (rowDefinition == null) {
             // the row was removed
-            logger.warn("Row " + rowName + " was removed from the rowstore.");
+            logger.warning("Row " + rowName + " was removed from the rowstore.");
 
         } else {
 
@@ -365,7 +366,7 @@ public class Parade {
     private Map<String, Map<String, String>> getRowstoreDefinition() {
         Map<String, Map<String, String>> rowstore = rowproperties.getRowDefinitions();
         if (rowstore.isEmpty()) {
-            logger.warn("No row definitions found, check RowProperties");
+            logger.warning("No row definitions found, check RowProperties");
         }
         return rowstore;
     }
@@ -428,13 +429,14 @@ public class Parade {
             r.setWatchedByJNotify(true);
 
         } catch (JNotifyException e) {
-            logger.error(e);
+            logger.severe(e.getMessage());
             r.setWatchedByJNotify(false);
             throw new ParadeException("Row " + r.getRowname()
                     + " not properly watched by JNotify! Are you having two rows that use the same directory?");
         } catch (NullPointerException npe) {
             // do nothing. JNotify returns plenty of those.
-            r.setWatchedByJNotify(true);        }
+            r.setWatchedByJNotify(true);
+        }
     }
 
     private static Hashtable<String, String> absoluteFilePathCache = new Hashtable<String, String>();

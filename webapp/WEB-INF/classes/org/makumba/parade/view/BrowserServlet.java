@@ -15,7 +15,7 @@ import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.view.managers.CommandViewManager;
+import org.makumba.parade.tools.ParadeException;
 import org.makumba.parade.view.managers.FileDisplay;
 import org.makumba.parade.view.managers.FileViewManager;
 
@@ -44,7 +44,7 @@ public class BrowserServlet extends HttpServlet {
         String context = req.getParameter("context");
         if (context == null)
             context = (String) req.getAttribute("context");
-        
+
         // we cache the context in the session
         ((HttpServletRequest) req).getSession().setAttribute("currentContext", context);
 
@@ -59,7 +59,7 @@ public class BrowserServlet extends HttpServlet {
         String file = req.getParameter("file");
         if (file == null)
             file = (String) req.getAttribute("file");
-        
+
         String refreshBrowser = req.getParameter("refreshBrowser");
         if (refreshBrowser == null)
             refreshBrowser = (String) req.getAttribute("refreshBrowser");
@@ -90,36 +90,36 @@ public class BrowserServlet extends HttpServlet {
 
         Session s = null;
         Transaction tx = null;
-        
+
         try {
-        
+
             s = InitServlet.getSessionFactory().openSession();
-        
+
             Parade p = (Parade) s.get(Parade.class, new Long(1));
-        
+
             Row r = p.getRows().get(context);
             if (r == null) {
                 out.println("Unknown context " + context);
             } else {
-        
+
                 // fetching data from the persistent store
                 // this is needed for lazy collections
                 // r.getFiles().size();
                 Hibernate.initialize(r.getFiles());
                 Hibernate.initialize(r.getApplication());
-        
+
                 // initialising the displays
-                CommandViewManager cmdV = new CommandViewManager();
                 FileViewManager fileV = new FileViewManager();
                 FileDisplay filebrowserV = new FileDisplay();
-                
+
                 RequestDispatcher header = null;
                 RequestDispatcher footer = super.getServletContext().getRequestDispatcher("/layout/footer.jsp");
-        
+
                 // switiching to the right display
                 String page = "";
                 if (display.equals("header")) {
-                    header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=header&baseTarget=command");
+                    header = super.getServletContext().getRequestDispatcher(
+                            "/layout/header.jsp?class=header&baseTarget=command");
                     // FIXME - path in here is null always, but should actually be equal to the currently browsed path
                     page = "jsp:/browserHeader.jsp";
 
@@ -127,33 +127,32 @@ public class BrowserServlet extends HttpServlet {
                 if (display.equals("tree")) {
                     header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=tree");
                     page = fileV.getTreeView(p, r);
-                    
+
                 }
                 if (display.equals("file")) {
-                    header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=files&pageTitle=File%20browser%20of%20row%20"+r.getRowname());
+                    header = super.getServletContext().getRequestDispatcher(
+                            "/layout/header.jsp?class=files&pageTitle=File%20browser%20of%20row%20" + r.getRowname());
                     page = filebrowserV.getFileBrowserView(p, r, path, opResult, order, success);
-                    
+
                 }
                 if (display.equals("command")) {
-                    header = super.getServletContext().getRequestDispatcher("/layout/header.jsp?class=command");
-                    page = cmdV.getCommandView(view, r, path, file, opResult, refreshBrowser);
-                    
+                    throw new ParadeException("Display is command!!!");
                 }
-        
+
                 // checking whether we include a JSP or not
                 if (page.startsWith("jsp:")) {
                     String url = page.substring(page.indexOf(":") + 1);
                     RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher(url);
                     dispatcher.forward(req, resp);
-                    
+
                 } else {
                     header.include(req, resp);
                     out.println(page);
                     footer.include(req, resp);
                 }
-        
+
             }
-            
+
         } finally {
             s.close();
         }

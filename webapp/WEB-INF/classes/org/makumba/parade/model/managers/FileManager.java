@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
@@ -23,7 +23,7 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.FileRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
-import org.makumba.parade.tools.LineNumberCounter;
+import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.tools.SimpleFileFilter;
 import org.makumba.parade.tools.WordCount;
 
@@ -37,7 +37,7 @@ import org.makumba.parade.tools.WordCount;
  */
 public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
-    static Logger logger = Logger.getLogger(FileManager.class.getName());
+    static Logger logger = ParadeLogger.getParadeLogger(FileManager.class.getName());
 
     private FileFilter filter = new SimpleFileFilter();
 
@@ -50,7 +50,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
      * Creates a first File for the row which is its root dir and invokes its refresh() method
      */
     public void hardRefresh(Row row) {
-        logger.debug("Refreshing row information for row " + row.getRowname());
+        logger.fine("Refreshing row information for row " + row.getRowname());
 
         File root = new File();
 
@@ -69,7 +69,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             row.getFiles().put(root.getPath(), root);
 
         } catch (Throwable t) {
-            logger.error("Couldn't access row path of row " + row.getRowname(), t);
+            logger.severe("Couldn't access row path of row " + row.getRowname());
         }
 
         root.refresh();
@@ -143,11 +143,11 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
      */
     public void cacheFile(Row row, java.io.File file, boolean local) {
         if (!file.exists() || file == null) {
-            logger.warn("Trying to add non-existing/null file");
+            logger.warning("Trying to add non-existing/null file");
             return;
         }
         if (row == null) {
-            logger.error("Row was null while trying to add file with path " + file.getAbsolutePath());
+            logger.severe("Row was null while trying to add file with path " + file.getAbsolutePath());
             return;
         }
 
@@ -169,7 +169,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     private void makeParentDirs(Row row, File f) {
         File parent = row.getFiles().get(f.getParentPath());
         if (parent == null) {
-            logger.warn("Creating new parent directory cache " + f.getParentPath() + " for file " + f.getPath());
+            logger.warning("Creating new parent directory cache " + f.getParentPath() + " for file " + f.getPath());
             parent = setFileData(row, new java.io.File(f.getParentPath()), true);
             addFile(row, parent);
             makeParentDirs(row, parent);
@@ -181,7 +181,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
         row.getFiles().put(fileData.getPath(), fileData);
 
-        // logger.warn("Added file: "+fileData.getName());
+        // logger.warning("Added file: "+fileData.getName());
     }
 
     /* setting File informations */
@@ -200,7 +200,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
             fileData.setOnDisk(true);
-            if(!isDir) {
+            if (!isDir) {
                 fileData.setPreviousChars(fileData.getCurrentChars());
                 fileData.setCurrentChars(WordCount.count(file.getAbsolutePath()));
             }
@@ -220,7 +220,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             fileData.setName(file.getName());
             fileData.setDate(new Long(file.lastModified()));
             fileData.setSize(new Long(file.length()));
-            if(!isDir) {
+            if (!isDir) {
                 fileData.setCurrentChars(WordCount.count(file.getAbsolutePath()));
                 fileData.setPreviousChars(WordCount.count(file.getAbsolutePath()));
             }
@@ -290,7 +290,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         if (success) {
             return "OK#" + f.getName();
         }
-        logger.error("Error while trying to delete file " + f.getAbsolutePath() + " " + "\n" + "Reason: exists: "
+        logger.severe("Error while trying to delete file " + f.getAbsolutePath() + " " + "\n" + "Reason: exists: "
                 + f.exists() + ", canRead: " + f.canRead() + ", canWrite: " + f.canWrite());
         return "Error while trying to delete file " + f.getName();
     }
@@ -327,7 +327,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     }
 
     public static void updateSimpleFileCache(String context, String path, String filename) {
-        logger.debug("Refreshing file cache for file " + filename + " in path " + path + " of row " + context);
+        logger.fine("Refreshing file cache for file " + filename + " in path " + path + " of row " + context);
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         Row r = Row.getRow(p, context);
@@ -336,7 +336,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         fileMgr.fileRefresh(r, path + java.io.File.separator + filename);
         tx.commit();
         s.close();
-        logger.debug("Finished refreshing file cache for file " + filename + " in path " + path + " of row " + context);
+        logger.fine("Finished refreshing file cache for file " + filename + " in path " + path + " of row " + context);
     }
 
     /* updates the File cache of a directory */

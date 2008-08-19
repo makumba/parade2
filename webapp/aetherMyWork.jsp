@@ -15,7 +15,7 @@
 <mak:value expr="max(a.focus)" printVar="maxFileFocus"/><%request.setAttribute("maxFileFocus", maxFileFocus); %>
 </mak:list>
 
-<form action="cvsCommit.jsp" target="command" method="post" style="display: inline;	margin:0 0 0 0;">
+<form action="/commandView/cvsCommit.jsp" target="command" method="post" style="display: inline;	margin:0 0 0 0;">
   <input type="hidden" name="getPathFromSession" value="true">
   
   <mak:list from="ALE a" where="a.user = :user_login and a.focus > 20 and a.isFile()" orderBy="a.focus desc, a.objectURL desc">

@@ -4,16 +4,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.makumba.aether.Aether;
 import org.makumba.providers.QueryAnalysisProvider;
 import org.makumba.providers.QueryProvider;
 
 public class RelationQuery {
 
-    private Logger logger = Logger.getLogger(RelationQuery.class);
+    private Logger logger = Aether.getAetherLogger(RelationQuery.class.getName());
 
     private static int executedQueries = 0;
 
@@ -47,6 +48,7 @@ public class RelationQuery {
 
     }
 
+    @Override
     public String toString() {
         return niceQuery(query);
     }
@@ -111,17 +113,17 @@ public class RelationQuery {
             }
         }
 
-        logger.debug("Executing relation query:\n\n" + this + "\n\nwith arguments " + args);
+        logger.fine("Executing relation query:\n\n" + this + "\n\nwith arguments " + args);
         List result = new LinkedList();
         Query q = null;
         try {
             q = s.createQuery(localQuery);
             result = q.list();
             executedQueries++;
-            logger.debug("Got " + result.size() + " result(s)");
+            logger.fine("Got " + result.size() + " result(s)");
         } catch (NullPointerException e) {
-            logger.error("Aether RelationQuery execution failed due to error:");
-            logger.error(e);
+            logger.severe("Aether RelationQuery execution failed due to error:");
+            logger.severe(e.getMessage());
         }
 
         return result;

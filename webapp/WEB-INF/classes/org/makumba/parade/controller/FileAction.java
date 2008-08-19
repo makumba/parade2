@@ -1,5 +1,10 @@
 package org.makumba.parade.controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +29,7 @@ public class FileAction extends Action {
         String path = request.getParameter("path");
         String file = request.getParameter("file");
         String op = request.getParameter("op");
+        String editor = request.getParameter("editor");
         String[] source = request.getParameterValues("source");
 
         // we reconstruct the absolute path
@@ -36,35 +42,34 @@ public class FileAction extends Action {
             request.setAttribute("success", result[1]);
         }
 
-        if (op != null && op.startsWith("editFile")) {
-
-            return (mapping.findForward("edit"));
-        }
-
         if (op != null && op.startsWith("saveFile")) {
             String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + file;
             ParadeJNotifyListener.createFileLock(absoluteFilePath);
-            
-            if(source == null) {
-                throw new ParadeException("Cannot save file: ParaDe did not receive any contents from your browser. If you use the Codepress editor, make sure that JavaScript is enabled and try reloading the edit page.");
+
+            if (source == null) {
+                throw new ParadeException(
+                        "Cannot save file: ParaDe did not receive any contents from your browser. If you use the Codepress editor, make sure that JavaScript is enabled and try reloading the edit page.");
             }
 
             FileController.saveFile(absoluteFilePath, source);
-            
+
             FileManager.updateSimpleFileCache(context, Parade.constructAbsolutePath(context, path), file);
             CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
-            ParadeJNotifyListener.updateRelations(Parade.constructAbsolutePath(context, ""), path + (path.endsWith("/") || file.startsWith("/") ? "" : java.io.File.separator) + file);
+            ParadeJNotifyListener.updateRelations(Parade.constructAbsolutePath(context, ""), path
+                    + (path.endsWith("/") || file.startsWith("/") ? "" : java.io.File.separator) + file);
             ParadeJNotifyListener.removeFileLock(absoluteFilePath);
-
-            return (mapping.findForward("edit"));
+            
+            if(editor.equals("codepress")) {
+                return (mapping.findForward("codePressEdit"));
+            } else {
+                return (mapping.findForward("simpleEdit"));
+            }
         }
 
         if (op != null && op.startsWith("upload")) {
 
             request.setAttribute("context", context);
             request.setAttribute("path", path);
-            request.setAttribute("display", "command");
-            request.setAttribute("view", "commandOutput");
             request.setAttribute("file", file);
 
             UploadForm uploadForm = (UploadForm) form;
@@ -76,12 +81,37 @@ public class FileAction extends Action {
             int fileSize = theFile.getFileSize();
             byte[] fileData = theFile.getFileData();
 
+            
             // upload the file
-            Object result[] = CommandController.uploadFile(context, path, fileName, contentType, fileSize, fileData);
-            request.setAttribute("result", result[0]);
-            request.setAttribute("success", result[1]);
+            boolean success = true;
+            String result = "";
+            String saveFilePath = Parade.constructAbsolutePath(context, path) + File.separator + fileName;
 
-            return mapping.findForward("browse");
+            FileOutputStream fileOut;
+            try {
+                fileOut = new FileOutputStream(saveFilePath);
+                fileOut.write(fileData);
+                fileOut.flush();
+                fileOut.close();
+            } catch (FileNotFoundException e) {
+                success = false;
+                result = ("Error writing file: " + e);
+
+            } catch (IOException e) {
+                success = false;
+                result = ("Error writing file: " + e);
+            }
+
+            if (success) {
+                request.setAttribute("contentType", contentType);
+                request.setAttribute("contentLength", fileSize);
+            }
+
+            request.setAttribute("result", result);
+            request.setAttribute("success", success);
+            request.setAttribute("saveFilePath", saveFilePath);
+
+            return mapping.findForward("uploadResponse");
 
         }
 

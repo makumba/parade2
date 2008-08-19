@@ -6,52 +6,49 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
+import org.makumba.parade.tools.ParadeLogger;
 
 public class ParadeProperties {
 
     static String DEFAULT_PROPERTYFILE = "/parade.properties";
-    
+
     static String DEFAULT_TOMCATPROPERTYFILE = "/tomcat.properties";
 
     private static Properties paradeConfig;
-    
+
     private static Properties tomcatConfig;
-    
-    static Logger logger = Logger.getLogger(ParadeProperties.class.getName());
+
+    static Logger logger = ParadeLogger.getParadeLogger(ParadeProperties.class.getName());
 
     static {
 
         try {
             paradeConfig = new Properties();
             paradeConfig.load(ParadeProperties.class.getResourceAsStream(DEFAULT_PROPERTYFILE));
-            
+
         } catch (Throwable t) {
             logger
-                    .error(
-                            "Error while loading parade.properties. Make sure you have configured a parade.properties in webapp/WEB-INF/classes (you can copy the example file)",
-                            t);
+                    .severe("Error while loading parade.properties. Make sure you have configured a parade.properties in webapp/WEB-INF/classes (you can copy the example file)");
         }
-        
+
         try {
             tomcatConfig = new Properties();
             tomcatConfig.load(new FileInputStream(new java.io.File(getParadeBase()) + DEFAULT_TOMCATPROPERTYFILE));
 
         } catch (Throwable t) {
             logger
-            .error(
-                    "Error while loading tomcat.properties. Make sure you have configured a tomcat.properties in parade's root dir (you can copy the example file)",
-                    t);
-            
+                    .severe("Error while loading tomcat.properties. Make sure you have configured a tomcat.properties in parade's root dir (you can copy the example file)");
+
         }
-        
+
     }
 
     public static String getParadeProperty(String configProperty) {
         return paradeConfig.getProperty(configProperty);
     }
-    
+
     public static String getTomcatProperty(String configProperty) {
         return tomcatConfig.getProperty(configProperty);
     }

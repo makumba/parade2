@@ -6,12 +6,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.makumba.aether.Aether;
 import org.makumba.aether.AetherEvent;
 import org.makumba.aether.PercolationException;
 import org.makumba.aether.model.InitialPercolationRule;
@@ -31,15 +32,16 @@ import org.makumba.parade.aether.ObjectTypes;
  */
 public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
 
-    private Logger logger = Logger.getLogger(SimplePercolationStrategy.class);
-    
+    private Logger logger = Aether.getAetherLogger(SimplePercolationStrategy.class.getName());
+
     /**
      * The entry point for the percolation of an {@link AetherEvent}, that matches the event against the initial
      * percolation rules
      */
     @Override
-    public void percolate(AetherEvent e, boolean virtualPercolation, SessionFactory sessionFactory) throws PercolationException {
-        
+    public void percolate(AetherEvent e, boolean virtualPercolation, SessionFactory sessionFactory)
+            throws PercolationException {
+
         try {
 
             List<MatchedAetherEvent> matchedEvents = new LinkedList<MatchedAetherEvent>();
@@ -77,8 +79,6 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
         } catch (Exception ex) {
             throw new PercolationException(ex);
         }
-        
-
 
     }
 
@@ -97,7 +97,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
      *            a Hibernate {@link Session}
      */
     private void percolateMatchedEvent(MatchedAetherEvent mae, Session s) {
-        logger.debug("Starting percolation of matched event \"" + mae.toString() + "\"");
+        logger.fine("Starting percolation of matched event \"" + mae.toString() + "\"");
 
         // first let's get the queries from the MatchedEvent
         List<RelationQuery> queries = mae.getInitialPercolationRule().getRelationQueries();
@@ -117,7 +117,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
             return;
         }
 
-        logger.debug("Going to percolate along " + initialRelations.size() + " initial relations");
+        logger.fine("Going to percolate along " + initialRelations.size() + " initial relations");
 
         int initialEnergy = new Long(Math.round(mae.getInitialPercolationLevel()
                 * (0.5 + mae.getInitialLevelCoefficient()))).intValue();
@@ -163,7 +163,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
 
         if (isFocusPercolation) {
 
-            logger.debug("====== START FOCUS PERCOLATION ======");
+            logger.fine("====== START FOCUS PERCOLATION ======");
 
             // we figure the percolation rules that may apply to this kind of event
 
@@ -175,33 +175,33 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
 
             // for each match
             for (PercolationRule pr : (List<PercolationRule>) q.list()) {
-                logger.debug("\t == Processing percolation rule match of rule " + pr.toString());
+                logger.fine("\t == Processing percolation rule match of rule " + pr.toString());
 
                 // record a new percolation step
-                logger.debug("\t == Recording percolation step with level " + energy);
+                logger.fine("\t == Recording percolation step with level " + energy);
 
                 PercolationStep ps = buildPercolationStep(mae, mae.getObjectURL(), mae.getObjectURL(), pr, energy,
                         isFocusPercolation, previousStep, threadLevel, false);
                 s.save(ps);
-                
+
                 addOrUpdateFocus(mae.getObjectURL(), mae.getActor(), energy, false, s);
-                
+
             }
 
-            logger.debug("====== END FOCUS PERCOLATION ======");
+            logger.fine("====== END FOCUS PERCOLATION ======");
 
         } else {
 
             if (energy < RuleBasedPercolator.MIN_ENERGY_LEVEL) {
-                logger.debug("NIMBUS-PERCOLATION: Not percolating any further because energy too low: " + energy);
+                logger.fine("NIMBUS-PERCOLATION: Not percolating any further because energy too low: " + energy);
             } else {
 
-                logger.debug("NIMBUS-PERCOLATION: Going to percolate along " + relations.size()
+                logger.fine("NIMBUS-PERCOLATION: Going to percolate along " + relations.size()
                         + " discovered relations");
 
                 for (Object[] relation : relations) {
-                    logger.debug("===== START NIMBUS PERCOLATION ====");
-                    logger.debug("===== " + Arrays.toString(relation));
+                    logger.fine("===== START NIMBUS PERCOLATION ====");
+                    logger.fine("===== " + Arrays.toString(relation));
 
                     Query q = s
                             .createQuery("SELECT r from PercolationRule r where r.subject = :subjectType and r.predicate = :predicate and r.object = :objectType and r.active = true");
@@ -211,13 +211,13 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
 
                     // for each match
                     for (PercolationRule pr : (List<PercolationRule>) q.list()) {
-                        logger.debug("\t == Processing percolation rule match of rule " + pr.toString());
+                        logger.fine("\t == Processing percolation rule match of rule " + pr.toString());
 
                         // we remove the consumption of the previous relation
                         int relationEnergy = energy - pr.getConsumption();
 
                         // - record a new percolation step
-                        logger.debug("\t == Recording percolation step with level " + relationEnergy);
+                        logger.fine("\t == Recording percolation step with level " + relationEnergy);
                         PercolationStep ps = buildPercolationStep(mae, (String) relation[2], (String) relation[0], pr,
                                 relationEnergy, isFocusPercolation, previousStep, threadLevel, false);
                         s.save(ps);
@@ -232,7 +232,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
 
                         if (relationEnergy < RuleBasedPercolator.MIN_ENERGY_LEVEL) {
 
-                            logger.debug("NIMBUS-PERCOLATION: Percolation of event " + mae.toString()
+                            logger.fine("NIMBUS-PERCOLATION: Percolation of event " + mae.toString()
                                     + " stopped after relation " + Arrays.toString(relation)
                                     + " due to insuffiscient energy");
 
@@ -247,7 +247,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
                                 percolate(mae, s, nextRelations, relationEnergy, isFocusPercolation, ps,
                                         threadLevel + 1);
                             } else {
-                                logger.debug("NIMBUS-PERCOLATION: Percolation of event " + mae.toString()
+                                logger.fine("NIMBUS-PERCOLATION: Percolation of event " + mae.toString()
                                         + " stopped after relation " + Arrays.toString(relation) + " due to timeout");
                                 break;
                             }
@@ -257,7 +257,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
                     if (!(now - start > RuleBasedPercolator.MAX_PERCOLATION_TIME)) {
                         continue;
                     } else {
-                        logger.debug("\t Percolation of event " + mae.toString() + " stopped after relation "
+                        logger.fine("\t Percolation of event " + mae.toString() + " stopped after relation "
                                 + Arrays.toString(relation) + " due to timeout");
                         break;
                     }
@@ -268,6 +268,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
 
     /**
      * Retrieves the next relations for nimbus percolation
+     * 
      * @param pr
      *            the {@link PercolationRule} having the queries for the next relations
      * @param ps

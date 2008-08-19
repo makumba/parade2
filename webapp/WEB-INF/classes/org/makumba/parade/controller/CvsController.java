@@ -20,7 +20,7 @@ import org.makumba.providers.QueryAnalysisProvider;
 import org.makumba.providers.QueryProvider;
 
 public class CvsController {
-    
+
     private static QueryAnalysisProvider qap = QueryProvider.getQueryAnalzyer("hql");
 
     public static Object[] onCheck(String context, String[] params) {
@@ -112,57 +112,58 @@ public class CvsController {
     }
 
     public static Object[] onCommit(String context, String[] files, String message) {
-        
+
         String resultString = "";
-        
+
         StringWriter result = new StringWriter();
         PrintWriter out = new PrintWriter(result);
-        
+
         MultiValueMap modelFiles = new MultiValueMap();
-        
+
         Session s = null;
         try {
             s = InitServlet.getSessionFactory().openSession();
             Transaction tx = s.beginTransaction();
-                        
+
             // retrieve the File objects for each file based on its URL
-            for (int i = 0; i < files.length; i++) {
+            for (String file : files) {
                 String query = "select f.row.rowpath as rowpath, f as file from File f where f.fileURL() = :fileURL";
-                Object res = s.createQuery(qap.inlineFunctions(query)).setString("fileURL", files[i]).uniqueResult();
+                Object res = s.createQuery(qap.inlineFunctions(query)).setString("fileURL", file).uniqueResult();
                 Object[] data = (Object[]) res;
-                modelFiles.put((String)data[0], (File)data[1]);
+                modelFiles.put(data[0], data[1]);
             }
-            
-            for(Object rowPath : modelFiles.keySet()) {
+
+            for (Object rowPath : modelFiles.keySet()) {
                 Collection<File> filesInRow = modelFiles.getCollection(rowPath);
-                
+
                 Vector<String> cmd = new Vector<String>();
                 cmd.add("cvs");
                 cmd.add("commit");
                 cmd.add("-m");
                 cmd.add("\"" + message + "\"");
-                
-                for(File f : filesInRow) {
+
+                for (File f : filesInRow) {
                     cmd.add(f.getPath().substring(f.getRow().getRowpath().length() + 1));
                 }
-                
-                Execute.exec(cmd, new java.io.File((String)rowPath), getPrintWriterCVS(out));
-                resultString +="\n" + result.toString();
+
+                Execute.exec(cmd, new java.io.File((String) rowPath), getPrintWriterCVS(out));
+                resultString += "\n" + result.toString();
 
                 CVSManager.updateMultipleCvsCache(context, filesInRow);
 
                 // in case of a cvs commit that leads to the deletion of a file of the repository
                 // we need to make sure that the file gets removed from the cache or it will appear as "zombie"
                 FileManager.checkShouldCache(context, filesInRow);
-                
+
                 tx.commit();
-                
+
             }
-            
+
         } finally {
-            if(s!=null) s.close();
+            if (s != null)
+                s.close();
         }
-        
+
         Object[] res = { resultString, new Boolean(true) };
 
         return res;

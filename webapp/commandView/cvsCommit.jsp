@@ -10,28 +10,7 @@
 </head>
 <body class="command">
 
-<c:set var="context" value="${param.context}" />
-<c:if test="${empty context}">
-  <c:set var="context" value="${requestScope.context}" />
-</c:if>
-<c:if test="${empty context}"><c:set var="context" value="${sessionScope.currentContext }"/></c:if>
-
-
-<c:choose>
-  <c:when test="${not empty param.getPathFromSession and param.getPathFromSession}">
-    <c:set var="path" value="${sessionScope.path}" />
-  </c:when>
-  <c:otherwise>
-    <c:set var="path" value="${param.path}" />
-    <c:if test="${empty path}">
-      <c:set var="path" value="${requestScope.path}" />
-    </c:if>
-  </c:otherwise>
-</c:choose>
-
-<c:if test="${not empty path and path ne ''}">
-  <c:set var="path" value="${path}" scope="session" />
-</c:if>
+<%@include file="../setParameters.jspf" %>
 
 <%
 	String[] files = request.getParameterValues("file");

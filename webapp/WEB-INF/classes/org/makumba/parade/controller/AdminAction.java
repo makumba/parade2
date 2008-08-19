@@ -9,7 +9,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.makumba.aether.percolation.RuleBasedPercolator;
 import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Application;
@@ -113,7 +112,7 @@ public class AdminAction extends DispatchAction {
             s.close();
         }
     }
-    
+
     public ActionForward refreshApplications(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
@@ -124,10 +123,10 @@ public class AdminAction extends DispatchAction {
             tx = s.beginTransaction();
 
             Parade p = (Parade) s.get(Parade.class, new Long(1));
-            
+
             ApplicationManager mgr = new ApplicationManager();
-            
-            for(Application a : p.getApplications().values()) {
+
+            for (Application a : p.getApplications().values()) {
                 mgr.buildCVSlist(a);
             }
 
@@ -136,13 +135,12 @@ public class AdminAction extends DispatchAction {
 
             return mapping.findForward("index");
 
-            
         } finally {
             tx.commit();
             s.close();
         }
     }
-    
+
     public ActionForward resetCrawlStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
@@ -153,8 +151,8 @@ public class AdminAction extends DispatchAction {
             tx = s.beginTransaction();
 
             Parade p = (Parade) s.get(Parade.class, new Long(1));
-            
-            for(Row r : p.getRows().values()) {
+
+            for (Row r : p.getRows().values()) {
                 MakumbaContextRelationComputer.resetCrawlStatus(r, s);
             }
 
@@ -163,13 +161,12 @@ public class AdminAction extends DispatchAction {
 
             return mapping.findForward("index");
 
-            
         } finally {
             tx.commit();
             s.close();
         }
     }
-    
+
     public ActionForward resetRowCrawlStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
@@ -178,27 +175,27 @@ public class AdminAction extends DispatchAction {
         try {
             s = InitServlet.getSessionFactory().openSession();
             tx = s.beginTransaction();
-            
-            String context = (String) request.getParameter("context");
+
+            String context = request.getParameter("context");
 
             Parade p = (Parade) s.get(Parade.class, new Long(1));
-            
+
             Row r = p.getRows().get(context);
-            
-            if(r != null) {
+
+            if (r != null) {
                 MakumbaContextRelationComputer.resetCrawlStatus(r, s);
                 request.setAttribute("result", "Crawl status refreshedApplications cache refreshed !");
                 request.setAttribute("success", new Boolean(true));
 
             } else {
 
-                request.setAttribute("result", "Couldn't refresh crawl status of context "+context+": context not found");
+                request.setAttribute("result", "Couldn't refresh crawl status of context " + context
+                        + ": context not found");
                 request.setAttribute("success", new Boolean(false));
             }
 
             return mapping.findForward("index");
 
-            
         } finally {
             tx.commit();
             s.close();

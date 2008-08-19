@@ -7,8 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -20,6 +20,7 @@ import org.makumba.devel.relations.RelationCrawler;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowWebapp;
+import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.providers.TransactionProvider;
 import org.makumba.providers.datadefinition.makumba.RecordInfo;
 
@@ -30,7 +31,7 @@ import org.makumba.providers.datadefinition.makumba.RecordInfo;
  * 
  */
 public class MakumbaContextRelationComputer implements RelationComputer {
-    
+
     private static Logger logger;
 
     protected Row r;
@@ -43,13 +44,13 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         this.r = r;
         this.webappPath = r.getRowpath() + java.io.File.separator + r.getWebappPath();
         initRelationCrawler();
-        logger = Logger.getLogger(MakumbaContextRelationComputer.class);
+        logger = ParadeLogger.getParadeLogger(MakumbaContextRelationComputer.class.getName());
 
     }
-    
+
     protected void initRelationCrawler() {
-        this.rc = RelationCrawler.getRelationCrawler(this.webappPath,
-                ParadeRelationComputer.PARADE_DATABASE_NAME, true, "file://", r.getRowname());
+        this.rc = RelationCrawler.getRelationCrawler(this.webappPath, ParadeRelationComputer.PARADE_DATABASE_NAME,
+                true, "file://", r.getRowname(), false);
     }
 
     public String getName() {
@@ -61,58 +62,59 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         // let's compute all relations using the Makumba relations crawler
         // while we crawl, we adjust the MDD provider root to the webapp root
         RecordInfo.setWebappRoot(webappPath);
-        
+
         List<String> filesToCrawl = getFilesToCrawl();
-        
+
         for (String path : filesToCrawl) {
-            logger.debug("Crawling file "+path);
+            logger.fine("Crawling file " + path);
             rc.crawl(path.substring(webappPath.length()));
         }
-        
+
         // we set it back to null after the crawling and clean the cache
         RecordInfo.setWebappRoot(null);
         NamedResources.cleanStaticCache(RecordInfo.infos);
-        
+
         rc.writeRelationsToDb();
-        
+
         // now we also update the file cache of the crawled files. they were crawled.
-        if(filesToCrawl.size() != 0) {
+        if (filesToCrawl.size() != 0) {
             Session s = null;
             try {
                 s = InitServlet.getSessionFactory().openSession();
                 Transaction tx = s.beginTransaction();
-                Query q = s.createQuery("update File set crawled = true where path in (" + fileListToHQLSet(filesToCrawl) + ")");
+                Query q = s.createQuery("update File set crawled = true where path in ("
+                        + fileListToHQLSet(filesToCrawl) + ")");
                 q.executeUpdate();
                 tx.commit();
-                
+
             } finally {
-                if(s!= null) {
+                if (s != null) {
                     s.close();
                 }
             }
         }
     }
-    
+
     private String fileListToHQLSet(List<String> files) {
         String res = "";
         Iterator<String> it = files.iterator();
         while (it.hasNext()) {
             String s = it.next();
             res += "'" + s + "'";
-            if(it.hasNext()) {
-                res+= ", ";
+            if (it.hasNext()) {
+                res += ", ";
             }
         }
         return res;
     }
 
     public void updateRelation(String filePath) throws RelationComputationException {
-        
-        if(filePath.startsWith(webappPath)) {
-            logger.debug("Updating relations of "+filePath);
+
+        if (filePath.startsWith(webappPath)) {
+            logger.fine("Updating relations of " + filePath);
             filePath = filePath.substring(webappPath.length());
-            if(!filePath.startsWith("/"))
-                filePath = "/"+filePath;
+            if (!filePath.startsWith("/"))
+                filePath = "/" + filePath;
             RecordInfo.setWebappRoot(webappPath);
             rc.crawl(filePath);
             RecordInfo.setWebappRoot(null);
@@ -131,7 +133,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
 
         org.makumba.Transaction t = tp.getConnectionTo(ParadeRelationComputer.PARADE_DATABASE_NAME);
         Map<String, Object> params = new HashMap<String, Object>();
-        String webappRoot = r.getRowpath() + "/" + ((RowWebapp)r.getRowdata().get("webapp")).getWebappPath();
+        String webappRoot = r.getRowpath() + "/" + ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
         params.put("webappRoot", webappRoot);
         params.put("webappRootLength", webappRoot.length());
         params.put("webappRootLike", webappRoot + "%");
@@ -144,7 +146,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
 
         for (Dictionary<String, Object> dictionary : v) {
             String path = (String) dictionary.get("path");
-                res.add(path);
+            res.add(path);
         }
 
         t.close();
@@ -153,21 +155,20 @@ public class MakumbaContextRelationComputer implements RelationComputer {
     }
 
     public void deleteRelation(String filePath) throws RelationComputationException {
-        if(filePath.startsWith(webappPath)) {
-            logger.debug("Deleting relations of "+filePath);
+        if (filePath.startsWith(webappPath)) {
+            logger.fine("Deleting relations of " + filePath);
             filePath = filePath.substring(webappPath.length());
-            if(filePath.startsWith("/"))
+            if (filePath.startsWith("/"))
                 filePath = filePath.substring(1);
             rc.deleteFileRelations(filePath);
         }
     }
-    
 
     public static void resetCrawlStatus(Row r, Session s) {
         Query q = s.createQuery("UPDATE File f set f.crawled = false where f.row.id = :rowid");
         q.setParameter("rowid", r.getId());
         int u = q.executeUpdate();
-        logger.debug("Reset the crawl status of "+u+" files");
+        logger.fine("Reset the crawl status of " + u + " files");
     }
-    
+
 }

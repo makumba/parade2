@@ -11,8 +11,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Main;
@@ -25,20 +25,22 @@ import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.Execute;
 import org.makumba.parade.tools.HtmlUtils;
+import org.makumba.parade.tools.ParadeLogger;
 
 public class AntManager implements RowRefresher, ParadeManager {
 
-    static Logger logger = Logger.getLogger(AntManager.class.getName());
+    static Logger logger = ParadeLogger.getParadeLogger(AntManager.class.getName());
 
     public void hardRefresh(Row row) {
-        logger.debug("Refreshing row information for row " + row.getRowname());
+        logger.fine("Refreshing row information for row " + row.getRowname());
 
         RowAnt antdata = new RowAnt();
         antdata.setDataType("ant");
 
         File buildFile = setBuildFile(row, antdata);
         if (buildFile == null || !buildFile.exists()) {
-            logger.warn("AntManager: no build file found for row " + row.getRowname() + " at path " + row.getRowpath());
+            logger.warning("AntManager: no build file found for row " + row.getRowname() + " at path "
+                    + row.getRowpath());
         } else {
             Project p = getInitProject(buildFile, row, antdata);
             if (p != null) {
@@ -98,8 +100,8 @@ public class AntManager implements RowRefresher, ParadeManager {
             project.init();
             ProjectHelper.getProjectHelper().parse(project, buildFile);
         } catch (Throwable t) {
-            java.util.logging.Logger.getLogger("org.makumba.parade.ant").log(java.util.logging.Level.WARNING,
-                    "project config error", t);
+            ParadeLogger.getParadeLogger("org.makumba.parade.ant").log(
+                    java.util.logging.Level.WARNING, "project config error", t);
             return null;
         }
 
@@ -154,13 +156,13 @@ public class AntManager implements RowRefresher, ParadeManager {
         v.addElement("ant");
         v.addElement(command);
 
-        logger.debug("Attempting to execute ANT command " + command + " with a java heap of " + memSize);
+        logger.fine("Attempting to execute ANT command " + command + " with a java heap of " + memSize);
 
         Execute.exec(v, buildFile.getParentFile(), out);
 
         rt.gc();
         long memSize1 = rt.totalMemory() - rt.freeMemory();
-        logger.debug("Finished to execute ANT command " + command + " with a java heap of " + memSize1);
+        logger.fine("Finished to execute ANT command " + command + " with a java heap of " + memSize1);
 
         out.println("heap size: " + memSize1);
         out.println("heap grew with: " + (memSize1 - memSize));
@@ -196,7 +198,7 @@ public class AntManager implements RowRefresher, ParadeManager {
         Vector<String> v = new Vector<String>();
         v.addElement(command);
 
-        logger.debug("Attempting to execute ANT command " + command + " with a java heap of " + memSize);
+        logger.fine("Attempting to execute ANT command " + command + " with a java heap of " + memSize);
 
         lg.setOutputPrintStream(out);
         lg.setErrorPrintStream(out);
@@ -217,7 +219,7 @@ public class AntManager implements RowRefresher, ParadeManager {
 
         rt.gc();
         long memSize1 = rt.totalMemory() - rt.freeMemory();
-        logger.debug("Finished to execute ANT command " + command + " with a java heap of " + memSize1);
+        logger.fine("Finished to execute ANT command " + command + " with a java heap of " + memSize1);
 
         out.println("heap size: " + memSize1);
         out.println("heap grew with: " + (memSize1 - memSize));

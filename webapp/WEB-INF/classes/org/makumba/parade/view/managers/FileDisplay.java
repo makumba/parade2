@@ -10,14 +10,15 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.tools.ParadeLogger;
 
 import freemarker.template.SimpleHash;
 import freemarker.template.Template;
@@ -25,7 +26,7 @@ import freemarker.template.TemplateException;
 
 public class FileDisplay {
 
-    static Logger logger = Logger.getLogger(FileDisplay.class.getName());
+    static Logger logger = ParadeLogger.getParadeLogger(FileDisplay.class.getName());
 
     // TODO move this somewhere else
     public static String creationFileOK(String rowname, String path, String filename) {
@@ -110,10 +111,10 @@ public class FileDisplay {
         Transaction tx = s.beginTransaction();
 
         for (File currentFile : files) {
-            
+
             // if this is a symbolic link
             if (currentFile.getPath().length() < r.getRowpath().length() + 1) {
-                logger.warn("Symbolic link detected:" + currentFile.getName() + " redirects to "
+                logger.warning("Symbolic link detected:" + currentFile.getName() + " redirects to "
                         + currentFile.getPath());
                 continue;
             }

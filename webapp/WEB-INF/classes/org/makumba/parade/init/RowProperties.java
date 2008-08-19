@@ -8,8 +8,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
+import org.makumba.parade.tools.ParadeLogger;
 
 /**
  * This class handles the extraction of information from the rows.properties file, and creates it if it doesn't exist
@@ -27,7 +28,7 @@ public class RowProperties {
 
     public Map<String, Map<String, String>> rowDefinitions = new HashMap<String, Map<String, String>>();
 
-    static Logger logger = Logger.getLogger(RowProperties.class.getName());
+    static Logger logger = ParadeLogger.getParadeLogger(RowProperties.class.getName());
 
     public RowProperties() {
         readRowDefinitions();
@@ -89,7 +90,7 @@ public class RowProperties {
 
         } catch (Exception e) {
             // if there's no row definition file, we create one
-            logger.warn("No rows.properties file found, attempting to generate one");
+            logger.warning("No rows.properties file found, attempting to generate one");
             state.setProperty("", ParadeProperties.getParadeBase());
             try {
                 state.store(new FileOutputStream(new java.io.File(ParadeProperties.getClassesPath()
@@ -111,9 +112,10 @@ public class RowProperties {
 
                 // we check if the row path is valid, if not, we ignore it
                 String rowPath = state.getProperty(rowName);
-                
-                if(rowPath == null) {
-                    logger.error("Error in rows.properties: row "+rowName+" is not configured but appears as having one or more rowdata elements. Please check!");
+
+                if (rowPath == null) {
+                    logger.severe("Error in rows.properties: row " + rowName
+                            + " is not configured but appears as having one or more rowdata elements. Please check!");
                     continue;
                 }
 
@@ -121,7 +123,7 @@ public class RowProperties {
                 if (f.exists()) {
                     extractRowDefinitions(rowName);
                 } else {
-                    logger.error("Error in rows.properties: could not access the path " + rowPath + " for row "
+                    logger.severe("Error in rows.properties: could not access the path " + rowPath + " for row "
                             + rowName + ". Please check if it is correct.");
                 }
             }

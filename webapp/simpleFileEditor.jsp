@@ -1,10 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak"%>
+<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
+
+
+<c:set var="context" value="${param.context}" />
+<c:if test="${empty context}">
+  <c:set var="context" value="${requestScope.context}" />
+</c:if>
+
+<c:set var="path" value="${param.path}" />
+<c:if test="${empty path}">
+  <c:set var="path" value="${requestScope.path}" />
+</c:if>
+
+<c:set var="file" value="${param.file}" />
+<c:if test="${empty file}">
+  <c:set var="file" value="${requestScope.file}" />
+</c:if>
+
+<c:set var="source" value="${param.source}" />
+<c:if test="${empty source}">
+  <c:set var="source" value="${requestScope.source}" />
+</c:if>
+
+<jsp:useBean id="fileEditorBean" class="org.makumba.parade.view.beans.FileEditorBean" />
+<jsp:setProperty name="fileEditorBean" property="context" value="${context}"/>
+<jsp:setProperty name="fileEditorBean" property="path" value="${path}"/>
+<jsp:setProperty name="fileEditorBean" property="file" value="${file}"/>
+<jsp:setProperty name="fileEditorBean" property="source" value="${source}"/>
+
+
+
+
+<html>
+<head>
+<title>File editor - ${file}</title>
+
+<link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/parade.css" type="text/css">
+
 <script language="JavaScript">
 <!--
 function insert() {
 strSelection = document.selection.createRange().text 
 if (strSelection == "") { 
- 	document.sourceEdit.source.selection.createRange().text =  strSelection + document.makHelper;
-	return false; 
+  document.sourceEdit.source.selection.createRange().text =  strSelection + document.makHelper;
+  return false; 
 } 
 else document.selection.createRange().text = "<b>" + strSelection 
 + "</b>" 
@@ -111,15 +151,18 @@ function setModified(){
 </script>
 
 </head>
-<body bgcolor="#dddddd" TOPMARGIN=0 LEFTMARGIN=0 RIGHTMARGIN=0 BOTTOMMARGIN=0 marginwidth=0 marginheight=0 STYLE="margin: 0px" onload="javascript:onLoad();" onresize="javascript:onResize();">
-<form name="sourceEdit" method="post" action="/File.do?op=saveFile&context=${rowName}&path=${path}&file=${fileName}&editor=old" style="margin:0px;">
 
+<body bgcolor="#dddddd" TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" BOTTOMMARGIN="0" marginwidth="0" marginheight="0" STYLE="margin: 0px" onload="javascript:onLoad();" onresize="javascript:onResize();">
+<form name="sourceEdit" method="post" action="/File.do?op=saveFile&context=${context}&path=${path}&file=${file}&editor=old" style="margin:0px;">
 <input type="submit" name="Submit" value="(S)ave!" ACCESSKEY="S" disabled onclick="javascript:setBunload(false);">
-<a href="browse.jsp?context=${rowName}" target="_top" title="${rowName}">${rowName}</a>:<a href="/servlet/browse?display=file&context=${rowName}&path=${path}">${path}</a>/<b>${fileName}</b>
-| <a href="/File.do?op=editFile&context=${rowName}&path=${path}&file=${fileName}&editor=old" title="get the file from disk again, undo all changes since last save">Revert</a> 
+<a href="browse.jsp?context=${context}&getPathFromSession=false" target="_top" title="${context}">${context}</a>:<a href="/servlet/browse?display=file&context=${context}&path=${path}">${path}</a>/<b>${file}</b>
+| <a href="simpleFileEditor.jsp?context=${context}&path=${path}&file=${file}" title="get the file from disk again, undo all changes since last save">Revert</a> 
 | <input type="text" value="Loading..." name="pagestatus" disabled size="10" style="border:0px; background-color:#dddddd; font-color:red;">
 <br>
 
-<textarea name="source" style="width:100%;height:92%" cols="90" rows="23" wrap="virtual" onKeypress="setModified()" STYLE="font-face:Lucida Console; font-size:8pt">${content}</textarea>
+<textarea name="source" style="width:100%;height:92%" cols="90" rows="23" wrap="virtual" onKeypress="setModified()" STYLE="font-face:Lucida Console; font-size:8pt">${fileEditorBean.content}</textarea>
 
 </form>
+
+</body>
+</html>

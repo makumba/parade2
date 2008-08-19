@@ -3,14 +3,15 @@ package org.makumba.parade.aether;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.makumba.Pointer;
 import org.makumba.Transaction;
 import org.makumba.aether.RelationComputationException;
 import org.makumba.aether.RelationComputer;
 import org.makumba.db.hibernate.HibernateTransactionProvider;
 import org.makumba.parade.init.ParadeProperties;
+import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.providers.TransactionProvider;
 
 /**
@@ -25,58 +26,63 @@ import org.makumba.providers.TransactionProvider;
 public class ParadeRelationComputer implements RelationComputer {
 
     public static final String PARADE_RELATION_TABLE = "org.makumba.devel.relations.Relation";
-    
+
     public static final String PARADE_DATABASE_NAME = ParadeProperties.getParadeProperty("aether.databaseName");
 
-    private Logger logger = Logger.getLogger(ParadeRelationComputer.class);
-    
+    private Logger logger = ParadeLogger.getParadeLogger(ParadeRelationComputer.class.getName());
+
     private TransactionProvider tp;
 
     public void computeRelations() throws RelationComputationException {
-        
-        logger.debug("Computing all relations of "+getName());
+
+        logger.fine("Computing all relations of " + getName());
 
         Transaction t = tp.getConnectionTo(PARADE_DATABASE_NAME);
 
         computeRowUserRelations(t);
-        
+
         // trainee-mentor relations
         // we populate the relations table with those relations
-        
+
         // first we remove all the previous relations
-        
-        Vector<Dictionary<String, Object>> old = t.executeQuery("SELECT rel.id AS rel FROM org.makumba.devel.relations.Relation rel WHERE rel.type = 'traineeOf'", null);
+
+        Vector<Dictionary<String, Object>> old = t
+                .executeQuery(
+                        "SELECT rel.id AS rel FROM org.makumba.devel.relations.Relation rel WHERE rel.type = 'traineeOf'",
+                        null);
         for (Dictionary<String, Object> dictionary : old) {
-            t.delete((Pointer)dictionary.get("rel"));
+            t.delete((Pointer) dictionary.get("rel"));
         }
-        
-        Vector<Dictionary<String, Object>> users = t.executeQuery("SELECT u.login as trainee, u.mentor.login as mentor FROM User u WHERE u.mentor != null", null);
-        logger.info("Found "+users.size() + " trainee to mentor relations");
-        
+
+        Vector<Dictionary<String, Object>> users = t.executeQuery(
+                "SELECT u.login as trainee, u.mentor.login as mentor FROM User u WHERE u.mentor != null", null);
+        logger.info("Found " + users.size() + " trainee to mentor relations");
+
         for (Dictionary<String, Object> dic : users) {
             Dictionary<String, Object> rel = buildTraineeToMentorRelation(dic);
             t.insert(PARADE_RELATION_TABLE, rel);
-         }
-        
+        }
+
         t.close();
-        
-        logger.debug("Finished computing all relations of "+getName());
+
+        logger.fine("Finished computing all relations of " + getName());
 
     }
 
     private void computeRowUserRelations(Transaction t) {
         // row-user relations
         // we populate the relations table with those relations
-        
+
         // first we remove all the previous relations
-        Vector<Dictionary<String, Object>> old = t.executeQuery("SELECT rel.id AS rel FROM org.makumba.devel.relations.Relation rel WHERE rel.type = 'owns'", null);
+        Vector<Dictionary<String, Object>> old = t.executeQuery(
+                "SELECT rel.id AS rel FROM org.makumba.devel.relations.Relation rel WHERE rel.type = 'owns'", null);
         for (Dictionary<String, Object> dictionary : old) {
-            t.delete((Pointer)dictionary.get("rel"));
+            t.delete((Pointer) dictionary.get("rel"));
         }
-        
+
         Vector<Dictionary<String, Object>> res = t.executeQuery(
                 "SELECT r.rowname AS row, r.user.login AS user FROM Row r WHERE r.user != null", null);
-        logger.info("Found "+res.size() + " user to row relations");
+        logger.info("Found " + res.size() + " user to row relations");
         for (Dictionary<String, Object> d : res) {
             Dictionary<String, Object> rel = buildUserRowRelation(d);
             t.insert(PARADE_RELATION_TABLE, rel);
@@ -90,7 +96,7 @@ public class ParadeRelationComputer implements RelationComputer {
         rel.put("type", "owns");
         return rel;
     }
-    
+
     private Dictionary<String, Object> buildTraineeToMentorRelation(Dictionary<String, Object> d) {
         Dictionary<String, Object> rel = new Hashtable<String, Object>();
         rel.put("fromURL", "user://" + d.get("trainee"));
@@ -104,8 +110,8 @@ public class ParadeRelationComputer implements RelationComputer {
     }
 
     public void updateRelation(String objectURL) throws RelationComputationException {
-        
-        logger.debug("Updating relation of object "+objectURL);
+
+        logger.fine("Updating relation of object " + objectURL);
 
         if (objectURL.startsWith("user://")) {
             String userLogin = objectURL.substring("user://".length());
@@ -119,9 +125,9 @@ public class ParadeRelationComputer implements RelationComputer {
 
             for (Dictionary<String, Object> dictionary : res) {
                 Pointer relPtr = (Pointer) dictionary.get("rel");
-                
-                logger.debug("Deleting old relation "+relPtr.getUid());
-                
+
+                logger.fine("Deleting old relation " + relPtr.getUid());
+
                 // delete old record
                 t.delete(relPtr);
 
@@ -132,7 +138,8 @@ public class ParadeRelationComputer implements RelationComputer {
                         new Object[] { userLogin });
                 for (Dictionary<String, Object> d : res1) {
                     Dictionary<String, Object> rel = buildUserRowRelation(d);
-                    logger.debug("Generating new relation "+rel.get("fromURL")+" --("+rel.get("type")+")--> "+rel.get("toURL"));
+                    logger.fine("Generating new relation " + rel.get("fromURL") + " --(" + rel.get("type") + ")--> "
+                            + rel.get("toURL"));
                     t.insert(PARADE_RELATION_TABLE, rel);
                 }
             }
@@ -145,7 +152,7 @@ public class ParadeRelationComputer implements RelationComputer {
 
     public void deleteRelation(String objectURL) throws RelationComputationException {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

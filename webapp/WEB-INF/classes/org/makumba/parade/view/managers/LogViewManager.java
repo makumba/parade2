@@ -72,7 +72,8 @@ public class LogViewManager {
         // FIXME the server restart should be detected solely as ActionLog (and generated as such in TriggerFilter), but
         // here we list ActionLog-Log couples
         String query = "from Log l, ActionLog al where l.actionLog = al and "
-                + (noContext ? "" : "(" + contextQuery + " or (al.origin = 'tomcat' and al.action='start' and l.origin='TriggerFilter')) and ")
+                + (noContext ? "" : "(" + contextQuery
+                        + " or (al.origin = 'tomcat' and al.action='start' and l.origin='TriggerFilter')) and ")
                 + dateQuery;
 
         Query q = s.createQuery(query);
@@ -157,116 +158,4 @@ public class LogViewManager {
 
     }
 
-    @SuppressWarnings("unchecked")
-    public String getActionLogView(Session s, String context) {
-        StringWriter result = new StringWriter();
-        PrintWriter out = new PrintWriter(result);
-
-        Template temp = null;
-        try {
-            temp = InitServlet.getFreemarkerCfg().getTemplate("actionLogs.ftl");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // Creating the data model
-        SimpleHash root = new SimpleHash();
-        root.put("context", context);
-
-        List<SimpleHash> viewEntries = new LinkedList<SimpleHash>();
-
-        Query q = s.createQuery("from ActionLog al order by al.logDate DESC");
-        List<ActionLog> res = q.list();
-        for (int i = 0; i < res.size(); i++) {
-            SimpleHash actionLogEntry = new SimpleHash();
-            List<SimpleHash> logEntries = new LinkedList<SimpleHash>();
-            ActionLog actionLog = res.get(i);
-            Query q1 = s.createQuery("from Log l where l.actionLog = :actionLog order by l.logDate DESC");
-            q1.setParameter("actionLog", actionLog);
-            List<Log> res1 = q1.list();
-            for (int j = 0; j < res1.size(); j++) {
-                SimpleHash entry = new SimpleHash();
-                Log log = res1.get(j);
-                populateLogEntry(entry, log);
-                logEntries.add(entry);
-            }
-            actionLogEntry.put("logEntries", logEntries);
-            actionLogEntry.put("date", actionLog.getlogDate());
-            actionLogEntry.put("url", actionLog.getUrl() == null ? "" : actionLog.getUrl());
-            actionLogEntry.put("context", actionLog.getContext() == null ? "tomcat" : actionLog.getContext());
-            actionLogEntry.put("user", actionLog.getUser() == null ? "(unknown user)" : actionLog.getUser());
-            actionLogEntry.put("queryString", actionLog.getQueryString() == null ? "" : actionLog.getQueryString());
-
-            viewEntries.add(actionLogEntry);
-        }
-
-        root.put("entries", viewEntries);
-
-        /* Merge data model with template */
-        try {
-            temp.process(root, out);
-        } catch (TemplateException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return result.toString();
-    }
-
-    public String getLogMenuView(Session s, String context, String filter, Integer years, Integer months, Integer days) {
-        StringWriter result = new StringWriter();
-        PrintWriter out = new PrintWriter(result);
-
-        Template temp = null;
-        try {
-            temp = InitServlet.getFreemarkerCfg().getTemplate("logsHeader.ftl");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // Creating the data model
-        SimpleHash root = new SimpleHash();
-        root.put("context", context);
-        root.put("year", years.toString());
-        root.put("month", "" + (months.intValue() + 1));
-        root.put("day", days.toString());
-        root.put("filter", filter);
-
-        List<String> rows = new LinkedList<String>();
-        rows.add("all");
-
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
-
-        for (Object element : p.getRows().keySet()) {
-            Row currentRow = p.getRows().get(element);
-            String displayName = currentRow.getRowname();
-            if (currentRow.getRowname() == "")
-                displayName = "(root)";
-
-            if(!currentRow.getModuleRow()) {
-                rows.add(displayName);
-            }
-        }
-
-        root.put("rows", rows);
-
-        /* Merge data model with template */
-        try {
-            temp.process(root, out);
-        } catch (TemplateException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return result.toString();
-
-    }
 }

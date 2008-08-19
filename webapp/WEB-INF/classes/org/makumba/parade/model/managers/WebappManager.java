@@ -5,13 +5,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
+import org.makumba.parade.tools.ParadeLogger;
 
 public class WebappManager implements RowRefresher, ParadeManager {
 
@@ -24,7 +25,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
     private static String DEFAULT_SERVLETCONTEXTPROPERTIES = "/servletContext.properties";
 
-    static Logger logger = Logger.getLogger(WebappManager.class.getName());
+    static Logger logger = ParadeLogger.getParadeLogger(WebappManager.class.getName());
 
     {
         loadConfig();
@@ -34,12 +35,12 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
         RowWebapp webappdata = new RowWebapp();
         webappdata.setDataType("webapp");
-        webappdata.setWebappPath(m.get("webapp") == null?"":m.get("webapp"));
+        webappdata.setWebappPath(m.get("webapp") == null ? "" : m.get("webapp"));
         r.addManagerData(webappdata);
     }
 
     public void softRefresh(Row row) {
-        logger.debug("Refreshing row information for row " + row.getRowname());
+        logger.fine("Refreshing row information for row " + row.getRowname());
 
         RowWebapp webappdata = (RowWebapp) row.getRowdata().get("webapp");
 
@@ -56,7 +57,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
             config = new Properties();
             config.load(this.getClass().getResourceAsStream(DEFAULT_SERVLETCONTEXTPROPERTIES));
         } catch (Throwable t) {
-            logger.error("Error loading servletcontext.properties", t);
+            logger.severe("Error loading servletcontext.properties: " + t.getMessage());
         }
     }
 
@@ -73,7 +74,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
                         + "servletcontext.properties"), "Parade servlet context config");
                 container.init(config);
             } catch (Throwable t) {
-                logger.error("Error getting servlet container", t);
+                logger.severe("Error getting servlet container: " + t.getMessage());
             }
 
         return container;
@@ -87,7 +88,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
                 + java.io.File.separator + "WEB-INF";
 
         if (!new java.io.File(webinfDir).isDirectory()) {
-            logger.warn("No WEB-INF directory found for row " + row.getRowname() + ": directory " + webinfDir
+            logger.warning("No WEB-INF directory found for row " + row.getRowname() + ": directory " + webinfDir
                     + " does not exist");
             webinfDir = "NO WEBINF";
             webappdata.setWebappPath("NO WEBINF");
@@ -126,7 +127,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
         return "Error: you cannot stop ParaDe like this !";
     }
-    
+
     public String servletContextRedeployRow(Row row) {
         RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
 
@@ -138,7 +139,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
             result = "Error: you cannot redeploy ParaDe this way!";
         }
         return result;
-        
+
     }
 
     public String servletContextReloadRow(Row row) {
@@ -163,7 +164,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
                     try {
                         Thread.sleep(100);
                     } catch (Throwable t) {
-                        logger.warn("Context reload thread sleep failed");
+                        logger.warning("Context reload thread sleep failed");
                     }
                 }
 
@@ -173,7 +174,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
             } catch (IOException e) {
                 result = "Error: Cannot reload Parade " + e;
-                logger.error("Cannot reload ParaDe", e);
+                logger.severe("Cannot reload ParaDe: " + e.getMessage());
             }
         }
 
@@ -215,10 +216,9 @@ public class WebappManager implements RowRefresher, ParadeManager {
         try {
             return row.getRowpath().equals(new File(ParadeProperties.getParadeBase()).getCanonicalPath());
         } catch (Throwable t) {
-            logger.error("Error: couldn't get row path", t);
+            logger.severe("Error: couldn't get row path: " + t.getMessage());
         }
         return true;
     }
-
 
 }

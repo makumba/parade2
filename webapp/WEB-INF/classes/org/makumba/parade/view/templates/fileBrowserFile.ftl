@@ -11,8 +11,8 @@
 </td>
 <td align='right'>
 <#if file.isOnDisk>
-<a href='/File.do?op=editFile&context=${rowName}&path=${path}&file=${file.nameEncoded}&editor=codepress'><img src='/images/edit.gif' alt='Edit ${file.name} with new editor'></a>
-<a href='/File.do?op=editFile&context=${rowName}&path=${path}&file=${file.nameEncoded}&editor=normal' title='Edit ${file.name} with old editor'>(E)</a>
+<a href='/codePressEditor.jsp?context=${rowName}&path=${path}&file=${file.nameEncoded}'><img src='/images/edit.gif' alt='Edit ${file.name} with javascript editor'></a>
+<a href='/simpleFileEditor.jsp?context=${rowName}&path=${path}&file=${file.nameEncoded}' title='Edit ${file.name} with old editor'>(E)</a>
 &nbsp;&nbsp;
 <a href="javascript:deleteFile('${path}','${file.name}')"><img src='/images/delete.gif' alt='Delete ${file.name}'></a>
 </td>

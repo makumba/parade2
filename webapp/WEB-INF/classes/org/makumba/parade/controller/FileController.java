@@ -4,12 +4,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
+import org.makumba.parade.tools.ParadeLogger;
 
 public class FileController {
 
-    static Logger logger = Logger.getLogger(FileController.class.getName());
+    static Logger logger = ParadeLogger.getParadeLogger(FileController.class.getName());
 
     public static void saveFile(String absoluteFilePath, String[] source) {
 
@@ -34,7 +35,7 @@ public class FileController {
             }
             pw.close();
         } catch (IOException e) {
-            logger.error("Error while creating file ", e);
+            logger.severe("Error while creating file:\n" + e.getMessage());
         }
 
     }

@@ -1,7 +1,5 @@
 package org.makumba.parade.controller;
 
-import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,15 +7,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.access.DatabaseLogServlet;
 import org.makumba.parade.model.Parade;
-import org.makumba.parade.tools.TriggerFilter;
 
 public class CvsAction extends DispatchAction {
 
     private DatabaseLogServlet dbs = new DatabaseLogServlet();
-    
+
     public ActionForward check(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
@@ -86,21 +82,21 @@ public class CvsAction extends DispatchAction {
 
     public ActionForward commit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        
+
         String[] files = request.getParameterValues("file");
         String context = request.getParameter("context");
-        if(files.length > 1 && context == null) {
-            context = (String)request.getSession().getAttribute("currentContext");
+        if (files.length > 1 && context == null) {
+            context = (String) request.getSession().getAttribute("currentContext");
         }
-        
-        if(context == null) {
+
+        if (context == null) {
             // doh. FIXME
-            context="";
+            context = "";
         }
-        
+
         String path = request.getParameter("path");
         String message = request.getParameter("message");
-        
+
         // we reconstruct the absolute paths (the ones passed as params are relative)
         path = Parade.constructAbsolutePath(context, path);
 
@@ -218,7 +214,7 @@ public class CvsAction extends DispatchAction {
         // we reconstruct the absolute paths (the ones passed as params are relative
         String absolutePath = Parade.constructAbsolutePath(context, path);
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
-        
+
         String[] params = { file.substring(path.length() + 1), path };
         Object[] result = CommandController.onDeleteFile(context, params);
         result = CvsController.onUpdateFile(context, absolutePath, absoluteFilePath);
@@ -233,7 +229,6 @@ public class CvsAction extends DispatchAction {
 
     }
 
-    
     public ActionForward deletefile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 

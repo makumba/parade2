@@ -54,7 +54,8 @@
 			type="org.makumba.parade.controller.FileAction" parameter="op">
 
 			<forward name="browse" path="/servlet/browse" />
-			<forward name="edit" path="/servlet/edit" />
+            <forward name="simpleEdit" path="/simpleFileEditor.jsp" />
+            <forward name="codePressEdit" path="/codePressEditor.jsp" />
 
 		</action>
 
@@ -62,9 +63,9 @@
 		<action path="/FileUpload"
 			type="org.makumba.parade.controller.FileAction" name="FileUpload"
 			scope="request" validate="true" parameter="op"
-			input="/webapp/uploadFile.jsp">
+			input="/webapp/commandView/uploadFile.jsp">
 
-			<forward name="browse" path="/servlet/browse" />
+            <forward name="uploadResponse" path="/commandView/uploadFileResponse.jsp" />
 		</action>
 
 		<!-- Command view -->
@@ -104,7 +105,7 @@
 		<action path="/Ant"
 			type="org.makumba.parade.controller.AntAction">
 
-			<forward name="command" path="/servlet/browse" />
+			<forward name="command" path="/commandView/commandOutput.jsp" />
 			<forward name="index" path="/index.jsp" />
 
 

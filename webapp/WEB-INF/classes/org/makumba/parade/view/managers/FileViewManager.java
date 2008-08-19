@@ -10,8 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -23,6 +23,7 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.managers.ServletContainer;
 import org.makumba.parade.tools.DisplayFormatter;
+import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.view.interfaces.FileView;
 import org.makumba.parade.view.interfaces.TreeView;
 
@@ -32,7 +33,7 @@ import freemarker.template.TemplateException;
 
 public class FileViewManager implements FileView, TreeView {
 
-    static Logger logger = Logger.getLogger(FileViewManager.class.getName());
+    static Logger logger = ParadeLogger.getParadeLogger(FileViewManager.class.getName());
 
     public void setFileView(SimpleHash fileView, Row r, String path, File f) {
 
@@ -87,7 +88,6 @@ public class FileViewManager implements FileView, TreeView {
         String addr = "";
         RowWebapp webappdata = (RowWebapp) r.getRowdata().get("webapp");
         String webappPath = webappdata.getWebappPath();
-
         if (webappdata.getStatus().intValue() == ServletContainer.RUNNING && path.startsWith(webappPath)) {
 
             String pathURI = path.substring(path.indexOf(webappPath) + webappPath.length()).replace(
@@ -202,7 +202,7 @@ public class FileViewManager implements FileView, TreeView {
                 simplePath = !path.equals(r.getRowpath()) ? path.substring(path.indexOf(r.getRowpath())
                         + r.getRowpath().length() + 1) : r.getRowname();
             } catch (StringIndexOutOfBoundsException e) {
-                logger.warn("Symbolic link detected while computing the tree, " + path + " of row " + r.getRowname()
+                logger.warning("Symbolic link detected while computing the tree, " + path + " of row " + r.getRowname()
                         + " links to something outside of the row");
             }
 

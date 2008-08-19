@@ -1,31 +1,55 @@
-<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
+<%-- This page sets all the parameters using JSTL.
+     
+     Possible parameters are:
+     
+     name     |  description
+     ------------------------------------------------------------------------------
+     context  |  the context (row)
+     order    |  the display order (in e.g. a file list)
+     file     |  the file name
+     path     |  the path. if tha request parameter "getPathFromSession" is true, 
+              |  it will be taken from the session
+     result   |  the result of an operation (text, message)
+     success  |  a boolean indicating whether the operation was successfull or not
+     
+     The page tries to fetch them in the following order:
+     - first from the request parameters
+     - then, if not null, from the request attributes
+     - finally, from the session, if nowhere else available (only in the case of "path" and "context")
+--%>
 
-<c:set var="display" value="${param.display}" />
-<c:if test="${empty display}"><c:set var="display" value="${requestScope.display}" /></c:if>
+<%-- Old attributes, to be removed once makumbization is done --%>
+<c:if test="${not empty param.display}"><c:set var="display" value="${param.display}" /></c:if>
+<c:if test="${not empty param.view}"><c:set var="view" value="${param.view}" /></c:if>
 
-<c:set var="context" value="${param.context}" />
-<c:if test="${empty context}"><c:set var="context" value="${requestScope.context}" /></c:if>
+<%-- Context (fetching currentContext if none defined) --%>
+<c:if test="${not empty param.context}"><c:set var="context" value="${param.context}" /></c:if>
+<c:if test="${empty context}">
+  <c:set var="context" value="${currentContext}" />
+</c:if>
+<c:if test="${not empty context and context ne ''}">
+  <c:set var="currentContext" value="${context}" scope="session" />
+</c:if>
 
-<c:set var="view" value="${param.view}" />
-<c:if test="${empty view}"><c:set var="view" value="${requestScope.view}" /></c:if>
+<%-- Display order --%>
+<c:if test="${not empty param.order}"><c:set var="order" value="${param.order}" /></c:if>
 
-<c:set var="order" value="${param.order}" />
-<c:if test="${empty order}"><c:set var="order" value="${requestScope.order}" /></c:if>
+<%-- File name --%>
+<c:if test="${not empty param.file}"><c:set var="file" value="${param.file}" /></c:if>
 
-<c:set var="file" value="${param.file}" />
-<c:if test="${empty file}"><c:set var="file" value="${requestScope.file}" /></c:if>
-
+<%-- Path (to be taken from session or not) --%>
 <c:choose>
-  <c:when test="${not empty param.getPathFromSession and param.getPathFromSession}"><c:set var="path" value="${sessionScope.path}" /></c:when>
+  <c:when test="${not empty param.getPathFromSession and param.getPathFromSession == true}">
+    <c:set var="path" value="${sessionScope.path}" />
+  </c:when>
   <c:otherwise>
-    <c:set var="path" value="${param.path}" />
-    <c:if test="${empty path}"><c:set var="path" value="${requestScope.path}" /></c:if>
+    <c:if test="${not empty param.path}"><c:set var="path" value="${param.path}" /></c:if>
   </c:otherwise>
 </c:choose>
+<c:if test="${not empty path and path ne ''}">
+  <c:set var="path" value="${path}" scope="session" />
+</c:if>
 
-<c:if test="${not empty path and path ne ''}"><c:set var="path" value="${path}" scope="session"/></c:if>
-
+<%-- Operation result --%>
 <c:set var="result" value="${requestScope.result}" />
 <c:set var="success" value="${requestScope.success}" />
-<c:if test="${empty success}"><c:set var="success" value="${false}" /></c:if>
-

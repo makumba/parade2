@@ -2,11 +2,9 @@ package org.makumba.parade.view.beans;
 
 import java.util.List;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.Pointer;
-import org.makumba.db.hibernate.HibernatePointer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.RowAnt;

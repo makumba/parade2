@@ -45,7 +45,7 @@ public class WebappController {
             makMgr.softRefresh(entryRow);
             opResult = webappMgr.servletContextInstallRow(entryRow);
         }
-        if(op.equals("servletContextRedeploy")) {
+        if (op.equals("servletContextRedeploy")) {
             makMgr.softRefresh(entryRow);
             opResult = webappMgr.servletContextRedeployRow(entryRow);
         }

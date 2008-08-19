@@ -14,8 +14,8 @@ getWorkOfOthers = function() {
     new Ajax.Updater('workofothers', '/aetherWorkOfOthers.jsp', {evalScripts: true});
 }
 
-new PeriodicalExecuter(getMyWork, 10);
-new PeriodicalExecuter(getWorkOfOthers, 10);
+new PeriodicalExecuter(getMyWork, 3);
+new PeriodicalExecuter(getWorkOfOthers, 8);
 
 </script>
 </head>

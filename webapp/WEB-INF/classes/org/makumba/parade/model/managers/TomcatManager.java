@@ -11,10 +11,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.makumba.parade.auth.ForeignHttpAuthorizer;
 import org.makumba.parade.init.ParadeProperties;
+import org.makumba.parade.tools.ParadeLogger;
 
 public class TomcatManager implements ServletContainer {
 
@@ -24,7 +25,7 @@ public class TomcatManager implements ServletContainer {
 
     Map<String, Integer> servletContextCache = new HashMap<String, Integer>();
 
-    static Logger logger = Logger.getLogger(TomcatManager.class);
+    static Logger logger = ParadeLogger.getParadeLogger(TomcatManager.class.getName());
 
     public void makeConfig(java.util.Properties config) {
         config.put("parade.servletContext.tomcatServerName", ParadeProperties.getTomcatProperty("tomcat.server"));
@@ -44,9 +45,9 @@ public class TomcatManager implements ServletContainer {
             HttpURLConnection uc = ForeignHttpAuthorizer.sendAuth(new URL(managerURL + s), user, pass);
 
             if (uc.getResponseCode() != 200)
-                logger.error(uc.getResponseMessage());
+                logger.severe(uc.getResponseMessage());
             if (uc.getContentLength() == 0)
-                logger.error("content zero");
+                logger.severe("content zero");
 
             StringWriter sw = new StringWriter();
             InputStreamReader ir = new InputStreamReader(uc.getInputStream());
@@ -56,7 +57,7 @@ public class TomcatManager implements ServletContainer {
                 sw.write(buf, 0, n);
             result = sw.toString();
         } catch (IOException e) {
-            logger.error(e);
+            logger.severe(e.getMessage());
         }
         return result;
     }
@@ -110,8 +111,8 @@ public class TomcatManager implements ServletContainer {
 
             if (!f.exists())
                 throw new RuntimeException("cannot find common root to context");
-            
-            if(contextName == null)
+
+            if (contextName == null)
                 throw new RuntimeException("cannot install context, context name was null");
 
             File deployer = File.createTempFile("parade-deploy", ".xml");
@@ -198,7 +199,7 @@ public class TomcatManager implements ServletContainer {
             s = "Could not reload " + contextName + ". " + pleaseCheck(s);
         return s;
     }
-    
+
     public synchronized String redeployContext(String contextName, String contextPath) {
         String s = unInstallContext(contextName);
         String s1 = "";
@@ -206,16 +207,15 @@ public class TomcatManager implements ServletContainer {
             s1 = s;
             s = installContext(contextName, contextPath);
         }
-        if(s.startsWith("OK")) {
+        if (s.startsWith("OK")) {
             s = s1 + "<br>" + s;
             servletContextCache.put(contextName, new Integer(RUNNING));
-            
+
         } else {
             s = "Could not redeploy " + contextName + ". " + pleaseCheck(s);
         }
         return s;
     }
-
 
     static String pleaseCheck(String s) {
         return "Please check the output on the Parade log. "

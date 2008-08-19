@@ -45,10 +45,9 @@ public class WebappViewManager implements HeaderView, ParadeView {
         // TODO - consider the case WEBINF isn't found, ie get server name, port from some request
         if (data.getWebappPath().equals("NO WEBINF")) {
             /*
-             * if(pageContext.findAttribute('servletContext.noPrintStatus')==null){ if(stt==ServletContainer.RUNNING) { %>
-             * <a href= <%='http://'+request.getServerName()+':'+request.getServerPort()+contextName %> > <%}%>
+             * if(pageContext.findAttribute('servletContext.noPrintStatus')==null){ if(stt==ServletContainer.RUNNING) {
+             * %> <a href= <%='http://'+request.getServerName()+':'+request.getServerPort()+contextName %> > <%}%>
              * <%=ServletContainer.status[stt]%> <% if(stt==ServletContainer.RUNNING) { %> </a> <%} %> <br> <% }
-             * 
              */
         }
         return webappModel;

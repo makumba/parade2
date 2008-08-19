@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyListener;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.aether.RelationComputationException;
@@ -23,6 +23,7 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.User;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.MakumbaManager;
+import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.tools.SimpleFileFilter;
 import org.makumba.parade.tools.TriggerFilter;
 
@@ -35,7 +36,7 @@ import org.makumba.parade.tools.TriggerFilter;
  */
 public class ParadeJNotifyListener implements JNotifyListener {
 
-    private static Logger logger = Logger.getLogger(ParadeJNotifyListener.class);
+    private static Logger logger = ParadeLogger.getParadeLogger(ParadeJNotifyListener.class.getName());
 
     private MakumbaManager makMgr = new MakumbaManager();
 
@@ -44,51 +45,52 @@ public class ParadeJNotifyListener implements JNotifyListener {
     public static Vector<String> lockedDirectories = new Vector<String>();
 
     private RowProperties rp = new RowProperties();
-    
+
     private SimpleFileFilter sf = new SimpleFileFilter();
-    
+
     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
-        logger.debug("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", " + oldName + " -> "
-                + newName);
-        //checkSpecialFile(rootPath, oldName);
-        //checkSpecialFile(rootPath, newName);
-        
+        logger
+                .fine("JNotifyTest.fileRenamed() : wd #" + wd + " root = " + rootPath + ", " + oldName + " -> "
+                        + newName);
+        // checkSpecialFile(rootPath, oldName);
+        // checkSpecialFile(rootPath, newName);
+
         if (isLocked(rootPath, oldName, JNotify.FILE_RENAMED))
             return;
-        
-        if(InitServlet.aetherEnabled) {
+
+        if (InitServlet.aetherEnabled) {
             deleteRelations(rootPath, oldName);
             updateRelations(rootPath, newName);
         }
-        
+
         cacheDeleted(rootPath, oldName);
         cacheNew(rootPath, newName);
 
     }
 
     public void fileModified(int wd, String rootPath, String name) {
-        logger.debug("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
-        //checkSpecialFile(rootPath, name);
-        
+        logger.fine("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
+        // checkSpecialFile(rootPath, name);
+
         if (isLocked(rootPath, name, JNotify.FILE_MODIFIED))
             return;
-        
-        if(InitServlet.aetherEnabled) {
+
+        if (InitServlet.aetherEnabled) {
             updateRelations(rootPath, name);
         }
-        
+
         cacheModified(rootPath, name);
         logAction(rootPath, name, JNotify.FILE_MODIFIED);
     }
 
     public void fileDeleted(int wd, String rootPath, String name) {
-        logger.debug("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", " + name);
-        //checkSpecialFile(rootPath, name);
-        
-        if(InitServlet.aetherEnabled) {
+        logger.fine("JNotifyTest.fileDeleted() : wd #" + wd + " root = " + rootPath + ", " + name);
+        // checkSpecialFile(rootPath, name);
+
+        if (InitServlet.aetherEnabled) {
             deleteRelations(rootPath, name);
         }
-        
+
         if (isLocked(rootPath, name, JNotify.FILE_DELETED))
             return;
         cacheDeleted(rootPath, name);
@@ -97,16 +99,16 @@ public class ParadeJNotifyListener implements JNotifyListener {
     }
 
     public void fileCreated(int wd, String rootPath, String name) {
-        logger.debug("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", " + name);
-        //checkSpecialFile(rootPath, name);
-        
+        logger.fine("JNotifyTest.fileCreated() : wd #" + wd + " root = " + rootPath + ", " + name);
+        // checkSpecialFile(rootPath, name);
+
         if (isLocked(rootPath, name, JNotify.FILE_CREATED))
             return;
 
-        if(InitServlet.aetherEnabled) {
+        if (InitServlet.aetherEnabled) {
             updateRelations(rootPath, name);
         }
-        
+
         cacheNew(rootPath, name);
         logAction(rootPath, name, JNotify.FILE_MODIFIED);
 
@@ -181,7 +183,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
         if (rootPath == null || fileName == null)
             return;
 
-        logger.debug("Refreshing file cache for file " + fileName + " of directory " + rootPath);
+        logger.fine("Refreshing file cache for file " + fileName + " of directory " + rootPath);
 
         java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
 
@@ -204,7 +206,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
             session.close();
         }
 
-        logger.debug("Finished refreshing file cache for file " + fileName + " of directory " + rootPath);
+        logger.fine("Finished refreshing file cache for file " + fileName + " of directory " + rootPath);
 
     }
 
@@ -212,7 +214,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
         if (rootPath == null || fileName == null)
             return;
 
-        logger.debug("Deleting file cache for file " + fileName + " of directory " + rootPath);
+        logger.fine("Deleting file cache for file " + fileName + " of directory " + rootPath);
 
         java.io.File f = new java.io.File(rootPath + java.io.File.separator + fileName);
 
@@ -234,7 +236,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
             session.close();
         }
 
-        logger.debug("Finished deleting file cache for file " + fileName + " of directory " + rootPath);
+        logger.fine("Finished deleting file cache for file " + fileName + " of directory " + rootPath);
     }
 
     private Row findRowFromContext(String rowPath, Parade p) {
@@ -268,10 +270,10 @@ public class ParadeJNotifyListener implements JNotifyListener {
             // a lock was just created, we register it
             if (fileName.equals(LOCK)) {
                 lockedDirectories.add(path);
-                logger.debug("Adding lock for directory " + path);
+                logger.fine("Adding lock for directory " + path);
             } else if (fileName.endsWith(LOCK) && fileName.length() > LOCK.length()) {
                 lockedDirectories.add(path + java.io.File.separator + fileName.substring(0, fileName.indexOf(LOCK)));
-                logger.debug("Adding lock for file " + path + java.io.File.separator
+                logger.fine("Adding lock for file " + path + java.io.File.separator
                         + fileName.substring(0, fileName.indexOf(LOCK)));
             }
             return true; // we don't want to cache this file anyway
@@ -286,132 +288,142 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
             if (lockedDirectories.contains(lockPath)) {
                 lockedDirectories.remove(lockPath);
-                logger.debug("Removing lock " + lockPath);
+                logger.fine("Removing lock " + lockPath);
             } else {
-                logger.error("Tried to remove lock for directory " + path + " but there was no lock registered");
+                logger.severe("Tried to remove lock for directory " + path + " but there was no lock registered");
             }
             return true; // we don't want to cache this file anyway
         } else if (fileName.endsWith(LOCK) && mask == JNotify.FILE_MODIFIED) {
             // WTF?
-            logger.warn("Lock of directory " + path + " modified, shouldn't happen.");
+            logger.warning("Lock of directory " + path + " modified, shouldn't happen.");
         }
 
         // does the actual check
         for (int i = 0; i < lockedDirectories.size(); i++) {
             if (path.startsWith(lockedDirectories.get(i)) || filePath.equals(lockedDirectories.get(i))) {
-                logger.debug("Lock detected for " + lockedDirectories.get(i));
+                logger.fine("Lock detected for " + lockedDirectories.get(i));
                 return true;
             }
         }
 
         return false;
     }
-    
-    
+
     public static void updateRelations(String rootPath, String name) {
-     
-        if((name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) && InitServlet.aetherEnabled) {
-            logger.debug("Updating relations for file "+name+" in "+rootPath);
-            if(!rootPath.startsWith(ParadeProperties.getParadeBase())) {
+
+        if ((name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) && InitServlet.aetherEnabled) {
+            logger.fine("Updating relations for file " + name + " in " + rootPath);
+            if (!rootPath.startsWith(ParadeProperties.getParadeBase())) {
                 try {
-                    InitServlet.getContextRelationComputer(rootPath).updateRelation(rootPath + (rootPath.endsWith(java.io.File.separator) || name.startsWith(java.io.File.separator) ? "" : "/")  + name);
+                    InitServlet.getContextRelationComputer(rootPath).updateRelation(
+                            rootPath
+                                    + (rootPath.endsWith(java.io.File.separator)
+                                            || name.startsWith(java.io.File.separator) ? "" : "/") + name);
                 } catch (RelationComputationException e) {
-                    logger.warn("Failed updating relations for file "+name+" in "+rootPath+": "+e.getMessage());
+                    logger.warning("Failed updating relations for file " + name + " in " + rootPath + ": "
+                            + e.getMessage());
                 }
-                logger.debug("Finished updating relations for file "+name+" in "+rootPath);
-            }            
+                logger.fine("Finished updating relations for file " + name + " in " + rootPath);
+            }
         }
 
     }
-    
+
     public static void deleteRelations(String rootPath, String name) {
 
-        if((name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) && InitServlet.aetherEnabled) {
-            logger.debug("Deleting relations for file "+name+" in "+rootPath);
+        if ((name.endsWith(".mdd") | name.endsWith(".java") | name.endsWith(".jsp")) && InitServlet.aetherEnabled) {
+            logger.fine("Deleting relations for file " + name + " in " + rootPath);
             try {
-                InitServlet.getContextRelationComputer(rootPath).deleteRelation(rootPath + (rootPath.endsWith(java.io.File.separator) || name.startsWith(java.io.File.separator) ? "" : "/")  + name);
+                InitServlet.getContextRelationComputer(rootPath)
+                        .deleteRelation(
+                                rootPath
+                                        + (rootPath.endsWith(java.io.File.separator)
+                                                || name.startsWith(java.io.File.separator) ? "" : "/") + name);
             } catch (RelationComputationException e) {
-                logger.warn("Failed deleting relations for file "+name+" in "+rootPath+": "+e.getMessage());
+                logger
+                        .warning("Failed deleting relations for file " + name + " in " + rootPath + ": "
+                                + e.getMessage());
             }
-            logger.debug("Finished deleting relations for file "+name+" in "+rootPath);
+            logger.fine("Finished deleting relations for file " + name + " in " + rootPath);
         }
     }
-    
+
     private void logAction(String root, String file, int action) {
-        
+
         java.io.File f = new java.io.File(root + java.io.File.separator + file);
 
-        if(!sf.accept(f))
+        if (!sf.accept(f))
             return;
-        
-        switch(action) {
-        
+
+        switch (action) {
+
         case JNotify.FILE_CREATED:
             logAction(root, file, ActionTypes.SAVE.action());
             break;
-            
+
         case JNotify.FILE_MODIFIED:
             logAction(root, file, ActionTypes.SAVE.action());
             break;
-            
+
         case JNotify.FILE_DELETED:
             logAction(root, file, ActionTypes.DELETE.action());
             break;
-            
+
         default:
             break;
         }
-        
+
     }
-    
+
     private void logAction(String root, String file, String action) {
         Session s = null;
         try {
             s = InitServlet.getSessionFactory().openSession();
             Transaction tx = s.beginTransaction();
-            Parade p = (Parade)s.get(Parade.class, new Long(1));
+            Parade p = (Parade) s.get(Parade.class, new Long(1));
             Row r = findRowFromContext(root, p);
-            
-            if(r.getFiles().get(file) == null) {
+
+            if (r.getFiles().get(file) == null) {
                 return;
             }
-            
+
             ActionLogDTO log = new ActionLogDTO();
             log.setAction(action);
             log.setDate(new Date());
             log.setParadecontext(r.getRowname());
             log.setFile(file);
-            
+
             // TODO maybe we have to replace this with a more elaborate mechanism
             // such as trying to figure who does unison via a process listing
             User u = r.getUser();
-            if(u != null) {
+            if (u != null) {
                 log.setUser(u.getLogin());
             } else {
                 // try to fetch it from rowstore
                 Map<String, String> defs = rp.getRowDefinitions().get(r.getRowname());
-                if(defs!=null) {
+                if (defs != null) {
                     String user = defs.get("user");
-                    if(user!=null) {
+                    if (user != null) {
                         log.setUser(user);
                     } else {
                         log.setUser(User.getUnknownUser().getLogin());
-//                      logger.error("User for row "+r.getRowname() + " not set! Please go to the ParaDe admin interface and set it there!");
+                        // logger.severe("User for row "+r.getRowname() +
+                        // " not set! Please go to the ParaDe admin interface and set it there!");
 
                     }
                 }
             }
 
             TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
-            
+
             tx.commit();
-            
+
         } finally {
-            if(s!=null) {
+            if (s != null) {
                 s.close();
             }
         }
-        
+
     }
 
     public static void removeDirectoryLock(String absoluteDirectoryPath) {

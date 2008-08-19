@@ -39,24 +39,23 @@
   <mak:value expr="mae.eventDate" var="eventDate" />
   <mak:value expr="sum(ps.nimbus)" var="sumNimbus" />
   <c:choose>
-    <c:when test="${(sumNimbus / max) * 100 == 100}">
+    <c:when test="${((sumNimbus / max) * 100) >= 99}">
       <c:set var="objectWeight" value="large" />
     </c:when>
-    <c:when test="${((sumNimbus / max) * 100) > 75 and ((sumNimbus / maxNimbus) * 100) < 100}">
+    <c:when test="${(((sumNimbus / max) * 100) > 75) and (((sumNimbus / max) * 100) < 99)}">
       <c:set var="objectWeight" value="medium" />
     </c:when>
-    <c:when test="${((sumNimbus / max) * 100) > 50 and ((sumNimbus / maxNimbus) * 100) < 75}">
+    <c:when test="${(((sumNimbus / max) * 100) > 50) and (((sumNimbus / max) * 100) < 75)}">
       <c:set var="objectWeight" value="small" />
     </c:when>
-    <c:when test="${((sumNimbus / max) * 100) > 25 and ((sumNimbus / maxNimbus) * 100 )< 50}">
+    <c:when test="${(((sumNimbus / max) * 100) > 25) and (((sumNimbus / max) * 100 )< 50)}">
       <c:set var="objectWeight" value="x-small" />
     </c:when>
-    <c:when test="${((sumNimbus / max) * 100) >= 0 and ((sumNimbus / maxNimbus) * 100) < 25}">
+    <c:when test="${(((sumNimbus / max) * 100) >= 0) and (((sumNimbus / max) * 100) < 25)}">
       <c:set var="objectWeight" value="xx-small" />
     </c:when>
 
   </c:choose>
-
   <font style="font-size: ${objectWeight};"> <%=ReadableFormatter.readableAge(new Date().getTime()
 								- ((Date) eventDate).getTime())%> ago <mak:object from="User u" where="u.login = mae.actor">
     <mak:value expr="u.nickname" printVar="actorNickname" />
