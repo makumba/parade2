@@ -110,7 +110,7 @@ d_checkout() {
              su -c "cd $D_PATH; sh restoreConfig.sh" - "$D_USER"
              echo "Copying 64 bit version of native Jnotify library (backup is libjnotify32.so)"
              su -c "cd $D_PATH; cp libjnotify.so libjnotify32.so; cp libjnotify64.so libjnotify.so" - "$D_USER"
-
+}
 case "$1" in
   start)
         echo -n "Starting $DESC"
