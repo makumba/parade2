@@ -14,7 +14,7 @@
 <head>
 <title>Header view for row ${param.context}</title>
 
-<link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/header.css" type="text/css">
+<link rel="StyleSheet" href="/layout/style/header.css" type="text/css">
 </head>
 <body class="header">
 

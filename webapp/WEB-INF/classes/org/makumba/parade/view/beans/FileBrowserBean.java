@@ -8,12 +8,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
+import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.RowWebapp;
+import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.ServletContainer;
+import org.makumba.parade.tools.CVSRevisionComparator;
 
 /**
  * Bean that provides data for the file browser view
@@ -24,11 +29,16 @@ import org.makumba.parade.model.managers.ServletContainer;
 public class FileBrowserBean {
 
     private Row row;
+    
+    private RowCVS cvsdata;
 
     private String path;
     
+    private String absolutePath;
+    
     private RowWebapp webappdata;
-
+    
+    private CVSRevisionComparator c = new CVSRevisionComparator();
 
     public void setContext(String context) {
 
@@ -42,7 +52,9 @@ public class FileBrowserBean {
                 throw new RuntimeException("Could not find row " + context);
             } else {
                 webappdata = (RowWebapp) row.getRowdata().get("webapp");
+                cvsdata = (RowCVS) row.getRowdata().get("cvs");
             }
+            tx.commit();
 
         } finally {
             if (s != null)
@@ -58,10 +70,27 @@ public class FileBrowserBean {
         this.path = path.replace(java.io.File.separatorChar, '/');
     }
 
+    /**
+     * the path of the currently browsed directory
+     */
     public String getPath() {
         return this.path;
     }
+    
+    /**
+     * the path of a file/directory within the currently browsed directory
+     */
+    public String getPath(String fileName) {
+        if(path.equals("/")) {
+            return fileName;
+        } else {
+            return (path.endsWith("/") ? path : path + "/") + fileName;
+        }
+    }
 
+    /**
+     * UTF-8 encoded path of the currently browsed directory
+     */
     public String getPathEncoded() {
         String pathEncoded = "";
 
@@ -74,22 +103,33 @@ public class FileBrowserBean {
         return pathEncoded;
     }
 
+    /**
+     * absolue path on disk of the currently browsed directory
+     */
     public String getAbsolutePath() {
-        String absolutePath = "";
-        if (path.equals("/"))
-            absolutePath = row.getRowpath();
-        else
-            absolutePath = row.getRowpath() + java.io.File.separator + path.replace('/', java.io.File.separatorChar);
-        if (absolutePath.endsWith(java.io.File.separator))
-            absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
+        if(absolutePath == null) {
+            if (path.equals("/"))
+                absolutePath = row.getRowpath();
+            else
+                absolutePath = row.getRowpath() + java.io.File.separator + path.replace('/', java.io.File.separatorChar);
+            if (absolutePath.endsWith(java.io.File.separator))
+                absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
 
-        return absolutePath.replace(File.separator, "/");
+            absolutePath = absolutePath.replace(File.separator, "/");
+        }
+        return absolutePath;
     }
 
+    /**
+     * absolute path of the browsed context
+     */
     public String getAbsoluteRowPath() {
         return (new java.io.File(row.getRowpath()).getAbsolutePath()).replace(File.separator, "/");
     }
 
+    /**
+     * list of parent directories, containing name and relative path
+     */
     public List<HashMap<String, String>> getParentDirs() {
 
         if (path == null)
@@ -118,8 +158,10 @@ public class FileBrowserBean {
                 + (path.length() > 1 ? java.io.File.separator + path.replace('/', java.io.File.separatorChar) : "");
     }
     
+    /**
+     * icons
+     */
     public String getFileIcon(String fl) {
-        // icons
         fl = fl.toLowerCase();
         String image = "unknown";
 
@@ -145,6 +187,9 @@ public class FileBrowserBean {
         return image;
     }
     
+    /**
+     * computes correct link to a file
+     */
     public String getFileLinkAddress(String fileName) {
         // name
         String addr = "";
@@ -181,21 +226,9 @@ public class FileBrowserBean {
 
     }
     
-    public String getEncodedPath(String filePath, String fileName) {
-        String pathEncoded = "";
-        try {
-            // we encode the path twice, because of the javascript that uses it
-            pathEncoded = URLEncoder.encode(URLEncoder.encode(filePath.substring(row.getRowpath().length() + 1), "UTF-8"), "UTF-8");
-//            nameEncoded = URLEncoder.encode(f.getName(), "UTF-8");
-//            fileURIEncoded = URLEncoder.encode(f.getFileURI(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        return pathEncoded;
-    }
-    
+    /**
+     * encodes a string 
+     */
     public String encode(String string) {
         String encoded = "";
         try {
@@ -205,4 +238,63 @@ public class FileBrowserBean {
         }
         return encoded;
     }
+    
+
+    /**
+     * CVS repository link 
+     */
+    public String getCVSWebLink(String filePath) {
+        String cvsWebLink="";
+        String cvsweb = ParadeProperties.getParadeProperty("cvs.site");
+        String webPath = filePath.substring(row.getRowpath().length() + 1).replace(java.io.File.separatorChar, '/');
+        cvsWebLink = cvsweb + cvsdata.getModule() + "/" + webPath;
+        return cvsWebLink;
+        
+    }
+    
+    public boolean isCVSConflict(String fileName) {
+        return fileName.startsWith(".#");
+    }
+    
+    public boolean getCvsNewerExists(String fileName, String cvsRevision) {
+        // let's see if there's a newer version of this on the repository
+ 
+        boolean newerExists = false;
+        String repositoryRevision = "", rowRevision = "";
+
+        if (row.getApplication() != null) {
+            String fileCvsPath = row.getApplication().getName() + getPath(fileName).substring(row.getRowpath().length());
+            Hibernate.initialize(row.getApplication().getCvsfiles());
+            repositoryRevision = row.getApplication().getCvsfiles().get(fileCvsPath);
+            rowRevision = cvsRevision;
+
+            if (repositoryRevision != null && rowRevision != null) {
+
+                if (repositoryRevision.equals("1.1.1.1")) {
+                    repositoryRevision = "1.1";
+                }
+                if (rowRevision.equals("1.1.1.1")) {
+                    rowRevision = "1.1";
+                }
+
+                newerExists = c.compare(repositoryRevision, rowRevision) == 1;
+
+            } else {
+                return false;
+            }
+        }
+
+        return newerExists;
+        
+    }
+    
+    public boolean isCvsConflictOnUpdate(String fileName) {
+        return CVSManager.cvsConflictOnUpdate(fileName, getAbsolutePath());
+    }
+    
+    public String getCvsNewRevision(String fileName) {
+        String fileCvsPath = row.getApplication().getName() + getPath(fileName).substring(row.getRowpath().length());
+        return row.getApplication().getCvsfiles().get(fileCvsPath);
+    }
+    
 }

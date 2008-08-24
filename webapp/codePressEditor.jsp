@@ -45,7 +45,7 @@
 
 <input type="submit" name="Submit" value="(S)ave!" ACCESSKEY="S" onclick="getEditorCode();"> <a
   href="browse.jsp?context=${context}&getPathFromSession=false" target="_top" title="${context}">${context}</a>:<a
-  href="/servlet/browse?display=file&context=${context}&path=${path}">${path}</a>/<b>${file}</b> | <a
+  href="/fileView/fileBrowser.jsp?context=${context}&path=${path}">${path}</a>/<b>${file}</b> | <a
   href="codePressEditor.jsp?context=${context}&path=${path}&file=${file}"
   title="get the file from disk again, undo all changes since last save">Revert</a> <br>
 

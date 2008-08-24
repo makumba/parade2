@@ -39,10 +39,8 @@
 
 	<!-- ========== Global Forward Definitions ============================== -->
 	<global-forwards>
-		<forward name="welcome" path="/Welcome.do" />
-		<forward name="logoff" path="/Logoff.do" />
-		<forward name="logon" path="/Logon.do" />
-		<forward name="success" path="/MainMenu.do" />
+		<forward name="files" path="/fileView/fileBrowser.jsp" />
+		<forward name="command" path="/commandView/commandOutput.jsp" />
 	</global-forwards>
 
 
@@ -53,7 +51,6 @@
 		<action path="/File"
 			type="org.makumba.parade.controller.FileAction" parameter="op">
 
-			<forward name="browse" path="/servlet/browse" />
             <forward name="simpleEdit" path="/simpleFileEditor.jsp" />
             <forward name="codePressEdit" path="/codePressEditor.jsp" />
 
@@ -71,44 +68,30 @@
 		<!-- Command view -->
 		<action path="/Command"
 			type="org.makumba.parade.controller.CommandAction" parameter="op">
-
-			<forward name="files" path="/servlet/browse" />
-
 		</action>
 
 		<!-- Edit view -->
 		<action path="/Edit"
 			type="org.makumba.parade.controller.EditAction" parameter="op">
-
-			<forward name="files" path="/servlet/browse" />
-
 		</action>
 
 		<!-- CVS view -->
 		<action path="/Cvs"
 			type="org.makumba.parade.controller.CvsAction" parameter="op">
-
-			<forward name="command" path="/servlet/browse" />
-
 		</action>
 
 		<!-- Webapp view -->
 		<action path="/Webapp"
 			type="org.makumba.parade.controller.WebappAction">
 
-			<forward name="command" path="/servlet/browse" />
 			<forward name="index" path="/index.jsp" />
-
 		</action>
 
 		<!-- Ant view -->
 		<action path="/Ant"
 			type="org.makumba.parade.controller.AntAction">
 
-			<forward name="command" path="/commandView/commandOutput.jsp" />
 			<forward name="index" path="/index.jsp" />
-
-
 		</action>
 
 		<!-- Admin view -->

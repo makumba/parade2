@@ -29,8 +29,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 
@@ -51,8 +49,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 
@@ -73,8 +69,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 
@@ -105,8 +99,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 
@@ -128,8 +120,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 
@@ -151,8 +141,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 
@@ -174,8 +162,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 
@@ -197,8 +183,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 
@@ -222,8 +206,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 
@@ -245,8 +227,6 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-        request.setAttribute("display", "command");
-        request.setAttribute("view", "commandOutput");
 
         return (mapping.findForward("command"));
 

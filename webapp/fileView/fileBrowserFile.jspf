@@ -1,14 +1,8 @@
-<mak:value expr="child.isDir" var="isDir"/>
-<mak:value expr="child.name" printVar="fileName"/>
-<mak:value expr="child.path" printVar="filePath"/>
-<mak:value expr="child.fileURL()" printVar="fileURL"/>
 <mak:value expr="child.date" var="fileDate" />
 <mak:value expr="child.onDisk" var="isOnDisk" />
 <mak:value expr="child.size" var="fileSize" />
 <c:set var="fileLinkAddress"><%=fileBrowserBean.getFileLinkAddress(fileName) %></c:set>
-<c:set var="encodedPath"><%=fileBrowserBean.getEncodedPath(filePath, fileName) %></c:set>
 <c:set var="encodedName"><%=fileBrowserBean.encode(fileName) %></c:set>
-<c:set var="encodedURL"><%=fileBrowserBean.encode(fileURL) %></c:set>
 <% pageContext.setAttribute("fileAge", (new Date()).getTime() - (Long)fileDate); %>
 <c:set var="ageNice"><%= DisplayFormatter.readableTime((Long)pageContext.getAttribute("fileAge")) %></c:set>
 <c:set var="sizeNice"><%= DisplayFormatter.readableBytes((Long)fileSize) %></c:set>
@@ -18,7 +12,7 @@
   <%-- DIRECTORY --%>
   <c:when test="${isDir}">
     <td><img src='/images/folder.gif'></td>
-    <td colspan='2'><a href='/File.do?display=file&context=${context}&path=${path}'>${fileName}</a></td>
+    <td colspan='2'><a href='/fileView/fileBrowser.jsp?context=${context}&path=${relativeFilePath}'>${fileName}</a></td>
   </c:when>
   <%-- FILE --%>
   <c:otherwise>
@@ -57,8 +51,3 @@
   </c:otherwise>
 </c:choose>
 </td>
-
-
-
-
-

@@ -19,6 +19,13 @@ import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.ParadeException;
 
+/**
+ * Struts Action for File
+ * 
+ * TODO refactor to use operations directly (see CvsAction)
+ * @author Manuel Gay
+ *
+ */
 public class FileAction extends Action {
 
     @Override
@@ -118,9 +125,8 @@ public class FileAction extends Action {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
         request.setAttribute("file", file);
-        request.setAttribute("display", "file");
 
-        return (mapping.findForward("browse"));
+        return (mapping.findForward("files"));
 
     }
 }

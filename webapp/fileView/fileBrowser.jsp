@@ -13,6 +13,8 @@
 
 <%-- Re-setting the cleaned path --%>
 <c:set var="path"><%=fileBrowserBean.getPath() %></c:set>
+<c:set var="pathEncoded"><%=fileBrowserBean.encode(fileBrowserBean.getPath()) %></c:set>
+
 
 <html>
 <head>
@@ -37,9 +39,8 @@
 
 <% pageContext.setAttribute("parentDirs", fileBrowserBean.getParentDirs()); %>
 
-<h2 class="files">[<a href='fileBrowser.jsp?context=${context}'>${context}</a>]/<c:forEach
-  var="parentDir" items="${parentDirs}">
-  <a href='fileBrowser.jsp?context=${context}&path=${parentDir["path"]}'>${parentDir["directoryName"]}</a>/</c:forEach><img src='/images/folder-open.gif'></h2>
+<h2 class="files">[<a href='/fileView/fileBrowser.jsp?context=${context}'>${context}</a>]/<c:forEach
+  var="parentDir" items="${parentDirs}"><a href='/fileView/fileBrowser.jsp?context=${context}&path=${parentDir["path"]}'>${parentDir["directoryName"]}</a>/</c:forEach><img src='/images/folder-open.gif'></h2>
 <div class='pathOnDisk'><%=fileBrowserBean.getPathOnDisk() %></div>
 <table class='files'>
   <tr>
@@ -50,16 +51,16 @@
       src='/images/uploadfile.gif' align='right'></a> <a
       href='/commandView/newFile.jsp?context=${context}&path=${path}' target='command'
       title='Create a new file'><img src='/images/newfile.gif' align='right'></a> <a
-      href='fileBrowser.jsp?context=${context}&path=${path}&order=name' title='Order by name'>Name</a></th>
-    <th><a href='fileBrowser.jsp?context=${context}&path=${path}&order=age' title='Order by age'>Age</a></th>
-    <th><a href='fileBrowser.jsp?context=${context}&path=${path}&order=size' title='Order by size'>Size</a></th>
+      href='/fileView/fileBrowser.jsp?context=${context}&path=${path}&order=name' title='Order by name'>Name</a></th>
+    <th><a href='/fileView/fileBrowser.jsp?context=${context}&path=${path}&order=age' title='Order by age'>Age</a></th>
+    <th><a href='/fileView/fileBrowser.jsp?context=${context}&path=${path}&order=size' title='Order by size'>Size</a></th>
 
     <script language="JavaScript">
 <!--
 function deleteFile(path, name) {
 if(confirm('Are you sure you want to delete the file '+name+' ?'))
 {
-  url='/File.do?display=file&context=${context}&path=${fileBrowserBean.pathEncoded}&op=deleteFile&params='+encodeURIComponent(name);
+  url='/File.do?context=${context}&path=${pathEncoded}&op=deleteFile&params='+encodeURIComponent(name);
   location.href=url;
 }
 }
@@ -74,7 +75,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
   </tr>
 
 
-  <%-- Setting sortGBy param for file sorting --%>
+  <%-- Setting sortBy param for file sorting --%>
   <c:choose>
     <c:when test="${empty order}">
       <c:set var="sortBy" value="child.isDir desc, child.name asc" />
@@ -96,30 +97,23 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
   <c:set var="absolutePath"><%=fileBrowserBean.getAbsolutePath() %></c:set>
 
   <mak:object from="File parent" where="parent.path = :absolutePath">
-    <mak:list from="File child" where="child.parentPath = parent.path" orderBy="#{sortBy}">
+    <mak:list from="File child" where="child.parentPath = parent.path and (length(child.path) >= length(parent.row.rowpath))" orderBy="#{sortBy}">
 
+    <%--Common values used by both file and cvs view --%>
+    <mak:value expr="child.isDir" var="isDir"/>
+    <mak:value expr="child.name" printVar="fileName"/>
+    <mak:value expr="child.path" printVar="filePath"/>
+    <mak:value expr="child.fileURL()" printVar="fileURL"/>
+    <c:set var="relativeFilePath"><%=fileBrowserBean.getPath(fileName) %></c:set>
+    <c:set var="encodedURL"><%=fileBrowserBean.encode(fileURL) %></c:set>
 <tr>
 <%@include file="fileBrowserFile.jspf" %>
+<%@include file="fileBrowserCVS.jspf" %>
 </tr>
 
     </mak:list>
   </mak:object>
 
-
-
-
-
-  <%-- 
-<#list fileViews as file>
-<tr class="<#if (file_index % 2) = 0>odd<#else>even</#if>">
-
-<#include "fileBrowserFile.ftl">
-<#include "fileBrowserCVS.ftl" >
-
-</tr>
-        
-</#list>
- --%>
 </table>
 
 </body>

@@ -669,6 +669,11 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
      * @return <code>true</code> if there will be a CVS conflict on update, <code>false</code> otherwise
      */
     public static boolean cvsConflictOnUpdate(File f) {
+        return cvsConflictOnUpdate(f.getName(), f.getParentPath());
+
+    }
+    
+    public static boolean cvsConflictOnUpdate(String fileName, String fileParentPath) {
         boolean cvsConflictOnUpdate = false;
 
         // we check what are the consequences of an update of this file
@@ -680,13 +685,13 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
         cmd.add("cvs");
         cmd.add("-n");
         cmd.add("update");
-        cmd.add(f.getName());
+        cmd.add(fileName);
 
-        Execute.exec(cmd, new java.io.File(f.getParentPath()), out);
+        Execute.exec(cmd, new java.io.File(fileParentPath), out);
 
         // first let's see if everything went fine
         if (result.toString().indexOf("exit value: 1") > -1) {
-            logger.severe("Could not retrieve CVS status for file " + f.getName() + ". Result of the operation was:\n"
+            logger.severe("Could not retrieve CVS status for file " + fileName + ". Result of the operation was:\n"
                     + result.toString());
         } else {
 
@@ -696,7 +701,7 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
 
         }
 
-        return cvsConflictOnUpdate;
+        return cvsConflictOnUpdate;        
     }
 
 }

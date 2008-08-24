@@ -83,7 +83,7 @@ public class IndexServlet extends HttpServlet {
                 dispatcher.forward(req, resp);
             } else {
                 if (context != null && !display.equals("index")) {
-                    RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/browse");
+                    RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/browser.jsp");
                     dispatcher.forward(req, resp);
                 }
                 RequestDispatcher header = super.getServletContext().getRequestDispatcher(

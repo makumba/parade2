@@ -10,7 +10,6 @@ import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
-import org.makumba.parade.view.managers.FileDisplay;
 
 public class CommandController {
 
@@ -109,11 +108,11 @@ public class CommandController {
 
         if (success) {
             if (action.equals("newFile"))
-                return res(FileDisplay.creationFileOK(row.getRowname(), relativePath, filename), success);
+                return res(CommandController.creationFileOK(row.getRowname(), relativePath, filename), success);
             if (action.equals("newDir"))
-                return res(FileDisplay.creationDirOK(filename), success);
+                return res(CommandController.creationDirOK(filename), success);
             if (action.equals("deleteFile"))
-                return res(FileDisplay.deletionFileOK(result.substring(result.indexOf("#") + 1)), success);
+                return res(CommandController.deletionFileOK(result.substring(result.indexOf("#") + 1)), success);
         } else {
             if (action.equals("newFile"))
                 return res(result, success);
@@ -131,5 +130,19 @@ public class CommandController {
         obj[0] = message;
         obj[1] = new Boolean(status);
         return obj;
+    }
+
+    // TODO move this somewhere else
+    public static String creationFileOK(String rowname, String path, String filename) {
+        return "New file " + filename + " created. " + "<a href='/File.do?op=editFile&context=" + rowname + "&path="
+                + path + "&file=" + filename + "&editor=codepress'>Edit</a></b>";
+    }
+
+    public static String creationDirOK(String filename) {
+        return "New directory " + filename + " created. ";
+    }
+
+    public static String deletionFileOK(String filename) {
+        return "File " + filename + " deleted";
     }
 }

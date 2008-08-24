@@ -1,8 +1,7 @@
 /* StyleSheet for header */
 
 body.header {
-	font-size:0.8em;
-	font-family:Tahoma,Arial;
+	font-size:0.7em;
     margin: 0px 0px 0px 0px;
 	background-color:#ddddff;
 }
@@ -17,6 +16,5 @@ table.header {
 }
 
 TD.header {
-	font-size:0.8em;
-	font-family:Tahoma,Arial;
+	font-size:0.7em;
 }

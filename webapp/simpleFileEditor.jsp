@@ -155,7 +155,7 @@ function setModified(){
 <body bgcolor="#dddddd" TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" BOTTOMMARGIN="0" marginwidth="0" marginheight="0" STYLE="margin: 0px" onload="javascript:onLoad();" onresize="javascript:onResize();">
 <form name="sourceEdit" method="post" action="/File.do?op=saveFile&context=${context}&path=${path}&file=${file}&editor=old" style="margin:0px;">
 <input type="submit" name="Submit" value="(S)ave!" ACCESSKEY="S" disabled onclick="javascript:setBunload(false);">
-<a href="browse.jsp?context=${context}&getPathFromSession=false" target="_top" title="${context}">${context}</a>:<a href="/servlet/browse?display=file&context=${context}&path=${path}">${path}</a>/<b>${file}</b>
+<a href="browse.jsp?context=${context}&getPathFromSession=false" target="_top" title="${context}">${context}</a>:<a href="/fileView/fileBrowser.jsp?context=${context}&path=${path}">${path}</a>/<b>${file}</b>
 | <a href="simpleFileEditor.jsp?context=${context}&path=${path}&file=${file}" title="get the file from disk again, undo all changes since last save">Revert</a> 
 | <input type="text" value="Loading..." name="pagestatus" disabled size="10" style="border:0px; background-color:#dddddd; font-color:red;">
 <br>

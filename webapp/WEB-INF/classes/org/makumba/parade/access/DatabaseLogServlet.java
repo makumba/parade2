@@ -313,6 +313,8 @@ public class DatabaseLogServlet extends HttpServlet {
             actionType = "browseRow";
         if (uri.indexOf("/servlet/browse") > -1)
             actionType = "browse";
+        if (uri.indexOf("/fileView/fileBrowser.jsp") > -1)
+            actionType = "browse";
         if (uri.indexOf("File.do") > -1)
             actionType = "file";
         if (uri.indexOf("File.do") > -1 && queryString.indexOf("browse&") > -1)
@@ -643,7 +645,7 @@ public class DatabaseLogServlet extends HttpServlet {
     String[] equalFilter = { "/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp",
             "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "browserHeader.jsp", "fileBrowser.jsp",
             "/todo.jsp", "/error.jsp", "/Admin.do", "/User.do", "/servlet/ticker", "/servlet/logs",
-            "/reload", "/unauthorized/index.jsp", "/FileUpload.do" };
+            "/reload", "/unauthorized/index.jsp", "/FileUpload.do", "browserHeader.jsp" };
 
     /**
      * Checks whether this access should be logged or not.<br>

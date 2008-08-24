@@ -16,7 +16,6 @@ import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.tools.ParadeException;
-import org.makumba.parade.view.managers.FileDisplay;
 import org.makumba.parade.view.managers.FileViewManager;
 
 public class BrowserServlet extends HttpServlet {
@@ -110,7 +109,6 @@ public class BrowserServlet extends HttpServlet {
 
                 // initialising the displays
                 FileViewManager fileV = new FileViewManager();
-                FileDisplay filebrowserV = new FileDisplay();
 
                 RequestDispatcher header = null;
                 RequestDispatcher footer = super.getServletContext().getRequestDispatcher("/layout/footer.jsp");
@@ -130,13 +128,11 @@ public class BrowserServlet extends HttpServlet {
 
                 }
                 if (display.equals("file")) {
-                    header = super.getServletContext().getRequestDispatcher(
-                            "/layout/header.jsp?class=files&pageTitle=File%20browser%20of%20row%20" + r.getRowname());
-                    page = filebrowserV.getFileBrowserView(p, r, path, opResult, order, success);
+                    throw new ParadeException("Display is file!!! Please report to developers!");
 
                 }
                 if (display.equals("command")) {
-                    throw new ParadeException("Display is command!!!");
+                    throw new ParadeException("Display is command! Please report to developers!");
                 }
 
                 // checking whether we include a JSP or not

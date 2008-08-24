@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.makumba.commons.RuntimeWrappedException;
 import org.makumba.parade.tools.ParadeLogger;
 
 /**
