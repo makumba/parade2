@@ -97,7 +97,8 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
   <c:set var="absolutePath"><%=fileBrowserBean.getAbsolutePath() %></c:set>
 
   <mak:object from="File parent" where="parent.path = :absolutePath">
-    <mak:list from="File child" where="child.parentPath = parent.path and (length(child.path) >= length(parent.row.rowpath))" orderBy="#{sortBy}">
+<%-- and (length(child.path) >= length(parent.row.rowpath)) --%>
+    <mak:list from="File child" where="child.parentPath = parent.path" orderBy="#{sortBy}">
 
     <%--Common values used by both file and cvs view --%>
     <mak:value expr="child.isDir" var="isDir"/>
