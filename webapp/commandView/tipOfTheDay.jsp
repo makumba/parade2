@@ -1,6 +1,6 @@
 <html>
 <head>
-<meta http-equiv="refresh" content="30;URL=/tipOfTheDay.jsp">
+<meta http-equiv="refresh" content="30;URL=/commandView/tipOfTheDay.jsp">
 <title>Parade tip of the day</title>
 <link rel='StyleSheet' href='/style/parade.css' type='text/css'>
 </head>
