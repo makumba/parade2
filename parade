@@ -13,6 +13,7 @@
 #               increased sleeping time before parade restart 1.5 29-Mar-2008 manuel.gay@best.eu.org
 #               added function that cleans the database cache 1.6 29-Mar-2008 manuel.gay@best.eu.org
 #               added function that cleans the tomcat work and conf dirs 1.7 10-Jun-2008 manuel.gay@best.eu.org
+#				added feature to do a frech checkout that keeps the configuration
 #
 
 set -e
@@ -100,6 +101,16 @@ d_all() {
         d_start
 }
 
+d_checkout() {
+             echo "Backing up the ParaDe configuration"
+             su -c "cd $D_PATH; sh backupConfig.sh" - "$D_USER"
+             echo "Checking out from CVS - password for user parade is 'paradeaether'"
+             su -c "cd $D_PATH/..; cvs -d:extssh:parade@parade.cvs.sf.net:/cvsroot/parade co parade2" - "$D_USER"
+             echo "Restoring the ParaDe configuration"
+             su -c "cd $D_PATH; sh restoreConfig.sh" - "$D_USER"
+             echo "Copying 64 bit version of native Jnotify library (backup is libjnotify32.so)"
+             su -c "cd $D_PATH; cp libjnotify.so libjnotify32.so; cp libjnotify64.so libjnotify.so" - "$D_USER"
+
 case "$1" in
   start)
         echo -n "Starting $DESC"
@@ -139,13 +150,18 @@ case "$1" in
 	d_cleanTomcat
 	echo "."
 	;;
+  checkout)
+    echo -n "Checking out fresh ParaDe copy"
+    d_checkout
+    echo "."
+    ;;	
   all)
         echo -n "Full service $DESC"
         d_all
         echo "."
         ;;
   *)
-        echo "Usage: $SCRIPTNAME {start|stop|restart|kill|stacktrace|clean|all}" >&2
+        echo "Usage: $SCRIPTNAME {start|stop|restart|kill|stacktrace|clean|checkout|all}" >&2
         exit 1
         ;;
 esac
