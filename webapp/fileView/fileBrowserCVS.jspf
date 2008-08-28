@@ -1,6 +1,6 @@
-<mak:value expr="child.cvsStatus" var="cvsStatus" />
-<mak:value expr="child.cvsRevision" printVar="cvsRevision" />
-<mak:value expr="child.cvsCheckedOutRevision" printVar="cvsCheckedOutRevision" />
+<mak:value expr="f.cvsStatus" var="cvsStatus" />
+<mak:value expr="f.cvsRevision" printVar="cvsRevision" />
+<mak:value expr="f.cvsCheckedOutRevision" printVar="cvsCheckedOutRevision" />
 <c:set var="cvsWebLink"><%=fileBrowserBean.getCVSWebLink(filePath) %></c:set>
 <c:set var="isCvsConflict"><%=fileBrowserBean.isCVSConflict(fileName) %></c:set>
 <c:set var="cvsNewerExists"><%=fileBrowserBean.getCvsNewerExists(fileName, cvsRevision) %></c:set>

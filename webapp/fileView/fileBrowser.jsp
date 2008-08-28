@@ -78,33 +78,30 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
   <%-- Setting sortBy param for file sorting --%>
   <c:choose>
     <c:when test="${empty order}">
-      <c:set var="sortBy" value="child.isDir desc, child.name asc" />
+      <c:set var="sortBy" value="f.isDir desc, f.name asc" />
     </c:when>
     <c:when test="${order == 'name'}">
-      <c:set var="sortBy" value="child.isDir desc, child.name asc" />
+      <c:set var="sortBy" value="f.isDir desc, f.name asc" />
     </c:when>
     <c:when test="${order == 'age'}">
-      <c:set var="sortBy" value="child.isDir desc, child.date asc" />
+      <c:set var="sortBy" value="f.isDir desc, f.date asc" />
     </c:when>
     <c:when test="${order == 'size'}">
-      <c:set var="sortBy" value="child.isDir desc, child.size asc" />
+      <c:set var="sortBy" value="f.isDir desc, f.size asc" />
     </c:when>
     <c:otherwise>
-      <c:set var="sortBy" value="child.isDir desc, child.name asc" />
+      <c:set var="sortBy" value="f.isDir desc, f.name asc" />
     </c:otherwise>
   </c:choose>
 
   <c:set var="absolutePath"><%=fileBrowserBean.getAbsolutePath() %></c:set>
 
-  <mak:object from="File parent" where="parent.path = :absolutePath">
-<%-- and (length(child.path) >= length(parent.row.rowpath)) --%>
-    <mak:list from="File child" where="child.parentPath = parent.path" orderBy="#{sortBy}">
-
+<mak:list from="File f" where="f.parentPath = :absolutePath and (length(f.path) >= length(f.row.rowpath))" orderBy="#{sortBy}">
     <%--Common values used by both file and cvs view --%>
-    <mak:value expr="child.isDir" var="isDir"/>
-    <mak:value expr="child.name" printVar="fileName"/>
-    <mak:value expr="child.path" printVar="filePath"/>
-    <mak:value expr="child.fileURL()" printVar="fileURL"/>
+    <mak:value expr="f.isDir" var="isDir"/>
+    <mak:value expr="f.name" printVar="fileName"/>
+    <mak:value expr="f.path" printVar="filePath"/>
+    <mak:value expr="f.fileURL()" printVar="fileURL"/>
     <c:set var="relativeFilePath"><%=fileBrowserBean.getPath(fileName) %></c:set>
     <c:set var="encodedURL"><%=fileBrowserBean.encode(fileURL) %></c:set>
 <tr>
@@ -112,8 +109,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 <%@include file="fileBrowserCVS.jspf" %>
 </tr>
 
-    </mak:list>
-  </mak:object>
+</mak:list>
 
 </table>
 
