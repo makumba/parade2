@@ -68,7 +68,7 @@ public class DatabaseLogServlet extends HttpServlet {
         rp = new RowProperties();
     }
 
-    private final static boolean STRICT_ACTIONLOG_FILTER = true;
+    private final static boolean STRICT_ACTIONLOG_FILTER = false;
 
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -645,7 +645,7 @@ public class DatabaseLogServlet extends HttpServlet {
     String[] equalFilter = { "/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp",
             "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "browserHeader.jsp", "fileBrowser.jsp",
             "/todo.jsp", "/error.jsp", "/Admin.do", "/User.do", "/servlet/ticker", "/servlet/logs",
-            "/reload", "/unauthorized/index.jsp", "/FileUpload.do", "browserHeader.jsp" };
+            "/reload", "/unauthorized/index.jsp", "/FileUpload.do", "/browserHeader.jsp" };
 
     /**
      * Checks whether this access should be logged or not.<br>
@@ -671,7 +671,7 @@ public class DatabaseLogServlet extends HttpServlet {
                 )
 
                 || log.getUser() == null
-                || (log.getOrigin() != null && log.getOrigin().equals("tomcat"))
+                || (log.getOrigin() != null && log.getOrigin().equals("tomcat") && !log.getAction().equals("start"))
                 || (log.getUser().equals("system-u") && log.getContext().equals("parade2") && log.getUrl() == null
                         && log.getAction() == null && log.getOrigin() == null)
 

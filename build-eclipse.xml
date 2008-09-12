@@ -13,10 +13,11 @@
 				<!-- Needed for the DTO -->
 				<include name="org/makumba/parade/model/ActionLog*.class" />
 				
-				<include name="org/makumba/parade/tools/ParadeConsoleHandler*.class" />
+				<include name="org/makumba/parade/tools/DatabaseHandler*.class" />
 				<include name="org/makumba/parade/tools/ParadeLogFormatter*.class" />
 				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
-				
+				<include name="org/makumba/parade/tools/ParadeLogger*.class" />
+								
 				<include name="org/makumba/parade/listeners/ParadeSessionListener*.class" />
 				
 				<include name="org/makumba/parade/aether/ObjectTypes*.class" />
@@ -25,10 +26,6 @@
 				<include name="org/makumba/commons/ServletObjects*.class" />
 
 				
-			</fileset>
-
-			<fileset dir=".">
-				<include name="logging.properties" />
 			</fileset>
 
 		</copy>

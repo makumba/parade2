@@ -1,7 +1,5 @@
 package org.makumba.parade.tools;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -10,8 +8,18 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class PerThreadPrintStream extends java.io.PrintStream {
+    
+    public PerThreadPrintStream(OutputStream o) {
+        super(o);
+    }
+
+    private static Logger logger = ParadeLogger.getParadeLogger(PerThreadPrintStream.class.getName());
+    
     public static DateFormat logDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     static Object dummy = "dummy";
@@ -32,17 +40,8 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         }
     };
     static {
-        OutputStream bos = null;
-        try {
-            bos = new FileOutputStream(System.getProperty("catalina.base") + java.io.File.separator + "logs"
-                    + java.io.File.separator + "catalina.out");
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
         oldSystemOut = System.out;
-        java.io.PrintStream singleton = new PerThreadPrintStream(bos);
+        java.io.PrintStream singleton = new PerThreadPrintStream(System.out);
         System.setOut(singleton);
         System.setErr(singleton);
     }
@@ -57,13 +56,11 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         super.flush();
     }
 
-    PerThreadPrintStream(OutputStream o) {
-        super(o);
-    }
-
     @Override
     public void write(byte[] buffer, int start, int len) {
 
+        // when enabled, we issue a log (so all the uncaught System.out.println's get to DB and File as well)
+        // when disabled, we just do System.out
         try {
 
             if (!(Boolean) enable.get()) {
@@ -71,16 +68,29 @@ public class PerThreadPrintStream extends java.io.PrintStream {
                 // super.write(buffer, start, len);
                 return;
             }
+            
             String msg = new String(buffer, start, len);
 
-            PerThreadPrintStreamLogRecord record = new PerThreadPrintStreamLogRecord();
-            record.setDate(new Date());
-            record.setMessage(msg);
+            // we issue a log so the catched text goes to the console, the db and the file
+            LogRecord rec = new LogRecord(Level.INFO, msg);
+            Object[] params = { TriggerFilter.prefix.get() };
+            
+            logger.getHandlers();
+            
+            rec.setParameters(params);
 
             enable.set(false);
-            TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", record);
+            logger.log(rec);
             enable.set(true);
+            
+        } catch (Throwable e) {
+            PrintWriter p = new PrintWriter(new OutputStreamWriter(out));
+            e.printStackTrace(p);
+            p.flush();
+        }
 
+            /*
+            
             String s = TriggerFilter.prefix.get();
             byte[] b = null;
             if (s != null)
@@ -123,12 +133,14 @@ public class PerThreadPrintStream extends java.io.PrintStream {
             e.printStackTrace(p);
             p.flush();
         }
+        
+        */
     }
 
     private void outWrite(byte[] buffer, int start, int len) throws IOException {
         out.write(buffer, start, len);
         out.flush();
-        oldSystemOut.write(buffer, start, len);
-        oldSystemOut.flush();
+        
     }
+    
 }

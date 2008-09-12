@@ -238,7 +238,7 @@ public class TriggerFilter implements Filter {
         ctx.getRequestDispatcher(servletName).include(req, resp);
     }
 
-    // we need a vector so adding from multiple threads simmultaneously is safe
+    // we need a vector so adding from multiple threads simultaneously is safe
     static Vector<TriggerFilterQueueData> queue = new Vector<TriggerFilterQueueData>();
 
     static {
@@ -270,14 +270,15 @@ public class TriggerFilter implements Filter {
                 return;
             }
 
-            ActionLogDTO log = computeHeuristicContextInformation(attributeValue);
-            TriggerFilter.setPrefix();
-
-            if (log != l) {
-                directSendToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
-            }
+            ActionLogDTO log = computeActionLogAndSetPrefix(attributeValue);
 
             try {
+
+                // if this is a new ActionLog we log it first
+                if (log != l) {
+                    directSendToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+                }
+    
                 directSendToServlet(servletName, attributeValue);
 
             } finally {
@@ -286,12 +287,20 @@ public class TriggerFilter implements Filter {
         }
     }
 
+    public static ActionLogDTO computeActionLogAndSetPrefix(Object attributeValue) {
+        ActionLogDTO log = computeHeuristicContextInformation(attributeValue);
+        TriggerFilter.setPrefix();
+        return log;
+    }
+
     private static void directSendToServlet(String servletName, Object attributeValue) {
         TriggerFilterQueueData data = new TriggerFilterQueueData(servletName, attributeValue);
-        if (staticRootCtx != null)
-            data.sendTo(staticRootCtx);
-        else {
-            // this happens only in the beggining
+        if (staticRootCtx != null) {
+            if(!data.sendTo(staticRootCtx)) {
+                queue.add(data);
+            }
+        } else {
+            // this happens only in the beginning
             computeStaticRoot(data);
         }
     }
@@ -325,6 +334,12 @@ public class TriggerFilter implements Filter {
         ActionLogDTO log = actionLog.get();
 
         String threadName = Thread.currentThread().getName();
+        
+        if(Thread.currentThread() == null || Thread.currentThread().getContextClassLoader() == null) {
+            handleOtherCases(log);
+            return log;
+        }
+        
         String classLoaderName = Thread.currentThread().getContextClassLoader().toString();
         
         // let's figure out here if this is tomcat doing some stuff
@@ -363,8 +378,6 @@ public class TriggerFilter implements Filter {
                 new Throwable().printStackTrace(new PrintWriter(s));
 
                 if (s.toString().indexOf(TOMCAT_SHUTDOWN) > -1) {
-
-                    PerThreadPrintStream.oldSystemOut.println("debug tomcat shutdown:\n" + s.toString());
 
                     // tomcat shutting down, we want to register that
 
