@@ -75,7 +75,7 @@ public class AetherBean {
             break;
 
         case DIR:
-            resourceLink = "/File.do?browse&display=file&context=" + context + "&path=" + relativePath;
+            resourceLink = "/browse.jsp?context=" + context + "&path=" + relativePath;
             break;
 
         case ROW:
