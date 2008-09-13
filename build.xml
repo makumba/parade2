@@ -179,6 +179,7 @@
             <jvmarg value="-XX:MaxPermSize=${tomcat.Xmx}" />
 			<jvmarg value="-Djava.library.path=." />
 			<jvmarg value="-Djava.util.logging.config.file=${basedir}/logging.properties" />
+			<jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" />
 			<jvmarg value="-XX:CompileCommand=exclude,com/bbn/openmap/layer/rpf/RpfFrame,decompressSubframe"/>
             <jvmarg value="-client"/>
 			<arg value="start" />
