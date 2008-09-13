@@ -676,6 +676,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         && log.getAction() == null && log.getOrigin() == null)
 
         ) {
+//            logger.fine("didn't log "+log.getAction()+" context " + log.getContext() +" origin "+ log.getOrigin());
             return false;
         }
 

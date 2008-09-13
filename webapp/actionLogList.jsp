@@ -22,7 +22,8 @@
 
 
 <mak:list from="ActionLog al" where="#{alWhere}" orderBy="al.logDate desc" limit="500">
-<mak:value expr="al.logDate" format="yyyy-MM-dd HH:mm" /> <mak:value expr="al.user"/>@<mak:value expr="al.paradecontext"/> : <mak:value expr="al.action"/> <mak:value expr="al.objectType"/> <mak:value expr="al.file"/><br>
+<mak:value expr="al.paradecontext" printVar="paradeContext"/>
+<mak:value expr="al.logDate" format="yyyy-MM-dd HH:mm" /> <mak:value expr="al.user"/>@<c:choose><c:when test="${empty paradeContext}"><mak:value expr="al.context"/></c:when><c:otherwise>${paradeContext}</c:otherwise></c:choose> : <mak:value expr="al.action"/> <mak:value expr="al.objectType"/> <mak:value expr="al.file"/><br>
 <div style="padding-left: 20px;">
 <mak:list from="Log l" where="l.actionLog.id = al.id" orderBy="l.logDate desc">
 <div class="<mak:value expr="l.level"/>"><mak:value expr="l.message"/></div>
