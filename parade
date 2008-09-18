@@ -13,7 +13,8 @@
 #               increased sleeping time before parade restart 1.5 29-Mar-2008 manuel.gay@best.eu.org
 #               added function that cleans the database cache 1.6 29-Mar-2008 manuel.gay@best.eu.org
 #               added function that cleans the tomcat work and conf dirs 1.7 10-Jun-2008 manuel.gay@best.eu.org
-#				added feature to do a frech checkout that keeps the configuration
+#		added feature to do a frech checkout that keeps the configuration 1.8 manuel.gay@best.eu.org
+#		fixed path to catalina.out (now date dependent)	1.9 18-09-2008 manuel.gay@best.eu.org
 #
 
 set -e
@@ -44,7 +45,7 @@ d_stop() {
         echo "Initiated stopping, sleeping 15 seconds"
         sleep 15
         echo "Tomcat logs (check if tomcat really stopped, look for a line like 'Tomcat terminated at ... '):"
-        tail -n 15 $D_PATH/tomcat/logs/catalina.out
+        tail -n 15 $D_PATH/tomcat/logs/catalina.`date +%Y-%m-%d`.log
 }
 
 #
@@ -58,8 +59,8 @@ d_stacktrace() {
         echo "Initiated strack traces, sleeping 5 seconds"
         sleep 5
         echo "Writing last 1500 lines of the logs to file '$LOGFILE'."
-        echo "If this is not enough lines, please run manually 'tail -n1500 $D_PATH/tomcat/logs/catalina.out > $LOGFILE' with a higher value!"
-        tail -n1500 $D_PATH/tomcat/logs/catalina.out > $LOGFILE
+        echo "If this is not enough lines, please run manually 'tail -n1500 $D_PATH/tomcat/logs/catalina.`date +%Y-%m-%d`.log > $LOGFILE' with a higher value!"
+        tail -n1500 $D_PATH/tomcat/logs/catalina.`date +%Y-%m-%d`.log > $LOGFILE
 }
 
 #
