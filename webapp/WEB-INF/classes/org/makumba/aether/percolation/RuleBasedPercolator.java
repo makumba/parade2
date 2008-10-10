@@ -262,30 +262,40 @@ public class RuleBasedPercolator implements Percolator {
 
         Query q0 = s.createQuery("delete from PercolationStep ps where ps.virtualPercolation = true");
 
+        Transaction tx1 = s.beginTransaction();
         int d0 = q0.executeUpdate();
+        tx1.commit();
 
         Query q1 = s
                 .createQuery("delete from PercolationStep ps where (ps.nimbus < 20 and ps.focus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 20 or ipr.percolationMode = 30))");
         // q1.setInteger("minValue", MIN_ENERGY_LEVEL);
+        Transaction tx2 = s.beginTransaction();
         int d1 = q1.executeUpdate();
+        tx2.commit();
 
         Query q2 = s
                 .createQuery("delete from PercolationStep ps where (ps.focus < 20 and ps.nimbus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 10 or ipr.percolationMode = 30))");
         // q2.setInteger("minValue", MIN_ENERGY_LEVEL);
+        Transaction tx3 = s.beginTransaction();
         int d2 = q2.executeUpdate();
+        tx3.commit();
 
         logger.fine("Garbage-collected " + (d0 + d1 + d2) + " percolation steps");
 
         Query q3 = s
                 .createQuery("delete from MatchedAetherEvent mae where not exists (from PercolationStep ps where mae.id = ps.matchedAetherEvent.id)");
 
+        Transaction tx4 = s.beginTransaction();
         int d3 = q3.executeUpdate();
+        tx4.commit();
 
         logger.fine("Garbage-collected " + d3 + " MatchedAetherEvents");
 
         Query q4 = s.createQuery("delete from ALE ale where focus < 20 and nimbus < 20");
 
+        Transaction tx5 = s.beginTransaction();
         int d4 = q4.executeUpdate();
+        tx5.commit();
 
         logger.fine("Garbage-collected " + d4 + " ALE values");
 
@@ -301,11 +311,15 @@ public class RuleBasedPercolator implements Percolator {
 
         String q = "update ALE a set a.focus = (select sum(ps.focus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.matchedAetherEvent.actor = a.user), "
                 + "a.nimbus = (select sum(ps.nimbus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.userGroup like '%*%' and ps.userGroup not like concat(concat(concat('%','-'), a.user), '%'))";
+        Transaction tx1 = s.beginTransaction();
         int updated = s.createQuery(q).executeUpdate();
-
+        tx1.commit();
+        
         // if no steps are found in the previous inner select, the sum is null so we have to fix this here
+        Transaction tx2 = s.beginTransaction();
         s.createQuery("update ALE set focus = 0 where focus is null").executeUpdate();
         s.createQuery("update ALE set nimbus = 0 where nimbus is null").executeUpdate();
+        tx2.commit();
 
         logger.fine("Updated " + updated + " ALE values");
 
@@ -343,14 +357,19 @@ public class RuleBasedPercolator implements Percolator {
             String focusQuery = buildEnergyUpdateStatement(ipr.getFocusProgressionCurve(), true);
             Query focusUpdate = s.createQuery(focusQuery).setParameter(0, ipr.getId());
             logger.fine("Now running " + focusQuery);
+            Transaction tx = s.beginTransaction();
             updatedFocusPercolationSteps = focusUpdate.executeUpdate();
+            tx.commit();
         }
 
         if (ipr.getNimbusProgressionCurve() != null && ipr.getNimbusProgressionCurve().trim().length() != 0) {
             String nimbusQuery = buildEnergyUpdateStatement(ipr.getNimbusProgressionCurve(), false);
             Query nimbusUpdate = s.createQuery(nimbusQuery).setParameter(0, ipr.getId());
             logger.fine("Now running " + nimbusQuery);
+            
+            Transaction tx = s.beginTransaction();
             updatedNimbusPercolationSteps = nimbusUpdate.executeUpdate();
+            tx.commit();
         }
 
         logger.fine("Updated " + updatedFocusPercolationSteps + " percolation steps for for focus and "
