@@ -40,6 +40,7 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+
 manu, 12/09/2008
 - refactoring logging mechanism: getting rid of ParadeConsoleHandler, replacing with DatabaseHandler
 - forcing usage of JULI
