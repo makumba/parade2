@@ -40,6 +40,8 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+gwen, 13/09/2008
+- fixing the CVS commit links in the file browser
 
 manu, 12/09/2008
 - refactoring logging mechanism: getting rid of ParadeConsoleHandler, replacing with DatabaseHandler
