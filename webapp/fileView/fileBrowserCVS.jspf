@@ -119,7 +119,7 @@
 <%-- ADDED --%>
 <c:when test="${cvsStatus == 4}">
 <a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
-<a target='command' href='/commandView/commandOutput.jsp?context=${context}&path=${path}&file=${encodedURL}&view=commit' title='CVS commit to repository (will add file to repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}' title='CVS commit to repository (will add file to repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 </c:when>
 
 <%-- DELETED --%>
