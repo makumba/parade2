@@ -19,7 +19,6 @@ import org.makumba.db.hibernate.HibernateTransactionProvider;
 import org.makumba.devel.relations.RelationCrawler;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.providers.TransactionProvider;
 import org.makumba.providers.datadefinition.makumba.RecordInfo;
@@ -133,7 +132,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
 
         org.makumba.Transaction t = tp.getConnectionTo(ParadeRelationComputer.PARADE_DATABASE_NAME);
         Map<String, Object> params = new HashMap<String, Object>();
-        String webappRoot = r.getRowpath() + "/" + ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
+        String webappRoot = r.getRowpath() + "/" + r.getWebappPath();
         params.put("webappRoot", webappRoot);
         params.put("webappRootLength", webappRoot.length());
         params.put("webappRootLike", webappRoot + "%");

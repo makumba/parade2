@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.ParadeLogger;
@@ -33,19 +32,13 @@ public class WebappManager implements RowRefresher, ParadeManager {
 
     public void newRow(String name, Row r, Map<String, String> m) {
 
-        RowWebapp webappdata = new RowWebapp();
-        webappdata.setDataType("webapp");
-        webappdata.setWebappPath(m.get("webapp") == null ? "" : m.get("webapp"));
-        r.addManagerData(webappdata);
+        r.setWebappPath(m.get("webapp") == null ? "" : m.get("webapp"));
     }
 
     public void softRefresh(Row row) {
         logger.fine("Refreshing row information for row " + row.getRowname());
 
-        RowWebapp webappdata = (RowWebapp) row.getRowdata().get("webapp");
-
-        setWebappInfo(row, webappdata);
-        row.addManagerData(webappdata);
+        setWebappInfo(row);
     }
 
     public void hardRefresh(Row row) {
@@ -81,35 +74,33 @@ public class WebappManager implements RowRefresher, ParadeManager {
     }
 
     /* stores information about Row's servletContext */
-    public void setWebappInfo(Row row, RowWebapp webappdata) {
+    public void setWebappInfo(Row row) {
 
         // checks if there's a WEB-INF dir
-        String webinfDir = row.getRowpath() + java.io.File.separator + webappdata.getWebappPath()
+        String webinfDir = row.getRowpath() + java.io.File.separator + row.getWebappPath()
                 + java.io.File.separator + "WEB-INF";
 
         if (!new java.io.File(webinfDir).isDirectory()) {
             logger.warning("No WEB-INF directory found for row " + row.getRowname() + ": directory " + webinfDir
                     + " does not exist");
             webinfDir = "NO WEBINF";
-            webappdata.setWebappPath("NO WEBINF");
-            webappdata.setStatus(new Integer(ServletContainer.NOT_INSTALLED));
+            row.setWebappPath("NO WEBINF");
+            row.setStatus(new Integer(ServletContainer.NOT_INSTALLED));
         }
         if (!webinfDir.equals("NO WEBINF")) {
             if (row.getRowname().equals("(root)")) {
-                webappdata.setContextname("/");
+                row.setContextname("/");
             } else {
-                webappdata.setContextname("/" + row.getRowname());
+                row.setContextname("/" + row.getRowname());
             }
-            webappdata.setStatus(new Integer(getServletContainer().getContextStatus(webappdata.getContextname())));
+            row.setStatus(new Integer(getServletContainer().getContextStatus(row.getContextname())));
         }
     }
 
     public String servletContextStartRow(Row row) {
-        RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-
         if (!isParadeCheck(row)) {
-            String result = getServletContainer().startContext(data.getContextname());
-            setWebappInfo(row, data);
+            String result = getServletContainer().startContext(row.getContextname());
+            setWebappInfo(row);
             return result;
         }
 
@@ -117,11 +108,9 @@ public class WebappManager implements RowRefresher, ParadeManager {
     }
 
     public String servletContextStopRow(Row row) {
-        RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-
         if (!isParadeCheck(row)) {
-            String result = getServletContainer().stopContext(data.getContextname());
-            setWebappInfo(row, data);
+            String result = getServletContainer().stopContext(row.getContextname());
+            setWebappInfo(row);
             return result;
         }
 
@@ -129,12 +118,10 @@ public class WebappManager implements RowRefresher, ParadeManager {
     }
 
     public String servletContextRedeployRow(Row row) {
-        RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-
         String result = "";
         if (!isParade(row)) {
-            String webapp = row.getRowpath() + File.separator + data.getWebappPath();
-            result = getServletContainer().redeployContext(data.getContextname(), webapp);
+            String webapp = row.getRowpath() + File.separator + row.getWebappPath();
+            result = getServletContainer().redeployContext(row.getContextname(), webapp);
         } else {
             result = "Error: you cannot redeploy ParaDe this way!";
         }
@@ -143,13 +130,11 @@ public class WebappManager implements RowRefresher, ParadeManager {
     }
 
     public String servletContextReloadRow(Row row) {
-        RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-
         String result = "";
 
         // must check if it's not this one
         if (!isParade(row)) {
-            result = getServletContainer().reloadContext(data.getContextname());
+            result = getServletContainer().reloadContext(row.getContextname());
         } else {
             try {
                 String antCommand = "ant";
@@ -182,23 +167,19 @@ public class WebappManager implements RowRefresher, ParadeManager {
     }
 
     public String servletContextInstallRow(Row row) {
-        RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-
         if (!isParadeCheck(row)) {
-            String webapp = row.getRowpath() + File.separator + data.getWebappPath();
-            String result = getServletContainer().installContext(data.getContextname(), webapp);
-            setWebappInfo(row, data);
+            String webapp = row.getRowpath() + File.separator + row.getWebappPath();
+            String result = getServletContainer().installContext(row.getContextname(), webapp);
+            setWebappInfo(row);
             return result;
         }
         return "Error: ParaDe should not be installed in this way !";
     }
 
     public String servletContextRemoveRow(Row row) {
-        RowWebapp data = (RowWebapp) row.getRowdata().get("webapp");
-
         if (!isParadeCheck(row)) {
-            String result = getServletContainer().unInstallContext(data.getContextname());
-            setWebappInfo(row, data);
+            String result = getServletContainer().unInstallContext(row.getContextname());
+            setWebappInfo(row);
             return result;
         }
         return "Error: you cannot uninstall ParaDe !";

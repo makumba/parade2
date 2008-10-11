@@ -24,7 +24,6 @@ import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.aether.ParadeRelationComputer;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowMakumba;
 import org.makumba.parade.tools.ParadeLogger;
 
 import freemarker.template.DefaultObjectWrapper;
@@ -66,10 +65,9 @@ public class InitServlet extends HttpServlet implements Runnable {
 
         try {
             // cfg = new Configuration().configure("localhost_mysql_parade.cfg.xml");
-            resources.add("org/makumba/parade/model/AbstractFileData.hbm.xml");
             resources.add("org/makumba/parade/model/Parade.hbm.xml");
             resources.add("org/makumba/parade/model/Row.hbm.xml");
-            resources.add("org/makumba/parade/model/AbstractRowData.hbm.xml");
+            resources.add("org/makumba/parade/model/AntTarget.hbm.xml");
             resources.add("org/makumba/parade/model/File.hbm.xml");
             resources.add("org/makumba/parade/model/Log.hbm.xml");
             resources.add("org/makumba/parade/model/ActionLog.hbm.xml");
@@ -175,7 +173,7 @@ public class InitServlet extends HttpServlet implements Runnable {
                     continue;
                 }
 
-                if (((RowMakumba) r.getRowdata().get("makumba")).getHasMakumba() && !r.getModuleRow()) {
+                if (r.getHasMakumba() && !r.getModuleRow()) {
                     MakumbaContextRelationComputer c = new MakumbaContextRelationComputer(r);
                     ctx.addRelationComputer(c);
                     rowComputers.put(r.getRowpath(), c);

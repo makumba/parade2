@@ -14,8 +14,6 @@ import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowCVS;
-import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.ServletContainer;
 import org.makumba.parade.tools.CVSRevisionComparator;
@@ -29,14 +27,10 @@ import org.makumba.parade.tools.CVSRevisionComparator;
 public class FileBrowserBean {
 
     private Row row;
-    
-    private RowCVS cvsdata;
 
     private String path;
     
     private String absolutePath;
-    
-    private RowWebapp webappdata;
     
     private CVSRevisionComparator c = new CVSRevisionComparator();
 
@@ -50,9 +44,6 @@ public class FileBrowserBean {
                     .uniqueResult();
             if (row == null) {
                 throw new RuntimeException("Could not find row " + context);
-            } else {
-                webappdata = (RowWebapp) row.getRowdata().get("webapp");
-                cvsdata = (RowCVS) row.getRowdata().get("cvs");
             }
             tx.commit();
 
@@ -193,11 +184,11 @@ public class FileBrowserBean {
     public String getFileLinkAddress(String fileName) {
         // name
         String addr = "";
-        String webappPath = webappdata.getWebappPath();
+        String webappPath = row.getWebappPath();
         String fileNameNormal = fileName;
         fileName = fileName.toLowerCase();
 
-        if (webappdata.getStatus().intValue() == ServletContainer.RUNNING && path.startsWith(webappPath)) {
+        if (row.getStatus().intValue() == ServletContainer.RUNNING && path.startsWith(webappPath)) {
 
             String pathURI = path.substring(path.indexOf(webappPath) + webappPath.length()).replace(
                     java.io.File.separatorChar, '/')
@@ -247,7 +238,7 @@ public class FileBrowserBean {
         String cvsWebLink="";
         String cvsweb = ParadeProperties.getParadeProperty("cvs.site");
         String webPath = filePath.substring(row.getRowpath().length() + 1).replace(java.io.File.separatorChar, '/');
-        cvsWebLink = cvsweb + cvsdata.getModule() + "/" + webPath;
+        cvsWebLink = cvsweb + row.getModule() + "/" + webPath;
         return cvsWebLink;
         
     }

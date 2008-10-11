@@ -13,8 +13,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowMakumba;
-import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.ParadeLogger;
@@ -28,16 +26,9 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
     public void softRefresh(Row row) {
         logger.fine("Refreshing row information for row " + row.getRowname());
 
-        RowMakumba makumbadata = new RowMakumba();
-        makumbadata.setDataType("makumba");
-
-        String root = row.getRowpath() + File.separator + ((RowWebapp) row.getRowdata().get("webapp")).getWebappPath();
-        makumbadata.setVersion(getMakumbaVersion(root, row));
-        makumbadata.setDb(getMakumbaDatabase(root));
-
-        makumbadata.setHasMakumba(hasMakumba);
-
-        row.addManagerData(makumbadata);
+        String root = row.getRowpath() + File.separator + row.getWebappPath();
+        row.setVersion(getMakumbaVersion(root, row));
+        row.setDb(getMakumbaDatabase(root));
     }
 
     public void hardRefresh(Row row) {

@@ -12,7 +12,6 @@ import org.makumba.aether.RelationComputer;
 import org.makumba.db.hibernate.HibernateTransactionProvider;
 import org.makumba.devel.relations.RelationCrawler;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.providers.TransactionProvider;
 
@@ -47,7 +46,7 @@ public class CVSModuleRelationComputer extends MakumbaContextRelationComputer im
 
         org.makumba.Transaction t = tp.getConnectionTo(ParadeRelationComputer.PARADE_DATABASE_NAME);
         Map<String, Object> params = new HashMap<String, Object>();
-        String webappRoot = r.getRowpath() + "/" + ((RowWebapp) r.getRowdata().get("webapp")).getWebappPath();
+        String webappRoot = r.getRowpath() + "/" + r.getWebappPath();
         params.put("webappRoot", webappRoot);
         params.put("webappRootLength", webappRoot.length());
         params.put("webappRootLike", webappRoot + "%");

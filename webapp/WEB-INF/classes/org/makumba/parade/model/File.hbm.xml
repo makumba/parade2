@@ -30,18 +30,8 @@
 			<column name="crawled" default="false"></column>
 		</property>
 
-		<many-to-one name="row" column="id_row" not-null="true"
+		<many-to-one name="row" column="row" not-null="true"
 			outer-join="false" />
-
-		<map name="filedata" cascade="all-delete-orphan" inverse="true"
-			access="field" order-by="dataType" lazy="true">
-			<cache usage="read-write" />
-			<key>
-				<column name="id_file" not-null="false" />
-			</key>
-			<index column="dataType" type="string" />
-			<one-to-many class="AbstractFileData" />
-		</map>
 
 	</class>
 

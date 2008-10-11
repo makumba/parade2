@@ -27,7 +27,6 @@ import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowCVS;
 import org.makumba.parade.model.interfaces.FileRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
@@ -135,20 +134,15 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
     public void hardRefresh(Row row) {
         logger.fine("Refreshing row information for row " + row.getRowname());
 
-        RowCVS cvsdata = new RowCVS();
-        cvsdata.setDataType("cvs");
-
-        readUserAndModule(row, cvsdata);
-
-        row.addManagerData(cvsdata);
+        readUserAndModule(row);
     }
 
-    private void readUserAndModule(Row row, RowCVS data) {
+    private void readUserAndModule(Row row) {
 
         String path = row.getRowpath();
-        data.setUser(getCVSUser(path));
-        data.setModule(getCVSModule(path));
-        data.setBranch(getCVSBranch(path));
+        row.setCvsuser(getCVSUser(path));
+        row.setModule(getCVSModule(path));
+        row.setBranch(getCVSBranch(path));
 
     }
 

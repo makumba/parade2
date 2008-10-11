@@ -4,7 +4,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.managers.ServletContainer;
 
 public class AetherBean {
@@ -31,9 +30,7 @@ public class AetherBean {
 
                 webappPath = r.getWebappPath();
 
-                RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
-
-                status = data.getStatus().intValue();
+                status = r.getStatus().intValue();
 
                 tx.commit();
 

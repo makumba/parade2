@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
-import org.makumba.parade.model.AbstractFileData;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
@@ -61,7 +60,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             root.setParentPath("");
             root.setRow(row);
             root.setDate(new Long(new java.util.Date().getTime()));
-            root.setFiledata(new HashMap<String, AbstractFileData>());
             root.setSize(new Long(0));
             root.setOnDisk(false);
             row.getFiles().clear();
@@ -241,7 +239,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         virtualFile.setSize(new Long(0));
         virtualFile.setCurrentChars(0);
         virtualFile.setPreviousChars(0);
-        virtualFile.setFiledata(new HashMap<String, AbstractFileData>());
         return virtualFile;
     }
 

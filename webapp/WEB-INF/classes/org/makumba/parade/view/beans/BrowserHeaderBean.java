@@ -7,8 +7,6 @@ import org.hibernate.Transaction;
 import org.makumba.Pointer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowAnt;
-import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.managers.ServletContainer;
 
 public class BrowserHeaderBean {
@@ -31,9 +29,8 @@ public class BrowserHeaderBean {
 
             // We fetch the row
             Row r = (Row) s.get(Row.class, new Long(rowId.getId()));
-            RowAnt rowAnt = (RowAnt) r.getRowdata().get("ant");
             // Ant data - allowed operations
-            List<String> allowedOps = rowAnt.getAllowedOperations();
+            List<String> allowedOps = r.getAllowedOperations();
             // we commit the transaction
             tx.commit();
 
@@ -58,12 +55,10 @@ public class BrowserHeaderBean {
             Row r = (Row) s.get(Row.class, new Long(rowId.getId()));
 
             // Webapp status data
-            RowWebapp data = (RowWebapp) r.getRowdata().get("webapp");
-
-            int status = data.getStatus().intValue();
+            int status = r.getStatus().intValue();
 
             if (r.getRowpath().equals(r.getParade().getBaseDir())) {
-                data.setStatus(new Integer(ServletContainer.RUNNING));
+                r.setStatus(new Integer(ServletContainer.RUNNING));
                 status = ServletContainer.RUNNING;
             }
 

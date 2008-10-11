@@ -1,10 +1,8 @@
 package org.makumba.parade.model;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -13,7 +11,6 @@ import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
-import org.makumba.parade.model.managers.TrackerManager;
 
 public class File {
 
@@ -32,8 +29,6 @@ public class File {
     private Integer currentChars;
 
     private Integer previousChars;
-
-    private Map<String, AbstractFileData> filedata = new HashMap<String, AbstractFileData>();
 
     private Row row;
 
@@ -57,11 +52,9 @@ public class File {
     public void refresh() {
         FileManager fileMgr = new FileManager();
         CVSManager CVSMgr = new CVSManager();
-        TrackerManager trackerMgr = new TrackerManager();
 
         fileMgr.directoryRefresh(row, this.getPath(), false);
         CVSMgr.directoryRefresh(row, this.getPath(), false);
-        trackerMgr.directoryRefresh(row, this.getPath(), false);
     }
 
     public void setPath(String p) {
@@ -94,14 +87,6 @@ public class File {
 
     public void setDate(Long date) {
         this.date = date;
-    }
-
-    public Map<String, AbstractFileData> getFiledata() {
-        return filedata;
-    }
-
-    public void setFiledata(Map<String, AbstractFileData> filedata) {
-        this.filedata = filedata;
     }
 
     public Long getSize() {
@@ -262,7 +247,6 @@ public class File {
         Iterator<File> i = q.iterate();
         while (i.hasNext()) {
             File f = i.next();
-            Hibernate.initialize(f.getFiledata());
             if (f.getRow().getApplication() != null) {
                 Hibernate.initialize(f.getRow().getApplication().getCvsfiles());
             }
@@ -289,7 +273,7 @@ public class File {
 
         Query q = s
                 .createSQLQuery(
-                        "SELECT path FROM File f JOIN Row r WHERE f.ID_ROW = r.row AND f.parentPath = ? AND r.rowname = ? ORDER BY f.isDir DESC, f.path ASC")
+                        "SELECT path FROM File f JOIN Row r WHERE f.row = r.row AND f.parentPath = ? AND r.rowname = ? ORDER BY f.isDir DESC, f.path ASC")
                 .addScalar("path", Hibernate.STRING);
         q.setCacheable(true);
         q.setString(0, keyPath);

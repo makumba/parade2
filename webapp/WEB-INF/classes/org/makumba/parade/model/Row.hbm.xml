@@ -2,57 +2,59 @@
 <!DOCTYPE hibernate-mapping PUBLIC 
       "-//Hibernate/Hibernate Mapping DTD//EN"
       "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-
 <hibernate-mapping package="org.makumba.parade.model">
-	<class name="Row">
-
-		<cache usage="read-write" />
-
-		<id name="id" column="row">
-			<generator class="native" />
-		</id>
-
-		<property name="rowname" />
-		<property name="rowpath" />
-		<property name="webappPath" />
-		<property name="description" />
-		<property name="automaticCvsUpdate" type="integer" insert="false">
-			<column name="automaticCvsUpdate" default="10"/>
-		</property>
-		<property name="watchedByJNotify" type="boolean" insert="false">
-			<column name="watchedByJNotify" default="false"/>
-		</property>
-		
-		<property name="moduleRow" />
-
-		<many-to-one name="parade" column="id_parade" />
-
-		<many-to-one name="application" class="Application" />
-
-		<many-to-one name="user" class="User" column="user" />
+  <class name="Row">
+    <cache usage="read-write" />
+    <id name="id" column="row">
+      <generator class="native" />
+    </id>
+    <property name="rowname" />
+    <property name="rowpath" />
+    <property name="description" />
+    <property name="automaticCvsUpdate" type="integer" insert="false">
+      <column name="automaticCvsUpdate" default="10" />
+    </property>
+    <property name="watchedByJNotify" type="boolean" insert="false">
+      <column name="watchedByJNotify" default="false" />
+    </property>
+    <property name="moduleRow" />
     
-        <many-to-one name="externalUser" class="User" column="externalUser" />
+    <many-to-one name="parade" column="id_parade" />
+    <many-to-one name="application" class="Application" />
+    <many-to-one name="user" class="User" column="user" />
+    <many-to-one name="externalUser" class="User" column="externalUser" />
     
-		<map name="files" cascade="all-delete-orphan" inverse="true"
-			access="field" order-by="name" lazy="true">
-			<cache usage="read-write" />
-			<key>
-				<column name="id_row" not-null="false" />
-			</key>
-			<index column="path" type="string" />
-			<one-to-many class="File" />
-		</map>
+    <map name="files" cascade="all-delete-orphan" inverse="true" access="field" order-by="name" lazy="true">
+      <cache usage="read-write" />
+      <key>
+        <column name="row" not-null="false" />
+      </key>
+      <index column="path" type="string" />
+      <one-to-many class="File" />
+    </map>
 
-		<map name="rowdata" cascade="all-delete-orphan" inverse="true"
-			access="field" order-by="dataType" outer-join="true">
-			<cache usage="read-write" />
-			<key>
-				<column name="id_row" not-null="false" />
-			</key>
-			<index column="dataType" type="string" />
-			<one-to-many class="AbstractRowData" />
-		</map>
+    <!-- ANT data -->
+    <property name="lastmodified" />
+    <property name="buildfile" />
+    
+    <bag name="targets" table="Row__anttargets_" lazy="false" cascade="all" inverse="false">
+      <key column="id_row" />
+      <many-to-many class="AntTarget" />
+    </bag>
 
-	</class>
-
+    <!-- CVS data -->
+    <property name="cvsuser" />
+    <property name="module" />
+    <property name="branch" />
+        
+    <!--  Webapp data -->
+    <property name="contextname" />
+    <property name="webappPath" />
+    <property name="status" />
+    
+    <!-- Makumba data -->
+    <property name="version" />
+    <property name="db" />
+    <property name="hasMakumba" />
+  </class>
 </hibernate-mapping>

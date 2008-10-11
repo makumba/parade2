@@ -40,6 +40,9 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+manu, 11/10/2008
+- refactoring data model: eliminating AbstractRowData and sub-classes to ease usage with makumba
+
 gwen, 13/09/2008
 - fixing the CVS commit links in the file browser
 

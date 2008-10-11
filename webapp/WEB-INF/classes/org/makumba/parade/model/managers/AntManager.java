@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,8 @@ import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
+import org.makumba.parade.model.AntTarget;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowAnt;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.Execute;
@@ -34,46 +35,41 @@ public class AntManager implements RowRefresher, ParadeManager {
     public void hardRefresh(Row row) {
         logger.fine("Refreshing row information for row " + row.getRowname());
 
-        RowAnt antdata = new RowAnt();
-        antdata.setDataType("ant");
-
-        File buildFile = setBuildFile(row, antdata);
+        File buildFile = setBuildFile(row);
         if (buildFile == null || !buildFile.exists()) {
             logger.warning("AntManager: no build file found for row " + row.getRowname() + " at path "
                     + row.getRowpath());
         } else {
-            Project p = getInitProject(buildFile, row, antdata);
+            Project p = getInitProject(buildFile, row);
             if (p != null) {
-                setTargets(antdata, p);
+                setTargets(row, p);
             }
         }
 
-        row.addManagerData(antdata);
-
     }
 
-    private java.io.File setBuildFile(Row row, RowAnt data) {
+    private java.io.File setBuildFile(Row row) {
         File dir = new File(row.getRowpath());
 
-        String buildFilePath = data.getBuildfile();
+        String buildFilePath = row.getBuildfile();
         File buildFile = null;
 
         if (buildFilePath == "") {
-            buildFile = setBuildFilePath(row, data, dir);
+            buildFile = setBuildFilePath(row, dir);
         }
 
         return buildFile;
 
     }
 
-    private java.io.File setBuildFilePath(Row row, RowAnt data, File dir) {
+    private java.io.File setBuildFilePath(Row row, File dir) {
         File buildFile;
-        buildFile = new java.io.File(dir + File.separator + "build.xml");
+        buildFile = new java.io.File(dir.getPath() + File.separator + "build.xml");
         if (!buildFile.exists()) {
-            data.setBuildfile("No build file found");
+            row.setBuildfile("No build file found");
         } else {
             try {
-                data.setBuildfile(buildFile.getCanonicalPath());
+                row.setBuildfile(buildFile.getCanonicalPath());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -82,11 +78,11 @@ public class AntManager implements RowRefresher, ParadeManager {
         return buildFile;
     }
 
-    private synchronized Project getInitProject(File buildFile, Row row, RowAnt data) {
+    private synchronized Project getInitProject(File buildFile, Row row) {
         Project project = null;
 
-        if (data.getLastmodified() == null || buildFile.lastModified() > data.getLastmodified().longValue()) {
-            data.setLastmodified(new Long(buildFile.lastModified()));
+        if (row.getLastmodified() == null || buildFile.lastModified() > row.getLastmodified().longValue()) {
+            row.setLastmodified(new Long(buildFile.lastModified()));
             project = getProject(buildFile, row);
 
         }
@@ -114,21 +110,29 @@ public class AntManager implements RowRefresher, ParadeManager {
 
         return project;
     }
+    
+    private class TargetComparator implements Comparator<AntTarget> {
 
-    private void setTargets(RowAnt antdata, Project p) {
+        public int compare(AntTarget arg0, AntTarget arg1) {
+            return arg0.getTarget().compareTo(arg1.getTarget());
+        }
+        
+    }
+
+    private void setTargets(Row row, Project p) {
         Project project = p;
         Enumeration ptargets = project.getTargets().elements();
 
-        List<String> targets = antdata.getTargets();
+        List<AntTarget> targets = row.getTargets();
         while (ptargets.hasMoreElements()) {
             Target currentTarget = (Target) ptargets.nextElement();
             if (currentTarget.getDescription() != null && currentTarget.getDescription() != "") {
-                targets.add("#" + currentTarget.getName());
+                targets.add(new AntTarget("#" + currentTarget.getName()));
             } else {
-                targets.add(currentTarget.getName());
+                targets.add(new AntTarget(currentTarget.getName()));
             }
         }
-        Collections.sort(antdata.getTargets());
+        Collections.sort(row.getTargets(), new TargetComparator());
     }
 
     public void newRow(String name, Row r, Map<String, String> m) {
@@ -141,8 +145,7 @@ public class AntManager implements RowRefresher, ParadeManager {
         rt.gc();
         long memSize = rt.totalMemory() - rt.freeMemory();
 
-        RowAnt antData = (RowAnt) r.getRowdata().get("ant");
-        String buildFilePath = antData.getBuildfile();
+        String buildFilePath = r.getBuildfile();
         if (buildFilePath.equals("No build file found"))
             return ("No build file found");
         java.io.File buildFile = new java.io.File(buildFilePath);
@@ -177,8 +180,7 @@ public class AntManager implements RowRefresher, ParadeManager {
         rt.gc();
         long memSize = rt.totalMemory() - rt.freeMemory();
 
-        RowAnt antData = (RowAnt) r.getRowdata().get("ant");
-        String buildFilePath = antData.getBuildfile();
+        String buildFilePath = r.getBuildfile();
         if (buildFilePath.equals("No build file found"))
             return ("No build file found");
         java.io.File buildFile = new java.io.File(buildFilePath);

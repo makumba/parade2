@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.Application;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowWebapp;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.tools.Execute;
 import org.makumba.parade.tools.ParadeLogger;
@@ -161,8 +160,7 @@ public class ApplicationManager implements ParadeManager {
                 Application a = r.getParade().getApplications().get(module);
                 if (a == null) {
                     logger.info("Registering new application " + module + " used by row " + r.getRowname());
-                    a = new Application(module, CVSManager.getCVSRepository(r.getRowpath()), ((RowWebapp) r
-                            .getRowdata().get("webapp")).getWebappPath());
+                    a = new Application(module, CVSManager.getCVSRepository(r.getRowpath()), r.getWebappPath());
 
                     buildCVSlist(a);
                     a.setParade(r.getParade());

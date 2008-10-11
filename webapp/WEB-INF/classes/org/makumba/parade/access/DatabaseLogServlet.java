@@ -703,13 +703,6 @@ public class DatabaseLogServlet extends HttpServlet {
             log.setMessage(logrecord.getMessage());
             log.setOrigin("java.util.Logging");
             // log.setThrowable(logrecord.getThrown());
-        } else if (record instanceof PerThreadPrintStreamLogRecord) {
-            PerThreadPrintStreamLogRecord pRecord = (PerThreadPrintStreamLogRecord) record;
-            log.setLogDate(pRecord.getDate());
-            log.setOrigin("stdout");
-            log.setLevel("INFO");
-            log.setMessage(pRecord.getMessage());
-            // log.setThrowable(null);
         } else if (record instanceof Object[]) {
             Object[] rec = (Object[]) record;
             log.setLogDate((Date) rec[0]);

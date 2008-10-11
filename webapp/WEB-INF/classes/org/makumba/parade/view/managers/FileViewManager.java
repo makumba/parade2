@@ -17,14 +17,9 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
-import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.model.RowWebapp;
-import org.makumba.parade.model.managers.ServletContainer;
-import org.makumba.parade.tools.DisplayFormatter;
 import org.makumba.parade.tools.ParadeLogger;
-import org.makumba.parade.view.interfaces.FileView;
 import org.makumba.parade.view.interfaces.TreeView;
 
 import freemarker.template.SimpleHash;
@@ -86,7 +81,7 @@ public class FileViewManager implements TreeView {
 
         Query q = s
                 .createSQLQuery(
-                        "SELECT * FROM File f JOIN Row r WHERE f.ID_ROW = r.row AND f.isDir = '1' AND r.rowname = ? ORDER BY f.path ASC")
+                        "SELECT * FROM File f JOIN Row r WHERE f.row = r.row AND f.isDir = '1' AND r.rowname = ? ORDER BY f.path ASC")
                 .addScalar("PATH", Hibernate.STRING).addScalar("NAME", Hibernate.STRING);
         q.setString(0, r.getRowname());
 
