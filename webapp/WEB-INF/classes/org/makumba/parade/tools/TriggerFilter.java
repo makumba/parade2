@@ -41,10 +41,10 @@ import org.makumba.parade.access.ActionLogDTO;
  * DatabaseLogServlet, which ensures that the log is written to the database. The ActionLogDTO is as well hold in a
  * ThreadLocal so as to be accessible by other classes at any time during the access.<br>
  * The redirectToServlet() method enables any classes using it to redirect an object to a servlet (typically the
- * DatabaseLogServlet) so as to be persisted.<br>
+ * DatabaseLogServlet) so that they can be for instance persisted.<br>
  * Before performing the redirection, the TriggerFilter makes sure that there's an ActionLogDTO instance and tries to
  * heuristically determine the accessed context (or the context by which the access is made).<br>
- * Another point worth mentionning is that if the DatabaseLogServlet is not ready to log yet, the incoming log events
+ * Another point worth mentioning is that if the DatabaseLogServlet is not ready to log yet, the incoming log events
  * are being queued and then flushed as soon as the servlet is ready. <br>
  * This is probably the most complex mechanism of the whole application.<br>
  * <br>
