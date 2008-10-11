@@ -1,3 +1,4 @@
+<%-- ParaDe image display: displays a user image stored in the database --%>
 <% /* $Id$ */ 
 %><%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%><%@ page
 	import="java.util.*, org.makumba.Text"%>

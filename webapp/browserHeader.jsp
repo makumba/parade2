@@ -1,10 +1,9 @@
+<%-- ParaDe browser header: shows the header of the browser view --%>
 <%@page import="org.makumba.parade.init.InitServlet"%>
 <%@page import="org.hibernate.Session"%>
 <%@page import="org.hibernate.Transaction"%>
 <%@page import="org.makumba.parade.model.Row"%>
-<%@page import="org.makumba.parade.model.RowAnt"%>
 <%@page import="java.util.List"%>
-<%@page import="org.makumba.parade.model.RowWebapp"%>
 <%@page import="org.makumba.parade.model.managers.ServletContainer"%>
 <%@page import="org.makumba.db.hibernate.HibernatePointer"%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>

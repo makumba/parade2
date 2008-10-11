@@ -1,4 +1,4 @@
-
+<%-- ActionLog view: displays the ActionLogs of a specific context (or of all context if none provided), i.e. the header and the list --%>
 <%
 	String context = null;
 	Object ctxValues = request.getParameterValues("context");

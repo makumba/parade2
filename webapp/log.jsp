@@ -1,3 +1,4 @@
+<%-- Log view: composes the view that shows the logs --%>
 <%
 String context=null;
 Object ctxValues = request.getParameterValues("context");

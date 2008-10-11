@@ -1,6 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 
 <%@include file="../setParameters.jspf" %>
+<%-- This variable is used in order to indicate whether the browser frame should be refreshed or not.
+It is used by the cvsCommit.jsp in some cases --%>
 <c:set var="refreshBrowser" value="${empty param.refreshBrowser}" />
 
 <html>

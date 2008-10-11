@@ -1,3 +1,4 @@
+<%-- ParaDe browser view: composes the tree-file browser-command log view --%>
 <%  String context = request.getParameterValues("context")[0];
 	if(context == null)
 	    context = (String) request.getAttribute("context");

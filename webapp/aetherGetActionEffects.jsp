@@ -1,3 +1,4 @@
+<%-- Aether action effects: computes a list of people affected by the changes for an action, using the results of a virtual percolation --%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>

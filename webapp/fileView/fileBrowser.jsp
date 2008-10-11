@@ -1,3 +1,4 @@
+<%-- File browser view: composes the file browser header, lists files according to the sorting and includes file and CVS specific data--%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <%@page import="org.makumba.parade.tools.DisplayFormatter"%>

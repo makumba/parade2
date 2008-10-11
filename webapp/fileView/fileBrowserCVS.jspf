@@ -1,3 +1,4 @@
+<%-- ParaDe file browser view - CVS: displays all the CVS-related information and links in the file browser --%>
 <mak:value expr="f.cvsStatus" var="cvsStatus" />
 <mak:value expr="f.cvsRevision" printVar="cvsRevision" />
 <mak:value expr="f.cvsCheckedOutRevision" printVar="cvsCheckedOutRevision" />

@@ -1,3 +1,4 @@
+<%-- Aether work of others: shows all the work of other people, emphasizing the actions depending on their nimbus --%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <%@page import="org.makumba.parade.aether.ObjectTypes"%>

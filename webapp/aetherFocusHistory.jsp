@@ -1,3 +1,4 @@
+<%-- Aether focus history: lists all the actions of a user for an object --%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <%@page import="org.makumba.parade.aether.ObjectTypes"%>

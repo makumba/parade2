@@ -1,3 +1,4 @@
+<%-- ParaDe log header: provides options for filtering Log-s or ActionLog-s --%>
 <%@page import="java.util.Calendar"%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>

@@ -1,3 +1,4 @@
+<%-- ActionLogList view: lists the ActionLogs and their related Logs --%>
 <%@page import="java.util.Calendar"%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>

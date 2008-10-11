@@ -1,3 +1,4 @@
+<%-- Aether view: fetches "my work" and "work of others" view using an AJAX callback --%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <html>

@@ -1,3 +1,5 @@
+<%-- Aether my work: shows the objects a user works on, sorted by focus, and separated into files, directories and rows --%>
+
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <%@page import="org.makumba.parade.aether.ObjectTypes"%>

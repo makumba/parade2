@@ -1,3 +1,4 @@
+<%-- Aether nimbus history: shows how a specific action affects the work of a user (i.e. displays percolation path) --%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 
