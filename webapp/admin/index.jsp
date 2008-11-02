@@ -69,8 +69,11 @@ Still to come.
 
 <h1>Aether administration</h1>
 
+<h3>Global relation crawling</h3>
+To make Aether crawl through all contexts, <a href="/Admin.do?op=crawlRows">click here</a>.
+
 <h3>Global relation cache refresh</h3>
-To make Aether run all RelationComputers relation computations on next startup, <a href="/Admin.do?op=resetCrawlStatus">click here</a>.
+To make Aether forget about all the crawled files, <a href="/Admin.do?op=resetCrawlStatus">click here</a>.
 
 <h3>Per row relation cache refresh</h3>
 <form action="/Admin.do"><input type="hidden" name="op"

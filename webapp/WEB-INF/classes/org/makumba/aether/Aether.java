@@ -53,7 +53,7 @@ public class Aether {
 
         p = new RuleBasedPercolator();
         p.configure(ctx.getSessionFactory());
-        computeAllRelations();
+        //computeAllRelations();
 
         logger.info("AETHER-INIT: Launching Aether finished at " + new java.util.Date());
         long end = System.currentTimeMillis();
@@ -65,7 +65,7 @@ public class Aether {
     /**
      * Computes all the relations using the relation computers
      */
-    private void computeAllRelations() {
+    public void computeAllRelations() {
         List<RelationComputer> computers = ctx.getRelationComputers();
         for (RelationComputer relationComputer : computers) {
             logger.fine("Starting computation of all relations for " + relationComputer.getName());

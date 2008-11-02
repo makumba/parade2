@@ -9,6 +9,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.makumba.aether.Aether;
 import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Application;
@@ -165,6 +166,23 @@ public class AdminAction extends DispatchAction {
             tx.commit();
             s.close();
         }
+    }
+    
+    public ActionForward crawlRows(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        
+        if(InitServlet.aetherEnabled) {
+            Aether a = InitServlet.getAether();
+            a.computeAllRelations();
+            
+            request.setAttribute("result", "Finished crawling through all contexts!");
+            request.setAttribute("success", new Boolean(true));
+        } else {
+            request.setAttribute("result", "Can't crawl, Aether engine is not active");
+            request.setAttribute("success", new Boolean(false));
+        }
+        return mapping.findForward("index");
+
     }
 
     public ActionForward resetRowCrawlStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,

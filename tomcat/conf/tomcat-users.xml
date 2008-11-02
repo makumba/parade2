@@ -3,4 +3,3 @@
   <role rolename="manager"/>
   <user username="someuser" password="somepass" roles="manager"/>
 </tomcat-users>
- 
