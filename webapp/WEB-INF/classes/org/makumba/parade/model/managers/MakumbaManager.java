@@ -28,6 +28,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
 
         String root = row.getRowpath() + File.separator + row.getWebappPath();
         row.setVersion(getMakumbaVersion(root, row));
+        row.setHasMakumba(hasMakumba);
         row.setDb(getMakumbaDatabase(root));
     }
 
