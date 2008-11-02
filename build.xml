@@ -40,8 +40,6 @@
 			<include name="jfreechart-1.0.9.jar" />
 			<include name="cewolf-1.0.jar" />
 			<include name="commons-collections-3.2.jar" />
-						
-						
 		</fileset>
 		<fileset dir="lib">
 			<include name="*.jar" />
@@ -237,5 +235,24 @@
 			</fileset>
 		</copy>
 	</target>
+	
+	
+	<target name="crawlRows" depends="compile">
+
+		<java classname="org.makumba.parade.tools.RowCrawler" fork="true" dir=".">
+			<classpath>
+				<pathelement path="${java.class.path}" />
+				<pathelement location="webapp/WEB-INF/classes"/>
+				<fileset dir="${webapp.path}/WEB-INF/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="lib">
+					<include name="*.jar" />
+					<include name="*.zip" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+
 	
 </project>
