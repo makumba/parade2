@@ -13,8 +13,9 @@
 #               increased sleeping time before parade restart 1.5 29-Mar-2008 manuel.gay@best.eu.org
 #               added function that cleans the database cache 1.6 29-Mar-2008 manuel.gay@best.eu.org
 #               added function that cleans the tomcat work and conf dirs 1.7 10-Jun-2008 manuel.gay@best.eu.org
-#		added feature to do a frech checkout that keeps the configuration 1.8 manuel.gay@best.eu.org
-#		fixed path to catalina.out (now date dependent)	1.9 18-09-2008 manuel.gay@best.eu.org
+#               added feature to do a frech checkout that keeps the configuration 1.8 manuel.gay@best.eu.org
+#               fixed path to catalina.out (now date dependent)	1.9 18-09-2008 manuel.gay@best.eu.org
+#               added crawl target to crawl row relations	2.0 2-11-2008 manuel.gay@best.eu.org
 #
 
 set -e
@@ -94,6 +95,16 @@ d_cleanTomcat() {
 }
 
 #
+#	Function that crawls all the rows and extracts relations
+#
+d_crawl() {
+        echo Crawling rows...
+        su -c "cd $D_PATH; ant crawlRows" - "$D_USER"
+        echo Finished crawling rows
+}
+
+
+#
 #       Function that does the whole process.
 #
 d_all() {
@@ -151,6 +162,11 @@ case "$1" in
 	d_cleanTomcat
 	echo "."
 	;;
+  crawl)
+	echo -n "Crawling rows"
+	d_crawl
+	echo "."
+	;;
   checkout)
     echo -n "Checking out fresh ParaDe copy"
     d_checkout
@@ -162,7 +178,7 @@ case "$1" in
         echo "."
         ;;
   *)
-        echo "Usage: $SCRIPTNAME {start|stop|restart|kill|stacktrace|clean|checkout|all}" >&2
+        echo "Usage: $SCRIPTNAME {start|stop|restart|kill|stacktrace|clean|cleanTomcat|crawl|checkout|all}" >&2
         exit 1
         ;;
 esac
