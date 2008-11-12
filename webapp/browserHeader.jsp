@@ -51,7 +51,7 @@
       <td valign="top"><a href='/' target='_top' title='back to front page'>&lt;</a> <select size='1'
         name='context' onchange="javascript:form.submit();">
 
-        <mak:list from="Row r" where="r.moduleRow = false">
+        <mak:list from="Row r" where="r.moduleRow = false" orderBy="r.rowname">
           <c:set var="currentRowName"><mak:value expr="r.rowname" /></c:set>
           <option value="${currentRowName}" <c:if test="${currentRowName eq rowName}"> selected</c:if>>${currentRowName}</option>
         </mak:list>
