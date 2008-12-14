@@ -31,4 +31,5 @@ version = char[255]
 
 
 rowURL() {concat('row://', rowname)}
-rowNotWatched() {case when (watchedByJNotify = false and rowname != '(root)') then true else false end}
+rowNotWatched() {(watchedByJNotify = false and rowname != '(root)')}
+rowWatched() {(watchedByJNotify = true)}

@@ -36,13 +36,6 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>index</servlet-name>
-		<servlet-class>
-			org.makumba.parade.view.IndexServlet
-		</servlet-class>
-	</servlet>
-
-	<servlet>
 		<servlet-name>browse</servlet-name>
 		<servlet-class>
 			org.makumba.parade.view.BrowserServlet
@@ -83,11 +76,6 @@
 			org.makumba.parade.view.UserServlet
 		</servlet-class>
 	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>index</servlet-name>
-		<url-pattern>/index.jsp</url-pattern>
-	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>logs</servlet-name>

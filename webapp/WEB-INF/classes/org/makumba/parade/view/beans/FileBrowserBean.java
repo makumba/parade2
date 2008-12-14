@@ -9,11 +9,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
-import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.ServletContainer;
 import org.makumba.parade.tools.CVSRevisionComparator;
@@ -24,34 +20,13 @@ import org.makumba.parade.tools.CVSRevisionComparator;
  * @author Manuel Gay
  * 
  */
-public class FileBrowserBean {
-
-    private Row row;
+public class FileBrowserBean extends ParadeBean {
 
     private String path;
     
     private String absolutePath;
     
     private CVSRevisionComparator c = new CVSRevisionComparator();
-
-    public void setContext(String context) {
-
-        Session s = null;
-        try {
-            s = InitServlet.getSessionFactory().openSession();
-            Transaction tx = s.beginTransaction();
-            row = (Row) s.createQuery("from Row r where r.rowname = :context").setString("context", context)
-                    .uniqueResult();
-            if (row == null) {
-                throw new RuntimeException("Could not find row " + context);
-            }
-            tx.commit();
-
-        } finally {
-            if (s != null)
-                s.close();
-        }
-    }
 
     public void setPath(String path) {
         // if this is the root of the row
