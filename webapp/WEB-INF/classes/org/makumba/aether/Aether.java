@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.makumba.aether.percolation.Percolator;
 import org.makumba.aether.percolation.RuleBasedPercolator;
+import org.makumba.parade.init.ParadeProperties;
 
 /**
  * The access point to the Aether engine
@@ -53,7 +54,9 @@ public class Aether {
 
         p = new RuleBasedPercolator();
         p.configure(ctx.getSessionFactory());
-        //computeAllRelations();
+        if(ParadeProperties.getParadeProperty("aether.crawlOnStartup").equals("true")) {
+            computeAllRelations();
+        }
 
         logger.info("AETHER-INIT: Launching Aether finished at " + new java.util.Date());
         long end = System.currentTimeMillis();
