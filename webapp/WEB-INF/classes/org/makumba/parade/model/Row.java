@@ -31,7 +31,7 @@ public class Row {
             s = InitServlet.getSessionFactory().openSession();
             Transaction tx = s.beginTransaction();
 
-            module = (String) s.createQuery("select module from RowCVS where row.rowname = :context").setString(
+            module = (String) s.createQuery("select module from Row where rowname = :context").setString(
                     "context", ObjectTypes.rowNameFromURL(fileURL)).uniqueResult();
 
             tx.commit();
