@@ -11,17 +11,27 @@
 
 
 	<!-- Makumba Controller Filter, needed to invoke e.g. form responders! -->
-	<filter>
-		<filter-name>makumba_controller</filter-name>
-		<filter-class>
-			org.makumba.controller.http.ControllerFilter
-		</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>makumba_controller</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-	</filter-mapping>
+    <filter>
+      <filter-name>makumba_controller</filter-name>
+      <filter-class>org.makumba.controller.http.ControllerFilter</filter-class>
+    </filter>
+  
+    <filter-mapping>
+      <filter-name>makumba_controller</filter-name>
+      <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+      <filter-name>makumba_controller</filter-name>
+      <url-pattern>*.jspx</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+      <filter-name>makumba_controller</filter-name>
+      <url-pattern>/mak-tools</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+      <filter-name>makumba_controller</filter-name>
+      <url-pattern>/mak-tools/*</url-pattern>
+    </filter-mapping>
 
 
 	<!-- after all redirections are done, the makumba controller is applied -->
@@ -33,6 +43,13 @@
 			org.makumba.parade.init.InitServlet
 		</servlet-class>
 		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>index</servlet-name>
+		<servlet-class>
+			org.makumba.parade.view.IndexServlet
+		</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -76,6 +93,11 @@
 			org.makumba.parade.view.UserServlet
 		</servlet-class>
 	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>index</servlet-name>
+		<url-pattern>/index.jsp</url-pattern>
+	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>logs</servlet-name>
