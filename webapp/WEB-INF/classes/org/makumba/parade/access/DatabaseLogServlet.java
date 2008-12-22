@@ -639,7 +639,7 @@ public class DatabaseLogServlet extends HttpServlet {
 
     String[] endFilter = { ".ico", ".css", ".gif", ".jpg", ".png", ".js" };
 
-    String[] startFilter = { "/logs", "/admin", "/aether", "/playground/", "/logic", "/dataDefinitions",
+    String[] startFilter = { "/logs", "/admin", "/aether", "/playground/", "/logic", "/mak-tools",
             "/scripts/codepress/", "/cewolf", "/servlet/cvscommit", "/commandView/" };
 
     String[] equalFilter = { "/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp",
