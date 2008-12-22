@@ -159,9 +159,6 @@
 		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>
 
-
-
-
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
@@ -175,101 +172,6 @@
 		<taglib-uri>/WEB-INF/lib/cewolf.tld</taglib-uri>
 		<taglib-location>/WEB-INF/lib/cewolf.tld</taglib-location>
 	</taglib>
-
-
-
-
-	<!-- Developer support - MDD & Business logic browser & viewer -->
-	<servlet>
-		<servlet-name>mddLinker</servlet-name>
-		<servlet-class>
-			org.makumba.devel.SourceViewServlet
-		</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>mddLinker</servlet-name>
-		<url-pattern>*.jspx</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>mddLinker</servlet-name>
-		<url-pattern>*.jspxp</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>mddLinker</servlet-name>
-		<url-pattern>/dataDefinitions/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>mddLinker</servlet-name>
-		<url-pattern>/classes/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>mddLinker</servlet-name>
-		<url-pattern>/logic/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>mddLinker</servlet-name>
-		<url-pattern>/codeGenerator/*</url-pattern>
-	</servlet-mapping>
-
-
-	<!-- Developer support - single data object viewer. Should be not used / protected in production! -->
-	<servlet>
-		<servlet-name>dataViewer</servlet-name>
-		<servlet-class>
-			org.makumba.devel.DataObjectViewerServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>dataViewer</servlet-name>
-		<url-pattern>/dataView/*</url-pattern>
-	</servlet-mapping>
-
-	<!-- Developer support - data lister. Should be not used / protected in production! -->
-	<servlet>
-		<servlet-name>dataLister</servlet-name>
-		<servlet-class>
-			org.makumba.devel.DataTypeListerServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>dataLister</servlet-name>
-		<url-pattern>/dataList/*</url-pattern>
-	</servlet-mapping>
-
-	<!-- Developer support - pointer value converter. Should be not used / protected in production! -->
-	<servlet>
-		<servlet-name>dataValueConverter</servlet-name>
-		<servlet-class>
-			org.makumba.devel.DataPointerValueConverter
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>dataValueConverter</servlet-name>
-		<url-pattern>/valueConverter/*</url-pattern>
-	</servlet-mapping>
-
-	<!-- Developer support - query tool. Should be not used / protected in production! -->
-	<servlet>
-		<servlet-name>dataQuery</servlet-name>
-		<servlet-class>
-			org.makumba.devel.DataQueryServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>dataQuery</servlet-name>
-		<url-pattern>/dataQuery/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>codeGenerator</servlet-name>
-		<servlet-class>org.makumba.devel.CodeGenerator</servlet-class>
-	</servlet>
 
 	<error-page>
 		<error-code>500</error-code>
