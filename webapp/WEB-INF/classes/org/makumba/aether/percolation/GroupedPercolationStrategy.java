@@ -171,6 +171,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             addSetArgument(arguments, "rowNameSet", ObjectTypes.rowNameFromURL(mae.getObjectURL()));
             addSetArgument(arguments, "percolationPathSet", "");
             addSetArgument(arguments, "fromURLAndTraversedCVSSet", mae.getObjectURL() + "False");
+            addSetArgument(arguments, "actorSet", mae.getActor());
 
             initialRelations.addAll(query.execute(arguments, "fromURLSet", s));
         }
@@ -449,7 +450,8 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                 addSetArgument(arguments, "fromURLAndTraversedCVSSet",
                         ps.getPercolationPath().indexOf("cvs://") > 0 ? ps.getObjectURL() + "True" : ps.getObjectURL()
                                 + "False");
-
+                addSetArgument(arguments, "actorSet", ps.getMatchedAetherEvent().getActor());
+                
             }
 
             results.addAll(rq.execute(arguments, "fromURLSet", s));
@@ -459,8 +461,12 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
         return results;
     }
 
-    public static String[] supportedArguments = { "fromURLSet", "cvsURLSet", "rowNameSet", "percolationPathSet",
-            "fromURLAndTraversedCVSSet" };
+    public static String[] supportedArguments = { "fromURLSet: the set of URLs to the previous objects (from which the relation comes)",
+        "cvsURLSet: the set of CVS URLs to the previous objects (as CVS URLs)",
+        "rowNameSet: the name of the row the previous objects belongs to",
+        "percolationPathSet: the set of percolation paths, i.e. of nodes traversed until now",
+        "fromURLAndTraversedCVSSet: the set of URLs to the previous objects followed by True or False according to whether a CVS relation was traversed",
+        "actorSet: the actor of the event we are propagating" };
 
     private static void addSetArgument(Map<String, String> arguments, String key, String value) {
         if (value == null || value.trim().length() == 0) {

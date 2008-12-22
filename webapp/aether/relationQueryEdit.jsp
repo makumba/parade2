@@ -11,7 +11,7 @@ Query: <mak:input field="query" cols="100" rows="5"/><br>
 <mak:value expr="rq.query" printVar="queryString"/>
 Query with inlined functions: <%= QueryProvider.getQueryAnalzyer("hql").inlineFunctions(queryString) %><br>
 Arguments: <mak:input field="arguments"/> (if none, fromURL is default)<br>
-Supported arguments: <%for(String a : GroupedPercolationStrategy.supportedArguments) {%><%=a%>, <%}%><br>
+Supported arguments: <ul><%for(String a : GroupedPercolationStrategy.supportedArguments) {%><li><%=a%></li><%}%></ul><br>
 <br>
 <input type="submit" value="Save"/>
 </mak:editForm>
