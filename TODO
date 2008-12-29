@@ -22,7 +22,8 @@ ENHANCEMENT (EASY)
 - paint a row browser of a non-watched row in pink (FileViewManager)
 
 ENHANCEMENT (MEDIUM)
-- display rows that a user uses next to the nick in the parade welcome page (IndexServlet, index.ftl)
+- make it possible to reload parade within parade: register reload and trigger JNotify watch unregistration
+- display rows that a user uses next to the nick in the parade welcome page (index.jsp)
 - improve log view:
   - automatically select view that is more relevant depending on last activity (last hour, day, week...)
     (LogViewManager)
@@ -39,6 +40,18 @@ ENHANCEMENT (HARD)
 ====
 DONE
 ====
+
+manu, 29/12/2008
+- adding cache to index so that it loads faster
+
+manu, 14/12/2008
+- makumbizing the index
+
+risto, 30/11/2008:
+- fixing the link for removing a deleted file from the CVS
+
+rudi, 12/11/2008
+- ordering rows by name for better visibility
 
 manu, 11/10/2008
 - refactoring data model: eliminating AbstractRowData and sub-classes to ease usage with makumba
