@@ -16,6 +16,7 @@ import org.makumba.parade.model.Application;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.ApplicationManager;
+import org.makumba.parade.view.ParadeRefreshPolicy;
 
 public class AdminAction extends DispatchAction {
 
@@ -34,6 +35,8 @@ public class AdminAction extends DispatchAction {
 
             request.setAttribute("result", "New rows added!");
             request.setAttribute("success", new Boolean(true));
+            
+            ParadeRefreshPolicy.setRowCacheStale(true);
 
             return mapping.findForward("index");
 
@@ -75,6 +78,8 @@ public class AdminAction extends DispatchAction {
 
             request.setAttribute("result", "Row " + context + " refreshed !");
             request.setAttribute("success", new Boolean(true));
+            
+            ParadeRefreshPolicy.setRowCacheStale(true);
 
             return mapping.findForward("index");
 
@@ -106,6 +111,8 @@ public class AdminAction extends DispatchAction {
             request.setAttribute("result", "ParaDe refreshed !");
             request.setAttribute("success", new Boolean(true));
 
+            ParadeRefreshPolicy.setRowCacheStale(true);
+            
             return mapping.findForward("index");
 
         } finally {
