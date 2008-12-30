@@ -7,6 +7,7 @@ import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.MakumbaManager;
 import org.makumba.parade.model.managers.WebappManager;
+import org.makumba.parade.view.ParadeRefreshPolicy;
 
 public class WebappController {
 
@@ -49,6 +50,8 @@ public class WebappController {
             makMgr.softRefresh(entryRow);
             opResult = webappMgr.servletContextRedeployRow(entryRow);
         }
+        
+        ParadeRefreshPolicy.setRowCacheStale(true);
 
         tx.commit();
         s.close();
