@@ -39,6 +39,7 @@
 			<include name="parser.jar" />
 			<include name="jfreechart-1.0.9.jar" />
 			<include name="cewolf-1.0.jar" />
+			<include name="oscache-2.4.1.jar" />
 			<include name="commons-collections-3.2.jar" />
 		</fileset>
 		<fileset dir="lib">
