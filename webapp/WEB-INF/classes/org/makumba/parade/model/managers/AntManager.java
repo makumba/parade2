@@ -54,7 +54,7 @@ public class AntManager implements RowRefresher, ParadeManager {
         String buildFilePath = row.getBuildfile();
         File buildFile = null;
 
-        if (buildFilePath == "" || buildFilePath == null) {
+        if (buildFilePath == "" || buildFilePath == null || !(new File(buildFilePath).exists())) {
             buildFile = setBuildFilePath(row, dir);
         } else {
             buildFile = new java.io.File(buildFilePath);
