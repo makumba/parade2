@@ -53,7 +53,7 @@ public class Parade {
 
     private RowProperties rowproperties = new RowProperties();
 
-    private Map<String, Integer> JNotifyWatches = new HashMap<String, Integer>();
+    public static Map<String, Integer> JNotifyWatches = new HashMap<String, Integer>();
 
     // ParaDe managers
 
@@ -424,7 +424,7 @@ public class Parade {
         try {
             logger.info("Adding filesystem watch to row " + r.getRowname());
             watchID = JNotify.addWatch(path, mask, watchSubtree, new ParadeJNotifyListener());
-
+            
             JNotifyWatches.put(r.getRowname(), watchID);
             r.setWatchedByJNotify(true);
 
