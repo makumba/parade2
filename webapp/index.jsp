@@ -100,7 +100,9 @@ Hi <%=u.getNickname() %>! Have a nice time on ParaDe!</div><br><br><br>
 
 <jsp:useBean id="indexBean" class="org.makumba.parade.view.beans.IndexBean" />
 <mak:value expr="row.id" printVar="rowId"/>
-<%request.setAttribute("antOperations", indexBean.getAntOperations(new Pointer("Row",rowId)));%>
+<% if(request.getAttribute("antOperations" + rowId) == null) {
+request.setAttribute("antOperations" + rowId, indexBean.getAntOperations(new Pointer("Row",rowId)));
+}%>
 <c:forEach var="target" items="${antOperations}"
   varStatus="allowedOpsListStatus">
   <a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=${target}">${target}</a>
