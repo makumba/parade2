@@ -172,12 +172,12 @@ public class FileBrowserBean extends ParadeBean {
             if (fileName.endsWith(".java")) {
                 String dd = pathURI + fileNameNormal;
                 dd = dd.substring(dd.indexOf("classes") + 8, dd.lastIndexOf(".")).replace('/', '.');
-                addr = "/" + row.getRowname() + "/classes/" + dd;
+                addr = "/" + row.getRowname() + "/mak-tools/classes/" + dd;
             }
             if (fileName.endsWith(".mdd") || fileName.endsWith(".idd")) {
                 String dd = pathURI + fileNameNormal;
                 dd = dd.substring(dd.indexOf("dataDefinitions") + 16, dd.lastIndexOf(".")).replace('/', '.');
-                addr = "/" + row.getRowname() + "/dataDefinitions/" + dd;
+                addr = "/" + row.getRowname() + "/mak-tools/dataDefinitions/" + dd;
             }
             if (fileName.endsWith(".jsp") || fileName.endsWith(".html") || fileName.endsWith(".htm") || fileName.endsWith(".txt")
                     || fileName.endsWith(".gif") || fileName.endsWith(".png") || fileName.endsWith(".jpeg") || fileName.endsWith(".jpg")
