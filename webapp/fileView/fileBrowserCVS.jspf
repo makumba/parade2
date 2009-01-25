@@ -132,7 +132,7 @@
 <%-- CONFLICT --%>
 <c:when test="${cvsStatus == 6}">
 <a href='${cvsWebLink}' title='CVS log'><b><font color='red'>Conflict</font></b></a>
-<a target='command' href='/commandView/commandOutput.jsp?context=${context}&path=${path}&file=${encodedURL}&view=commit' title='CVS commit to repository'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
+<a target='command' href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}' title='CVS commit to repository'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
 <a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=overridefile' title='Override local changes and replace with file from repository'><img src='/images/cvs-override.gif' alt='Override local changes and replace with file from repository'></a>
 <a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
 </c:when>
