@@ -81,11 +81,6 @@
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>index</servlet-name>
-		<url-pattern>/index.jsp</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
 		<servlet-name>logs</servlet-name>
 		<url-pattern>/logs</url-pattern>
 	</servlet-mapping>
