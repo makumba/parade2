@@ -46,20 +46,6 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>index</servlet-name>
-		<servlet-class>
-			org.makumba.parade.view.IndexServlet
-		</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>browse</servlet-name>
-		<servlet-class>
-			org.makumba.parade.view.BrowserServlet
-		</servlet-class>
-	</servlet>
-
-	<servlet>
 		<servlet-name>edit</servlet-name>
 		<servlet-class>
 			org.makumba.parade.view.FileEditorServlet
