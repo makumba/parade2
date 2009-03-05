@@ -17,7 +17,7 @@ module = char[255]
 # ANT
 buildfile = char[255]
 lastmodified = int
-#    private List<String> targets = new LinkedList<String>();
+targets = set AntTarget
 
 # WEBAPP
 contextname = char[255]

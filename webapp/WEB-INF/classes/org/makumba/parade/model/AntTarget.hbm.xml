@@ -8,12 +8,13 @@
 
 		<cache usage="read-write" />
 
-		<id name="id" column="row">
+		<id name="id" column="anttarget">
 			<generator class="native" />
 		</id>
 
 		<property name="target"/>
-
+		
+		<many-to-one name="row"/>
 
 	</class>
 

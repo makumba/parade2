@@ -129,9 +129,9 @@ public class AntManager implements RowRefresher, ParadeManager {
         while (ptargets.hasMoreElements()) {
             Target currentTarget = (Target) ptargets.nextElement();
             if (currentTarget.getDescription() != null && currentTarget.getDescription() != "") {
-                targets.add(new AntTarget("#" + currentTarget.getName()));
+                targets.add(new AntTarget("#" + currentTarget.getName(), row));
             } else {
-                targets.add(new AntTarget(currentTarget.getName()));
+                targets.add(new AntTarget(currentTarget.getName(), row));
             }
         }
         Collections.sort(row.getTargets(), new TargetComparator());

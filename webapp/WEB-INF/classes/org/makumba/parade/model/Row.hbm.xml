@@ -39,7 +39,7 @@
     
     <bag name="targets" table="Row__anttargets_" lazy="false" cascade="all" inverse="false">
       <key column="id_row" />
-      <many-to-many class="AntTarget" />
+      <many-to-many class="AntTarget" column="row" />
     </bag>
 
     <!-- CVS data -->

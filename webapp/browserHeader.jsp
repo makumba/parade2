@@ -65,11 +65,7 @@
       <jsp:useBean id="browserHeaderBean" class="org.makumba.parade.view.beans.BrowserHeaderBean" />
       <mak:value expr="row.id" printVar="rowId"/>
       <jsp:setProperty name="browserHeaderBean" property="rowId" value="<%=rowId %>"/>
-      <td valign="top">&nbsp; ant: <c:forEach var="target" items="${browserHeaderBean.antOperations}"
-        varStatus="allowedOpsListStatus">
-        <a target="command" href="/Ant.do?getPathFromSession=true&display=command&context=${rowName}&path=&op=${target}">${target}</a>
-        <c:if test="${not allowedOpsListStatus.last}">, </c:if>
-      </c:forEach></td>
+      <td valign="top">&nbsp; ant: <c:set var="vWhere">t.row = row and t.target in (<%=browserHeaderBean.getAllowedAntOperations() %>)</c:set><mak:list from="AntTarget t" where="#{vWhere}" separator=", "><a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value expr="t.target"/></a></mak:list></td>
       <td valign="top">&nbsp; webapp: <c:if test="${browserHeaderBean.webappStatus == 2}">
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextReload&getPathFromSession=true" target="command">reload</a>

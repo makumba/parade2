@@ -83,7 +83,7 @@ Hi <%=u.getNickname() %>! Have a nice time on ParaDe!</div><br><br><br>
 
 </tr>
 
-<mak:list from="Row row" countVar="row_index">
+<mak:list from="Row row" orderBy="row.rowname asc" countVar="row_index">
 <tr class="<mak:if test="row.rowNotWatched()">notWatched</mak:if><mak:if test="row.rowWatched()"><c:choose><c:when test="${(row_index % 2) == 0}">odd</c:when><c:otherwise>even</c:otherwise></c:choose></mak:if>">
 <td align='center'>
 <mak:if test="row.rowNotWatched()"><img src="/images/exclamation.gif">&nbsp;This row is not watched by JNotify and won't work properly! Please restart ParaDe and read the logs to get more information.<br><br></mak:if>
@@ -97,14 +97,9 @@ Hi <%=u.getNickname() %>! Have a nice time on ParaDe!</div><br><br><br>
 
 <jsp:useBean id="indexBean" class="org.makumba.parade.view.beans.IndexBean" />
 <mak:value expr="row.id" printVar="rowId"/>
-<% if(request.getAttribute("antOperations" + rowId) == null) {
-request.setAttribute("antOperations" + rowId, indexBean.getAntOperations(new Pointer("Row",rowId)));
-}%>
-<c:forEach var="target" items="${antOperations}"
-  varStatus="allowedOpsListStatus">
-  <a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=${target}">${target}</a>
-  <c:if test="${not allowedOpsListStatus.last}">, </c:if>
-</c:forEach></td>
+<c:set var="vWhere">t.row = row and t.target in (<%=indexBean.getAllowedAntOperations() %>)</c:set>
+<mak:list from="AntTarget t" where="#{vWhere}" separator=", "><a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value expr="t.target"/></a></mak:list>
+</td>
 </td>
 <td><mak:value expr="row.webappPath"/></td>
 <td>

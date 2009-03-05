@@ -1,8 +1,6 @@
 package org.makumba.parade.view.beans;
 
 
-import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.Pointer;
@@ -18,10 +16,6 @@ public class BrowserHeaderBean extends ParadeBean{
         this.rowId = new Pointer("Row", rowId);
     }
     
-    public List<String> getAntOperations() {
-        return getAntOperations(rowId);
-    }
-
     public int getWebappStatus() {
         Session s = null;
         try {

@@ -52,6 +52,14 @@
 		</servlet-class>
 	</servlet>
 
+   <servlet>
+        <servlet-name>browse</servlet-name>
+        <servlet-class>
+            org.makumba.parade.view.BrowserServlet
+        </servlet-class>
+    </servlet>
+
+
 	<servlet>
 		<servlet-name>logs</servlet-name>
 		<servlet-class>
