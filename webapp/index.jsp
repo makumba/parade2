@@ -30,7 +30,7 @@ if (u == null) {
     RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/user");
     dispatcher.forward(request, response);
 }
-ParadeLogger.getParadeLogger("index.jsp").info("User loading time: " + (System.currentTimeMillis() - beforeUser));
+String userLoading = ("User loading time: " + (System.currentTimeMillis() - beforeUser));
 
 %>
 
@@ -59,7 +59,7 @@ request.setAttribute("myDate", cal.getTime()); %>
 <a href='userView.jsp?user=<mak:value expr="u.login"/>'><mak:value expr="u.nickname"/></a>&nbsp;&nbsp;
 </mak:list>
 </td>
-<% ParadeLogger.getParadeLogger("index.jsp").info("Active users loading time: " + (System.currentTimeMillis() - beforeUsers)); %>
+<% String activeUsers = ("Active users loading time: " + (System.currentTimeMillis() - beforeUsers)); %>
 <td align="right">
 <a class="icon_user_edit" title="See and modify your profile here" href="userView.jsp">My profile</a>&nbsp;&nbsp;
 <a class="icon_bug" href="mailto:parade-developers@lists.sourceforge.net" title="Report a bug">Report a bug</a>
@@ -115,7 +115,7 @@ request.setAttribute("antOperations" + rowId, indexBean.getAntOperations(new Poi
   <a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=${target}">${target}</a>
   <c:if test="${not allowedOpsListStatus.last}">, </c:if>
 </c:forEach></td>
-<% ParadeLogger.getParadeLogger("index.jsp").info("Ant tasks loading time: " + (System.currentTimeMillis() - beforeAnt)); %>
+<% String antTasksLoading = "Ant tasks loading time: " + (System.currentTimeMillis() - beforeAnt); %>
 </td>
 <td><mak:value expr="row.webappPath"/></td>
 <td>
@@ -150,5 +150,8 @@ request.setAttribute("antOperations" + rowId, indexBean.getAntOperations(new Poi
 <br><br><br>
 <a title="ParaDe TODO list" href="todo.jsp">ParaDe</a>
 </cache:cache>
+User loading time: <%=userLoading %><br>
+Active users loading time: <%=activeUsers %><br>
+Ant tasks loading time: <%=antTasksLoading %>
 </body>
 </html>
