@@ -23,14 +23,12 @@
 <%@include file="setParameters.jspf" %>
 
 <%
-long beforeUser = System.currentTimeMillis();
 // set the User
 User u = (User) ((HttpServletRequest) request).getSession(true).getAttribute("org.makumba.parade.userObject");
 if (u == null) {
     RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/user");
     dispatcher.forward(request, response);
 }
-String userLoading = ("User loading time: " + (System.currentTimeMillis() - beforeUser));
 
 %>
 
@@ -49,17 +47,10 @@ String userLoading = ("User loading time: " + (System.currentTimeMillis() - befo
 <a class="icon_project" title="All the action logs" href="actionLog.jsp?context=all">[Action log] (beta)</a>&nbsp;&nbsp;
 <strong><a class="icon_members" title="People who were active in the 20 past minutes">Currently online:</a></strong> 
 
-<%
-long beforeUsers = System.currentTimeMillis();
-Calendar cal = Calendar.getInstance();
-cal.setTime(new Date());
-cal.add(Calendar.MINUTE, -20);
-request.setAttribute("myDate", cal.getTime()); %>
-<mak:list from="ActionLog a, User u" where="a.user = u.login and a.logDate > :myDate" groupBy="u.login">
+<mak:list from="ActionLog a, User u" where="a.user = u.login and a.logDate > (now() - 2000)" groupBy="u.login">
 <a href='userView.jsp?user=<mak:value expr="u.login"/>'><mak:value expr="u.nickname"/></a>&nbsp;&nbsp;
 </mak:list>
 </td>
-<% String activeUsers = ("Active users loading time: " + (System.currentTimeMillis() - beforeUsers)); %>
 <td align="right">
 <a class="icon_user_edit" title="See and modify your profile here" href="userView.jsp">My profile</a>&nbsp;&nbsp;
 <a class="icon_bug" href="mailto:parade-developers@lists.sourceforge.net" title="Report a bug">Report a bug</a>
@@ -104,7 +95,6 @@ Hi <%=u.getNickname() %>! Have a nice time on ParaDe!</div><br><br><br>
 <td><mak:value expr="row.branch"/></td>
 <td><mak:value expr="row.buildfile"/><br>
 
-<% long beforeAnt = System.currentTimeMillis(); %>
 <jsp:useBean id="indexBean" class="org.makumba.parade.view.beans.IndexBean" />
 <mak:value expr="row.id" printVar="rowId"/>
 <% if(request.getAttribute("antOperations" + rowId) == null) {
@@ -115,7 +105,6 @@ request.setAttribute("antOperations" + rowId, indexBean.getAntOperations(new Poi
   <a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=${target}">${target}</a>
   <c:if test="${not allowedOpsListStatus.last}">, </c:if>
 </c:forEach></td>
-<% String antTasksLoading = "Ant tasks loading time: " + (System.currentTimeMillis() - beforeAnt); %>
 </td>
 <td><mak:value expr="row.webappPath"/></td>
 <td>
@@ -150,8 +139,5 @@ request.setAttribute("antOperations" + rowId, indexBean.getAntOperations(new Poi
 <br><br><br>
 <a title="ParaDe TODO list" href="todo.jsp">ParaDe</a>
 </cache:cache>
-User loading time: <%=userLoading %><br>
-Active users loading time: <%=activeUsers %><br>
-Ant tasks loading time: <%=antTasksLoading %>
 </body>
 </html>
