@@ -3,13 +3,15 @@
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 <%@page import="org.makumba.parade.model.User"%>
+<%@page import="org.makumba.parade.tools.ParadeLogger"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="java.util.Date"%>
 <%@page import="org.makumba.parade.view.beans.IndexBean"%>
 <%@page import="org.makumba.parade.model.Row"%>
 <%@page import="org.makumba.Pointer"%>
+<%@page import="org.makumba.parade.view.ParadeRefreshPolicy"%>
 
-<%@page import="org.makumba.parade.view.ParadeRefreshPolicy"%><html>
+<html>
 <head>
 <title>Welcome to ParaDe!</title>
   <link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/icons_silk.css" type="text/css" media="all"/>
@@ -21,12 +23,14 @@
 <%@include file="setParameters.jspf" %>
 
 <%
+long beforeUser = System.currentTimeMillis();
 // set the User
 User u = (User) ((HttpServletRequest) request).getSession(true).getAttribute("org.makumba.parade.userObject");
 if (u == null) {
     RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/user");
     dispatcher.forward(request, response);
 }
+ParadeLogger.getParadeLogger("index.jsp").info("User loading time: " + (System.currentTimeMillis() - beforeUser));
 
 %>
 
@@ -46,6 +50,7 @@ if (u == null) {
 <strong><a class="icon_members" title="People who were active in the 20 past minutes">Currently online:</a></strong> 
 
 <%
+long beforeUsers = System.currentTimeMillis();
 Calendar cal = Calendar.getInstance();
 cal.setTime(new Date());
 cal.add(Calendar.MINUTE, -20);
@@ -54,6 +59,7 @@ request.setAttribute("myDate", cal.getTime()); %>
 <a href='userView.jsp?user=<mak:value expr="u.login"/>'><mak:value expr="u.nickname"/></a>&nbsp;&nbsp;
 </mak:list>
 </td>
+<% ParadeLogger.getParadeLogger("index.jsp").info("Active users loading time: " + (System.currentTimeMillis() - beforeUsers)); %>
 <td align="right">
 <a class="icon_user_edit" title="See and modify your profile here" href="userView.jsp">My profile</a>&nbsp;&nbsp;
 <a class="icon_bug" href="mailto:parade-developers@lists.sourceforge.net" title="Report a bug">Report a bug</a>
@@ -98,6 +104,7 @@ Hi <%=u.getNickname() %>! Have a nice time on ParaDe!</div><br><br><br>
 <td><mak:value expr="row.branch"/></td>
 <td><mak:value expr="row.buildfile"/><br>
 
+<% long beforeAnt = System.currentTimeMillis(); %>
 <jsp:useBean id="indexBean" class="org.makumba.parade.view.beans.IndexBean" />
 <mak:value expr="row.id" printVar="rowId"/>
 <% if(request.getAttribute("antOperations" + rowId) == null) {
@@ -108,7 +115,7 @@ request.setAttribute("antOperations" + rowId, indexBean.getAntOperations(new Poi
   <a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=${target}">${target}</a>
   <c:if test="${not allowedOpsListStatus.last}">, </c:if>
 </c:forEach></td>
-
+<% ParadeLogger.getParadeLogger("index.jsp").info("Ant tasks loading time: " + (System.currentTimeMillis() - beforeAnt)); %>
 </td>
 <td><mak:value expr="row.webappPath"/></td>
 <td>
