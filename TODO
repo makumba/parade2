@@ -41,6 +41,9 @@ ENHANCEMENT (HARD)
 DONE
 ====
 
+manu, 05/03/2009
+- optimizing index.jsp speed
+
 manu, 29/12/2008
 - adding cache to index so that it loads faster
 
