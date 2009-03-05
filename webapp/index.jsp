@@ -1,7 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="cache" %>
 <%@page import="org.makumba.parade.model.User"%>
 <%@page import="org.makumba.parade.tools.ParadeLogger"%>
 <%@page import="java.util.Calendar"%>
@@ -61,10 +60,6 @@ if (u == null) {
 
 <br>
 Hi <%=u.getNickname() %>! Have a nice time on ParaDe!</div><br><br><br>
-
-<c:set var="row_cache_key"><%=ParadeRefreshPolicy.ROW_CACHE_KEY%></c:set>
-
-<cache:cache key="${row_cache_key}" scope="application" refreshpolicyclass="org.makumba.parade.view.ParadeRefreshPolicy">
 
 <border class='rowstore'>
 
@@ -133,6 +128,5 @@ Hi <%=u.getNickname() %>! Have a nice time on ParaDe!</div><br><br><br>
 </CENTER>
 <br><br><br>
 <a title="ParaDe TODO list" href="todo.jsp">ParaDe</a>
-</cache:cache>
 </body>
 </html>
