@@ -1,0 +1,222 @@
+% Title:  latex-insert
+%
+% Doc: SAMPLE.TEX
+% Original Author:   S Luz <luzs@cs.tcd.ie>    
+% Created:    19 Mar 2007           
+%
+% Change log:
+% $Log$
+
+
+\documentclass{ecscw2007}
+\usepackage{graphicx}
+%%\usepackage{color}
+%%\usepackage[pdfmark,bookmarksopen,colorlinks,urlcolor=red]{hyperref}
+%%\usepackage{url}
+
+%%\newcommand{\VERSION}  {$Revision$, \today}
+
+\title{Aether-based Awareness Support for a\\Community of Amateur Programmers}
+\author{Author 1, Author 2}
+\affiliation{Institute 1, Country, Institute 2, Country} 
+\email{author1@institute1.org, author1@institute1.org}
+
+%%%%%% PDF setup
+%%\hypersetup{pdftitle={}}
+%%\hypersetup{pdfsubject={}}
+%%\hypersetup{pdfkeywords={}}
+%%\hypersetup{pdfauthor={S Luz (luzs@)}}
+%%\hypersetup{citecolor=red}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+
+\begin{abstract}
+  This document is formatted in accordance with the ECSCW formatting
+  guidelines by means of the ecscw2007.cls \LaTeX\ class.
+  Use this document as a template.
+\end{abstract}
+
+\section*{Document layout} 
+
+The manuscript must not have page number or running headers and footers. 
+
+The text bloc (the printed area) should measure and must not exceed
+140 x 227 mm; it must have a one-column format and be positioned at
+the center of the page.  In A4 format, this corresponds to 35 mm
+margins on all sides. If you use other formats, e.g., US Letter,
+please make sure the text bloc measures 140 x 227 mm (i.e., make sure
+line lengths do not exceed 140 mm).
+
+\section*{Title, author, abstract} 
+
+The title of the article must be preceded by 50 mm blank space (the blank space on 
+top of the first page will be used for editorial purposes). The title should be set in 24 
+point Times, flushed left. 
+
+The title should be followed by the name of the author(s) in 14 point Times, 
+flushed left. Immediately after the name of the author, the name and country of the 
+affiliation of the author should be given in a separate line (12 point Times, flushed 
+left). 
+
+The title, author's name, and author's affiliation should be followed by a short 
+{\bf abstract} of not more than 200 words, which clearly summarizes the paper. The
+abstract should be set in 10 point Helvetica (or an equivalent sans serif font) with 13 
+point line leading (line space). The abstract should have 24 point space before and 
+after. 
+
+\section*{Body text}
+ 
+Body text should be set in 12 point Times (the font used here) or an
+equivalent serif font. Line spacing (leading) should be 15 point. The
+first paragraph after a headline should not be indented; otherwise the
+first line of a body text paragraph should be indented by 5 mm. Body
+text should be justified (i.e., do not use a ragged-right style).
+
+Headings should be set in Times and flush left:
+
+\begin{itemize}
+\item Level 1: 18 point, 24 point space before, 12 point after. 
+\item Level 2: 14 point, 18 point space before, 9 point after. 
+\item Level 3: 12 point, 12 point space before, 6 point after. 
+\end{itemize}
+
+Quoted passages of more than 40 words should be set off from the text by 
+indenting the left-hand margin 5 mm. Such quotations should be set in 10 point 
+
+Times with 13 point line spacing, with 2 mm additional spacing before and after the 
+quotation. 
+
+Trademarks and system names should be set in small caps, for example,
+{\sc The Coordinator}. 
+
+\section*{References}
+
+Citations should be incorporated into the text, either directly in the
+sentence (``As claimed by \cite{bib:Bowers91}...'') or at the end,
+with author's name and date of publication in parenthesis:
+\citep{bib:Bowers91}.
+
+
+References should be listed at the end of the article, after the Notes, in 
+alphabetical and chronological order. References should be set in 10 point Times, 
+with 5 mm hanging indents. 
+
+References should be listed at the end of the article, after the Notes, in 
+alphabetical and chronological order. References should be set in 10 point Times, 
+with 5 mm hanging indents. 
+
+(a) References to books, such as \citep{bib:Johansen98}, should include
+the authors name; year of publication; title in full, in italics;
+publisher; place of publication; volume number (if appropriate).
+
+(b) References to articles in periodicals, such as
+\citep{bib:gerson86}, should include the author's name; year of
+publication; title of article, in quotation marks; full title of
+periodical, in italics; volume number; issue number; issue date; page
+numbers.
+
+(c)References to essays in edited editions should include the author's
+name; year of publication; title of essay, in quotation marks;
+editor's name; title of collection, in italics; publisher; place of
+publication; volume number (if appropriate).
+
+
+
+\section*{Notes}
+ 
+Please keep notes to a minimum, and avoid long or discursive notes.
+Short notes should preferably be placed as footnotes at the bottom of
+the page.\footnote{This is a footnote.} Notes should be numbered
+consecutively with Arabic numbers, and indicated in the text by
+superscript numbers.
+
+
+\section*{Tables} 
+
+Tables should be numbered consecutively with roman numbers, followed
+by the title (Table I. xxxxx), as shown in
+Table~\ref{tab:sample}. Horizontal rules should be indicated; vertical
+rules should not be used. Each table should be mentioned in the
+text. Each table should be positioned in place in the manuscript.
+
+\begin{table}[htb]
+  \caption{Table caption}\vspace{1ex}
+  \label{tab:sample}
+  \centering
+  \begin{tabular}{ccccc}
+    \hline 
+    header 1 & header 2 & header 3 & header 4 & header 5 \\
+    \hline  
+    data & data & data & data & data \\
+    data & data & data & data & data \\
+    data & data & data & data & data \\
+    data & data & data & data & data \\
+    data & data & data & data & data \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\section*{Figures} 
+
+Figures should be numbered consecutively with arabic numbers, followed
+by the title (Figure 1. xxxxx), and shown in
+Figure~\ref{fig:figure}. Each figure should be mentioned in the
+text. Each figure should be positioned in place in the manuscript:
+
+\begin{figure}[htb]
+  \centering
+  %\includegraphics[width=.3\linewidth]{flies}    
+  \caption{Figure caption}
+  \label{fig:figure}
+\end{figure}
+
+Photographs should be black-and-white and should be prepared for offset 
+printing without further processing. 
+
+\section*{Long quotes} 
+
+\begin{quote}
+  Long quotes should be set in 10 point Times with a 5 mm paragraph indentation and 2 mm 
+space above and after  (as here). 
+\end{quote}
+
+\section*{Lists} 
+The following list formats are recommended: 
+\begin{itemize}
+\item list 1
+\item list 1
+  \begin{itemize}
+  \item list 2
+  \item list 2
+  \end{itemize}
+\item list 1 
+\end{itemize}
+
+\begin{itemize}
+\item[(1)] list numbered 1 
+\item[(2)] list numbered 1 
+\item[(3)] list numbered 1 
+\end{itemize}
+
+
+
+\section*{Acknowledgments} 
+
+{\footnotesize Acknowledgment. }
+
+
+
+\bibliography{ecscw09-aether}
+\bibliographystyle{ecscw2007}  
+
+\end{document}
+
+% Local Variables:
+% TeX-master: t
+% End:
