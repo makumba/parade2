@@ -14,7 +14,7 @@
 
 		<property name="target"/>
 		
-		<many-to-one name="row"/>
+		<many-to-one name="row" column="row_id"/>
 
 	</class>
 

@@ -76,8 +76,6 @@ public class Row {
 
     private Long id;
 
-    private Long lastmodified;
-
     private String module;
 
     private boolean moduleRow = false;
@@ -161,10 +159,6 @@ public class Row {
 
     public Long getId() {
         return id;
-    }
-
-    public Long getLastmodified() {
-        return lastmodified;
     }
 
     public String getModule() {
@@ -257,10 +251,6 @@ public class Row {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setLastmodified(Long lastmodified) {
-        this.lastmodified = lastmodified;
     }
 
     public void setModule(String module) {

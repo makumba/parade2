@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -20,6 +21,7 @@ import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
+import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.AntTarget;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.ParadeManager;
@@ -40,7 +42,7 @@ public class AntManager implements RowRefresher, ParadeManager {
             logger.warning("AntManager: no build file found for row " + row.getRowname() + " at path "
                     + row.getRowpath());
         } else {
-            Project p = getInitProject(buildFile, row);
+            Project p = getProject(buildFile, row);
             if (p != null) {
                 setTargets(row, p);
             }
@@ -80,17 +82,6 @@ public class AntManager implements RowRefresher, ParadeManager {
         return buildFile;
     }
 
-    private synchronized Project getInitProject(File buildFile, Row row) {
-        Project project = null;
-
-        if (row.getLastmodified() == null || buildFile.lastModified() > row.getLastmodified().longValue()) {
-            row.setLastmodified(new Long(buildFile.lastModified()));
-            project = getProject(buildFile, row);
-
-        }
-        return project;
-    }
-
     private synchronized Project getProject(File buildFile, Row row) {
         Project project = new Project();
 
@@ -122,18 +113,16 @@ public class AntManager implements RowRefresher, ParadeManager {
     }
 
     private void setTargets(Row row, Project p) {
-        Project project = p;
-        Enumeration ptargets = project.getTargets().elements();
-
+        Enumeration ptargets = p.getTargets().elements();
+        
         List<AntTarget> targets = row.getTargets();
+        
         while (ptargets.hasMoreElements()) {
             Target currentTarget = (Target) ptargets.nextElement();
-            if (currentTarget.getDescription() != null && currentTarget.getDescription() != "") {
-                targets.add(new AntTarget("#" + currentTarget.getName(), row));
-            } else {
-                targets.add(new AntTarget(currentTarget.getName(), row));
-            }
+            
+            targets.add(new AntTarget(currentTarget.getName(), row));
         }
+        row.setTargets(targets);
         Collections.sort(row.getTargets(), new TargetComparator());
     }
 
@@ -233,5 +222,9 @@ public class AntManager implements RowRefresher, ParadeManager {
 
     public void softRefresh(Row row) {
         hardRefresh(row);
+    }
+
+    public void clearCollections(Row row) {
+        row.getTargets().clear();
     }
 }

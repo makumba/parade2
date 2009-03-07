@@ -16,7 +16,6 @@ module = char[255]
 
 # ANT
 buildfile = char[255]
-lastmodified = int
 targets = set AntTarget
 
 # WEBAPP

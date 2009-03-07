@@ -1,4 +1,2 @@
 target=char[255]
 row=ptr Row
-
-cleanTarget() { case when target like '#%' then substring(target, 1) else target end }

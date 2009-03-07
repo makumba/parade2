@@ -34,12 +34,11 @@
     </map>
 
     <!-- ANT data -->
-    <property name="lastmodified" />
     <property name="buildfile" />
     
-    <bag name="targets" table="Row__anttargets_" lazy="false" cascade="all" inverse="false">
-      <key column="id_row" />
-      <many-to-many class="AntTarget" column="row" />
+    <bag name="targets" table="Row__anttargets_" lazy="false" cascade="all-delete-orphan" inverse="true">
+      <key column="row_id" />
+      <one-to-many class="AntTarget" />
     </bag>
 
     <!-- CVS data -->

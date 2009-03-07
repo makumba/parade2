@@ -112,7 +112,7 @@ public class Parade {
         removeUnmappedRows(getRowstoreDefinition());
 
     }
-
+    
     public void performPostRefreshOperations() {
         logger.info("Performing post-refresh tasks...");
         applMgr.checkoutAndCreateModuleRows();
@@ -436,6 +436,11 @@ public class Parade {
         } catch (NullPointerException npe) {
             // do nothing. JNotify returns plenty of those.
             r.setWatchedByJNotify(true);
+        } catch(java.lang.ExceptionInInitializerError re) {
+            // have JNotify shut up if we run parade on a mac
+            if(!re.getCause().getMessage().startsWith("Unsupported OS : mac os")) {
+                throw new RuntimeException(re);
+            }
         }
     }
 
@@ -542,4 +547,13 @@ public class Parade {
     public void setJNotifyWatches(Map<String, Integer> notifyWatches) {
         JNotifyWatches = notifyWatches;
     }
+
+    public void clearCollections() {
+        for(Row row : getRows().values()) {
+            antMgr.clearCollections(row);
+            
+        }
+        
+    }
+
 }

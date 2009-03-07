@@ -153,6 +153,8 @@ public class InitServlet extends HttpServlet implements Runnable {
         }
         try {
             p.refreshApplicationsCache();
+            p.clearCollections();
+            session.saveOrUpdate(p);
             p.softRefresh();
             p.addJNotifyListeners();
         } catch (Throwable e) {
