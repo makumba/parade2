@@ -6,6 +6,9 @@
 %
 % Change log:
 % $Log$
+% Revision 1.4  2009/03/06 22:56:02  cristian_bogdan
+% implementation
+%
 % Revision 1.3  2009/03/06 22:41:47  cristian_bogdan
 % layout
 %
@@ -19,6 +22,7 @@
 
 \documentclass{ecscw2007}
 \usepackage{graphicx}
+
 %%\usepackage{color}
 %%\usepackage[pdfmark,bookmarksopen,colorlinks,urlcolor=red]{hyperref}
 %%\usepackage{url}
@@ -63,16 +67,132 @@ content and size of semantic network
 object, relation, virtual relations
 implementation of percolation steps, etc
 
+
+\subsection*{description of parade data model}
+
+Figure 2 (parade-data-model.png) represents the objects ParaDe works with:
+\begin{itemize}
+	\item the Parade object represents one instance of the application,
+	\item the Row object represents a user row,
+	\item the User object represents a ParaDe user,
+	\item the File object contains the meta-data of a File in the ParaDe application,
+	\item the Application object represents one project of common interest for several users,
+	\item the ActionLog object represents an action of a user and the Log object is a technical log line.
+\end{itemize}
+
+
+\subsection*{design constraints}
+
+In order to design the Aether engine so as it can be used seamlessly in the ParaDe development environment, it is necessary to take into account several specificities both of the environment and of the Aether engine as depicted by the model.
+Most importantly, the features provided by the Aether engine should not have a negative impact on the usability of the system, thus the design of those operations needs to place a high priority on performance. Indeed the first implementation attempt of the Aether engine in 1997 was not usable because the Aether engine tends to take a lot of computation resources.
+
+If we consider that ParaDe holds approximately 100000 objects, using a relational database management system (DBMS) in order to perform key operations seems appropriate: those systems are optimised for handling large data-sets with an optimal performance. However, representing all the relations amongst objects in the ParaDe system and querying them would not scale: for each one of the 20 rows, there are approximately 5000 files, 10000 relations amongst files of one row, and about 20 times 5000 relations to the files in the other rows, which would represent a total of 400000 objects in the semantic network. This semantic network would then need to be partially traversed on event propagation. Therefore, concretely storing all those relations in the database does not appear as being a solution. Instead, some of them are implicit, such as for instance the relations between files of different rows: they all hold a common path relative to the root in the CVS module they are issued from.
+Another important aspect is the process of “Aether experimentation”. This feature of the system should enable users to influence the behaviour of the engine and thus supports the usage of a DBMS, in addition to the already large initial size, insofar as the usage of queries enables programmability. Queries themselves can then be seen as data and modified by the user.
+
+Since DBMS are optimised to execute queries in the most efficient way, the single most important performance factor when working with a relational DBMS is the number of queries executed. Hence the algorithm that will propagate queries needs to be done in such a way that queries can be combined.
+To sum up, the main constraints for deploying an awareness computation engine are:
+\begin{itemize}
+     \item computational performance: the fact that the awareness engine is active should not hinder users from a normal usage, hence its operations have to be optimised
+     \item scalability: the production set-up of ParaDe handles a huge number of files and relations amongst those that grow in time, and the Aether engine has to take this growth into account
+     \item information and configurability: users should be able to experiment with the engine’s operations, hence its mechanisms need to be “translucent” , making them easier to understand and hence programmable
+\end{itemize}
+
+
+
+percolation process (can be used as explanation to the mechanism figure)
+
+When an event is registered to the Aether engine, it is first matched against a set of InitialPercolationRules. Each match leads to the creation of a MatchedAetherEvent, which is enriched with information provided by the InitialPercolationRule. The InitialPercolationRule determines the initial energy with which this event should be propagated. It also holds a set of RelationQueries that once executed provide an initial set of relations amongst objects along which the event can be propagated.
+For each of the matched Aether events, the resulting initial relations are then matched against a set of PercolationRules. When a relation is matched, a PercolationStep is recorded (unless not enough energy is left at this point of the propagation) and another set of relations is retrieved, using the set of queries provided by the PercolationRule. This process lasts until no more energy is left or until the percolation process timed out (the timeout is arbitrary and corresponds to a bearable amount of waiting time for the user).
+
+The resulting table of percolation steps then makes it possible to compute the awareness level as described further in this chapter.
+
+\subsection*{Initial percolation rules}
+The InitialPercolationRules help to determine following characteristics of the propagation to be performed:
+\begin{itemize}
+   \item the initial energy level at which the event should be propagated in the network,
+   \item the user type that shall be affected by the propagation of the event,
+   \item an initial set of relations amongst objects,
+   \item two functions describing how focus and nimbus of the matched relations shall evolve in time,
+   \item the percolation mode (focus percolation or nimbus percolation).
+\end{itemize}
+
+When an event is registered to the Aether engine, it is first matched against:
+\begin{itemize}
+   \item the object type (file, directory, row, user, ...),
+   \item the action (“save”, “delete”, “view”, ...),
+   \item the user type (“all”, “none”, “all but actor”, ...).
+\end{itemize}
+
+\subsubsection*{Initial level}
+The initial energy level is set by the InitialPercolationRule and depending on the “impact” of the event, a coefficient can be specified in the AetherEvent. For example, in the case of an event having as action “save”, the coefficient will depend on the amount of changes done. If no change is done, the coefficient will be 0. If a lot of changes were made to the file, it may be for instance 1.4 (40% of the file was changed).
+The initial energy level is therefore the product of the initial level described by the InitialPercolationRule and the coefficient (which by default is 1, if no coefficient was indicated by the initial event).
+In the current implementation, ParaDe calculates this coefficient for file modifications, depending on how many lines were added or removed. Of course a more fine-grained process could be applied.
+
+\subsubsection*{User type}
+This property is used in order to indicate which group of users should be affected by the propagation of an event. For example, an action of the kind “save” may be relevant to all users (that have their focus set on the file), but not for the actor that performed the action. Note that the type defined by the rule is abstract (“everyone but actor”), and it is once an event is matched that it is transformed in a concrete user group (“everyone but Alice”), which is stored in the MatchedAetherEvent. This mechanism is described more into detail in 3.5: Percolation engine.
+
+\subsubsection*{Progression curves}
+The Aether model represents focus and nimbus as being functions of time. This behaviour is modelled using two functions of time, which are stored as simple expression strings in the database. The stored focus and nimbus values are then recomputed for all PercolationSteps regularly by a scheduled task.
+This re-computation of focus and nimbus values needs to be done in an effective manner, since this task affects many PercolationSteps. Writing one query per PercolationStep would not scale.
+Therefore, the idea is to use mass UPDATE statements that would be composed using the progression curves. Supposing that the progression curve of the nimbus of one InitialPercolationRule is 100–nimbus * t it is possible to compose the query:
+UPDATE
+       PercolationStep ps
+SET
+       ps.nimbus = (100 – ps.nimbus * (now() – ps.lastModified))
+WHERE
+       ps.matchedAetherEvent.initialPercolationRule = :InitialPercolationRule
+
+This query (as well as the corresponding query for the focus) is run for each InitialPercolationRule, which represents a relatively small amount of queries therefore ensuring a higher performance of the operation.
+The curve on figure 6 represents the focus progression using the expression 1-ln(t/10+1).
+By executing this kind of queries in a scheduled manner it is possible to simulate the progression behaviour described by the curves.
+
+\subsubsection*{Percolation rules}
+Once an event is matched, a set of initial relations is computed through which the event can propagate in the first place. The percolation process will try to match these relations against each of the PercolationRules, as those describe how an event propagates.
+The matching of relations is done on their subject, predicate and object. Subject and object are both object types, where the predicate describes their relation. The rule
+FILE versionOf CVSFILE
+matches all the relations between files and their equivalent in a CVS repository. This structure is voluntarily inspired by RDF relations.
+The percolation rule helps determining following characteristics of the percolation to be performed:
+\begin{itemize}
+    \item energy consumption of the relation,
+    \item humanly understandable description of the rule (e.g. “is a version of the file on the CVS repository”) that can be used in order to display a log of the percolation process to the user,
+    \item  a set of relations amongst objects through which the propagation should evolve further.
+\end{itemize}
+
+\subsubsection*{Percolation steps}
+When an event is matched by a PercolationRule, a PercolationStep is recorded. This step stores:
+\begin{itemize}
+	\item the energy of the current relation after consumption (meaning, after that it “traversed” the relation),
+    \item the user group for which this step applies,
+    \item the URI of the object,
+    \item the path of the percolation so far (meaning which relations it traversed).
+\end{itemize}
+    
+If the energy left after consumption is sufficient enough (the current minimum value is arbitrarily set to 20), a set of next relations is computed, and the process is repeated again, until no energy is left or until the percolation process timed out.
+Listing all PercolationSteps provides a log of the percolation process.
+
 \section*{Related Work} 
 
 
-%\begin{figure}[htb]
-%  \centering
-%  \includegraphics[width=.3\linewidth]{flies}    
-%  \caption{Figure caption}
-%  \label{fig:figure}
-%\end{figure}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=.7\linewidth]{figures/aether-mechanism}
+  \caption{Figure caption}
+  \label{fig:figure1}
+\end{figure}
 
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=.7\linewidth]{figures/parade-data-model}
+  \caption{Figure caption}
+  \label{fig:figure2}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=.7\linewidth]{figures/peroclation-example}
+  \caption{Figure caption}
+  \label{fig:figure3}
+\end{figure}
 
 
 \section*{Acknowledgments} 
