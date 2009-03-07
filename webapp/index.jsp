@@ -92,8 +92,8 @@ Hi <%=u.getNickname() %>! Have a nice time on ParaDe!</div><br><br><br>
 
 <jsp:useBean id="indexBean" class="org.makumba.parade.view.beans.IndexBean" />
 <mak:value expr="row.id" printVar="rowId"/>
-<c:set var="vWhere">t.row = row and t.cleanTarget() in (<%=indexBean.getAllowedAntOperations() %>)</c:set>
-<mak:list from="AntTarget t" where="#{vWhere}" separator=", "><a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value expr="t.target"/></a></mak:list>
+<c:set var="vWhere">t.row = row and t.target in (<%=indexBean.getAllowedAntOperations() %>)</c:set>
+<mak:list from="AntTarget t" where="#{vWhere}" separator=", " orderBy="t.target"><a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value expr="t.target"/></a></mak:list>
 </td>
 </td>
 <td><mak:value expr="row.webappPath"/></td>
