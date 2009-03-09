@@ -25,7 +25,7 @@
 <body>
 
 <h3>People notified for "${param.user} --(${param.action})--> ${param.objectURL}"</h3>
-<cache:cache key="${param.objectURL} ${param.action}" time="120" scope="application" >
+<cache:cache key="${param.objectURL} ${param.action}" time="10" scope="application" >
 <% 
 AetherEvent ae = new AetherEvent(request.getParameter("objectURL"), request.getParameter("objectType"), request.getParameter("user"), request.getParameter("action"), new Date(), 0.2);
 InitServlet.getAether().registerEvent(ae, true);
