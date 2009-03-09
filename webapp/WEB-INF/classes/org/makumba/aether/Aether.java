@@ -101,7 +101,7 @@ public class Aether {
 
         long end = System.currentTimeMillis();
         long refresh = end - start;
-        logger.info("AETHER: percolation of event " + e.toString() + " took " + refresh + " ms");
+        logger.info("AETHER: " + (virtualPercolation?"virtual ":"") + "percolation of event " + e.toString() + " took " + refresh + " ms");
 
     }
 
