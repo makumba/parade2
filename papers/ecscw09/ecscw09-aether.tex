@@ -73,30 +73,21 @@ ParaDe (\cite{bogdan-coop08}) has been designed for a group of amateur programme
 
 In terms of its design, ParaDe is a web-based web application development environment, keeping one copy of the Intranet code for each amateur programmer. The copies are shared within ParaDe, so programmers can examine their own and other's code, compile it, test it in a web application container, and commit their code to a Concurrent Versioning System (CVS) code repository. All these operations can be performed from any web browser, which is suitable for the large geographical spreading of the community and the high mobility of its members. Furthermore, all tools needed for programming, testing and versioning code (compiler, CVS client, web application engine, database server) are readily installed behind the web interface so amateur programmers do not need to perform much installation, for which they might not be skilled enough. Also due to the potentially low-level skills of the setting members, ParaDe only shows essential features of these development tools.
 
-There are several reasons for which we thought of ParaDe as being suitable for AETHER experimentation. \textit{First} the fluid, nomadic nature of work in the setting as well as the complexity of programming are a challenging ground for providing awareness support. \textit{Second} we have full control of its programming details, and we were in fact able to do a complete re-implementation of it in preparation for the attachment of the awareness engine. \textit{Thrid}, the size of the semantic network that one can build over ParaDe constitutes a large space for focus and nimbus percolation, thereby providing a challenging ground for experimentation. Manipulating 2300 objects (source code files) for each of the 20 active developers already brings this size to the ten thousand magnitude order. When one considers the relations between these objects, the magnitude increases even further: each such source code file is related to a folder, to a user, and to its basic version in the source code repository. Furthermore, and leading to our \textit{fourth} reason for ParaDe suitability for awareness engine experimentation, a dense network of \textit{dependency relations} can be automatically identified between the source code files, thus taking the size and complexity of the semantic network even further. In all, the ParaDe case seems to fulfill our \textit{semantic network buildup} concern, due to the ability to capture a large part of the work context into the semantic network, and to provide a nearly complete and accurate set of relations between the semantic network objects. 
+There are several reasons for which we thought of ParaDe as being suitable for AETHER experimentation. \textit{First} the fluid, nomadic nature of work in the setting as well as the complexity of programming tasks and artifacts are a challenging ground for providing awareness support. In fact, ParaDe users are known to assemble their own forms of awareness support for e.g. presence awareness by using instant messaging. \textit{Second} we have full control of ParaDe programming details, and we were in fact able to do a complete re-implementation of it in preparation for the attachment of the awareness engine. \textit{Third}, the size of the semantic network that one can build over ParaDe constitutes a large space for focus and nimbus percolation, thereby providing a challenging ground for experimentation. Manipulating 2300 objects (source code files) for each of the 20 active developers already brings this size to the ten thousand magnitude order. When one considers the relations between these objects, the magnitude increases even further: each such source code file is related to a folder, to a user, and to its reference version in the source code repository. Furthermore, and leading to our \textit{fourth} reason for ParaDe suitability for awareness engine experimentation, a dense network of \textit{dependency relations} can be automatically identified between the source code files, thus taking the size and complexity of the semantic network even further. In all, the ParaDe case seems to fulfill our \textit{semantic network buildup} concern, due to the ability to capture a large part of the work context into the semantic network, and to provide a nearly complete and accurate set of relations between the semantic network objects. 
 
-We could metaphorically say that ParaDe is for awareness engine experimentation what an "ideal gas" is for thermodynamics. While it is difficult to find nowadays arrangements where a semantic network can be built with such completeness and accuracy, we believe that for example semantic technologies can advance this field so that non-programming activities and more heterogeneous and distributed systems will in the future benefit from a better-quality semantic network. In the meantime, our experiments with the "ideal gas" in the ParaDe programming domain can help us find principles and practices that will be useful for other types of collaborative distributed "knowledge work".
+We could metaphorically say that ParaDe is for awareness engine experimentation what an "ideal gas" is for thermodynamics. While it is difficult to find nowadays real-world work arrangements where a semantic network can be built with such completeness and accuracy, we believe that for example Semantic Web technologies can advance this field so that also non-programming activities and more heterogeneous and distributed systems will in the future benefit from a better-quality semantic network. In the meantime, our experiments with the "ideal gas" in the ParaDe programming domain can help us find principles and practices that will be useful for other types of collaborative distributed work.
+
+While the ParaDe context poses important awareness challenges and addresses well our semantic network buildup concern, some of our other concerns served as design constraints for our awareness engine implementation. For example we designed the ParaDe awareness engine architecture so that it will be easily \textit{tailorable} and so that it will support \textit{translucency} of its internal mechanisms to increase user understanding and trust. For our \textit{focus-nimbus manipulation concern} we decided to provide initial design solutions but take advantage of the subsequent experimentation to improve them. In general, we tended to postpone aspects that involve user interface design for the experimentation stage, and make sure that we build in 
 
 \section*{Implementation} 
 Implementing engine without compromising use
 
-description of Parade
-content and size of semantic network
+Query centric implementation
+
+Garbage collection
+
 object, relation, virtual relations
 implementation of percolation steps, etc
-
-
-\subsection*{description of parade data model}
-
-Figure \ref{fig:parade-data-model} represents the objects ParaDe works with:
-\begin{itemize}
-	\item the Parade object represents one instance of the application,
-	\item the Row object represents a user row,
-	\item the User object represents a ParaDe user,
-	\item the File object contains the meta-data of a File in the ParaDe application,
-	\item the Application object represents one project of common interest for several users,
-	\item the ActionLog object represents an action of a user and the Log object is a technical log line.
-\end{itemize}
 
 
 \subsection*{design constraints}
@@ -197,34 +188,6 @@ Listing all PercolationSteps provides a log of the percolation process.
   \includegraphics[width=.7\linewidth]{aether-mechanism}
   \caption{Aether mechanism}
   \label{fig:aether-mechanism}
-\end{figure}
-
-\begin{figure}[thb]
-  \centering
-  \includegraphics[width=.4\linewidth]{parade-data-model}
-  \caption{Parade data model}
-  \label{fig:parade-data-model}
-\end{figure}
-
-\begin{figure}[thb]
-  \centering
-  \includegraphics[width=.7\linewidth]{peroclation-example}
-  \caption{Percolation example}
-  \label{fig:percolation}
-\end{figure}
-
-\begin{figure}[thb]
-  \centering
-  \includegraphics[width=.9\linewidth]{my-work}
-  \caption{My work}
-  \label{fig:my-work}
-\end{figure}
-
-\begin{figure}[thb]
-  \centering
-  \includegraphics[width=.9\linewidth]{work-others}
-  \caption{Work of others}
-  \label{fig:work-others}
 \end{figure}
 
 \begin{figure}[thb]
