@@ -69,7 +69,7 @@
       ${actorNickname}
     </mak:object> <mak:value expr="mae.action" printVar="action" /><%=ActionTypes.getReadableAction(action)%> <mak:value
     expr="mae.objectURL" printVar="actionObject" /> <a target="directory"
-    href="<%=aetherBean.getResourceLink(actionObject, false)%>"><%=ObjectTypes.objectNameFromURL(actionObject)%></a> (<a target="command" href="aetherNimbusHistory.jsp?mae=<mak:value expr="mae.id"/>" title="What does ${sumNimbus} mean?">${sumNimbus}</a>)<br>
+    href="<%=aetherBean.getResourceLink(actionObject, false)%>"><%=ObjectTypes.objectNameFromURL(actionObject)%></a> in row <%=ObjectTypes.rowNameFromURL(actionObject)%> (<a target="command" href="aetherNimbusHistory.jsp?mae=<mak:value expr="mae.id"/>" title="What does ${sumNimbus} mean?">${sumNimbus}</a>)<br>
   </font>
 </mak:list>
 
