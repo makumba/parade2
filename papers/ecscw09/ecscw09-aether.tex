@@ -1,37 +1,3 @@
-% Title:  latex-insert
-%
-% Doc: SAMPLE.TEX
-% Original Author:   S Luz <luzs@cs.tcd.ie>    
-% Created:    19 Mar 2007           
-%
-% Change log:
-% $Log$
-% Revision 1.8  2009/03/07 01:52:39  rosso_nero
-% also adding cropped version
-%
-% Revision 1.7  2009/03/07 01:40:17  rosso_nero
-% added other figures of manu
-%
-% Revision 1.6  2009/03/07 00:27:21  rosso_nero
-% fixing quotes
-%
-% Revision 1.5  2009/03/07 00:13:37  rosso_nero
-% added manu's stuff in a semi-structured way
-%
-% Revision 1.4  2009/03/06 22:56:02  cristian_bogdan
-% implementation
-%
-% Revision 1.3  2009/03/06 22:41:47  cristian_bogdan
-% layout
-%
-% Revision 1.2  2009/03/06 22:21:09  rosso_nero
-% cristi's abstract, and some cutting down
-%
-% Revision 1.1  2009/03/06 22:05:25  rosso_nero
-% stub for the paper. cristi, learn how to do that :-p
-%
-
-
 \documentclass{ecscw2007}
 \usepackage{graphicx}
 \graphicspath{{./figures/}}
@@ -68,7 +34,8 @@ We are in the process of assembling an awareness engine experimentation ground. 
 
 \section*{Introduction}
 Awareness has long been a topic of concern for CSCW and has developed in a large variety of ways (Schimdt 2002) that make it a problematic concept, yet do not reduce the considerable amount of interest. Developing frameworks for supporting awareness in a generic way within CSCW systems has come naturally within this concern, with systems such as GroupDesk (Fuchs et al. 1995), BSCW (Bentley et al. 1997), and Interlocus (Nomura et al. 1998), NESSIE (Prinz 1999),. Most such systems come with a conceptual framework that theorizes and models awareness. Other researchers have focused on design frameworks focusing on, for example, workspace awareness (Gutwin and Greenberg, 2002), and “past events awareness” (Kirsch-Pinheiro et al. 2003). A generic spatial theory of awareness “with strong relation to physical reality and therefore [. . .] highly intuitive nature” was developed for virtual reality systems under the name of Spatial Model by Benford and Fahlén (1993), further formalized by Rodden (1996). The Aether framework (?andor et al. 1997) has been devised as a continuation of these efforts, in order to try to apply the spatial model concepts to non-geometrical spaces such as mundane files and folders, or their more generic formalization, “the semantic network”.  
-Benford and Fahlén (1993) with their collaborators have defined a Spatial Model of awareness starting from their interest in Collaborative Virtual Environments. The model has at its core three concepts called aura, focus and nimbus. An object in a virtual space carries with it an aura (a sub-space around the object) which, if it intersects the aura of another object, makes it possible for awareness to exist between the two. The level of intensity to which the awareness will exist depends on focus and nimbus. More precisely “the level of awareness that object A has of object B in Medium M is some function of A’s focus in M and B’s nimbus in M”.
+
+Benford and Fahlén (1993) with their collaborators have defined a Spatial Model of awareness starting from their interest in Collaborative Virtual Environments. The model has at its core three concepts called aura, focus and nimbus. An object in a virtual space carries with it an aura (a sub-space around the object) which, if it intersects the aura of another object, makes it possible for awareness to exist between the two. The level of intensity to which the awareness will exist depends on focus and nimbus. More precisely “the level of awareness that object A has of object B in Medium M is some function of A’s focus in M and B’s nimbus in M”.
 
 Collaborative Virtual Environments employ geometrical spaces, so in their early days, aura, focus and nimbus were defined as subspaces of a geometrical virtual space. Furthermore, the existence of an awareness level between A and B meant that potentially expensive (as limited resources) communication channels in medium M needed to be open, which explains the main reason for the existence of aura: it served as a filter to avoid unnecessary computation of awareness levels and unnecessary allocation of communication resources. 
 
@@ -82,18 +49,22 @@ Time is considered in Aether in multiple ways. On the one hand there exist media
 
 Aether thus presents an ambitious model that aims to fulfill the needs of as many collaborative applications and systems as possible. It is also based on a strong correspondence with physical reality, so apart from its theoretical sophistications, its base on aura, focus and nimbus is of intuitive nature. A very computationally intensive implementation was available at the time of its proposal, yet the practical efforts in its further deployment and evaluation were hampered by a number of issues to which we turn now. 
 
-\subsection*{The troubles with Aether}Several concerns have arisen in continuing with Aether evaluation in realistic settings. We will attempt to address these concerns in this paper.First, while Aether takes good care of the percolation and matching mechanisms once focus and nimbus were established, it was not clear what would be the levers by which the user can manipulate focus and nimbus. In an unfortunate case, this can be related to Grudin’s (1994) concept of prisoner’s dilemma in relation to groupware, where extra user work would be needed to take care of foci and nimbi without the user benefiting directly from that work. We will call this our focus-nimbus manipulation concern.
-Second, practically building such semantic networks with information extracted from off-the-shelf applications is very difficult, as these applications have closed document models. Since the proposition of Aether, this semantic network build-up concern has been addressed through open document formats and the increasing research on the Semantic Web.
+\subsection*{Issues with Aether}
+Several concerns have arisen in continuing with Aether realization and evaluation in realistic settings. We begin to address these concerns in this paper.
+First, while Aether takes good care of the percolation and matching mechanisms once focus and nimbus were established, it was not clear what would be the levers by which the user can manipulate focus and nimbus. In an unfortunate case, this can be related to Grudin’s (1994) concept of prisoner’s dilemma in relation to groupware, where extra user work would be needed to take care of foci and nimbi without the user benefiting directly from that work. We will call this our focus-nimbus manipulation concern.
 
-Third, the complexity of processing mechanisms taking place in an Aether engine may be difficult for end users to comprehend. We take from Dourish and Button (1998) a translucency concern that should enable artefacts we build to be sufficiently transparent for our users to be able to understand, or delve more into the details that they whish to understand, without needing to expose all technical details of the mechanisms’ implementation. As Dourish and Button put it\begin{quote}By revealing more of what lies behind them, [] ‘translucent’ interfaces [] provide cues as to not only what the system was doing, but why it was being done, and what was likely to be done next, uniquely for the immediate circumstances
+Second, practically building such semantic networks with information extracted from off-the-shelf applications is very difficult, as these applications have closed document models. Since the proposition of Aether, this semantic network build-up concern has been addressed through open document formats and the increasing research on the Semantic Web.
+
+Third, the complexity of processing mechanisms taking place in an Aether engine may be difficult for end users to comprehend. We take from Dourish and Button (1998) a translucency concern that should enable artefacts we build to be sufficiently transparent for our users to be able to understand, or delve more into the details that they whish to understand, without needing to expose all technical details of the mechanisms’ implementation. As Dourish and Button put it
+\begin{quote}By revealing more of what lies behind them, [] 'translucent' interfaces [] provide cues as to not only what the system was doing, but why it was being done, and what was likely to be done next, uniquely for the immediate circumstances
 \end{quote}
 
 Fourth, also related to complexity of an awareness engine, as well as to understanding its mechanisms, is the issue of configuration of such mechanisms, and share such configurations with other users. This tailoring concern has long been pressing in CSCW, yet it was not much addressed in relation to awareness platforms.
 
+However we do not believe that such issues should prevent CSCW from experimenting further with awareness engines. Instead, they are design challenges that should be addressed. We identified ParaDe (\cite{bogdan-coop08}), a collaborative programming sandbox, as a suitable ground for starting to address these issues through experimentation.
 
-\section*{Aether} 
+\section*{ParaDe: awareness engine experimentation field} 
 
-\section*{Issues} 
 
 \section*{Implementation} 
 description of Parade
@@ -159,7 +130,7 @@ When an event is registered to the Aether engine, it is first matched against:
 \end{itemize}
 
 \subsubsection*{Initial level}
-The initial energy level is set by the InitialPercolationRule and depending on the ``impact'' of the event, a coefficient can be specified in the AetherEvent. For example, in the case of an event having as action ``save'', the coefficient will depend on the amount of changes done. If no change is done, the coefficient will be 0. If a lot of changes were made to the file, it may be for instance 1.4 (40% of the file was changed).
+The initial energy level is set by the InitialPercolationRule and depending on the ``impact'' of the event, a coefficient can be specified in the AetherEvent. For example, in the case of an event having as action ``save'', the coefficient will depend on the amount of changes done. If no change is done, the coefficient will be 0. If a lot of changes were made to the file, it may be for instance 1.4 (40\% of the file was changed).
 The initial energy level is therefore the product of the initial level described by the InitialPercolationRule and the coefficient (which by default is 1, if no coefficient was indicated by the initial event).
 In the current implementation, ParaDe calculates this coefficient for file modifications, depending on how many lines were added or removed. Of course a more fine-grained process could be applied.
 
