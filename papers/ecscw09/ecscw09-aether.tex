@@ -6,6 +6,9 @@
 %
 % Change log:
 % $Log$
+% Revision 1.8  2009/03/07 01:52:39  rosso_nero
+% also adding cropped version
+%
 % Revision 1.7  2009/03/07 01:40:17  rosso_nero
 % added other figures of manu
 %
@@ -39,7 +42,7 @@
 
 %%\newcommand{\VERSION}  {$Revision$, \today}
 
-\title{Aether-based Awareness Support for a\\Community of Amateur Programmers}
+\title{AETHER in ParaDe: Setting the Stage for Awareness Engine Experimentation}
 \author{Author 1, Author 2}
 \affiliation{Institute 1, Country, Institute 2, Country} 
 \email{author1@institute1.org, author1@institute1.org}
@@ -60,12 +63,33 @@
 
 
 \begin{abstract}
-Aether is a framework that defines an awareness engine working over spaces made by semantic networks of objects. Aether defines generic manipulation of awareness information irrespective of the kinds of objects from the semantic network. Despite the potential power of such a generic mechanism, building and maintaining a shared semantic network in an actual collaborative work setting poses important challenges with today's software oriented towards personal computing. We therefore identified a case which presents a better opportunity for building such a semantic network for applying Aether mechanisms to provide awareness support. Our case is a multi-user programming sandbox for a community of amateur programmers. We describe our Aether implementation and present our plan for evaluating it in the setting.
+We are in the process of assembling an awareness engine experimentation ground. The AETHER awareness engine principles still look promising after more than a decade, yet their implementation and long-term use on real-life systems were hampered by a number of issues, which we describe in this paper. Due to such issues we believe that generic awareness engine support for groupware is still far in the future, and therefore it is important, as an intermediate step, to build experimentation grounds for awareness engines like AETHER. We found a suitable setting for such experimentation in a collaborative programming application called ParaDe. We implemented generic AETHER awareness support for ParaDe and we are preparing experimentation in regard to awareness widgets, awareness engine performance, awareness engine configuration, and long-term evaluation of AETHER-mediated awareness in the collaborative tool.
 \end{abstract}
 
-\section*{Introduction} 
+\section*{Introduction}
+Awareness has long been a topic of concern for CSCW and has developed in a large variety of ways (Schimdt 2002) that make it a problematic concept, yet do not reduce the considerable amount of interest. Developing frameworks for supporting awareness in a generic way within CSCW systems has come naturally within this concern, with systems such as GroupDesk (Fuchs et al. 1995), BSCW (Bentley et al. 1997), and Interlocus (Nomura et al. 1998), NESSIE (Prinz 1999),. Most such systems come with a conceptual framework that theorizes and models awareness. Other researchers have focused on design frameworks focusing on, for example, workspace awareness (Gutwin and Greenberg, 2002), and “past events awareness” (Kirsch-Pinheiro et al. 2003). A generic spatial theory of awareness “with strong relation to physical reality and therefore [. . .] highly intuitive nature” was developed for virtual reality systems under the name of Spatial Model by Benford and Fahlén (1993), further formalized by Rodden (1996). The Aether framework (?andor et al. 1997) has been devised as a continuation of these efforts, in order to try to apply the spatial model concepts to non-geometrical spaces such as mundane files and folders, or their more generic formalization, “the semantic network”.  
+Benford and Fahlén (1993) with their collaborators have defined a Spatial Model of awareness starting from their interest in Collaborative Virtual Environments. The model has at its core three concepts called aura, focus and nimbus. An object in a virtual space carries with it an aura (a sub-space around the object) which, if it intersects the aura of another object, makes it possible for awareness to exist between the two. The level of intensity to which the awareness will exist depends on focus and nimbus. More precisely “the level of awareness that object A has of object B in Medium M is some function of A’s focus in M and B’s nimbus in M”.
 
-\cite{Bowers91}
+Collaborative Virtual Environments employ geometrical spaces, so in their early days, aura, focus and nimbus were defined as subspaces of a geometrical virtual space. Furthermore, the existence of an awareness level between A and B meant that potentially expensive (as limited resources) communication channels in medium M needed to be open, which explains the main reason for the existence of aura: it served as a filter to avoid unnecessary computation of awareness levels and unnecessary allocation of communication resources. 
+
+Starting from Rodden's (1996) abstract mapping of aura, focus and nimbus to non-geometrical spaces, the Aether model was proposed as a basic service that CSCW systems could offer, in order for their applications to benefit from generic awareness level computation between the objects these applications work with. As different from the initial Spatial Model, Aether works in a non-geometric space called semantic network made by whatever objects the applications work with, including documents, messages, calendar and task records, etc. The users benefit from awareness level computation by their presence in the semantic network, and presence is registered via applications that manipulate various objects from the network. 
+
+A crucial part of the network are the relations between the objects, which help create the semantic network of objects, thus creating a space where notions of distance can be defined.  Relations are modified by the applications during user or agent operations. A change in a relation automatically implements what other CSCW systems would call an event. Relations are also first-class objects i.e. they can also have an aura, focus, and nimbus, therefore awareness levels can be computed in regard to them. 
+
+To the focus-nimbus matching "law" defined by the Spatial Model, Aether also adds the concept of medium "filtering", whereby the medium can "consume" aura, focus or nimbus as they propagate (“percolate” is the Aether term), therefore a focus or nimbus will be finite subspaces having what in a geometrical space would be called a “shape”. In other words, if two objects are situated at a certain “distance” from each other, one’s focus may be consumed out while propagating in the relation chain leading up to the other, thereby result in a zero (no) awareness level.
+
+Time is considered in Aether in multiple ways. On the one hand there exist media that are propagating aura, focus or nimbus in specific ways, such as a medium that only propagates “right now” thereby resulting in synchronous-only behaviours. On the other hand, aura, focus or nimbus consumption are also defined in time, in that they might get reduced or increased in time in different ways, depending on the nature of the object or relation they are associated with. In the same line of thought, objects that become “un-interesting” in time in that no other objects have an awareness level to them can be “garbage collected” for sustainability and performance reasons.
+
+Aether thus presents an ambitious model that aims to fulfill the needs of as many collaborative applications and systems as possible. It is also based on a strong correspondence with physical reality, so apart from its theoretical sophistications, its base on aura, focus and nimbus is of intuitive nature. A very computationally intensive implementation was available at the time of its proposal, yet the practical efforts in its further deployment and evaluation were hampered by a number of issues to which we turn now. 
+
+\subsection*{The troubles with Aether}Several concerns have arisen in continuing with Aether evaluation in realistic settings. We will attempt to address these concerns in this paper.First, while Aether takes good care of the percolation and matching mechanisms once focus and nimbus were established, it was not clear what would be the levers by which the user can manipulate focus and nimbus. In an unfortunate case, this can be related to Grudin’s (1994) concept of prisoner’s dilemma in relation to groupware, where extra user work would be needed to take care of foci and nimbi without the user benefiting directly from that work. We will call this our focus-nimbus manipulation concern.
+Second, practically building such semantic networks with information extracted from off-the-shelf applications is very difficult, as these applications have closed document models. Since the proposition of Aether, this semantic network build-up concern has been addressed through open document formats and the increasing research on the Semantic Web.
+
+Third, the complexity of processing mechanisms taking place in an Aether engine may be difficult for end users to comprehend. We take from Dourish and Button (1998) a translucency concern that should enable artefacts we build to be sufficiently transparent for our users to be able to understand, or delve more into the details that they whish to understand, without needing to expose all technical details of the mechanisms’ implementation. As Dourish and Button put it\begin{quote}By revealing more of what lies behind them, [] ‘translucent’ interfaces [] provide cues as to not only what the system was doing, but why it was being done, and what was likely to be done next, uniquely for the immediate circumstances
+\end{quote}
+
+Fourth, also related to complexity of an awareness engine, as well as to understanding its mechanisms, is the issue of configuration of such mechanisms, and share such configurations with other users. This tailoring concern has long been pressing in CSCW, yet it was not much addressed in relation to awareness platforms.
+
 
 \section*{Aether} 
 
