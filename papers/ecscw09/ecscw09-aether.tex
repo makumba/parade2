@@ -11,8 +11,6 @@
 %%\usepackage[pdfmark,bookmarksopen,colorlinks,urlcolor=red]{hyperref}
 %%\usepackage{url}
 
-%%\newcommand{\VERSION}  {$Revision$, \today}
-
 \title{AETHER in ParaDe: Setting the Stage for Awareness Engine Experimentation}
 \author{Author 1, Author 2}
 \affiliation{Institute 1, Country, Institute 2, Country} 
@@ -34,7 +32,7 @@
 
 
 \begin{abstract}
-We are in the process of assembling an awareness engine experimentation ground. The AETHER awareness engine principles still look promising after more than a decade, yet their implementation and long-term use on real-life systems were hampered by a number of issues, which we describe in this paper. Due to such issues we believe that generic awareness engine support for groupware is still far in the future, and therefore it is important, as an intermediate step, to build experimentation grounds for awareness engines like AETHER. We found a suitable setting for such experimentation in a collaborative programming application called ParaDe. We implemented generic AETHER awareness support for ParaDe and we are preparing experimentation in regard to awareness widgets, awareness engine performance, awareness engine configuration, and long-term evaluation of AETHER-mediated awareness in the collaborative tool.
+We are in the process of assembling an awareness engine experimentation ground. The AETHER awareness engine principles still look promising after more than a decade, yet their implementation and long-term use on real-life systems were hampered by a number of issues, which we describe in this paper. Due to such issues we believe that generic awareness engine support for groupware is still far in the future, and therefore it is important, as an intermediate step, to build experimentation grounds for awareness engines like AETHER. We found a suitable setting for such experimentation in a collaborative programming application called ParaDe. We implemented generic AETHER awareness support for ParaDe and we are preparing experimentation in regard to awareness widgets, awareness engine performance, awareness engine configuration, and long-term evaluation of AETHER-mediated awareness in the collaborative tool. Experimentation will involve the participation of ParaDe users.
 \end{abstract}
 
 \section*{Introduction}
@@ -69,26 +67,45 @@ Several concerns have arisen in continuing with Aether realization and evaluatio
 However we do not believe that such issues should prevent CSCW from experimenting further with awareness engines. Instead, they are design challenges that should be addressed. We identified ParaDe, a collaborative programming sandbox, as a suitable ground for starting to address these issues through experimentation. 
 
 \section*{ParaDe: awareness engine experimentation field} 
-ParaDe (\cite{bogdan-coop08}) has been designed for a group of amateur programmers to be able to maintain the code of a large intranet of a student organization spread out in 70 locations in Europe. It has been used since 2002 by a team of volunteers which has numbered between 10 and 20 programmers, and between 5 and 10 testers. As in many student settings, membership of the team has changed quite often, yet the voluntary activity could be sustained, to develop and maintain the student organization intranet which at present consists of over 2300 source code files. The team of programmers works in a highly ad-hoc manner, without fixed times for work, with various times and  periods of engagement with the programming activity, and scattered over the 70 locations, with few members being co-located or having the opportunity to meet. A handful of face-to-face team meetings are scheduled every year, yet not all members can attend due to limited places or due to obligations outside the voluntary setting. Such a setting can be regarded as \textit{nomadic} (\cite{bogdan-coop06}).
+ParaDe (\cite{bogdan-coop08}) has been designed for a group of amateur programmers to be able to maintain the code of a large intranet of a student organization spread out in 70 locations in Europe. It has been used since 2002 by a team of volunteers which has numbered between 10 and 20 programmers, and between 5 and 10 testers. As in many student settings, membership of the team has changed quite often, yet the voluntary activity could be sustained, to develop and maintain the student organization intranet which at present consists of over 2300 source code files. The team of programmers works in a highly ad-hoc manner, without fixed times for work, with various times and  periods of engagement with the programming activity, and scattered over the 70 locations, with few members being co-located or having the opportunity to meet and work in a co-located manner. A handful of face-to-face team meetings are scheduled every year, yet not all members can attend due to limited places or due to obligations outside the voluntary setting. Such a setting can be regarded as \textit{nomadic} (\cite{bogdan-coop06}).
 
+%TODO: refer to some picture
 In terms of its design, ParaDe is a web-based web application development environment, keeping one copy of the Intranet code for each amateur programmer. The copies are shared within ParaDe, so programmers can examine their own and other's code, compile it, test it in a web application container, and commit their code to a Concurrent Versioning System (CVS) code repository. All these operations can be performed from any web browser, which is suitable for the large geographical spreading of the community and the high mobility of its members. Furthermore, all tools needed for programming, testing and versioning code (compiler, CVS client, web application engine, database server) are readily installed behind the web interface so amateur programmers do not need to perform much installation, for which they might not be skilled enough. Also due to the potentially low-level skills of the setting members, ParaDe only shows essential features of these development tools.
 
-There are several reasons for which we thought of ParaDe as being suitable for AETHER experimentation. \textit{First} the fluid, nomadic nature of work in the setting as well as the complexity of programming tasks and artifacts are a challenging ground for providing awareness support. In fact, ParaDe users are known to assemble their own forms of awareness support for e.g. presence awareness by using instant messaging. \textit{Second} we have full control of ParaDe programming details, and we were in fact able to do a complete re-implementation of it in preparation for the attachment of the awareness engine. \textit{Third}, the size of the semantic network that one can build over ParaDe constitutes a large space for focus and nimbus percolation, thereby providing a challenging ground for experimentation. Manipulating 2300 objects (source code files) for each of the 20 active developers already brings this size to the ten thousand magnitude order. When one considers the relations between these objects, the magnitude increases even further: each such source code file is related to a folder, to a user, and to its reference version in the source code repository. Furthermore, and leading to our \textit{fourth} reason for ParaDe suitability for awareness engine experimentation, a dense network of \textit{dependency relations} can be automatically identified between the source code files, thus taking the size and complexity of the semantic network even further. In all, the ParaDe case seems to fulfill our \textit{semantic network buildup} concern, due to the ability to capture a large part of the work context into the semantic network, and to provide a nearly complete and accurate set of relations between the semantic network objects. 
+There are several reasons for which we thought of ParaDe as being suitable for AETHER experimentation. \textit{First} the fluid, nomadic nature of work in the setting as well as the complexity of programming tasks and artifacts are a challenging ground for providing awareness support. In fact, ParaDe users are known to assemble their own forms of awareness support for e.g. presence awareness by using instant messaging.
+ \textit{Second} we developed good relations wit the ParaDe users, and we were in fact able to do a complete ParaDe re-implementation in preparation for the attachment of the awareness engine. 
+ \textit{Third}, the size of the semantic network that one can build over ParaDe constitutes a large space for focus and nimbus percolation, thereby providing a challenging ground for experimentation. Manipulating 2300 objects (source code files) for each of the 20 active developers already brings this size to the ten thousand magnitude order. When one considers the relations between these objects, the magnitude increases even further: each such source code file is related to a folder, to a user, and to its reference version in the source code repository. 
+ Furthermore, and leading to our \textit{fourth} reason for ParaDe suitability for awareness engine experimentation, a dense network of \textit{dependency relations} can be automatically identified between the source code files, thus taking the size and complexity of the semantic network even further. In all, the ParaDe case seems to fulfill our \textit{semantic network buildup} concern, due to the ability to capture a large part of the work context into the semantic network, and to provide a nearly complete and accurate set of relations between the semantic network objects. 
 
 We could metaphorically say that ParaDe is for awareness engine experimentation what an "ideal gas" is for thermodynamics. While it is difficult to find nowadays real-world work arrangements where a semantic network can be built with such completeness and accuracy, we believe that for example Semantic Web technologies can advance this field so that also non-programming activities and more heterogeneous and distributed systems will in the future benefit from a better-quality semantic network. In the meantime, our experiments with the "ideal gas" in the ParaDe programming domain can help us find principles and practices that will be useful for other types of collaborative distributed work.
 
 While the ParaDe context poses important awareness challenges and addresses well our semantic network buildup concern, some of our other concerns served as design constraints for our awareness engine implementation. For example we designed the ParaDe awareness engine architecture so that it will be easily \textit{tailorable} and so that it will support \textit{translucency} of its internal mechanisms to increase user understanding and trust. For our \textit{focus-nimbus manipulation concern} we decided to provide initial design solutions but take advantage of the subsequent experimentation to improve them. In general, we tended to postpone aspects that involve user interface design for the experimentation stage, and make sure that we build in 
 
 \section*{Implementation} 
+Besides our AETHER-related concerns already expressed, we aimed to implement an awareness engine that would not make many ParaDe-related assumptions and that would be usable without compromising the present user experience, in terms of e.g. response time and familiarity with the present interface. Based on earlier experiences with AETHER described by \cite{sandor97} we identified \textit{performance of percolation} as an important design constraint for our architecture. In order to be able to process a large semantic network such as ParaDe's in satisfactory time, we decided to employ database management system (DBMS) technologies, which are designed to perform well for large amounts of data. In the DBMS domain, the \textit{database query} is a fundamental unit of work, and is typically written in a derivative of Structured Query Language (SQL). While DBMS systems are optimized to run most queries fast enough, the single most important performance factor of an application (e.g.  ParaDe or the awareness engine) employing a DBMS is the number of queries sent from the application to the DBMS. As part of our work with another technology (Makumba, www.makumba.org) we acquired quite a lot of experience with \textit{query-centric} ways of developing applications, especially in regard to aggregating more \textit{query fragments} into a single query, to reduce the number of queries sent to the database back-end (DBMS).  We decided to apply such query aggregation techniques here,  and thus we have obtained a query-centric awareness engine implementation. 
+
+
+
+
+
+
+
 Implementing engine without compromising use
 
 Query centric implementation
 
 Garbage collection
 
+the community feeling, relaxed focus
+for now we focused on percolation and its tailorability and translucency
+
 object, relation, virtual relations
+
+anticipative awareness
+
 implementation of percolation steps, etc
 
+RELATED WORK
 
 \subsection*{design constraints}
 
