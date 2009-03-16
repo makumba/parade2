@@ -1,6 +1,6 @@
 \documentclass{ecscw2007}
 \usepackage{graphicx}
-%\graphicspath{{./figures/}}
+\graphicspath{{./figures/}}
 
 %\usepackage[romanian]{babel}
 \usepackage{ucs}
@@ -30,182 +30,120 @@
 \maketitle
 \thispagestyle{empty}
 
+% TODO Şandor
+% TODO anticipative awareness
 
 \begin{abstract}
 We are in the process of assembling an awareness engine experimentation ground. The AETHER awareness engine principles still look promising after more than a decade, yet their implementation and long-term use on real-life systems were hampered by a number of issues, which we describe in this paper. Due to such issues we believe that generic awareness engine support for groupware is still far in the future, and therefore it is important, as an intermediate step, to build experimentation grounds for awareness engines like AETHER. We found a suitable setting for such experimentation in a collaborative programming application called ParaDe. We implemented generic AETHER awareness support for ParaDe and we are preparing experimentation in regard to awareness widgets, awareness engine performance, awareness engine configuration, and long-term evaluation of AETHER-mediated awareness in the collaborative tool. Experimentation will involve the participation of ParaDe users.
 \end{abstract}
 
 \section*{Introduction}
-Awareness has long been a topic of concern for CSCW and has developed in a large variety of ways (\cite{schmidt02}) that make it a problematic concept, yet do not reduce the considerable amount of interest. Developing frameworks for supporting awareness in a generic way within CSCW systems has come naturally within this concern, with systems such as GroupDesk (\cite{fuchs95}), BSCW (\cite{bentley97}), and Interlocus \cite{nomura98}), NESSIE (\cite{prinz99}). Most such systems come with a conceptual framework that theorizes and models awareness. Other researchers have focused on design frameworks focusing on, for example, workspace awareness (\cite{gutwin02}), and ``past events awareness'' (\cite{kirsch-pinheiro03}). A generic spatial theory of awareness ``with strong relation to physical reality and therefore [. . .] highly intuitive nature'' was developed for virtual reality systems under the name of Spatial Model by Benford and Fahl\'{e}n (1993), further formalized by Rodden (1996). The Aether framework (\cite{sandor97}) has been devised as a continuation of these efforts, in order to try to apply the spatial model concepts to non-geometrical spaces such as mundane files and folders, or their more generic formalization, ``the semantic network''.  
+Awareness has long been a topic of concern for CSCW and has developed in a large variety of ways (\cite{schmidt02}) that make it a problematic concept, yet do not reduce the considerable amount of interest. Developing frameworks for supporting awareness in a generic way within CSCW systems has come naturally within this concern, with systems such as GroupDesk (\cite{fuchs95}), BSCW (\cite{bentley97}), and Interlocus \cite{nomura98}), NESSIE (\cite{prinz99}). Most such systems come with a conceptual framework that theorizes and models awareness. Other researchers have focused on design frameworks focusing on, for example, workspace awareness (\cite{gutwin02}), and ``past events awareness'' (\cite{kirsch-pinheiro03}). A generic spatial theory of awareness ``with strong relation to physical reality and therefore [] highly intuitive nature'' was developed for virtual reality systems under the name of Spatial Model by \cite{benford93}.
+%, further formalized by \cite{rodden96}
+The Spatial Model has at its core the concepts of focus and nimbus; the focus represents what a user is interested in, and the nimbus of an object is meant to 'attract' user attention to it.
+%An object in a virtual space carries with it an aura (a sub-space around the object) which, if it intersects the aura of another object, makes it possible for awareness to exist between the two. 
+%The level of intensity to which the awareness will exist depends on focus and nimbus. 
+%More precisely 
+Then 
+``the level of awareness that object A has of object B in Medium M is some function of A's focus in M and B's nimbus in M''.
 
-Benford and Fahl\'{e}n (1993) with their collaborators have defined a Spatial Model of awareness starting from their interest in Collaborative Virtual Environments. The model has at its core three concepts called aura, focus and nimbus. An object in a virtual space carries with it an aura (a sub-space around the object) which, if it intersects the aura of another object, makes it possible for awareness to exist between the two. The level of intensity to which the awareness will exist depends on focus and nimbus. More precisely ``the level of awareness that object A has of object B in Medium M is some function of A's focus in M and B's nimbus in M''.
 
-Collaborative Virtual Environments employ geometrical spaces, so in their early days, aura, focus and nimbus were defined as subspaces of a geometrical virtual space. Furthermore, the existence of an awareness level between A and B meant that potentially expensive (as limited resources) communication channels in medium M needed to be open, which explains the main reason for the existence of aura: it served as a filter to avoid unnecessary computation of awareness levels and unnecessary allocation of communication resources. 
+%Collaborative Virtual Environments employ geometrical spaces, so in their early days, aura, focus and nimbus were defined as subspaces of a geometrical virtual space. Furthermore, the existence of an awareness level between A and B meant that potentially expensive (as limited resources) communication channels in medium M needed to be open, which explains the main reason for the existence of aura: it served as a filter to avoid unnecessary computation of awareness levels and unnecessary allocation of communication resources. 
 
-Starting from Rodden's (1996) abstract mapping of aura, focus and nimbus to non-geometrical spaces, the Aether model was proposed as a basic service that CSCW systems could offer, in order for their applications to benefit from generic awareness level computation between the objects these applications work with. As different from the initial Spatial Model, Aether works in a non-geometric space called semantic network made by whatever objects the applications work with, including documents, messages, calendar and task records, etc. The users benefit from awareness level computation by their presence in the semantic network, and presence is registered via applications that manipulate various objects from the network. 
-
-A crucial part of the network are the relations between the objects, which help create the semantic network of objects, thus creating a space where notions of distance can be defined.  Relations are modified by the applications during user or agent operations. A change in a relation automatically implements what other CSCW systems would call an event. Relations are also first-class objects i.e. they can also have an aura, focus, and nimbus, therefore awareness levels can be computed in regard to them. 
-
-To the focus-nimbus matching "law" defined by the Spatial Model, Aether also adds the concept of medium "filtering", whereby the medium can "consume" aura, focus or nimbus as they propagate (``percolate'' is the Aether term), therefore a focus or nimbus will be finite subspaces having what in a geometrical space would be called a ``shape''. In other words, if two objects are situated at a certain ``distance'' from each other, one's focus may be consumed out while propagating in the relation chain leading up to the other, thereby result in a zero (no) awareness level.
-
-Time is considered in Aether in multiple ways. On the one hand there exist media that are propagating aura, focus or nimbus in specific ways, such as a medium that only propagates ``right now'' thereby resulting in synchronous-only behaviours. On the other hand, aura, focus or nimbus consumption are also defined in time, in that they might get reduced or increased in time in different ways, depending on the nature of the object or relation they are associated with. In the same line of thought, objects that become ``un-interesting'' in time in that no other objects have an awareness level to them can be ``garbage collected'' for sustainability and performance reasons.
-
-Aether thus presents an ambitious model that aims to fulfill the needs of as many collaborative applications and systems as possible. It is also based on a strong correspondence with physical reality, so apart from its theoretical sophistications, its base on aura, focus and nimbus is of intuitive nature. A very computationally intensive implementation was available at the time of its proposal, yet the practical efforts in its further deployment and evaluation were hampered by a number of issues to which we turn now. 
+% Starting from Rodden's (1996) abstract mapping of aura, focus and nimbus to non-geometrical spaces,
+The AETHER model was proposed as a basic service that CSCW systems could offer, in order for their applications to benefit from generic awareness level computation between the objects these applications work with. As different from the initial Spatial Model, AETHER works in a non-geometric space called semantic network made by whatever objects the applications work with, including documents, messages, calendar and task records, etc. Aura, focus and nimbus are said to \textit{percolate} in this space. AETHER thus presents an ambitious model that aims to fulfill the needs of as many collaborative applications and systems as possible. It is also based on a strong correspondence with physical reality, so apart from its theoretical sophistications, its base on aura, focus and nimbus is of intuitive nature.
+% A very computationally intensive implementation was available at the time of its proposal, yet the practical efforts in its further deployment and evaluation were hampered by a number of issues to which we turn now. 
 
 \subsection*{Issues with Aether}
-Several concerns have arisen in continuing with Aether realization and evaluation in realistic settings. We begin to address these concerns in this paper.
-\textit{First}, while Aether takes good care of the percolation and matching mechanisms once focus and nimbus were established, it was not clear what would be the levers by which the user can manipulate focus and nimbus. In an unfortunate case, this can be related to Grudin's (1994) concept of prisoner's dilemma in relation to groupware, where extra user work would be needed to take care of foci and nimbi without the user benefiting directly from that work. We will call this our \textit{focus-nimbus manipulation concern}.
-
-\textit{Second}, practically building and maintaining such semantic networks with information extracted from off-the-shelf applications is very difficult, as these applications have closed document models. This is the \textit{semantic network buildup} concern. The concern is not only related to the availability of data for a semantic network but also to the quality of the data. Often a relation between two objects that are present in a semantic network exists in a medium or form that is not accessible to the awareness engine, thereby compromising its abilities to perform useful percolation.
-
-\textit{Third}, the complexity of processing mechanisms taking place in an Aether engine may be difficult for end users to comprehend. We take from Dourish and Button (1998) a \textit{translucency concern} that should enable artefacts we build to be sufficiently transparent for our users to be able to understand, or delve more into the details that they whish to understand, without needing to expose all technical details of the mechanisms' implementation. As Dourish and Button put it
-\begin{quote}By revealing more of what lies behind them, [] 'translucent' interfaces [] provide cues as to not only what the system was doing, but why it was being done, and what was likely to be done next, uniquely for the immediate circumstances
-\end{quote}
-
-\textit{Fourth}, also related to complexity of an awareness engine, as well as to understanding its mechanisms, is the issue of configuration of such mechanisms, and share such configurations with other users. This \textit{tailoring concern} has long been pressing in CSCW, yet it was not much addressed in relation to awareness platforms.
-
-However we do not believe that such issues should prevent CSCW from experimenting further with awareness engines. Instead, they are design challenges that should be addressed. We identified ParaDe, a collaborative programming sandbox, as a suitable ground for starting to address these issues through experimentation. 
+Several concerns have arisen in continuing with AETHER realization and evaluation in realistic settings. While AETHER takes good care of the percolation and matching mechanisms once focus and nimbus were established, it was not clear what would be the levers by which the user can manipulate focus and nimbus. 
+%In an unfortunate case, this can be related to Grudin's (1994) concept of prisoner�s dilemma in relation to groupware, where extra user work would be needed to take care of foci and nimbi without the user benefiting directly from that work.
+We will call this our \textit{focus-nimbus manipulation concern}. Practically building and maintaining such semantic networks with information extracted from off-the-shelf applications is very difficult, as these applications have closed document models. This is the \textit{semantic network buildup} concern. The concern is not only related to the availability of data for a semantic network but also to the quality of the data. Often a relation between two objects that are present in a semantic network exists in a medium or form that is not accessible to the awareness engine, thereby compromising its abilities to perform useful percolation. The complexity of processing mechanisms taking place in an Aether engine may be difficult for end users to comprehend. We take from Dourish and Button (1998) a \textit{translucency concern} that should enable artefacts we build to be sufficiently transparent for our users to be able to understand, or delve more into the details that they whish to understand, without needing to expose all technical details of the mechanisms' implementation. 
+%As Dourish and Button put it
+%\begin{quote}By revealing more of what lies behind them, [] 'translucent' interfaces [] provide cues as to not only what the system was doing, but why it was being done, and what was likely to be done next, uniquely for the immediate circumstances
+%\end{quote}
+Also related to complexity of an awareness engine, as well as to understanding its mechanisms, is the issue of configuration of such mechanisms, and share such configurations with other users. This \textit{tailoring concern} has long been pressing in CSCW, yet it was not much addressed in relation to awareness platforms. However we do not believe that such issues should prevent CSCW from experimenting further with awareness engines. Instead, they are design challenges that should be addressed. We identified ParaDe, a collaborative programming sandbox, as a suitable ground for starting to address these issues through experimentation. 
 
 \section*{ParaDe: awareness engine experimentation field} 
-ParaDe (\cite{bogdan-coop08}) has been designed for a group of amateur programmers to be able to maintain the code of a large intranet of a student organization spread out in 70 locations in Europe. It has been used since 2002 by a team of volunteers which has numbered between 10 and 20 programmers, and between 5 and 10 testers. As in many student settings, membership of the team has changed quite often, yet the voluntary activity could be sustained, to develop and maintain the student organization intranet which at present consists of over 2300 source code files. The team of programmers works in a highly ad-hoc manner, without fixed times for work, with various times and  periods of engagement with the programming activity, and scattered over the 70 locations, with few members being co-located or having the opportunity to meet and work in a co-located manner. A handful of face-to-face team meetings are scheduled every year, yet not all members can attend due to limited places or due to obligations outside the voluntary setting. Such a setting can be regarded as \textit{nomadic} (\cite{bogdan-coop06}).
+ParaDe (Parallel Development, \cite{bogdan-coop08}) has been designed for a group of amateur programmers to be able to maintain the code of a large intranet of a student organization spread out in 70 locations in Europe. It has been used since 2002 by a team of volunteers which has numbered between 10 and 20 programmers, and between 5 and 10 testers. As in many student settings, membership of the team has changed quite often, yet the voluntary activity could be sustained, to develop and maintain the student organization intranet which at present consists of over 2300 source code files. The team of programmers works in a highly ad-hoc manner, without fixed times for work, with various times and  periods of engagement with the programming activity, and scattered over the 70 locations, with few members being co-located or having the opportunity to meet and work in a co-located manner. A handful of face-to-face team meetings are scheduled every year, yet not all members can attend due to limited places or due to obligations outside the voluntary setting. Such a setting can be regarded as \textit{nomadic} (\cite{bogdan-coop08}).
 
 %TODO: refer to some picture
-In terms of its design, ParaDe is a web-based web application development environment, keeping one copy of the Intranet code for each amateur programmer. The copies are shared within ParaDe, so programmers can examine their own and other's code, compile it, test it in a web application container, and commit their code to a Concurrent Versioning System (CVS) code repository. All these operations can be performed from any web browser, which is suitable for the large geographical spreading of the community and the high mobility of its members. Furthermore, all tools needed for programming, testing and versioning code (compiler, CVS client, web application engine, database server) are readily installed behind the web interface so amateur programmers do not need to perform much installation, for which they might not be skilled enough. Also due to the potentially low-level skills of the setting members, ParaDe only shows essential features of these development tools.
+In terms of its design, ParaDe is a web-based web application development environment, keeping one copy of the Intranet code for each amateur programmer. The copy called "manu-a" is browsed in Figure \ref{fig:parade}, belonging to the user "manu". The copies are shared within ParaDe, so programmers can examine their own and other's code, compile it, test it in a web application container, and commit their code to a Concurrent Versioning System (CVS) code repository. All these operations can be performed from any web browser, which is suitable for the large geographical spreading of the community and the high mobility of its members. Furthermore, all tools needed for programming, testing and versioning code (compiler, CVS client, web application engine, database server) are readily installed behind the web interface so amateur programmers do not need to perform much installation, for which they might not be skilled enough. Also due to the potentially low-level skills of the setting members, ParaDe only shows essential features of these development tools. 
 
 There are several reasons for which we thought of ParaDe as being suitable for AETHER experimentation. \textit{First} the fluid, nomadic nature of work in the setting as well as the complexity of programming tasks and artifacts are a challenging ground for providing awareness support. In fact, ParaDe users are known to assemble their own forms of awareness support for e.g. presence awareness by using instant messaging.
  \textit{Second} we developed good relations wit the ParaDe users, and we were in fact able to do a complete ParaDe re-implementation in preparation for the attachment of the awareness engine. 
  \textit{Third}, the size of the semantic network that one can build over ParaDe constitutes a large space for focus and nimbus percolation, thereby providing a challenging ground for experimentation. Manipulating 2300 objects (source code files) for each of the 20 active developers already brings this size to the ten thousand magnitude order. When one considers the relations between these objects, the magnitude increases even further: each such source code file is related to a folder, to a user, and to its reference version in the source code repository. 
  Furthermore, and leading to our \textit{fourth} reason for ParaDe suitability for awareness engine experimentation, a dense network of \textit{dependency relations} can be automatically identified between the source code files, thus taking the size and complexity of the semantic network even further. In all, the ParaDe case seems to fulfill our \textit{semantic network buildup} concern, due to the ability to capture a large part of the work context into the semantic network, and to provide a nearly complete and accurate set of relations between the semantic network objects. 
 
-We could metaphorically say that ParaDe is for awareness engine experimentation what an "ideal gas" is for thermodynamics. While it is difficult to find nowadays real-world work arrangements where a semantic network can be built with such completeness and accuracy, we believe that for example Semantic Web technologies can advance this field so that also non-programming activities and more heterogeneous and distributed systems will in the future benefit from a better-quality semantic network. In the meantime, our experiments with the "ideal gas" in the ParaDe programming domain can help us find principles and practices that will be useful for other types of collaborative distributed work.
-
 While the ParaDe context poses important awareness challenges and addresses well our semantic network buildup concern, some of our other concerns served as design constraints for our awareness engine implementation. For example we designed the ParaDe awareness engine architecture so that it will be easily \textit{tailorable} and so that it will support \textit{translucency} of its internal mechanisms to increase user understanding and trust. For our \textit{focus-nimbus manipulation concern} we decided to provide initial design solutions but take advantage of the subsequent experimentation to improve them. In general, we tended to postpone aspects that involve user interface design for the experimentation stage, and make sure that we build in 
 
-\section*{Implementation} 
-Besides our AETHER-related concerns already expressed, we aimed to implement an awareness engine that would not make many ParaDe-related assumptions and that would be usable without compromising the present user experience, in terms of e.g. response time and familiarity with the present interface. Based on earlier experiences with AETHER described by \cite{sandor97} we identified \textit{performance of percolation} as an important design constraint for our architecture. In order to be able to process a large semantic network such as ParaDe's in satisfactory time, we decided to employ database management system (DBMS) technologies, which are designed to perform well for large amounts of data. In the DBMS domain, the \textit{database query} is a fundamental unit of work, and is typically written in a derivative of Structured Query Language (SQL). While DBMS systems are optimized to run most queries fast enough, the single most important performance factor of an application (e.g.  ParaDe or the awareness engine) employing a DBMS is the number of queries sent from the application to the DBMS. As part of our work with another technology (Makumba, www.makumba.org) we acquired quite a lot of experience with \textit{query-centric} ways of developing applications, especially in regard to aggregating more \textit{query fragments} into a single query, to reduce the number of queries sent to the database back-end (DBMS).  We decided to apply such query aggregation techniques here,  and thus we have obtained a query-centric awareness engine implementation. 
+\begin{figure}[thb]
+  \centering
+  \includegraphics[width=.98\linewidth]{nimbus-history}
+  \caption{ParaDe: initial interface (top, centre, left), on which we added the initial awareness widgets (right) and percolation explanation (bottom). These 'awareness engine' frames were enlarged for illustration purposes}
+  \label{fig:parade}
+\end{figure}
 
+\section*{Awareness engine implementation} 
+Besides our AETHER-related concerns already expressed, we aimed to implement an awareness engine that would not make many ParaDe-related assumptions and that would be usable without compromising the present user experience, in terms of e.g. response time and familiarity with the present interface. Based on earlier experiences with AETHER described by \cite{sandor97} we identified \textit{performance of percolation} as an important design constraint for our architecture. In order to be able to process a large semantic network such as ParaDe's in satisfactory time, we decided to employ database management system (DBMS) technologies, which are designed to perform well for large amounts of data. In the DBMS domain, the \textit{database query} is a fundamental unit of work, and is typically written in a variant of Structured Query Language (SQL). While DBMS systems are optimized to run most queries fast enough, the single most important performance factor of an application (e.g.  ParaDe or the awareness engine) employing a DBMS is the number of queries sent from the application to the DBMS. As part of our work with another technology (Makumba, www.makumba.org) we acquired quite a lot of experience with \textit{query-centric} ways of developing applications, especially in regard to aggregating more \textit{query fragments} into a single query, to reduce the number of queries sent to the database back-end (DBMS).  We decided to apply such query aggregation techniques here,  and thus we have obtained a query-centric awareness engine implementation. 
 
+\subsection*{Building the semantic network}
+The data that the awareness engine primarily works with is the ParaDe data, which models applications (like the Intranet) and copies of the application. Each application copy contains a large set of files. A user (the copy owner) is also associated to the application copy. Over this data, a semantic network is created by defining relations among these objects. Some relations are stored in the database explicitly, like the relation between an application copy and the owner, or the code dependency relation between two files. However, we chose to define many of our relations using \textit{relation rules}, which are stored by the awareness engine as query fragments. As such, we chose not to represent some relations in the database explicitly, but to generate relations when we need them (during percolation) by integrating their query fragments in the queries we run for percolation. The reason for this is that the number of objects stored in the database would multiply manyfold if we would explicitly represent relations such as "file is in directory" or "file isVersionOf  repositoryFile", and this would affect performance and would make the semantic network more difficult to maintain. Instead, both exemplified relations are determined based on the file path. Another reason is that using relation rules allows us to create an awareness engine over any existing database. For uniformity, even the relations that are represented explicitly in our database are retrieved through relation rules. The rules become \textit{data} for the awareness engine, and the query fragments are actually stored in the database and can be changed at awareness engine runtime. Below we exemplify a relation rule that defines a \texttt{parentOf} relation between a  file and its containing directory. 
 
+\begin{quote}\texttt{SELECT f.parentURI() as toURI, 'parentOf' as type, f.URI() as fromURI \\*
+FROM File f \\*
+WHERE f.URI() IN(:fromURISet)}
+\end{quote}
 
+The rule query is used as a fragment, i.e. its sections (FROM, WHERE) can be combined with sections from other queries during percolation. The query parameter \texttt{:fromURISet} is a value maintained during the percolation process. The functions \texttt{parentURI()} and \texttt{URI()} are expanded by the Makumba technology in the queries sent to the DBMS. Their implementation, defined in relation to the \texttt{File} data type is essentially made of a series of string processing SQL calls. For example \texttt{parentURI()}, given \texttt{file://a/b.txt} returns \texttt{dir://a} by processing the URI strings. Using such functions allows us to simplify a lot the query fragments employed by the awareness engine for defining rules. 
 
+\subsection*{Percolation}
+Once the semantic network is defined (in a dynamic way via relation rules), we have the space over which we can percolate. Firstly, we maintain an action log, which collects all user actions such as opening a directory, compiling an application, looking at a file, changing a file, deploying an application for execution in a web application engine, accessing the web page produced by a source code file, etc. This action log will be application dependent, however, the only assumption made by our awareness engine implementation is that the action log is represented in the database, which is not uncommon for current logging systems. Once the actions are registered in the database, we can define \textit{initial percolation rules} to trigger percolation based on some action logged. Like relation rules, initial percolation rules can be changed at engine runtime, new rules can be added, and existing ones can be de-activated. The following example illustrates an initial percolation rule for percolating nimbus on file save:
+\begin{quote}objectType:\texttt{FILE}\\*
+action: \texttt{save}\\*
+userType: \texttt{all\_but\_actor}\\*
+initialLevel: \texttt{100}\\*
+percolationMode: Nimbus\\*
+interactionType	: Deferred \\*
+active: Yes\\*
+relation rules to follow: \texttt{parentOf}, \texttt{dependsOn}, \texttt{versionOf} \\*
+nimbus progression curve: \texttt{1-t*t+t} \\*
+\end{quote}
 
+This initial percolation rule will match actions of type 'save' on objects of type FILE. They will begin nimbus percolation towards any other user than the user who produced the action (\texttt{all\_but\_actor}), with an initial strength of 100. The strength will vary in time according to a given progression curve, so  the event "loses in importance" as time goes by (this however can be compensated by large focus value for a certain user). The first percolation step will start over relations of type \texttt{parentOf} (exemplified above), \texttt{dependsOn} (source file dependency) and \texttt{versionOf} (relations to the reference file versions in the CVS repository).
 
-Implementing engine without compromising use
+Once percolation has reached a new set of objects via such initial relations, \textit{percolation rules} apply. Once a certain kind of relation has been traversed, a percolation rule defines what types of relations to look for next, and how much to consume from the existing focus or nimbus strength. For example the following rule specifies a consumption of 20 units on each file dependency percolation, and specifies to take next either a dependency relation or a version relation. The "description" of the rule can be used to generate a textual description of a percolation path, for example to explain to a user why they were notified of a certain event. A prototype version of such an explanation is shown at the lower part of Figure \ref{fig:parade}. Such explanation of complex internal mechanisms is addressing our \textit{translucency concern}. Users can examine and possibly alter the rules that applied during a percolation, which addresses our \textit{tailoring concern}.
 
-Query centric implementation
+\begin{quote}
+subject: \texttt{FILE}\\*
+predicate: \texttt{dependsOn}\\*
+object:\texttt{FILE}\\*
+consumption: 20\\*
+description: depends on the file that was acted upon\\*
+active: Yes\\*
+relation rules to follow: \texttt{dependsOn}, \texttt{versionOf} \\*
+\end{quote}
+For every relation rule traversal (starting with an initial percolation rule or continuing on a percolation rule), a \textit{percolation step} is saved. By summing up all percolation steps on a certain object for a certain user (or user group) we obtain the total focus and nimbus levels for that user and object, which allows us to compute the awareness level. Summing up allows us to account for arriving at an object through multiple paths during percolation, or to sum "old" percolations which still have some initial strengths as per their time progression curve with "new" (more recent) event percolations, i.e.  we accumulate focus or nimbus levels both \textit{spatially} and \textit{temporally}. Percolation steps where the focus and nimbus levels "dies out" according to the progression curves are cleaned from the database, thereby resulting in a manageable number of objects and sustainable use of database storage space. Registering percolation steps also allows us to explain to users how a percolation took place, as already mentioned.  
 
-Garbage collection
+\subsection*{User interface and Plan for experimentation}
+Addressing our \textit{focus-nimbus manipulation concern} is the most challenging part of our awareness engine work, and we plan to continue this during our experimentation, together with the ParaDe users. For starters, we designed two  'widgets' called "my work" and "work of others". "My work" (Figure \ref{fig:parade} top right) shows the actions of the user from which successful focus percolation took place. The user focus is thus initially built from the objects they have worked with. Out of these, the modification actions can also be committed to the CVS repository, thereby bringing added value to the "my work" widget. To add other objects to their focus, the will be able to click on a "watch" widget near that object. To increase the nimbus of one of their actions, the user will be able to use a "show" widget.
 
-the community feeling, relaxed focus
-for now we focused on percolation and its tailorability and translucency
+The "work of others" widget  (Figure \ref{fig:parade} lower right)  shows objects that had a focus-nimbus match and thus have a certain awareness level at the moment. In this prototype version of the widget, the size of the text in work of others is dependent on the awareness level, which is also explicitly shown. By clicking on the "work of others" information, the user can obtain the percolation explanation depicted at the bottom of Figure \ref{fig:parade}.
 
-object, relation, virtual relations
+%virtual percolation
 
-anticipative awareness
+%the community feeling, relaxed focus
 
-implementation of percolation steps, etc
+%anticipative awareness
 
-RELATED WORK
+\section*{Conclusion}
+We could metaphorically say that ParaDe is for awareness engine experimentation what an "ideal gas" is for thermodynamics. While it is difficult to find nowadays real-world work arrangements where a semantic network can be built with such completeness and accuracy, we believe that for example Semantic Web technologies can advance this field so that also non-programming activities and more heterogeneous and distributed systems will in the future benefit from a better-quality semantic network. In the meantime, our experiments with the "ideal gas" in the ParaDe programming domain can help us find principles and practices that will be useful for other types of collaborative distributed work.
 
-\subsection*{design constraints}
-
-In order to design the Aether engine so as it can be used seamlessly in the ParaDe development environment, it is necessary to take into account several specificities both of the environment and of the Aether engine as depicted by the model.
-Most importantly, the features provided by the Aether engine should not have a negative impact on the usability of the system, thus the design of those operations needs to place a high priority on performance. Indeed the first implementation attempt of the Aether engine in 1997 was not usable because the Aether engine tends to take a lot of computation resources.
-
-If we consider that ParaDe holds approximately 100000 objects, using a relational database management system (DBMS) in order to perform key operations seems appropriate: those systems are optimised for handling large data-sets with an optimal performance. However, representing all the relations amongst objects in the ParaDe system and querying them would not scale: for each one of the 20 rows, there are approximately 5000 files, 10000 relations amongst files of one row, and about 20 times 5000 relations to the files in the other rows, which would represent a total of 400000 objects in the semantic network. This semantic network would then need to be partially traversed on event propagation. Therefore, concretely storing all those relations in the database does not appear as being a solution. Instead, some of them are implicit, such as for instance the relations between files of different rows: they all hold a common path relative to the root in the CVS module they are issued from.
-Another important aspect is the process of ``Aether experimentation''. This feature of the system should enable users to influence the behaviour of the engine and thus supports the usage of a DBMS, in addition to the already large initial size, insofar as the usage of queries enables programmability. Queries themselves can then be seen as data and modified by the user.
-
-Since DBMS are optimised to execute queries in the most efficient way, the single most important performance factor when working with a relational DBMS is the number of queries executed. Hence the algorithm that will propagate queries needs to be done in such a way that queries can be combined.
-To sum up, the main constraints for deploying an awareness computation engine are:
-\begin{itemize}
-     \item computational performance: the fact that the awareness engine is active should not hinder users from a normal usage, hence its operations have to be optimised
-     \item scalability: the production set-up of ParaDe handles a huge number of files and relations amongst those that grow in time, and the Aether engine has to take this growth into account
-     \item information and configurability: users should be able to experiment with the engine’s operations, hence its mechanisms need to be ``translucent'''' , making them easier to understand and hence programmable
-\end{itemize}
-
-
-
-\subsubsection*{Percolation process}
-(can be used as explanation to the mechanism figure \ref{fig:percolation})
-
-When an event is registered to the Aether engine, it is first matched against a set of InitialPercolationRules. Each match leads to the creation of a MatchedAetherEvent, which is enriched with information provided by the InitialPercolationRule. The InitialPercolationRule determines the initial energy with which this event should be propagated. It also holds a set of RelationQueries that once executed provide an initial set of relations amongst objects along which the event can be propagated.
-For each of the matched Aether events, the resulting initial relations are then matched against a set of PercolationRules. When a relation is matched, a PercolationStep is recorded (unless not enough energy is left at this point of the propagation) and another set of relations is retrieved, using the set of queries provided by the PercolationRule. This process lasts until no more energy is left or until the percolation process timed out (the timeout is arbitrary and corresponds to a bearable amount of waiting time for the user).
-
-The resulting table of percolation steps then makes it possible to compute the awareness level as described further in this chapter.
-
-\subsection*{Initial percolation rules}
-The InitialPercolationRules help to determine following characteristics of the propagation to be performed:
-\begin{itemize}
-   \item the initial energy level at which the event should be propagated in the network,
-   \item the user type that shall be affected by the propagation of the event,
-   \item an initial set of relations amongst objects,
-   \item two functions describing how focus and nimbus of the matched relations shall evolve in time,
-   \item the percolation mode (focus percolation or nimbus percolation).
-\end{itemize}
-
-When an event is registered to the Aether engine, it is first matched against:
-\begin{itemize}
-   \item the object type (file, directory, row, user, ...),
-   \item the action (``save'', ``delete'', ``view'', ...),
-   \item the user type (``all'', ``none'', ``all but actor'', ...).
-\end{itemize}
-
-\subsubsection*{Initial level}
-The initial energy level is set by the InitialPercolationRule and depending on the ``impact'' of the event, a coefficient can be specified in the AetherEvent. For example, in the case of an event having as action ``save'', the coefficient will depend on the amount of changes done. If no change is done, the coefficient will be 0. If a lot of changes were made to the file, it may be for instance 1.4 (40\% of the file was changed).
-The initial energy level is therefore the product of the initial level described by the InitialPercolationRule and the coefficient (which by default is 1, if no coefficient was indicated by the initial event).
-In the current implementation, ParaDe calculates this coefficient for file modifications, depending on how many lines were added or removed. Of course a more fine-grained process could be applied.
-
-\subsubsection*{User type}
-This property is used in order to indicate which group of users should be affected by the propagation of an event. For example, an action of the kind ``save'' may be relevant to all users (that have their focus set on the file), but not for the actor that performed the action. Note that the type defined by the rule is abstract (``everyone but actor''), and it is once an event is matched that it is transformed in a concrete user group (``everyone but Alice''), which is stored in the MatchedAetherEvent. This mechanism is described more into detail in 3.5: Percolation engine.
-
-\subsubsection*{Progression curves}
-The Aether model represents focus and nimbus as being functions of time. This behaviour is modelled using two functions of time, which are stored as simple expression strings in the database. The stored focus and nimbus values are then recomputed for all PercolationSteps regularly by a scheduled task.
-This re-computation of focus and nimbus values needs to be done in an effective manner, since this task affects many PercolationSteps. Writing one query per PercolationStep would not scale.
-Therefore, the idea is to use mass UPDATE statements that would be composed using the progression curves. Supposing that the progression curve of the nimbus of one InitialPercolationRule is 100–nimbus * t it is possible to compose the query:
-UPDATE
-       PercolationStep ps
-SET
-       ps.nimbus = (100 – ps.nimbus * (now() – ps.lastModified))
-WHERE
-       ps.matchedAetherEvent.initialPercolationRule = :InitialPercolationRule
-
-This query (as well as the corresponding query for the focus) is run for each InitialPercolationRule, which represents a relatively small amount of queries therefore ensuring a higher performance of the operation.
-The curve on figure 6 represents the focus progression using the expression 1-ln(t/10+1).
-By executing this kind of queries in a scheduled manner it is possible to simulate the progression behaviour described by the curves.
-
-\subsubsection*{Percolation rules}
-Once an event is matched, a set of initial relations is computed through which the event can propagate in the first place. The percolation process will try to match these relations against each of the PercolationRules, as those describe how an event propagates.
-The matching of relations is done on their subject, predicate and object. Subject and object are both object types, where the predicate describes their relation. The rule
-FILE versionOf CVSFILE
-matches all the relations between files and their equivalent in a CVS repository. This structure is voluntarily inspired by RDF relations.
-The percolation rule helps determining following characteristics of the percolation to be performed:
-\begin{itemize}
-    \item energy consumption of the relation,
-    \item humanly understandable description of the rule (e.g. ``is a version of the file on the CVS repository'') that can be used in order to display a log of the percolation process to the user,
-    \item  a set of relations amongst objects through which the propagation should evolve further.
-\end{itemize}
-
-\subsubsection*{Percolation steps}
-When an event is matched by a PercolationRule, a PercolationStep is recorded. This step stores:
-\begin{itemize}
-	\item the energy of the current relation after consumption (meaning, after that it ``traversed'' the relation),
-    \item the user group for which this step applies,
-    \item the URI of the object,
-    \item the path of the percolation so far (meaning which relations it traversed).
-\end{itemize}
-    
-If the energy left after consumption is sufficient enough (the current minimum value is arbitrarily set to 20), a set of next relations is computed, and the process is repeated again, until no energy is left or until the percolation process timed out.
-Listing all PercolationSteps provides a log of the percolation process.
-
-\section*{Related Work} 
-
-
-
-\section*{Acknowledgments} 
-
-{\footnotesize Acknowledgment. }
-
-
+%\begin{figure}[thb]
+%  \centering
+%  \includegraphics[width=.7\linewidth]{aether-mechanism}
+%  \caption{Aether mechanism}
+%  \label{fig:aether-mechanism}
+%\end{figure}
 
 \bibliography{ecscw09-aether}
 \bibliographystyle{ecscw2007}  
