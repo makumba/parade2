@@ -1,24 +1,22 @@
-<%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
+<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 
 <c:if test="${empty param.user}">
-	<c:set var="user" value="${user_login}" />
+	<c:set var="user" value="${sessionScope.user_login}" />
 </c:if>
 
-<mak:object from="User u" where="u.login=:user">
+<mak:object from="User u" where="u.login = $user">
 
 	<html>
 	<head>
-	<title>User information of <mak:value expr="u.name" /> <mak:value
-		expr="u.surname" /></title>
+	<title>User information of <mak:value expr="u.name" /> <mak:value expr="u.surname" /></title>
 	</head>
 	<body>
 
 	<mak:response />
 
-	<h2>User profile of <mak:value expr="u.name" /> <mak:value
-		expr="u.surname" /></h2>
-	<c:if test="${empty param.user or param.user == user_login}">
+	<h2>User profile of <mak:value expr="u.name" /> <mak:value expr="u.surname" /></h2>
+	<c:if test="${empty param.user or param.user == sessionScope.user_login}">
 Here's the information ParaDe knows about you.
 </c:if>
 	<br>
@@ -74,7 +72,7 @@ Here's the information ParaDe knows about you.
 </mak:object>
 
 <br>
-<c:if test="${empty param.user or param.user == user_login}">
+<c:if test="${empty param.user or param.user == sessionScope.user_login}">
 	<a href="userEdit.jsp">Edit my info</a>
 </c:if>
 
