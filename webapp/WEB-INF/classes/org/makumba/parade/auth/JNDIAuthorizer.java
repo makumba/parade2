@@ -119,5 +119,34 @@ public class JNDIAuthorizer implements Authorizer {
         }
 
     }
+    
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public String getEmployeeType() {
+        return employeeType;
+    }
+
+    public String getSn() {
+        return sn;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public String getCn() {
+        return cn;
+    }
+
+    public byte[] getJpegPhoto() {
+        return jpegPhoto;
+    }
+
 
 }
