@@ -54,7 +54,7 @@ public class Aether {
 
         p = new RuleBasedPercolator();
         p.configure(ctx.getSessionFactory());
-        if(ParadeProperties.getParadeProperty("aether.crawlOnStartup").equals("true")) {
+        if(ParadeProperties.getParadeProperty("aether.crawlOnStartup") != null && ParadeProperties.getParadeProperty("aether.crawlOnStartup").equals("true")) {
             computeAllRelations();
         }
 
