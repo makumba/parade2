@@ -1,0 +1,45 @@
+Relation Crawler (mostly makumba)
+- quality of relations MakDemo?
+
+m - checkout makumba, get rights in svn...
+m error invoking method setType on object of class org.makumba.forms.tags.NewTag with argument best.internal.Abbreviation
+
+m --CVS write rights
+m --blog write rights
+++membership on parade-developers
+--commit this file
+m --double files: ask manu, investigate, for now empty the db 
+m jnotify
+
+import mak_demo on sunset.nada
+check out mak_demo in several rows for several CVS users
+++relation between CVS user and parade user
+--start aether, import percolation rules
+--Run relation crawler which find dependency between files
+--find the relations in the database. look for user-row relations, cvs relations, makumba dependency relations
+++ start parade with java 1.5
+
+checkout karamba from sunset in serveral rows for several CVS users
+
+fix blank username-password issue
+
+m MyISAM tables????
+
+Makumba user mailing list, is the invoker needed in mak-demo? ParaDe uses it itself ... Doens't work with parde
+contribute mak-demo build.xml to makumba svn. send it to the mak-user mailing list first
+
+Put the code guide on parade.sourceforge
+
+[@parade2]  java.lang.NullPointerException
+[@parade2]  	at org.makumba.parade.access.DatabaseLogServlet.handleIncomingLog(DatabaseLogServlet.java:135)
+[@parade2]  	at org.makumba.parade.access.DatabaseLogServlet.service(DatabaseLogServlet.java:90)
+[@parade2]  	at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
+
+strange error.jsp line, sometimes leads to ErrorPage 500 errors:<%=request.getAttribute("mak_error_description") %>
+username missing on log (sometimes?)
+
+Whenever you "fix" something
+- if it doesn't work, put it in this file
+- if you can, commit it in code
+- if it's a howto, update some document (README == parade.sourceforge, code guide)
+- if it's something you wonder, send an email to parade-developers@lists.sourceforge.net
