@@ -8,7 +8,14 @@
 <%@page import="java.util.Vector"%>
 <%@page import="java.util.Iterator"%>
 
+
+<%@page import="org.makumba.parade.init.InitServlet"%>
+
 <jsp:useBean id="aetherBean" class="org.makumba.parade.aether.AetherBean" />
+
+<%-- Do an Aether check first --%>
+<% if(InitServlet.aetherEnabled) {%>
+
 <%
 	Vector<Integer> maxFinder = new Vector<Integer>();
 %>
@@ -72,4 +79,10 @@
     href="<%=aetherBean.getResourceLink(actionObject, false)%>"><%=ObjectTypes.objectNameFromURL(actionObject)%></a> in row <%=ObjectTypes.rowNameFromURL(actionObject)%> (<a target="command" href="aetherNimbusHistory.jsp?mae=<mak:value expr="mae.id"/>" title="What does ${sumNimbus} mean?">${sumNimbus}</a>)<br>
   </font>
 </mak:list>
+
+<%-- If aether is disabled, show error message --%>
+<% } else { %>
+ <strong>Aether is disabled!</strong>
+
+<% } %>
 

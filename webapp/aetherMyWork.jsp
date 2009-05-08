@@ -3,14 +3,20 @@
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <%@page import="org.makumba.parade.aether.ObjectTypes"%>
+<%@page import="org.makumba.parade.init.InitServlet"%>
 
 <html>
 <head>
+
 
 <link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/icons_silk.css" type="text/css" media="all" />
 </head>
 <body>
 <jsp:useBean id="aetherBean" class="org.makumba.parade.aether.AetherBean" />
+
+<%-- Do an Aether check first --%>
+<% if(InitServlet.aetherEnabled) {%>
+
 
 <%-- FILES --%>
 <mak:list from="ALE a" where="a.user = :user_login and a.focus > 20 and a.isFile()" id="0">
@@ -126,5 +132,10 @@
   <br>
 </mak:list>
 
+<%-- If aether is disabled, show error message --%>
+<% } else { %>
+ <strong>Aether is disabled!</strong>
+
+<% } %>
 </body>
 </html>
