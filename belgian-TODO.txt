@@ -1,29 +1,29 @@
-Relation Crawler (mostly makumba)
-- quality of relations MakDemo?
+++Relation Crawler (mostly makumba)
+++quality of relations MakDemo?
 
-m - checkout makumba, get rights in svn...
+m checkout makumba, get rights in svn...
 m error invoking method setType on object of class org.makumba.forms.tags.NewTag with argument best.internal.Abbreviation
 
-m --CVS write rights
-m --blog write rights
+++CVS write rights
+++blog write rights
 ++membership on parade-developers
---commit this file
+++commit this file
 m --double files: ask manu, investigate, for now empty the db 
 m jnotify
 
-import mak_demo on sunset.nada
-check out mak_demo in several rows for several CVS users
+++import mak_demo on sunset.nada
+++check out mak_demo in several rows for several CVS users
 ++relation between CVS user and parade user
---start aether, import percolation rules
---Run relation crawler which find dependency between files
+++start aether, import percolation rules
+++Run relation crawler which find dependency between files
 --find the relations in the database. look for user-row relations, cvs relations, makumba dependency relations
-++ start parade with java 1.5
+++start parade with java 1.5
 
-checkout karamba from sunset in serveral rows for several CVS users
+++checkout karamba from sunset in serveral rows for several CVS users
 
 fix blank username-password issue
 
-m MyISAM tables????
+++MyISAM tables????
 
 Makumba user mailing list, is the invoker needed in mak-demo? ParaDe uses it itself ... Doens't work with parde
 contribute mak-demo build.xml to makumba svn. send it to the mak-user mailing list first
@@ -35,8 +35,9 @@ Put the code guide on parade.sourceforge
 [@parade2]  	at org.makumba.parade.access.DatabaseLogServlet.service(DatabaseLogServlet.java:90)
 [@parade2]  	at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
 
-strange error.jsp line, sometimes leads to ErrorPage 500 errors:<%=request.getAttribute("mak_error_description") %>
 username missing on log (sometimes?)
+
+The "more wisdom" button in tipOfTheDay.jsp doesn't work, it produces an errorpage when you click it.
 
 Whenever you "fix" something
 - if it doesn't work, put it in this file
