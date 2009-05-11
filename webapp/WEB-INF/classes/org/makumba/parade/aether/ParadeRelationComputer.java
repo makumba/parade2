@@ -10,6 +10,7 @@ import org.makumba.Transaction;
 import org.makumba.aether.RelationComputationException;
 import org.makumba.aether.RelationComputer;
 import org.makumba.db.hibernate.HibernateTransactionProvider;
+import org.makumba.db.makumba.MakumbaTransactionProvider;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.providers.TransactionProvider;
@@ -147,7 +148,11 @@ public class ParadeRelationComputer implements RelationComputer {
     }
 
     public ParadeRelationComputer() {
-        tp = new TransactionProvider(new HibernateTransactionProvider());
+        //+++
+        //Changed because of Null Pointer Exception on the DatabaseLogServlet
+        //tp = TransactionProvider(new HibernateTransactionProvider());
+        tp = TransactionProvider.getInstance();
+        //---
     }
 
     public void deleteRelation(String objectURL) throws RelationComputationException {
