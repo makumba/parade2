@@ -1,5 +1,22 @@
+Percolation rules
+Aether JSP: check them out
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ++Relation Crawler (mostly makumba)
 ++quality of relations MakDemo?
+
 
 m checkout makumba, get rights in svn...
 m error invoking method setType on object of class org.makumba.forms.tags.NewTag with argument best.internal.Abbreviation
@@ -21,21 +38,21 @@ m jnotify
 
 ++checkout karamba from sunset in serveral rows for several CVS users
 
-fix blank username-password issue
+++fix blank username-password issue
 
 ++MyISAM tables????
 
-Makumba user mailing list, is the invoker needed in mak-demo? ParaDe uses it itself ... Doens't work with parde
-contribute mak-demo build.xml to makumba svn. send it to the mak-user mailing list first
+++Makumba user mailing list, is the invoker needed in mak-demo? ParaDe uses it itself ... Doens't work with parde
+++contribute mak-demo build.xml to makumba svn. send it to the mak-user mailing list first
 
-Put the code guide on parade.sourceforge
+--Put the code guide on parade.sourceforge
 
-[@parade2]  java.lang.NullPointerException
-[@parade2]  	at org.makumba.parade.access.DatabaseLogServlet.handleIncomingLog(DatabaseLogServlet.java:135)
-[@parade2]  	at org.makumba.parade.access.DatabaseLogServlet.service(DatabaseLogServlet.java:90)
-[@parade2]  	at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
+++[@parade2]  java.lang.NullPointerException
+++[@parade2]  	at org.makumba.parade.access.DatabaseLogServlet.handleIncomingLog(DatabaseLogServlet.java:135)
+++[@parade2]  	at org.makumba.parade.access.DatabaseLogServlet.service(DatabaseLogServlet.java:90)
+++[@parade2]  	at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
 
-username missing on log (sometimes?)
+++username missing on log (sometimes?)
 
 The "more wisdom" button in tipOfTheDay.jsp doesn't work, it produces an errorpage when you click it.
 
