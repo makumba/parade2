@@ -1,12 +1,38 @@
 Percolation rules
 Aether JSP: check them out
 
+fix error (the path) of the icon next to changed in MyWork.jsp
+commit button, none checked = null pointer exception
+ajax refresh reset the checkboxes
+
+MDD Test. change mdd-- get notified
+if changed a mdd with many relations, CPU raises- check if you can work
+
+row-same= same file
+CVS-same= file checked out from the same CVS file in different rows
+
+- work on CVS-folder-neighbour files, row-folder-neighbour 
+-- same folder
+-- same parent of folders
+
+- work on CVS-related files
+
+- work on my row
+
+- work on my trainee's row
+
+work: write, read, execute, commit	
+
+different time work
 
 
+document:
+tom@tom-desktop:~$ cvs -d :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository login
+Logging in to :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository
+CVS password:
+tom@tom-desktop:~$ cvs -d :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository login
 
-
-
-
+The "more wisdom" button in tipOfTheDay.jsp doesn't work, it produces an errorpage when you click it.
 
 
 
@@ -16,7 +42,6 @@ Aether JSP: check them out
 
 ++Relation Crawler (mostly makumba)
 ++quality of relations MakDemo?
-
 
 m checkout makumba, get rights in svn...
 m error invoking method setType on object of class org.makumba.forms.tags.NewTag with argument best.internal.Abbreviation
@@ -53,8 +78,6 @@ m jnotify
 ++[@parade2]  	at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
 
 ++username missing on log (sometimes?)
-
-The "more wisdom" button in tipOfTheDay.jsp doesn't work, it produces an errorpage when you click it.
 
 Whenever you "fix" something
 - if it doesn't work, put it in this file
