@@ -1,5 +1,6 @@
 package org.makumba.parade.aether;
 
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,6 +58,8 @@ public class MakumbaContextRelationComputer implements RelationComputer {
     }
 
     public void computeRelations() throws RelationComputationException {
+        
+        long start = new Date().getTime();
 
         // let's compute all relations using the Makumba relations crawler
         // while we crawl, we adjust the MDD provider root to the webapp root
@@ -74,6 +77,10 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         NamedResources.cleanStaticCache(RecordInfo.infos);
 
         rc.writeRelationsToDb();
+        
+        long end = new Date().getTime();
+        
+        ParadeLogger.getParadeLogger(MakumbaContextRelationComputer.class.getName()).info("Crawling of row " + r.getRowname() + " took " + (end - start) + " ms");
 
         // now we also update the file cache of the crawled files. they were crawled.
         if (filesToCrawl.size() != 0) {
