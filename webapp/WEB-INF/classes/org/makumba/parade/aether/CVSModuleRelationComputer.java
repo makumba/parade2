@@ -42,7 +42,7 @@ public class CVSModuleRelationComputer extends MakumbaContextRelationComputer im
         List<String> res = new LinkedList<String>();
 
         // we get only the files that are not yet crawled
-        TransactionProvider tp = new TransactionProvider(new HibernateTransactionProvider());
+        TransactionProvider tp = TransactionProvider.getInstance();
 
         org.makumba.Transaction t = tp.getConnectionTo(ParadeRelationComputer.PARADE_DATABASE_NAME);
         Map<String, Object> params = new HashMap<String, Object>();

@@ -26,6 +26,6 @@ cvs.site=http://cvs.makumba.org/cgi-bin/cvsweb.cgi/
 # Aether engine configuration
 
 #aether.enabled=true
-#aether.databaseName=localhost_mysql_parade
+#aether.databaseName=parade
 #aether.crawlOnStartup=true
 #aether.excludedFiles=WEB-INF/classes/dataDefinitions/general/Person.mdd,WEB-INF/classes/dataDefinitions/best/Student.mdd

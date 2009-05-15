@@ -17,6 +17,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.auth.Authorizer;
 import org.makumba.parade.auth.DatabaseAuthorizer;
+import org.makumba.parade.auth.DirectoryAuthorizer;
+import org.makumba.parade.auth.JNDIAuthorizer;
 import org.makumba.parade.auth.LDAPAuthorizer;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
@@ -106,8 +108,8 @@ public class AccessServlet extends HttpServlet {
                                 setUserAttributes(req, u);
                             } else if (results.size() == 0) {
                                 // maybe we can get the guy from LDAP
-                                if (a instanceof LDAPAuthorizer) {
-                                    LDAPAuthorizer auth = (LDAPAuthorizer) a;
+                                if (a instanceof DirectoryAuthorizer) {
+                                    DirectoryAuthorizer auth = (DirectoryAuthorizer) a;
                                     u = new User(user, auth.getGivenName(), auth.getSn(), auth.getCn(), auth.getMail());
                                     u.setJpegPhoto(auth.getJpegPhoto());
                                     s.save(u);

@@ -13,8 +13,8 @@ import javax.naming.directory.InitialDirContext;
 
 import org.makumba.parade.init.ParadeProperties;
 
-public class JNDIAuthorizer implements Authorizer {
-    
+public class JNDIAuthorizer implements DirectoryAuthorizer {
+
     private static String ldapHost;
 
     private static String baseDN;
@@ -59,35 +59,30 @@ public class JNDIAuthorizer implements Authorizer {
 
     private byte[] jpegPhoto;
 
-
-
     public boolean auth(String username, String password) {
-        
+
         if (username.equals(""))
             return false;
 
-        
         // Set up environment for creating initial context
-        Hashtable env = new Hashtable(11);
-        env.put(Context.INITIAL_CONTEXT_FACTORY, 
-            "com.sun.jndi.ldap.LdapCtxFactory");
+        Hashtable<String, String> env = new Hashtable<String, String>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, "ldap://" + ldapHost + ":389");
 
-        // Authenticate as S. User and password "mysecret"
+        // Authenticate
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
- 
+
         String loginDN = "uid=" + username + "," + baseDN;
-        
+
         env.put(Context.SECURITY_PRINCIPAL, loginDN);
         env.put(Context.SECURITY_CREDENTIALS, password);
 
         String returnAttrs[] = { "displayName", "givenName", "employeeType", "sn", "mail", "cn", "jpegPhoto" };
-        
+
         try {
             // Create initial context
             DirContext ctx = new InitialDirContext(env);
             Attributes a = ctx.getAttributes(loginDN, returnAttrs);
-            
 
             displayName = a.get("displayName").toString();
             givenName = a.get("givenName").toString();
@@ -97,29 +92,29 @@ public class JNDIAuthorizer implements Authorizer {
 
             NamingEnumeration cns = a.get("cn").getAll();
             String cn = cns.next().toString();
-            
-            if(cns.hasMore()) {
+
+            if (cns.hasMore()) {
                 // take the shortname
                 cn = cns.next().toString();
             }
- 
+
+            // this may fail, let's see
             Attribute picture = a.get("jpegPhoto");
             if (picture != null) {
                 jpegPhoto = (byte[]) picture.get();
             }
 
-            
             // Close the context when we're done
             ctx.close();
             return true;
-            
+
         } catch (NamingException e) {
             e.printStackTrace();
             return false;
         }
 
     }
-    
+
     public String getDisplayName() {
         return displayName;
     }
@@ -147,6 +142,5 @@ public class JNDIAuthorizer implements Authorizer {
     public byte[] getJpegPhoto() {
         return jpegPhoto;
     }
-
 
 }

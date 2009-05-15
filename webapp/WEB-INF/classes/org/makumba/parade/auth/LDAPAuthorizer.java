@@ -35,7 +35,7 @@ import com.novell.security.sasl.RealmChoiceCallback;
  * @author Manuel Gay
  * 
  */
-public class LDAPAuthorizer implements Authorizer {
+public class LDAPAuthorizer implements DirectoryAuthorizer {
 
     private static String ldapHost;
 
