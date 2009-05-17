@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.makumba.aether.Aether;
 import org.makumba.aether.RelationComputationException;
 import org.makumba.aether.RelationComputer;
 import org.makumba.commons.NamedResources;
@@ -44,7 +45,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         this.r = r;
         this.webappPath = r.getRowpath() + java.io.File.separator + r.getWebappPath();
         initRelationCrawler();
-        logger = ParadeLogger.getParadeLogger(MakumbaContextRelationComputer.class.getName());
+        logger = Aether.getAetherLogger(MakumbaContextRelationComputer.class.getName());
 
     }
 
@@ -60,6 +61,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
     public void computeRelations() throws RelationComputationException {
         
         long start = new Date().getTime();
+        logger.info("Starting crawling of row " + r.getRowname());
 
         // let's compute all relations using the Makumba relations crawler
         // while we crawl, we adjust the MDD provider root to the webapp root
@@ -80,7 +82,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         
         long end = new Date().getTime();
         
-        ParadeLogger.getParadeLogger(MakumbaContextRelationComputer.class.getName()).info("Crawling of row " + r.getRowname() + " took " + (end - start) + " ms");
+        logger.info("Crawling of row " + r.getRowname() + " took " + (end - start) + " ms");
 
         // now we also update the file cache of the crawled files. they were crawled.
         if (filesToCrawl.size() != 0) {
