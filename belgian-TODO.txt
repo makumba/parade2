@@ -1,4 +1,8 @@
-Percolation rules
+Actions are logged before they are executed. How would it be to log some of them (e.g. Struts actions) in the afterServlet
+
+Each Struts action handler should create its own ActionLog and AetherEvent. 
+
+
 Aether JSP: check them out
 
 fix error (the path) of the icon next to changed in MyWork.jsp
@@ -11,20 +15,6 @@ if changed a mdd with many relations, CPU raises- check if you can work
 row-same= same file
 CVS-same= file checked out from the same CVS file in different rows
 
-- work on CVS-folder-neighbour files, row-folder-neighbour 
--- same folder
--- same parent of folders
-
-- work on CVS-related files
-
-- work on my row
-
-- work on my trainee's row
-
-work: write, read, execute, commit	
-
-different time work
-
 
 document:
 tom@tom-desktop:~$ cvs -d :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository login
@@ -35,9 +25,19 @@ tom@tom-desktop:~$ cvs -d :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/i
 The "more wisdom" button in tipOfTheDay.jsp doesn't work, it produces an errorpage when you click it.
 
 
+++ Test Aether:
+---------------
+- work on CVS-folder-neighbour files, row-folder-neighbour 
+- same folder
+- same parent of folders
+- work on CVS-related files
+- work on my row
+- different time work
+- work on my trainee's row
+- work: write, read, execute, commit	
 
 
-
+++ Look into percolation rules
 
 
 ++Relation Crawler (mostly makumba)
