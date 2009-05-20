@@ -180,7 +180,8 @@ public class AdminAction extends DispatchAction {
         
         if(InitServlet.aetherEnabled) {
             Aether a = InitServlet.getAether();
-            a.computeAllRelations();
+            
+            a.computeAllRelations(request.getParameter("flush").equals("true"));
             
             request.setAttribute("result", "Finished crawling through all contexts!");
             request.setAttribute("success", new Boolean(true));

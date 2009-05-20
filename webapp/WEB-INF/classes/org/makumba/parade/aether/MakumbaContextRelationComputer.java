@@ -17,11 +17,9 @@ import org.makumba.aether.Aether;
 import org.makumba.aether.RelationComputationException;
 import org.makumba.aether.RelationComputer;
 import org.makumba.commons.NamedResources;
-import org.makumba.db.hibernate.HibernateTransactionProvider;
 import org.makumba.devel.relations.RelationCrawler;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Row;
-import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.providers.TransactionProvider;
 import org.makumba.providers.datadefinition.makumba.RecordInfo;
 
@@ -58,7 +56,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         return "MakumbaContextRelationComputer for row " + r.getRowname();
     }
 
-    public void computeRelations() throws RelationComputationException {
+    public void computeRelations(boolean updateExistingRelations) throws RelationComputationException {
         
         long start = new Date().getTime();
         logger.info("Starting crawling of row " + r.getRowname());
@@ -78,7 +76,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         RecordInfo.setWebappRoot(null);
         NamedResources.cleanStaticCache(RecordInfo.infos);
 
-        rc.writeRelationsToDb();
+        rc.writeRelationsToDb(updateExistingRelations);
         
         long end = new Date().getTime();
         
@@ -127,7 +125,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
             rc.crawl(filePath);
             RecordInfo.setWebappRoot(null);
             NamedResources.cleanStaticCache(RecordInfo.infos);
-            rc.writeRelationsToDb();
+            rc.writeRelationsToDb(false);
         }
     }
 

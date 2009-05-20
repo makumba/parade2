@@ -9,7 +9,6 @@ import org.makumba.Pointer;
 import org.makumba.Transaction;
 import org.makumba.aether.RelationComputationException;
 import org.makumba.aether.RelationComputer;
-import org.makumba.db.hibernate.HibernateTransactionProvider;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.providers.TransactionProvider;
@@ -33,7 +32,8 @@ public class ParadeRelationComputer implements RelationComputer {
 
     private TransactionProvider tp;
 
-    public void computeRelations() throws RelationComputationException {
+    // FIXME implement the update mechanism, for now we flush each time
+    public void computeRelations(boolean updateExistingRelations) throws RelationComputationException {
 
         logger.fine("Computing all relations of " + getName());
         
@@ -45,7 +45,7 @@ public class ParadeRelationComputer implements RelationComputer {
         // we populate the relations table with those relations
 
         // first we remove all the previous relations
-
+        
         Vector<Dictionary<String, Object>> old = t
                 .executeQuery(
                         "SELECT rel.id AS rel FROM org.makumba.devel.relations.Relation rel WHERE rel.type = 'traineeOf'",

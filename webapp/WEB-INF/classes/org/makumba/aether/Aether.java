@@ -55,7 +55,7 @@ public class Aether {
         p = new RuleBasedPercolator();
         p.configure(ctx.getSessionFactory());
         if(ParadeProperties.getParadeProperty("aether.crawlOnStartup") != null && ParadeProperties.getParadeProperty("aether.crawlOnStartup").equals("true")) {
-            computeAllRelations();
+            computeAllRelations(true);
         }
 
         logger.info("AETHER-INIT: Launching Aether finished at " + new java.util.Date());
@@ -68,12 +68,12 @@ public class Aether {
     /**
      * Computes all the relations using the relation computers
      */
-    public void computeAllRelations() {
+    public void computeAllRelations(boolean updateExistingRelations) {
         List<RelationComputer> computers = ctx.getRelationComputers();
         for (RelationComputer relationComputer : computers) {
             logger.fine("Starting computation of all relations for " + relationComputer.getName());
             try {
-                relationComputer.computeRelations();
+                relationComputer.computeRelations(updateExistingRelations);
             } catch (RelationComputationException e) {
                 logger.fine("Could not compute relations of relation computer " + relationComputer.getName() + ": "
                         + e.getMessage());

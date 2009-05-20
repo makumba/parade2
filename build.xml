@@ -241,6 +241,9 @@
 	<target name="crawlRows" depends="compile">
 
 		<java classname="org.makumba.parade.tools.RowCrawler" fork="true" dir=".">
+            <jvmarg value="-Xms${tomcat.Xms}" />
+            <jvmarg value="-Xmx${tomcat.Xmx}" />
+            <jvmarg value="-XX:MaxPermSize=${tomcat.Xmx}" />
 			<classpath>
 				<pathelement path="${java.class.path}" />
 				<pathelement location="webapp/WEB-INF/classes"/>

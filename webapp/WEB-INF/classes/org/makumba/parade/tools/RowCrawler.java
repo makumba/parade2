@@ -49,7 +49,7 @@ public class RowCrawler {
         System.out.flush();
 
         Aether a = Aether.getAether(ctx);
-        a.computeAllRelations();
+        a.computeAllRelations(false);
         ParadeLogger.getParadeLogger("RowCrawler").info("INIT: Finished crawling relations at " + new java.util.Date());
         long end = System.currentTimeMillis();
 

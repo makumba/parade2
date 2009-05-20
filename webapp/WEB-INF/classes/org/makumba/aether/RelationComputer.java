@@ -19,10 +19,12 @@ public interface RelationComputer {
     /**
      * Computes all the relations
      * 
+     * @param updateExistingRelations whether existing relations in the database should be updated or flushed
+     * 
      * @throws RelationComputationException
      *             when a computation exception occurs
      */
-    public void computeRelations() throws RelationComputationException;
+    public void computeRelations(boolean updateExistingRelations) throws RelationComputationException;
 
     /**
      * Updates the relations of an object
