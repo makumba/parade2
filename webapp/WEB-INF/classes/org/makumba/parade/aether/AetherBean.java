@@ -63,9 +63,8 @@ public class AetherBean {
                             + (actionObject.endsWith(".jsp") ? "x" : "");
                 }
             } else {
-
                 resourceLink = "/codePressEditor.jsp?context=" + context + "&path="
-                        + (webappPath.length() > 0 ? webappPath + "/" : "") + relativePath + "&file="
+                        + (webappPath.length() > 0 ? webappPath + "/" : "") + "&file="
                         + ObjectTypes.objectNameFromURL(actionObject);
             }
 
@@ -82,5 +81,6 @@ public class AetherBean {
         }
         return resourceLink;
     }
+
 
 }
