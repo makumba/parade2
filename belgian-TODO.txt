@@ -5,7 +5,7 @@ Each Struts action handler should create its own ActionLog and AetherEvent.
 
 Aether JSP: check them out
 
-fix error (the path) of the icon next to changed in MyWork.jsp
+
 commit button, none checked = null pointer exception
 ajax refresh reset the checkboxes
 
@@ -36,6 +36,8 @@ The "more wisdom" button in tipOfTheDay.jsp doesn't work, it produces an errorpa
 - work on my trainee's row
 - work: write, read, execute, commit	
 
+++ Fix error of the icon next to changed in MyWork.jsp
+	-problem was the path to the file
 
 ++ Look into percolation rules
 
