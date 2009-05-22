@@ -2,9 +2,11 @@ package org.makumba.parade.model.managers;
 
 import java.io.BufferedWriter;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.apache.tools.ant.util.FileUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.makumba.parade.init.InitServlet;
@@ -226,6 +229,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         }
         return fileData;
     }
+    
 
     public static File setVirtualFileData(Row r, File path, String name, boolean dir) {
         File virtualFile = new File();

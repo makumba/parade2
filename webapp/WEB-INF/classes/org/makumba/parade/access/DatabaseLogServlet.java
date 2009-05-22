@@ -87,7 +87,7 @@ public class DatabaseLogServlet extends HttpServlet {
             if (record == null)
                 return;
 
-            handleIncomingLog(record);
+            handleIncomingLog(record, req);
 
         } catch (NullPointerException npe) {
             // throw(npe);
@@ -102,7 +102,7 @@ public class DatabaseLogServlet extends HttpServlet {
         }
     }
 
-    public void handleIncomingLog(Object record) {
+    public void handleIncomingLog(Object record, HttpServletRequest req) {
         // first check if this should be logged at all
         if (record instanceof ActionLogDTO) {
             if (!shouldLog((ActionLogDTO) record))
@@ -129,10 +129,17 @@ public class DatabaseLogServlet extends HttpServlet {
                 ActionLogDTO a = (ActionLogDTO) record;
 
                 if (!a.getAction().equals(ActionTypes.LOGIN.action())) {
-                    AetherEvent e = buildAetherEventFromLog(a, s);
+                    System.out.println("OUTPUT="
+                            + ((HttpServletRequest) req.getAttribute("org.eu.best.tools.TriggerFilter.request"))
+                                    .getParameter("source"));
+                    AetherEvent e = buildAetherEventFromLog(a, s, req);
 
                     if (e != null) {
-                        InitServlet.getAether().registerEvent(e, false);
+                        if (InitServlet.getAether() != null) // Don't give NPE while aether is crawling. (aether is null
+                        // when crawling on startup)
+                        {
+                            InitServlet.getAether().registerEvent(e, false);
+                        }
                     }
                 }
             }
@@ -143,7 +150,7 @@ public class DatabaseLogServlet extends HttpServlet {
         }
     }
 
-    private AetherEvent buildAetherEventFromLog(ActionLogDTO log, Session s) {
+    private AetherEvent buildAetherEventFromLog(ActionLogDTO log, Session s, HttpServletRequest req) {
 
         if (log.getObjectType() == null) {
             logger.severe("**********************************\n" + "Object type for ActionLog not set: "
@@ -172,6 +179,13 @@ public class DatabaseLogServlet extends HttpServlet {
         }
 
         if (log.getAction().equals(ActionTypes.SAVE.action())) {
+            //+++
+            //System.out.println("OUTPUT=" + ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("source"));
+            
+            System.out.println(req.getParameter("file"));
+            System.out.println(org.apache.commons.lang.StringUtils.getLevenshteinDistance("foobar", "bar"));
+
+            //---
             Transaction tx = s.beginTransaction();
             String rowName = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
             if (rowName == null)
@@ -187,6 +201,10 @@ public class DatabaseLogServlet extends HttpServlet {
 
                 if (Double.isNaN(initialLevelCoefficient))
                     initialLevelCoefficient = 0.00;
+
+                // +++
+                System.out.println("File saved now!");
+                // ---
             }
 
             tx.commit();
@@ -644,8 +662,8 @@ public class DatabaseLogServlet extends HttpServlet {
 
     String[] equalFilter = { "/logout.jsp", "/userView.jsp", "/userEdit.jsp", "/showImage.jsp", "/log.jsp",
             "/actionLog.jsp", "/actionLogList.jsp", "/logHeader.jsp", "browserHeader.jsp", "fileBrowser.jsp",
-            "/todo.jsp", "/error.jsp", "/Admin.do", "/User.do", "/servlet/ticker", "/servlet/logs",
-            "/reload", "/unauthorized/index.jsp", "/FileUpload.do", "/browserHeader.jsp" };
+            "/todo.jsp", "/error.jsp", "/Admin.do", "/User.do", "/servlet/ticker", "/servlet/logs", "/reload",
+            "/unauthorized/index.jsp", "/FileUpload.do", "/browserHeader.jsp" };
 
     /**
      * Checks whether this access should be logged or not.<br>
@@ -665,8 +683,10 @@ public class DatabaseLogServlet extends HttpServlet {
                         || StringUtils.equalsAny(log.getUrl(), equalFilter)
 
                         || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=header") > -1)
-                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1)
-                        || (log.getUrl().equals("/File.do") && log.getQueryString().indexOf("display=command") > -1 && log.getQueryString().indexOf("view=new") > -1)
+                        || (log.getUrl().equals("/servlet/browse") && log.getQueryString().indexOf("display=tree") > -1) || (log
+                        .getUrl().equals("/File.do")
+                        && log.getQueryString().indexOf("display=command") > -1 && log.getQueryString().indexOf(
+                        "view=new") > -1)
 
                 )
 
@@ -676,7 +696,7 @@ public class DatabaseLogServlet extends HttpServlet {
                         && log.getAction() == null && log.getOrigin() == null)
 
         ) {
-//            logger.fine("didn't log "+log.getAction()+" context " + log.getContext() +" origin "+ log.getOrigin());
+            // logger.fine("didn't log "+log.getAction()+" context " + log.getContext() +" origin "+ log.getOrigin());
             return false;
         }
 

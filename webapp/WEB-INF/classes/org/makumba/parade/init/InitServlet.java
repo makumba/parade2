@@ -181,7 +181,7 @@ public class InitServlet extends HttpServlet implements Runnable {
                     rowComputers.put(r.getRowpath(), c);
                 }
             }
-            aether = Aether.getAether(ctx);
+            aether = Aether.getAether(ctx);        
         }
 
         tx.commit();
