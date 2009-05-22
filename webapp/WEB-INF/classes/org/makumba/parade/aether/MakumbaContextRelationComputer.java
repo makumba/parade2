@@ -125,7 +125,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
             rc.crawl(filePath);
             RecordInfo.setWebappRoot(null);
             NamedResources.cleanStaticCache(RecordInfo.infos);
-            rc.writeRelationsToDb(false);
+            rc.writeRelationsToDb(true);
         }
     }
 
