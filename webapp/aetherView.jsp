@@ -8,11 +8,23 @@
 
 <script type="text/javascript">
 
-getMyWork = function() {
-  new Ajax.Updater('mywork', '/aetherMyWork.jsp', {evalScripts: true});
-}
 getWorkOfOthers = function() {
     new Ajax.Updater('workofothers', '/aetherWorkOfOthers.jsp', {evalScripts: true});
+}
+
+getMyWork = function() {
+	var c_value = 1;
+	for (var i=0; i < document.fileform.file.length && c_value!=0; i++)
+	   {
+	   if (document.fileform.file[i].checked)
+	      {
+	      c_value = 0;
+	      }
+	   }
+	 if(c_value)
+	 {
+		 new Ajax.Updater('mywork', '/aetherMyWork.jsp', {evalScripts: true});
+	 }		
 }
 
 new PeriodicalExecuter(getMyWork, 3);

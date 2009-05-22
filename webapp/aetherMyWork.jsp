@@ -23,7 +23,7 @@
 <mak:value expr="max(a.focus)" printVar="maxFileFocus"/><%request.setAttribute("maxFileFocus", maxFileFocus); %>
 </mak:list>
 
-<form action="/commandView/cvsCommit.jsp" target="command" method="post" style="display: inline;	margin:0 0 0 0;">
+<form name="fileform" action="/commandView/cvsCommit.jsp" target="command" method="post" style="display: inline;	margin:0 0 0 0;">
   <input type="hidden" name="getPathFromSession" value="true">
   
   <mak:list from="ALE a" where="a.user = :user_login and a.focus > 20 and a.isFile()" orderBy="a.focus desc, a.objectURL desc">
@@ -55,7 +55,8 @@
 
     <font style="font-size: ${objectWeight};">
       <strong><a class="icon_file" title="<%=ObjectTypes.rowNameFromURL(objectURL) %>" target="directory" href="<%=aetherBean.getResourceLink(objectURL, false)%>"><%=ObjectTypes.objectNameFromURL(objectURL)%></a></strong>
-      <a class="icon_edit" target="directory" href="<%=aetherBean.getResourceLink(objectURL, true)%>"></a> (<a target="command" title="What does <mak:value expr="a.focus" /> mean?" href="/aetherFocusHistory.jsp?objectURL=${objectURL}"><mak:value expr="a.focus" /></a>) <a href="/aetherGetActionEffects.jsp?objectURL=${objectURL}&objectType=FILE&action=save&user=<%=request.getSession().getAttribute("user_login") %>" target="command" class="icon_info" title="Who gets notified if I change this file?"></a>
+      <a class="icon_edit" target="directory" href="<%=aetherBean.getResourceLink(objectURL, true)%>"></a> 
+      (<a target="command" title="What does <mak:value expr="a.focus" /> mean?" href="/aetherFocusHistory.jsp?objectURL=${objectURL}"><mak:value expr="a.focus" /></a>) <a href="/aetherGetActionEffects.jsp?objectURL=${objectURL}&objectType=FILE&action=save&user=<%=request.getSession().getAttribute("user_login") %>" target="command" class="icon_info" title="Who gets notified if I change this file?"></a>
     </font>
     <br>
   </mak:list>
