@@ -129,7 +129,7 @@ public class DatabaseLogServlet extends HttpServlet {
                 ActionLogDTO a = (ActionLogDTO) record;
 
                 if (!a.getAction().equals(ActionTypes.LOGIN.action())) {
-                    System.out.println("OUTPUT="
+                    logger.fine("OUTPUT="
                             + ((HttpServletRequest) req.getAttribute("org.eu.best.tools.TriggerFilter.request"))
                                     .getParameter("source"));
                     AetherEvent e = buildAetherEventFromLog(a, s, req);
@@ -182,8 +182,8 @@ public class DatabaseLogServlet extends HttpServlet {
             //+++
             //System.out.println("OUTPUT=" + ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("source"));
             
-            System.out.println(req.getParameter("file"));
-            System.out.println(org.apache.commons.lang.StringUtils.getLevenshteinDistance("foobar", "bar"));
+            //System.out.println(req.getParameter("file"));
+            //System.out.println(org.apache.commons.lang.StringUtils.getLevenshteinDistance("foobar", "bar"));
 
             //---
             Transaction tx = s.beginTransaction();
@@ -339,6 +339,8 @@ public class DatabaseLogServlet extends HttpServlet {
             actionType = "fileBrowse";
         if (uri.indexOf("Cvs.do") > -1)
             actionType = "cvs";
+        if (uri.indexOf("Ant.do") > -1)
+            actionType = "ant";
         if (uri.indexOf("Webapp.do") > -1)
             actionType = "webapp";
         if (uri.indexOf("Command.do") > -1)
@@ -563,6 +565,14 @@ public class DatabaseLogServlet extends HttpServlet {
                 }
                 tx.commit();
             }
+        }
+        
+        if(actionType.equals("ant")) {
+            // FIXME there's probably much more to set than this, i.e. extend the ActionTypes to account for ant clean, compile...
+            // and then set them here
+            // for now we just set the object type
+            log.setObjectType(ObjectTypes.ROW);
+            
         }
 
         // webapp matters
