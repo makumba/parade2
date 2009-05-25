@@ -32,9 +32,9 @@ import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.model.File;
 import org.makumba.parade.model.Log;
+import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.User;
 import org.makumba.parade.tools.ParadeLogger;
-import org.makumba.parade.tools.PerThreadPrintStreamLogRecord;
 import org.makumba.parade.tools.TriggerFilter;
 import org.makumba.parade.view.TickerTapeData;
 import org.makumba.parade.view.TickerTapeServlet;
@@ -129,9 +129,6 @@ public class DatabaseLogServlet extends HttpServlet {
                 ActionLogDTO a = (ActionLogDTO) record;
 
                 if (!a.getAction().equals(ActionTypes.LOGIN.action())) {
-                    logger.fine("OUTPUT="
-                            + ((HttpServletRequest) req.getAttribute("org.eu.best.tools.TriggerFilter.request"))
-                                    .getParameter("source"));
                     AetherEvent e = buildAetherEventFromLog(a, s, req);
 
                     if (e != null) {
@@ -157,8 +154,12 @@ public class DatabaseLogServlet extends HttpServlet {
                     + log.toString());
             return null;
         }
-
-        Double initialLevelCoefficient = 1.0;
+        
+        //+++
+        //Double initialLevelCoefficient = 1.0;
+        Double initialLevelCoefficient = 0.0;
+        //---
+        
         String objectURL = log.getObjectType().prefix();
         switch (log.getObjectType()) {
         case ROW:
@@ -180,14 +181,11 @@ public class DatabaseLogServlet extends HttpServlet {
 
         if (log.getAction().equals(ActionTypes.SAVE.action())) {
             //+++
-            //System.out.println("OUTPUT=" + ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("source"));
-            
-            //System.out.println(req.getParameter("file"));
-            //System.out.println(org.apache.commons.lang.StringUtils.getLevenshteinDistance("foobar", "bar"));
-
-            //---
+            //Original Code:
+            /*
             Transaction tx = s.beginTransaction();
             String rowName = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
+            
             if (rowName == null)
                 rowName = "";
             File f = (File) s
@@ -196,23 +194,54 @@ public class DatabaseLogServlet extends HttpServlet {
                     .setString("path", log.getFile()).setString("rowname", rowName).uniqueResult();
 
             if (f != null) {
-                initialLevelCoefficient = Math.abs(f.getPreviousChars() - f.getCurrentChars() + 0.00)
-                        / ((f.getCurrentChars() + f.getPreviousChars()) / 2 + 0.00);
-
+                initialLevelCoefficient = Math.abs(f.getPreviousChars() - f.getCurrentChars() + 0.00) / ((f.getCurrentChars() + f.getPreviousChars()) / 2 + 0.00);
                 if (Double.isNaN(initialLevelCoefficient))
                     initialLevelCoefficient = 0.00;
-
-                // +++
-                System.out.println("File saved now!");
-                // ---
             }
-
+            
             tx.commit();
+            */
+            
+            //New Code:
+            //Get the correct filepath and the new source code and compare the new source with the old source of the file
+            String context = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("context");
+            String path = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("path");
+            String file = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("file");
+            String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + file;
+            
+            String newSource = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("source").replace("\r", "").trim();
+            String oldSource = org.makumba.parade.tools.FileOperations.ReadFileToString(absoluteFilePath).replace("\r", "").trim();
+            
+            double differenceResult = org.apache.commons.lang.StringUtils.getLevenshteinDistance(oldSource, newSource);
+
+            if (differenceResult != 0)
+            {
+                //file gets larger
+                if (newSource.length() > oldSource.length())
+                {
+                    initialLevelCoefficient = Math.abs(differenceResult / newSource.length());    
+                }
+                //file gets smaller or is same length but is changed
+                else            
+                {
+                    initialLevelCoefficient = Math.abs(differenceResult / oldSource.length());
+                }
+            }
+            else
+            {
+                return null; //if the file has not been changed, don't create a new AetherEvent
+            }
+            
+            //+++
+            //Print some debug information at the moment about the filedifference
+            //This will be removed from the code when the calculation is 100% correct
+            //System.out.print("File difference-Levenshtein: " + differenceResult);
+            //System.out.print("InitialCoefficient: " + initialLevelCoefficient);
+            //---
         }
 
         if (log.getObjectType().equals(ObjectTypes.FILE) && isExcluded(log.getFile())) {
             initialLevelCoefficient = 0.00;
-
         }
 
         return new AetherEvent(objectURL, log.getObjectType().toString(), log.getUser(), log.getAction(),
@@ -572,7 +601,6 @@ public class DatabaseLogServlet extends HttpServlet {
             // and then set them here
             // for now we just set the object type
             log.setObjectType(ObjectTypes.ROW);
-            
         }
 
         // webapp matters

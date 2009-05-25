@@ -187,12 +187,6 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
         if (mae.getInitialLevelCoefficient() == 0.00)
             initialEnergy = 0;
-        
-        //+++
-        //Debug
-//        System.out.println("Debug information: inital level = " + mae.getInitialLevelCoefficient());
-//        System.out.println("Debug information: inital energy = " + initialEnergy);
-        //---
 
         NodePercolationStatus init = new NodePercolationStatus(mae.getObjectURL(), initialEnergy, 0, null);
         nodePercolationStatuses.put(mae.getObjectURL(), init);
