@@ -35,7 +35,7 @@ CREATE TABLE `InitialPercolationRule` (
   `interactionType` varchar(255) default NULL,
   `description` varchar(255) default NULL,
   PRIMARY KEY  (`initialpercolationrule`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=INNODB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -60,7 +60,7 @@ CREATE TABLE `InitialPercolationRule__relationQueries` (
   `elt` bigint(20) NOT NULL,
   KEY `FK91634F409CE9A215` (`elt`),
   KEY `FK91634F408FE3CD7C` (`id_initialpercolationrule`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=INNODB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -90,7 +90,7 @@ CREATE TABLE `PercolationRule` (
   `active` bit(1) default NULL,
   `propagationDepthLimit` int(11) default NULL,
   PRIMARY KEY  (`percolationrule`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=INNODB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -115,7 +115,7 @@ CREATE TABLE `PercolationRule__relationQueries` (
   `elt` bigint(20) NOT NULL,
   KEY `FK432EF01C9CE9A215` (`elt`),
   KEY `FK432EF01C6E36F558` (`id_initialpercolationrule`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=INNODB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -141,7 +141,7 @@ CREATE TABLE `RelationQuery` (
   `description` text,
   `arguments` varchar(255) default NULL,
   PRIMARY KEY  (`relationquery`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=INNODB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
