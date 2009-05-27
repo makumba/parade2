@@ -6,26 +6,34 @@ This checkout provides you with two things:
 - one way to run ParaDe from Eclipse
 - one way to run ParaDe on a server
 
-== Setting up ParaDe for Eclipse, with Aether
+== Software that should be installed ==
+- Java 5
+- Tomcat 5.5
+- MySQL Server
+- Apache Ant tools
 
-1/ checkout parade2
+== Setting up ParaDe for Eclipse, with Aether ==
 
-2/ copy webapp/WEB-INF/classes/parade.properties.example to webapp/WEB-INF/classes/parade.properties and make sure you have the dummyAuthorizer enabled (so u can login as anyone)
+01. Checkout parade2 from CVS (for details look on: http://parade.sourceforge.net)
 
-3/ configure /tomcat.properties (port, manager password, ...)
+02. Copy /webapp/WEB-INF/classes/parade.properties.example to /webapp/WEB-INF/classes/parade.properties and make sure you have the dummyAuthorizer enabled (so u can login as anyone)
 
-4/ create a "parade" database, and if necessary configure password in webapp/WEB-INF/classes/localhost_mysql_parade.properties AND webapp/WEB-INF/classes/localhost_mysql_parade.cfg.xml
+03. Configure the file /tomcat.properties (port, manager password, ...)
 
-5/ configure the parade2-tomcat runner (i.e. set the catalina_home var, if it's not already set)
+04. Create database with the name "parade", and if necessary configure password in /webapp/WEB-INF/classes/Makumba.conf. Verify that in this file the MySQL dialect is set to INNODB and not MyISAM
 
-6/ run parade2-tomcat
+05. Configure the parade2-tomcat runner (i.e. set the catalina_home var to your tomcat directory, if it's not already set)
 
-7/ stop it again :) now you have a webapp/WEB-INF/classes/rows.properties
+06. Run parade2-tomcat
 
-8/ configure your rows in rows.properties
+07. Stop it again :) now you have a /webapp/WEB-INF/classes/rows.properties file
 
-9/ in parade.properties, uncomment the aether.enabled line and the aether.databaseName
+08. Configure your rows in /webapp/WEB-INF/classes/rows.properties like it is done in the example at the top of the file
 
-10/ run parade again. this time it will compute all the relationships
+09. In /webapp/WEB-INF/classes/parade.properties, uncomment the aether.enabled line and the aether.databaseName
 
-11/ that's it!
+10. Import the /backup_rules.sql file into your database for inserting the percolation rules
+
+11. Run parade again. this time it will compute all the relationships (this can take a little time)
+
+12. That's it!
