@@ -7,24 +7,28 @@
 <script src="${pageContext.request.contextPath}/scripts/prototype.js"></script>
 
 <script type="text/javascript">
+var firstTime = 1;
+
+getMyWork = function() {
+	var checkbox = 1;
+		
+	for (var i=0; i < document.fileform.file.length && checkbox!=0; i++)
+	{
+		if (document.fileform.file[i].checked)
+	    {
+	    	checkbox = 0;
+		}
+	}
+	   
+	if (checkbox || firstTime)
+	{
+		new Ajax.Updater('mywork', '/aetherMyWork.jsp', {evalScripts: true});
+		firstTime = 0;
+	}		
+}
 
 getWorkOfOthers = function() {
     new Ajax.Updater('workofothers', '/aetherWorkOfOthers.jsp', {evalScripts: true});
-}
-
-getMyWork = function() {
-	var c_value = 1;
-	for (var i=0; i < document.fileform.file.length && c_value!=0; i++)
-	   {
-	   if (document.fileform.file[i].checked)
-	      {
-	      c_value = 0;
-	      }
-	   }
-	 if(c_value)
-	 {
-		 new Ajax.Updater('mywork', '/aetherMyWork.jsp', {evalScripts: true});
-	 }		
 }
 
 new PeriodicalExecuter(getMyWork, 3);
