@@ -38,9 +38,7 @@ public class FileAction extends Action {
         String op = request.getParameter("op");
         String editor = request.getParameter("editor");
         String[] source = request.getParameterValues("source");
-
-        // we reconstruct the absolute path
-
+        
         if (op != null && op.startsWith("deleteFile")) {
             String[] params = { request.getParameter("params"), path };
 

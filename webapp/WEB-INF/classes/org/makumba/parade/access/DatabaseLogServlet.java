@@ -154,11 +154,8 @@ public class DatabaseLogServlet extends HttpServlet {
                     + log.toString());
             return null;
         }
-        
-        //+++
-        //Double initialLevelCoefficient = 1.0;
+
         Double initialLevelCoefficient = 0.0;
-        //---
         
         String objectURL = log.getObjectType().prefix();
         switch (log.getObjectType()) {
@@ -180,29 +177,6 @@ public class DatabaseLogServlet extends HttpServlet {
         }
 
         if (log.getAction().equals(ActionTypes.SAVE.action())) {
-            //+++
-            //Original Code:
-            /*
-            Transaction tx = s.beginTransaction();
-            String rowName = log.getParadecontext() == null ? log.getContext() : log.getParadecontext();
-            
-            if (rowName == null)
-                rowName = "";
-            File f = (File) s
-                    .createQuery(
-                            "select f as file from File f join f.row r where substring(f.path, 1 + length(r.rowpath) + length(r.webappPath) + case when length(r.webappPath) = 0 then 0 else 1 end, length(f.path)) = :path and r.rowname = :rowname")
-                    .setString("path", log.getFile()).setString("rowname", rowName).uniqueResult();
-
-            if (f != null) {
-                initialLevelCoefficient = Math.abs(f.getPreviousChars() - f.getCurrentChars() + 0.00) / ((f.getCurrentChars() + f.getPreviousChars()) / 2 + 0.00);
-                if (Double.isNaN(initialLevelCoefficient))
-                    initialLevelCoefficient = 0.00;
-            }
-            
-            tx.commit();
-            */
-            
-            //New Code:
             //Get the correct filepath and the new source code and compare the new source with the old source of the file
             String context = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("context");
             String path = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("path");
@@ -231,13 +205,6 @@ public class DatabaseLogServlet extends HttpServlet {
             {
                 return null; //if the file has not been changed, don't create a new AetherEvent
             }
-            
-            //+++
-            //Print some debug information at the moment about the filedifference
-            //This will be removed from the code when the calculation is 100% correct
-            //System.out.print("File difference-Levenshtein: " + differenceResult);
-            //System.out.print("InitialCoefficient: " + initialLevelCoefficient);
-            //---
         }
 
         if (log.getObjectType().equals(ObjectTypes.FILE) && isExcluded(log.getFile())) {

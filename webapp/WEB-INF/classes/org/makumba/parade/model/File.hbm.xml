@@ -27,7 +27,6 @@
 		<property name="cvsCheckedOutRevision" />
 		<property name="cvsDate" />
 		<property name="crawled">
-			<column name="crawled" default="false"></column>
 		</property>
 
 		<many-to-one name="row" column="row" not-null="true"

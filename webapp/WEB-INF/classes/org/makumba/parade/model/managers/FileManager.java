@@ -38,9 +38,7 @@ import org.makumba.parade.tools.WordCount;
  * 
  */
 public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
-
     static Logger logger = ParadeLogger.getParadeLogger(FileManager.class.getName());
-
     private FileFilter filter = new SimpleFileFilter();
 
     public void softRefresh(Row row) {
@@ -179,7 +177,13 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
     /* adding file to Row files */
     private void addFile(Row row, File fileData) {
-
+        //+++        
+        if (fileData.getCrawled() == null)
+        {
+            //set to 0 when you insert the file into the database so the crawler will crawl the file for the first time
+            fileData.setCrawled(new Long(0)); 
+        }
+        //---
         row.getFiles().put(fileData.getPath(), fileData);
 
         // logger.warning("Added file: "+fileData.getName());
@@ -229,7 +233,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         }
         return fileData;
     }
-    
 
     public static File setVirtualFileData(Row r, File path, String name, boolean dir) {
         File virtualFile = new File();
@@ -285,7 +288,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     }
 
     public String deleteFile(Row r, String path, String entry) {
-
         java.io.File f = new java.io.File(path + java.io.File.separator + entry);
         boolean success = f.delete();
         if (success) {
@@ -319,7 +321,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     }
 
     public void removeFileCache(File file) {
-
         // if there is CVS data for this file we keep it and set is as virtual
         if (file.getCvsStatus() != null) {
             file.setOnDisk(false);
@@ -362,7 +363,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     // checks if a file should still be cached or if it's a zombie
     // FIXME should probably be in a more general CacheManager or so
     public static void checkShouldCache(String context, Collection<File> files) {
-
         for (File file : files) {
             java.io.File f = new java.io.File(file.getPath());
             if (!f.exists()) {

@@ -46,7 +46,7 @@ public class File {
 
     private Date cvsDate;
 
-    private boolean crawled = false;
+    private Long crawled;
 
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
@@ -173,11 +173,11 @@ public class File {
         this.cvsDate = cvsDate;
     }
 
-    public boolean getCrawled() {
+    public Long getCrawled() {
         return crawled;
     }
 
-    public void setCrawled(boolean crawled) {
+    public void setCrawled(Long crawled) {
         this.crawled = crawled;
     }
 

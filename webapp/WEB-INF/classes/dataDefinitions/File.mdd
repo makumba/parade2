@@ -13,7 +13,7 @@ cvsDate=date
 row = ptr Row
 isDir=boolean
 onDisk=boolean
-crawled=boolean
+crawled=int
 
 # composes the URL of this file
 URL() { case when (isDir = true) then dirURL() else fileURL() end } 

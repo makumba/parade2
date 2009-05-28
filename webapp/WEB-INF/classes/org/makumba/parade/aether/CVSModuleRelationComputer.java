@@ -52,11 +52,15 @@ public class CVSModuleRelationComputer extends MakumbaContextRelationComputer im
         params.put("webappRootLike", webappRoot + "%");
         params.put("relationsDb", ParadeRelationComputer.PARADE_DATABASE_NAME);
         params.put("rowId", r.getId().intValue());
+
+        //+++
         Vector<Dictionary<String, Object>> v = t
                 .executeQuery(
-                        "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND (f.path like '%.mdd' OR f.path like '%.jsp' OR f.path like '%.java') AND f.isDir = false AND f.row.id = :rowId AND f.crawled = false",
+                        "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND (f.path like '%.mdd' OR f.path like '%.jsp' OR f.path like '%.java') AND f.isDir = false AND f.row.id = :rowId AND f.crawled < f.date",
                         params);
-
+        //---
+        
+        
         for (Dictionary<String, Object> dictionary : v) {
             String path = (String) dictionary.get("path");
             res.add(path);
