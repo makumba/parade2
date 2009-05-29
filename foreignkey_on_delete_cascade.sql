@@ -1,0 +1,5 @@
+ALTER TABLE `PercolationStep` DROP FOREIGN KEY `FKB547075E29F27E9C` ;
+
+ALTER TABLE `PercolationStep` ADD FOREIGN KEY ( `root` ) REFERENCES `parade`.`PercolationStep` (
+`percolationstep`
+) ON DELETE CASCADE ON UPDATE CASCADE ;

@@ -1,3 +1,18 @@
+- Investigate the makumba.jar twice (lib and webinf/lib)
+- Provide the feature to clean the work directory of a row
+
+
+
+
+
+
+
+
+
+
+
+
+
 Actions are logged before they are executed. How would it be to log some of them (e.g. Struts actions) in the afterServlet
 
 Each Struts action handler should create its own ActionLog and AetherEvent. 
