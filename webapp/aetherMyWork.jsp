@@ -93,7 +93,7 @@
   </c:choose>
 
   <font style="font-size: ${objectWeight};">
-  <strong><a class="icon_folder" title="<%=ObjectTypes.rowNameFromURL(objectURL) %>" target="directory" href="<%=aetherBean.getResourceLink(objectURL, false)%>"><%=ObjectTypes.objectNameFromURL(objectURL)%></a> (<a target="command" title="What does <mak:value expr="a.focus" /> mean?" href="/aetherFocusHistory.jsp?objectURL=${objectURL}"><mak:value expr="a.focus" /></a>)</strong>
+  <strong><a class="icon_folder" title="<%=ObjectTypes.rowNameFromURL(objectURL) %>" target="_parent" href="<%=aetherBean.getResourceLink(objectURL, false)%>"><%=ObjectTypes.objectNameFromURL(objectURL)%></a> (<a target="command" title="What does <mak:value expr="a.focus" /> mean?" href="/aetherFocusHistory.jsp?objectURL=${objectURL}"><mak:value expr="a.focus" /></a>)</strong>
   </font>  
 <br>
 </mak:list>
