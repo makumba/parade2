@@ -155,7 +155,7 @@ public class DatabaseLogServlet extends HttpServlet {
             return null;
         }
 
-        Double initialLevelCoefficient = 0.0;
+        Double initialLevelCoefficient = 0.5;
         
         String objectURL = log.getObjectType().prefix();
         switch (log.getObjectType()) {
@@ -188,16 +188,13 @@ public class DatabaseLogServlet extends HttpServlet {
             
             double differenceResult = org.apache.commons.lang.StringUtils.getLevenshteinDistance(oldSource, newSource);
 
-            if (differenceResult != 0)
-            {
+            if (differenceResult != 0) {
                 //file gets larger
-                if (newSource.length() > oldSource.length())
-                {
+                if (newSource.length() > oldSource.length()) {
                     initialLevelCoefficient = Math.abs(differenceResult / newSource.length());    
                 }
                 //file gets smaller or is same length but is changed
-                else            
-                {
+                else {
                     initialLevelCoefficient = Math.abs(differenceResult / oldSource.length());
                 }
             }
