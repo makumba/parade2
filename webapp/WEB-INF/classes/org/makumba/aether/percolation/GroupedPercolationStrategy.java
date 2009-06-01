@@ -13,6 +13,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -104,6 +105,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
             } finally {
                 if (s != null && shouldCloseSession) {
+                    s.flush();
                     s.close();
                 }
             }
@@ -129,6 +131,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
             percolateMatchedEvent(mae, false, s);
             tx.commit();
+            s.flush();
             s.close();
 
         }
@@ -205,8 +208,16 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
         }
 
         // save all the percolation steps
-        for (PercolationStep ps : steps) {
+        s.setCacheMode(CacheMode.IGNORE);
+        for (int i = 0; i < steps.size(); i++) {
+            PercolationStep ps = steps.get(i);
             s.save(ps);
+
+            if ( i % 50 == 0 ) { //20, same as the JDBC batch size
+                //flush a batch of inserts and release memory:
+                s.flush();
+                s.clear();
+            }
         }
 
         // save all the nimbus contributions
