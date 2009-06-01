@@ -53,7 +53,7 @@ public class RuleBasedPercolator implements Percolator {
 
     static final int GARBAGE_COLLECTION_INTERVAL = 1000 * 60; // 10 mins
 
-    static final int CURVE_UPDATE_INTERVAL = 1000 * 60; // 15 mins
+    static final int CURVE_UPDATE_INTERVAL = 1000 * 60; // 10 mins
 
     static final int MAX_PERCOLATION_TIME = 5000000;
 
@@ -259,52 +259,32 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate {@link Session}
      */
     private void collectGarbage(Session s) {
-/*
-        Query qFirst = s.createQuery("delete from PercolationStep where percolationstep in (select ps2.root from PercolationStep ps2 where ps2.virtualPercolation = true)");
 
-        Transaction txFirst = s.beginTransaction();
-        int dFirst = qFirst.executeUpdate();
-        txFirst.commit();
-*/        
-        
         Query q0 = s.createQuery("delete from PercolationStep ps where ps.virtualPercolation = true");
-
-        Transaction tx0 = s.beginTransaction();
-        int d0 = q0.executeUpdate();
-        tx0.commit();
 
         Query q1 = s
                 .createQuery("delete from PercolationStep ps where (ps.nimbus < 20 and ps.focus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 20 or ipr.percolationMode = 30))");
-        // q1.setInteger("minValue", MIN_ENERGY_LEVEL);
-        Transaction tx1 = s.beginTransaction();
-        int d1 = q1.executeUpdate();
-        tx1.commit();
-
+        
         Query q2 = s
                 .createQuery("delete from PercolationStep ps where (ps.focus < 20 and ps.nimbus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 10 or ipr.percolationMode = 30))");
-        // q2.setInteger("minValue", MIN_ENERGY_LEVEL);
-        Transaction tx2 = s.beginTransaction();
-        int d2 = q2.executeUpdate();
-        tx2.commit();
-
-        logger.fine("Garbage-collected " + (d0 + d1 + d2) + " percolation steps");
 
         Query q3 = s
                 .createQuery("delete from MatchedAetherEvent mae where not exists (from PercolationStep ps where mae.id = ps.matchedAetherEvent.id)");
 
-        Transaction tx3 = s.beginTransaction();
-        int d3 = q3.executeUpdate();
-        tx3.commit();
-
-        logger.fine("Garbage-collected " + d3 + " MatchedAetherEvents");
-
         Query q4 = s.createQuery("delete from ALE ale where focus < 20 and nimbus < 20");
-
-        Transaction tx4 = s.beginTransaction();
+        
+        Transaction transaction = s.beginTransaction();
+        int d0 = q0.executeUpdate();
+        int d1 = q1.executeUpdate();
+        int d2 = q2.executeUpdate();
+        int d3 = q3.executeUpdate();
         int d4 = q4.executeUpdate();
-        tx4.commit();
-
+        transaction.commit();
+        
+        logger.fine("Garbage-collected " + (d0 + d1 + d2) + " percolation steps");
+        logger.fine("Garbage-collected " + d3 + " MatchedAetherEvents");
         logger.fine("Garbage-collected " + d4 + " ALE values");
+        
     }
 
     /**
@@ -319,13 +299,12 @@ public class RuleBasedPercolator implements Percolator {
                 + "a.nimbus = (select sum(ps.nimbus) from PercolationStep ps where ps.objectURL = a.objectURL and ps.userGroup like '%*%' and ps.userGroup not like concat(concat(concat('%','-'), a.user), '%'))";
         Transaction tx1 = s.beginTransaction();
         int updated = s.createQuery(q).executeUpdate();
-        tx1.commit();
 
         // if no steps are found in the previous inner select, the sum is null so we have to fix this here
-        Transaction tx2 = s.beginTransaction();
         s.createQuery("update ALE set focus = 0 where focus is null").executeUpdate();
         s.createQuery("update ALE set nimbus = 0 where nimbus is null").executeUpdate();
-        tx2.commit();
+
+        tx1.commit();
 
         logger.fine("Updated " + updated + " ALE values");
 
@@ -359,24 +338,34 @@ public class RuleBasedPercolator implements Percolator {
         int updatedFocusPercolationSteps = 0;
         int updatedNimbusPercolationSteps = 0;
 
-        if (ipr.getFocusProgressionCurve() != null && ipr.getFocusProgressionCurve().trim().length() != 0) {
+        boolean focusCurve = ipr.getFocusProgressionCurve() != null && ipr.getFocusProgressionCurve().trim().length() != 0;
+        boolean nimbusCurve = ipr.getNimbusProgressionCurve() != null && ipr.getNimbusProgressionCurve().trim().length() != 0;
+
+        Query focusUpdate = null;
+        Query nimbusUpdate = null;
+        
+        if (focusCurve) {
             String focusQuery = buildEnergyUpdateStatement(ipr.getFocusProgressionCurve(), true);
-            Query focusUpdate = s.createQuery(focusQuery).setParameter(0, ipr.getId());
-            logger.fine("Now running " + focusQuery);
-            Transaction tx = s.beginTransaction();
-            updatedFocusPercolationSteps = focusUpdate.executeUpdate();
-            tx.commit();
+             focusUpdate = s.createQuery(focusQuery).setParameter(0, ipr.getId());
         }
 
-        if (ipr.getNimbusProgressionCurve() != null && ipr.getNimbusProgressionCurve().trim().length() != 0) {
+        if (nimbusCurve) {
             String nimbusQuery = buildEnergyUpdateStatement(ipr.getNimbusProgressionCurve(), false);
-            Query nimbusUpdate = s.createQuery(nimbusQuery).setParameter(0, ipr.getId());
-            logger.fine("Now running " + nimbusQuery);
-
-            Transaction tx = s.beginTransaction();
-            updatedNimbusPercolationSteps = nimbusUpdate.executeUpdate();
-            tx.commit();
+            nimbusUpdate = s.createQuery(nimbusQuery).setParameter(0, ipr.getId());
         }
+        
+        Transaction tx = s.beginTransaction();
+        if(focusUpdate != null) {
+            logger.fine("Now running " + focusUpdate.getQueryString());
+            updatedFocusPercolationSteps = focusUpdate.executeUpdate();
+        }
+        
+        if(nimbusUpdate != null) {
+            logger.fine("Now running " + nimbusUpdate.getQueryString());
+            updatedNimbusPercolationSteps = nimbusUpdate.executeUpdate();
+        }
+        
+        tx.commit();
 
         logger.fine("Updated " + updatedFocusPercolationSteps + " percolation steps for for focus and "
                 + updatedNimbusPercolationSteps + " for nimbus");
