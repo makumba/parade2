@@ -7,24 +7,27 @@
 <script src="${pageContext.request.contextPath}/scripts/prototype.js"></script>
 
 <script type="text/javascript">
-var firstTime = 1;
 
 getMyWork = function() {
-	var checkbox = 1;
-		
-	for (var i=0; i < document.fileform.file.length && checkbox!=0; i++)
-	{
-		if (document.fileform.file[i].checked)
-	    {
-	    	checkbox = 0;
+	var flag = false;
+	var count = document.fileform.file.length;
+
+	if (isNaN(count)) {
+		if (document.fileform.file.checked == true) {
+            flag = true
+  	    }
+	}
+	else {
+		for (var i = 0; i < count; i++) {
+			if (document.fileform.file[i].checked == true) {
+		    	flag = true;
+		   	}
 		}
 	}
-	   
-	if (checkbox || firstTime)
-	{
+	
+	if (!flag) {
 		new Ajax.Updater('mywork', '/aetherMyWork.jsp', {evalScripts: true});
-		firstTime = 0;
-	}		
+	}
 }
 
 getWorkOfOthers = function() {
