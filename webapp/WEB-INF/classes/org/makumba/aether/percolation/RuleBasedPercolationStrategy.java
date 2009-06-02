@@ -178,8 +178,8 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
                     s.save(f);
 
                 }
-                RuleBasedPercolator.mutex.notifyAll();
             }
+            RuleBasedPercolator.mutex.notifyAll();
         }
 
     }
