@@ -93,7 +93,8 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                         } else if (mae.getInitialPercolationRule().getInteractionType() == InitialPercolationRule.DIFFERED_INTERACTION) {
                             shouldCloseSession = false;
                             PercolationThread t = new PercolationThread(mae, s, tx, startQueries);
-                            t.start();
+                            //+++t.start();
+                            t.run();
 
                         }
                     }

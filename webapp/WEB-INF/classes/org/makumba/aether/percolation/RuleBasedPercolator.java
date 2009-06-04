@@ -53,7 +53,7 @@ public class RuleBasedPercolator implements Percolator {
 
     static final int GARBAGE_COLLECTION_INTERVAL = 1000 * 60; // 10 mins
 
-    static final int CURVE_UPDATE_INTERVAL = 1000 * 60; // 10 mins
+    static final int CURVE_UPDATE_INTERVAL = 1000 * 600; // 10 mins
 
     static final int MAX_PERCOLATION_TIME = 5000000;
 
@@ -70,6 +70,26 @@ public class RuleBasedPercolator implements Percolator {
     public static boolean rulesChanged = false;
 
     public static Object mutex = new Object();
+    {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                synchronized (mutex) {
+                    while (true) {
+                        try {
+                            mutex.wait();
+                        } catch (InterruptedException e) {
+                            return;
+                        }
+                        consumePercolationData();
+                        mutex.notifyAll();
+                    }
+                }
+            }
+
+        });
+        t.setPriority(Thread.MIN_PRIORITY);
+        t.start();
+    }
 
     class PercolationData {
 
@@ -99,6 +119,20 @@ public class RuleBasedPercolator implements Percolator {
         }
     }
 
+    protected void consumePercolationData() {
+        Iterator<PercolationData> i = ((AbstractList<PercolationData>) percolationQueue.clone()).iterator();
+        while (i.hasNext()) {
+            PercolationData d = i.next();
+            try {
+                strategy.percolate(d.getAetherEvent(), d.isVirtualPercolation(), sessionFactory);
+            } catch (PercolationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            percolationQueue.remove(d);
+        }
+    }
+
     private Vector<PercolationData> percolationQueue = new Vector<PercolationData>();
 
     private void addToPercolationQueue(AetherEvent e, boolean virtualPercolation) throws PercolationException {
@@ -106,13 +140,7 @@ public class RuleBasedPercolator implements Percolator {
         synchronized (mutex) {
 
             percolationQueue.add(new PercolationData(e, virtualPercolation));
-            Iterator<PercolationData> i = ((AbstractList<PercolationData>) percolationQueue.clone()).iterator();
-            while (i.hasNext()) {
-                PercolationData d = i.next();
-                strategy.percolate(d.getAetherEvent(), d.isVirtualPercolation(), sessionFactory);
-                percolationQueue.remove(d);
-
-            }
+            consumePercolationData();
             mutex.notifyAll();
 
         }
@@ -264,7 +292,7 @@ public class RuleBasedPercolator implements Percolator {
 
         Query q1 = s
                 .createQuery("delete from PercolationStep ps where (ps.nimbus < 20 and ps.focus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 20 or ipr.percolationMode = 30))");
-        
+
         Query q2 = s
                 .createQuery("delete from PercolationStep ps where (ps.focus < 20 and ps.nimbus = 0) and ps.matchedAetherEvent.id in (select mae.id from MatchedAetherEvent mae join mae.initialPercolationRule ipr where (ipr.percolationMode = 10 or ipr.percolationMode = 30))");
 
@@ -272,7 +300,7 @@ public class RuleBasedPercolator implements Percolator {
                 .createQuery("delete from MatchedAetherEvent mae where not exists (from PercolationStep ps where mae.id = ps.matchedAetherEvent.id)");
 
         Query q4 = s.createQuery("delete from ALE ale where focus < 20 and nimbus < 20");
-        
+
         Transaction transaction = s.beginTransaction();
         int d0 = q0.executeUpdate();
         int d1 = q1.executeUpdate();
@@ -280,11 +308,11 @@ public class RuleBasedPercolator implements Percolator {
         int d3 = q3.executeUpdate();
         int d4 = q4.executeUpdate();
         transaction.commit();
-        
-        logger.fine("Garbage-collected " + (d0 + d1 + d2) + " percolation steps");
-        logger.fine("Garbage-collected " + d3 + " MatchedAetherEvents");
-        logger.fine("Garbage-collected " + d4 + " ALE values");
-        
+
+        logger.info("Garbage-collected " + (d0 + d1 + d2) + " percolation steps");
+        logger.info("Garbage-collected " + d3 + " MatchedAetherEvents");
+        logger.info("Garbage-collected " + d4 + " ALE values");
+
     }
 
     /**
@@ -306,7 +334,7 @@ public class RuleBasedPercolator implements Percolator {
 
         tx1.commit();
 
-        logger.fine("Updated " + updated + " ALE values");
+        logger.info("Updated " + updated + " ALE values");
 
     }
 
@@ -338,36 +366,38 @@ public class RuleBasedPercolator implements Percolator {
         int updatedFocusPercolationSteps = 0;
         int updatedNimbusPercolationSteps = 0;
 
-        boolean focusCurve = ipr.getFocusProgressionCurve() != null && ipr.getFocusProgressionCurve().trim().length() != 0;
-        boolean nimbusCurve = ipr.getNimbusProgressionCurve() != null && ipr.getNimbusProgressionCurve().trim().length() != 0;
+        boolean focusCurve = ipr.getFocusProgressionCurve() != null
+                && ipr.getFocusProgressionCurve().trim().length() != 0;
+        boolean nimbusCurve = ipr.getNimbusProgressionCurve() != null
+                && ipr.getNimbusProgressionCurve().trim().length() != 0;
 
         Query focusUpdate = null;
         Query nimbusUpdate = null;
-        
+
         if (focusCurve) {
             String focusQuery = buildEnergyUpdateStatement(ipr.getFocusProgressionCurve(), true);
-             focusUpdate = s.createQuery(focusQuery).setParameter(0, ipr.getId());
+            focusUpdate = s.createQuery(focusQuery).setParameter(0, ipr.getId());
         }
 
         if (nimbusCurve) {
             String nimbusQuery = buildEnergyUpdateStatement(ipr.getNimbusProgressionCurve(), false);
             nimbusUpdate = s.createQuery(nimbusQuery).setParameter(0, ipr.getId());
         }
-        
+
         Transaction tx = s.beginTransaction();
-        if(focusUpdate != null) {
+        if (focusUpdate != null) {
             logger.fine("Now running " + focusUpdate.getQueryString());
             updatedFocusPercolationSteps = focusUpdate.executeUpdate();
         }
-        
-        if(nimbusUpdate != null) {
+
+        if (nimbusUpdate != null) {
             logger.fine("Now running " + nimbusUpdate.getQueryString());
             updatedNimbusPercolationSteps = nimbusUpdate.executeUpdate();
         }
-        
+
         tx.commit();
 
-        logger.fine("Updated " + updatedFocusPercolationSteps + " percolation steps for for focus and "
+        logger.info("Updated " + updatedFocusPercolationSteps + " percolation steps for for focus and "
                 + updatedNimbusPercolationSteps + " for nimbus");
 
     }
