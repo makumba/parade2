@@ -4,10 +4,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -56,12 +57,13 @@ public class File {
     private Date cvsDate;
 
     private Long crawled;
+    
+    private FileManager fileMgr = new FileManager();
+    
+    private CVSManager CVSMgr = new CVSManager();
 
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
-        FileManager fileMgr = new FileManager();
-        CVSManager CVSMgr = new CVSManager();
-
         fileMgr.directoryRefresh(row, this.getPath(), false);
         CVSMgr.directoryRefresh(row, this.getPath(), false);
     }
@@ -70,7 +72,8 @@ public class File {
         this.path = p;
     }
 
-    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
+    @ManyToOne
+    @JoinColumn(name="row")
     public Row getRow() {
         return row;
     }
@@ -79,7 +82,7 @@ public class File {
         this.row = row;
     }
 
-    @Id
+    @Id @GeneratedValue
     public Long getId() {
         return id;
     }
