@@ -16,6 +16,9 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.ParadeLogger;
+import org.makumba.providers.MakumbaINIFileReader;
+
+import com.sun.tools.doclets.internal.toolkit.Configuration;
 
 public class MakumbaManager implements RowRefresher, ParadeManager {
 
@@ -108,15 +111,31 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
 
         root = (root + "/WEB-INF/classes/").replace('/', File.separatorChar);
         File f = new File(root + "MakumbaDatabase.properties");
-        if (!f.exists())
-            return "No MakumbaDatabase.properties found";
         Properties p = new Properties();
-        try {
-            p.load(new FileInputStream(f));
-        } catch (IOException e) {
-            return "Invalid MakumbaDatabase.properties";
+        if (!f.exists()) {
+            f = new File(root + "Makumba.conf");
+            if(!f.exists()) {
+                return "No makumba configuration file found";
+            }
+            
+            MakumbaINIFileReader makumbaConf = null;
+            try {
+                makumbaConf = new MakumbaINIFileReader(f.toURL(), null);
+            } catch (IOException e) {
+                return "Invalid Makumba.conf";
+            }
+
+            return "Default database: " + makumbaConf.getProperty("dataSourceConfig", "defaultDataSource");
+
+        } else {
+            try {
+                p.load(new FileInputStream(f));
+            } catch (IOException e) {
+                return "Invalid MakumbaDatabase.properties";
+            }
+            return "Default database: " + (String) p.get("default");
+
         }
-        return "Default database: " + (String) p.get("default");
     }
 
     public void newRow(String name, Row r, Map<String, String> m) {
