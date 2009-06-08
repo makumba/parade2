@@ -84,11 +84,11 @@ public class JNDIAuthorizer implements DirectoryAuthorizer {
             DirContext ctx = new InitialDirContext(env);
             Attributes a = ctx.getAttributes(loginDN, returnAttrs);
 
-            displayName = a.get("displayName").toString();
-            givenName = a.get("givenName").toString();
-            employeeType = a.get("sn").toString();
-            mail = a.get("mail").toString();
-            sn = a.get("sn").toString();
+            displayName = (String) a.get("displayName").get();
+            givenName = (String) a.get("givenName").get();
+            employeeType = (String) a.get("sn").get();
+            mail = (String) a.get("mail").get();
+            sn = (String) a.get("sn").get();
 
             NamingEnumeration cns = a.get("cn").getAll();
             String cn = cns.next().toString();
