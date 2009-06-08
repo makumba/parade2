@@ -4,14 +4,23 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.annotations.Index;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 
+@Entity
 public class File {
 
     private Long id;
@@ -61,6 +70,7 @@ public class File {
         this.path = p;
     }
 
+    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
     public Row getRow() {
         return row;
     }
@@ -69,6 +79,7 @@ public class File {
         this.row = row;
     }
 
+    @Id
     public Long getId() {
         return id;
     }
@@ -77,10 +88,13 @@ public class File {
         this.id = id;
     }
 
+    @Transient
     public Long getAge() {
         return new Long(new Date().getTime() - this.date.longValue());
     }
+    
 
+    @Column
     public Long getDate() {
         return date;
     }
@@ -88,7 +102,8 @@ public class File {
     public void setDate(Long date) {
         this.date = date;
     }
-
+    
+    @Column
     public Long getSize() {
         return size;
     }
@@ -97,6 +112,8 @@ public class File {
         this.size = size;
     }
 
+    @Column
+    @Index(name="nameIndex")
     public String getName() {
         return name;
     }
@@ -105,6 +122,7 @@ public class File {
         this.name = name;
     }
 
+    @Column
     public boolean getIsDir() {
         return isDir;
     }
@@ -113,10 +131,12 @@ public class File {
         this.isDir = isDir;
     }
 
+    @Column
     public String getPath() {
         return this.path;
     }
 
+    @Column
     public String getParentPath() {
         return parentPath;
     }
@@ -125,6 +145,7 @@ public class File {
         this.parentPath = parentPath;
     }
 
+    @Column
     public boolean getOnDisk() {
         return onDisk;
     }
@@ -133,6 +154,7 @@ public class File {
         this.onDisk = onDisk;
     }
 
+    @Column
     public String getCvsURL() {
         return cvsURL;
     }
@@ -141,6 +163,7 @@ public class File {
         this.cvsURL = cvsURL;
     }
 
+    @Column
     public Integer getCvsStatus() {
         return cvsStatus;
     }
@@ -149,6 +172,7 @@ public class File {
         this.cvsStatus = cvsStatus;
     }
 
+    @Column
     public String getCvsRevision() {
         return cvsRevision;
     }
@@ -157,6 +181,7 @@ public class File {
         this.cvsRevision = cvsRevision;
     }
 
+    @Column
     public String getCvsCheckedOutRevision() {
         return cvsCheckedOutRevision;
     }
@@ -165,6 +190,7 @@ public class File {
         this.cvsCheckedOutRevision = cvsCheckedOutRevision;
     }
 
+    @Column
     public Date getCvsDate() {
         return cvsDate;
     }
@@ -173,6 +199,7 @@ public class File {
         this.cvsDate = cvsDate;
     }
 
+    @Column
     public Long getCrawled() {
         return crawled;
     }
@@ -181,6 +208,7 @@ public class File {
         this.crawled = crawled;
     }
 
+    @Transient
     public String getFileURI() {
 
         if (path.startsWith(row.getRowpath() + "/" + row.getWebappPath())) {
@@ -199,6 +227,7 @@ public class File {
                         java.io.File.separator, "/");
     }
 
+    @Transient
     public String getCvsPath() {
         return row.getApplication().getName() + path.substring(row.getRowpath().length());
     }
@@ -212,6 +241,7 @@ public class File {
     }
 
     /* returns a List of the direct children (files, dirs) of a given Path */
+    @Transient
     public List<File> getChildren(String orderBy) {
 
         if (orderBy == null) {
@@ -259,6 +289,7 @@ public class File {
     }
 
     /* returns a List of the direct children (files, dirs) of a given Path */
+    @Transient
     public List<String> getChildrenPaths() {
         String keyPath = this.getPath().replace(java.io.File.separatorChar, '/');
 
@@ -287,6 +318,7 @@ public class File {
         return children;
     }
 
+    @Column
     public Integer getCurrentChars() {
         return currentChars;
     }
@@ -295,6 +327,7 @@ public class File {
         this.currentChars = chars;
     }
 
+    @Column
     public Integer getPreviousChars() {
         return previousChars;
     }

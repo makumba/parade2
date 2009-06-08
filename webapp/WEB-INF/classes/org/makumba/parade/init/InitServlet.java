@@ -68,7 +68,8 @@ public class InitServlet extends HttpServlet implements Runnable {
             resources.add("org/makumba/parade/model/Parade.hbm.xml");
             resources.add("org/makumba/parade/model/Row.hbm.xml");
             resources.add("org/makumba/parade/model/AntTarget.hbm.xml");
-            resources.add("org/makumba/parade/model/File.hbm.xml");
+            //resources.add("org/makumba/parade/model/File.hbm.xml");
+            resources.add("org.makumba.parade.model.File");
             resources.add("org/makumba/parade/model/Log.hbm.xml");
             resources.add("org/makumba/parade/model/ActionLog.hbm.xml");
             resources.add("org/makumba/parade/model/Application.hbm.xml");

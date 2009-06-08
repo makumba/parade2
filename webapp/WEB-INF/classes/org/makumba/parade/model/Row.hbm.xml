@@ -27,7 +27,7 @@
     <map name="files" cascade="all-delete-orphan" inverse="true" access="field" order-by="name" lazy="true">
       <cache usage="read-write" />
       <key>
-        <column name="row" not-null="false" />
+        <column name="row_row" not-null="false" />
       </key>
       <index column="path" type="string" />
       <one-to-many class="File" />
