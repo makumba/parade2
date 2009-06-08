@@ -83,6 +83,7 @@ public class File {
     }
 
     @Id @GeneratedValue
+    @Column(name="file")
     public Long getId() {
         return id;
     }
