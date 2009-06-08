@@ -1,11 +1,11 @@
-<%@ taglib uri="http://www.makumba.org/presentation" prefix="mak"%>
+<%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 
 <c:if test="${empty param.user}">
 	<c:set var="user" value="${sessionScope.user_login}" />
 </c:if>
 
-<mak:object from="User u" where="u.login = $user">
+<mak:object from="User u" where="u.login = :user">
 
 	<html>
 	<head>
@@ -56,7 +56,7 @@ Here's the information ParaDe knows about you.
                   <td style="font-weight: bold;">Mentor</td>
                   <td><mak:value expr="u.mentor.name" /> <mak:value expr="u.mentor.surname" /></td>
                 </tr>
-				<mak:list from="Row r" where="r.user = u" separator=" and ">
+				<mak:list from="Row r" where="r.user.id = u.id" separator=" and ">
 				<c:if test="${mak:maxCount() > 0}">
 				<c:if test="${mak:count()==1}"><tr></tr><td colspan="2">&nbsp;</td><tr><td colspan="2" style="font-weight: bold;">Proud owner of row</c:if>
 				<mak:value expr="r.rowname" />
