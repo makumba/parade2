@@ -66,7 +66,8 @@ public class InitServlet extends HttpServlet implements Runnable {
         try {
             // cfg = new Configuration().configure("localhost_mysql_parade.cfg.xml");
             resources.add("org/makumba/parade/model/Parade.hbm.xml");
-            resources.add("org/makumba/parade/model/Row.hbm.xml");
+            //resources.add("org/makumba/parade/model/Row.hbm.xml");
+            resources.add("org.makumba.parade.model.Row");
             resources.add("org/makumba/parade/model/AntTarget.hbm.xml");
             //resources.add("org/makumba/parade/model/File.hbm.xml");
             resources.add("org.makumba.parade.model.File");

@@ -5,8 +5,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.IndexColumn;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
@@ -17,6 +31,8 @@ import org.makumba.parade.init.ParadeProperties;
  * @author Manuel Gay
  * 
  */
+@Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Row {
 
     public static final int AUTO_CVS_UPDATE_DISABLED = 10;
@@ -98,6 +114,7 @@ public class Row {
 
     private String webappPath;
 
+    @Transient
     public List<String> getAllowedOperations() {
         List<String> allowedTargets = new LinkedList<String>();
 
@@ -113,94 +130,125 @@ public class Row {
         return allowedTargets;
     }
 
+    @ManyToOne
     public Application getApplication() {
         return application;
     }
 
+    @Column(insertable=false, columnDefinition = "int(11) default 10")
     public int getAutomaticCvsUpdate() {
         return automaticCvsUpdate;
     }
 
+    @Column
     public String getBranch() {
         return branch;
     }
 
+    @Column
     public String getBuildfile() {
         return buildfile;
     }
 
+    @Column
     public String getContextname() {
         return contextname;
     }
 
+    @Column
     public String getCvsuser() {
         return cvsuser;
     }
 
+    @Column
     public String getDb() {
         return db;
     }
 
+    @Column
     public String getDescription() {
         return description;
     }
 
+    @ManyToOne
+    @JoinColumn(name="externalUser")
     public User getExternalUser() {
         return externalUser;
     }
 
+    @OneToMany(cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.File.class, fetch=FetchType.LAZY)
+    @org.hibernate.annotations.MapKey(columns={@Column(name="row",nullable=false)})
+    @IndexColumn(name="path")
+    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
     public Map<String, File> getFiles() {
         return this.files;
     }
 
+    @Column
     public boolean getHasMakumba() {
         return hasMakumba;
     }
 
+    @Id @GeneratedValue
+    @Column(name="row")
     public Long getId() {
         return id;
     }
 
+    @Column
     public String getModule() {
         return module;
     }
 
+    @Column
     public boolean getModuleRow() {
         return moduleRow;
     }
 
+    @ManyToOne
+    @JoinColumn(name="id_parade")
     public Parade getParade() {
         return parade;
     }
 
+    @Column
     public String getRowname() {
         return rowname;
     }
 
+    @Column
     public String getRowpath() {
         return rowpath.replace('/', java.io.File.separatorChar);
     }
 
+    @Column
     public Integer getStatus() {
         return status;
     }
 
+    @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.AntTarget.class)
+    @org.hibernate.annotations.MapKey(columns={@Column(name="row_id")})
     public List<AntTarget> getTargets() {
         return targets;
     }
 
+    @ManyToOne
+    @JoinColumn(name="user")
     public User getUser() {
         return user;
     }
 
+    @Column
     public String getVersion() {
         return version;
     }
 
+    @Column(insertable=false, columnDefinition = "bit(1) default '\0'")
     public boolean getWatchedByJNotify() {
         return this.watchedByJNotify;
     }
 
+    @Column
     public String getWebappPath() {
         return webappPath;
     }

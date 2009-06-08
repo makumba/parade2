@@ -16,12 +16,15 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
 
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class File {
 
     private Long id;
@@ -96,7 +99,6 @@ public class File {
     public Long getAge() {
         return new Long(new Date().getTime() - this.date.longValue());
     }
-    
 
     @Column
     public Long getDate() {
