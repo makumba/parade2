@@ -76,7 +76,7 @@ public class File {
     }
 
     @ManyToOne
-    @JoinColumn(name="row")
+    @JoinColumn(name="row", insertable=false, updatable=false)
     public Row getRow() {
         return row;
     }

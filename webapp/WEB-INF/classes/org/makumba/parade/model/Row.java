@@ -178,9 +178,7 @@ public class Row {
     }
 
     @OneToMany(cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.File.class)
-    @org.hibernate.annotations.MapKey(columns={@Column(name="row",nullable=false)})
-    @IndexColumn(name="path")
-    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+    @JoinColumn(name="row")
     public Map<String, File> getFiles() {
         return this.files;
     }
