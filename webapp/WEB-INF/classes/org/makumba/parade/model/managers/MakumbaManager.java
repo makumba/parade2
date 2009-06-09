@@ -18,8 +18,6 @@ import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.providers.MakumbaINIFileReader;
 
-import com.sun.tools.doclets.internal.toolkit.Configuration;
-
 public class MakumbaManager implements RowRefresher, ParadeManager {
 
     private static Logger logger = ParadeLogger.getParadeLogger(MakumbaManager.class.getName());
