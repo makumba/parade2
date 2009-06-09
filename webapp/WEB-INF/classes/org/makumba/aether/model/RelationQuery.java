@@ -6,12 +6,21 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.makumba.aether.Aether;
 import org.makumba.providers.QueryAnalysisProvider;
 import org.makumba.providers.QueryProvider;
 
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class RelationQuery {
 
     private Logger logger = Aether.getAetherLogger(RelationQuery.class.getName());
@@ -28,6 +37,8 @@ public class RelationQuery {
 
     private QueryAnalysisProvider qap = QueryProvider.getQueryAnalzyer("hql");
 
+    @Id @GeneratedValue
+    @Column(name="relationquery")
     public long getId() {
         return id;
     }
@@ -36,6 +47,7 @@ public class RelationQuery {
         this.id = id;
     }
 
+    @Column(nullable=false, columnDefinition="longtext")
     public String getQuery() {
         return query;
     }
@@ -71,6 +83,7 @@ public class RelationQuery {
         return niceQuery;
     }
 
+    @Column(columnDefinition="longtext")
     public String getDescription() {
         return description;
     }
@@ -79,6 +92,7 @@ public class RelationQuery {
         this.description = description;
     }
 
+    @Column
     public String getArguments() {
         return arguments;
     }

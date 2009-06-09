@@ -64,29 +64,26 @@ public class InitServlet extends HttpServlet implements Runnable {
         Vector<String> resources = new Vector<String>();
 
         try {
-            // cfg = new Configuration().configure("localhost_mysql_parade.cfg.xml");
-            resources.add("org/makumba/parade/model/Parade.hbm.xml");
-            //resources.add("org/makumba/parade/model/Row.hbm.xml");
+            resources.add("org.makumba.parade.model.ActionLog");
+            resources.add("org.makumba.parade.model.Parade");
             resources.add("org.makumba.parade.model.Row");
-            resources.add("org/makumba/parade/model/AntTarget.hbm.xml");
-            //resources.add("org/makumba/parade/model/File.hbm.xml");
+            resources.add("org.makumba.parade.model.AntTarget");
             resources.add("org.makumba.parade.model.File");
-            resources.add("org/makumba/parade/model/Log.hbm.xml");
-            resources.add("org/makumba/parade/model/ActionLog.hbm.xml");
-            resources.add("org/makumba/parade/model/Application.hbm.xml");
-            resources.add("org/makumba/parade/model/User.hbm.xml");
+            resources.add("org.makumba.parade.model.Log");
+            resources.add("org.makumba.parade.model.Application");
+            resources.add("org.makumba.parade.model.User");
 
             if (aetherEnabled) {
 
                 // Aether XMLs
                 // In a standalone Aether those would be in initialised by an own Aether sessionFactory
                 // but that seems a bit too resource-consuming, and we anyway need to query this model
-                resources.add("org/makumba/aether/model/InitialPercolationRule.hbm.xml");
-                resources.add("org/makumba/aether/model/PercolationRule.hbm.xml");
-                resources.add("org/makumba/aether/model/PercolationStep.hbm.xml");
-                resources.add("org/makumba/aether/model/RelationQuery.hbm.xml");
-                resources.add("org/makumba/aether/model/MatchedAetherEvent.hbm.xml");
-                resources.add("org/makumba/aether/model/ALE.hbm.xml");
+                resources.add("org.makumba.aether.model.InitialPercolationRule");
+                resources.add("org.makumba.aether.model.PercolationRule");
+                resources.add("org.makumba.aether.model.PercolationStep");
+                resources.add("org.makumba.aether.model.RelationQuery");
+                resources.add("org.makumba.aether.model.MatchedAetherEvent");
+                resources.add("org.makumba.aether.model.ALE");
 
             }
 

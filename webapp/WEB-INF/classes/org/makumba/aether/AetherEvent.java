@@ -2,12 +2,17 @@ package org.makumba.aether;
 
 import java.util.Date;
 
+import javax.persistence.MappedSuperclass;
+
+import org.hibernate.annotations.Index;
+
 /**
  * A aether event that can be processed by the percolation engine
  * 
  * @author Manuel Gay
  * 
  */
+@MappedSuperclass
 public class AetherEvent implements Cloneable {
 
     protected String objectURL;
@@ -42,6 +47,7 @@ public class AetherEvent implements Cloneable {
         this.eventDate = eventDate;
     }
 
+    @Index(name="IDX_OBJECTURL")
     public String getObjectURL() {
         return objectURL;
     }
@@ -50,6 +56,7 @@ public class AetherEvent implements Cloneable {
         return objectType;
     }
 
+    @Index(name="IDX_ACTOR")
     public String getActor() {
         return actor;
     }

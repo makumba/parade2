@@ -2,8 +2,19 @@ package org.makumba.parade.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
+import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.aether.ObjectTypes;
 
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class ActionLog {
 
     private Long id;
@@ -30,6 +41,7 @@ public class ActionLog {
 
     private ObjectTypes objectType;
 
+    @Column
     public String getAction() {
         return action;
     }
@@ -38,6 +50,7 @@ public class ActionLog {
         this.action = action;
     }
 
+    @Column
     public String getOrigin() {
         return origin;
     }
@@ -46,6 +59,7 @@ public class ActionLog {
         this.origin = origin;
     }
 
+    @Column
     public String getContext() {
         return context;
     }
@@ -54,6 +68,7 @@ public class ActionLog {
         this.context = context;
     }
 
+    @Column
     public Date getlogDate() {
         return logDate;
     }
@@ -62,6 +77,7 @@ public class ActionLog {
         this.logDate = date;
     }
 
+    @Column
     public String getPost() {
         return post;
     }
@@ -70,6 +86,7 @@ public class ActionLog {
         this.post = post;
     }
 
+    @Column
     public String getQueryString() {
         return queryString;
     }
@@ -78,6 +95,7 @@ public class ActionLog {
         this.queryString = queryString;
     }
 
+    @Column
     public String getUrl() {
         return url;
     }
@@ -86,6 +104,7 @@ public class ActionLog {
         this.url = url;
     }
 
+    @Column
     public String getUser() {
         return user;
     }
@@ -94,6 +113,8 @@ public class ActionLog {
         this.user = user;
     }
 
+    @Id @GeneratedValue
+    @Column(name="actionlog")
     public Long getId() {
         return id;
     }
@@ -102,6 +123,7 @@ public class ActionLog {
         this.id = id;
     }
 
+    @Column
     public String getParadecontext() {
         return paradecontext;
     }
@@ -110,6 +132,7 @@ public class ActionLog {
         this.paradecontext = paradecontext;
     }
 
+    @Column
     public String getFile() {
         return file;
     }
@@ -118,6 +141,8 @@ public class ActionLog {
         this.file = file;
     }
 
+    @Column
+    @Type(type="objectType")
     public ObjectTypes getObjectType() {
         return objectType;
     }
@@ -125,4 +150,24 @@ public class ActionLog {
     public void setObjectType(ObjectTypes objectType) {
         this.objectType = objectType;
     }
+    
+    /**
+     * Populates this ActionLog with data from an ActionLogDTO
+     */
+    public void populateFrom(ActionLogDTO dto) {
+        this.id = dto.getId();
+        this.context = dto.getContext();
+        this.action = dto.getAction();
+        this.file = dto.getFile();
+        this.logDate = dto.getDate();
+        this.objectType = dto.getObjectType();
+        this.origin = dto.getOrigin();
+        this.paradecontext = dto.getParadecontext();
+        this.post = dto.getPost();
+        this.queryString = dto.getQueryString();
+        this.url = dto.getUrl();
+        this.user = dto.getUser();
+    }
+    
+    
 }

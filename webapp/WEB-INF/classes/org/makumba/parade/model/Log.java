@@ -2,6 +2,17 @@ package org.makumba.parade.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Log {
 
     private Long id;
@@ -18,6 +29,7 @@ public class Log {
 
     private ActionLog actionLog;
 
+    @Column
     public String getLevel() {
         return level;
     }
@@ -26,6 +38,8 @@ public class Log {
         this.level = level;
     }
 
+    @Id @GeneratedValue
+    @Column(name="log")
     public Long getId() {
         return id;
     }
@@ -34,6 +48,7 @@ public class Log {
         this.id = id;
     }
 
+    @Column
     public String getMessage() {
         return message;
     }
@@ -42,6 +57,7 @@ public class Log {
         this.message = message;
     }
 
+    @Column
     public Throwable getThrowable() {
         return throwable;
     }
@@ -50,6 +66,7 @@ public class Log {
         this.throwable = throwable;
     }
 
+    @Column
     public Date getLogDate() {
         return logDate;
     }
@@ -57,7 +74,8 @@ public class Log {
     public void setLogDate(Date date) {
         this.logDate = date;
     }
-
+    
+    @Column
     public String getOrigin() {
         return origin;
     }
@@ -66,6 +84,7 @@ public class Log {
         this.origin = origin;
     }
 
+    @ManyToOne(optional=false)
     public ActionLog getActionLog() {
         return actionLog;
     }

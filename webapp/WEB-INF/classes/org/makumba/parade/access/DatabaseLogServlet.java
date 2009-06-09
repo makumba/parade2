@@ -246,7 +246,7 @@ public class DatabaseLogServlet extends HttpServlet {
         } else {
             actionLog = (ActionLog) s.get(ActionLog.class, log.getId());
         }
-        log.populate(actionLog);
+        actionLog.populateFrom(log);
         s.saveOrUpdate(actionLog);
         tx.commit();
 
@@ -755,7 +755,7 @@ public class DatabaseLogServlet extends HttpServlet {
         }
 
         ActionLog actionLog = new ActionLog();
-        actionLogDTO.populate(actionLog);
+        actionLog.populateFrom(actionLogDTO);
 
         // if the actionLog is there but not persisted, we persist it first
         if (actionLog.getId() == null) {

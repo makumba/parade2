@@ -2,12 +2,24 @@ package org.makumba.aether.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+
 /**
  * Percolation step, containing focus and nimbus for each percolation step
  * 
  * @author Manuel Gay
  * 
  */
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class PercolationStep {
 
     private long id;
@@ -48,6 +60,8 @@ public class PercolationStep {
 
     }
 
+    @Id @GeneratedValue
+    @Column(name="percolationstep")
     public long getId() {
         return id;
     }
@@ -56,6 +70,7 @@ public class PercolationStep {
         this.id = id;
     }
 
+    @Column
     public String getUserGroup() {
         return userGroup;
     }
@@ -64,6 +79,8 @@ public class PercolationStep {
         this.userGroup = userGroup;
     }
 
+    @Column
+    @Index(name="IDX_FOCUS")
     public int getFocus() {
         return focus;
     }
@@ -72,6 +89,8 @@ public class PercolationStep {
         this.focus = focus;
     }
 
+    @Column
+    @Index(name="IDX_NIMBUS")
     public int getNimbus() {
         return nimbus;
     }
@@ -80,6 +99,7 @@ public class PercolationStep {
         this.nimbus = nimbus;
     }
 
+    @ManyToOne
     public PercolationStep getPrevious() {
         return previous;
     }
@@ -88,6 +108,7 @@ public class PercolationStep {
         this.previous = previous;
     }
 
+    @ManyToOne
     public MatchedAetherEvent getMatchedAetherEvent() {
         return matchedAetherEvent;
     }
@@ -96,6 +117,7 @@ public class PercolationStep {
         this.matchedAetherEvent = matchedAetherEvent;
     }
 
+    @ManyToOne
     public PercolationRule getPercolationRule() {
         return percolationRule;
     }
@@ -104,6 +126,7 @@ public class PercolationStep {
         this.percolationRule = percolationRule;
     }
 
+    @Column
     public String getPercolationPath() {
         return percolationPath;
     }
@@ -112,6 +135,7 @@ public class PercolationStep {
         this.percolationPath = percolationPath;
     }
 
+    @Column
     public int getPercolationLevel() {
         return percolationLevel;
     }
@@ -120,6 +144,7 @@ public class PercolationStep {
         this.percolationLevel = percolationLevel;
     }
 
+    @ManyToOne
     public PercolationStep getRoot() {
         return root;
     }
@@ -128,6 +153,7 @@ public class PercolationStep {
         this.root = root;
     }
 
+    @Column
     public String getPreviousURL() {
         return previousURL;
     }
@@ -136,6 +162,8 @@ public class PercolationStep {
         this.previousURL = previousURL;
     }
 
+    @Column
+    @Index(name="IDX_OBJECTURL")
     public String getObjectURL() {
         return objectURL;
     }
@@ -144,6 +172,7 @@ public class PercolationStep {
         this.objectURL = objectURL;
     }
 
+    @Column
     public Date getLastModified() {
         return lastModified;
     }
@@ -152,6 +181,7 @@ public class PercolationStep {
         this.lastModified = lastModified;
     }
 
+    @Column
     public int getInitialFocus() {
         return initialFocus;
     }
@@ -160,6 +190,7 @@ public class PercolationStep {
         this.initialFocus = initialFocus;
     }
 
+    @Column
     public int getInitialNimbus() {
         return initialNimbus;
     }
@@ -168,6 +199,7 @@ public class PercolationStep {
         this.initialNimbus = initialNimbus;
     }
 
+    @Column
     public Date getCreated() {
         return created;
     }
@@ -175,6 +207,17 @@ public class PercolationStep {
     public void setCreated(Date created) {
         this.created = created;
     }
+    
+
+    public void setVirtualPercolation(boolean virtualPercolation) {
+        this.virtualPercolation = virtualPercolation;
+    }
+
+    @Column
+    public boolean getVirtualPercolation() {
+        return virtualPercolation;
+    }
+
 
     public PercolationStep(String previousURL, String objectURL, String userGroup, int focus, int nimbus,
             PercolationRule percolationRule, MatchedAetherEvent matchedAetherEvent, PercolationStep previous,
@@ -194,13 +237,5 @@ public class PercolationStep {
         this.created = new Date();
         this.lastModified = new Date();
         this.setVirtualPercolation(virtualPercolation);
-    }
-
-    public void setVirtualPercolation(boolean virtualPercolation) {
-        this.virtualPercolation = virtualPercolation;
-    }
-
-    public boolean getVirtualPercolation() {
-        return virtualPercolation;
     }
 }

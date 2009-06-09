@@ -81,7 +81,6 @@
 		<mkdir dir="${basedir}/jspc" />
 		<mkdir dir="globalClasses" />
 
-		<!-- this is a bug in the karamba build.xml... the jspc directory is not always created at install or paradeInstall -->
 		<delete>
 			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/*.class" />
 			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/*.java~" />
@@ -140,8 +139,6 @@
 				<include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
 				<include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
 				<include name="org/makumba/parade/access/ActionLogDTO*.class" />
-				<!-- Needed for the DTO -->
-				<include name="org/makumba/parade/model/ActionLog*.class" />
 								
 				<include name="org/makumba/parade/tools/DatabaseHandler*.class" />
 				<include name="org/makumba/parade/tools/ParadeLogFormatter*.class" />

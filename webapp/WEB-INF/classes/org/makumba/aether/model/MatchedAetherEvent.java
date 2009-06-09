@@ -1,15 +1,24 @@
 package org.makumba.aether.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.makumba.aether.AetherEvent;
 
 /**
  * Matched aether event that is being percolated
  * 
- * TODO add progression curve
- * 
  * @author Manuel Gay
  * 
  */
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class MatchedAetherEvent extends AetherEvent {
 
     private long id;
@@ -35,6 +44,8 @@ public class MatchedAetherEvent extends AetherEvent {
         super();
     }
 
+    @Id @GeneratedValue
+    @Column(name="matchedaetherevent")
     public long getId() {
         return id;
     }
@@ -43,6 +54,7 @@ public class MatchedAetherEvent extends AetherEvent {
         this.id = id;
     }
 
+    @Column
     public String getUserType() {
         return userType;
     }
@@ -55,10 +67,12 @@ public class MatchedAetherEvent extends AetherEvent {
         this.userGroup = userGroup;
     }
 
+    @Column
     public String getUserGroup() {
         return userGroup;
     }
 
+    @ManyToOne
     public InitialPercolationRule getInitialPercolationRule() {
         return initialPercolationRule;
     }
@@ -67,10 +81,11 @@ public class MatchedAetherEvent extends AetherEvent {
         this.initialPercolationRule = initialPercolationRule;
     }
 
+    @Transient
     public int getInitialPercolationLevel() {
         return initialPercolationRule.getInitialLevel();
     }
-
+        
     @Override
     public String toString() {
         return this.actor + " (" + this.userType + ") --(" + this.action + ")--> " + this.objectURL + " ("
@@ -82,6 +97,7 @@ public class MatchedAetherEvent extends AetherEvent {
         this.virtualPercolation = virtualPercolation;
     }
 
+    @Column
     public boolean getVirtualPercolation() {
         return virtualPercolation;
     }

@@ -2,12 +2,23 @@ package org.makumba.aether.model;
 
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 /**
  * Initial percolation rule for rule-based percolation
  * 
  * @author Manuel Gay
  * 
  */
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class InitialPercolationRule implements AetherRule {
 
     public static final int NO_PERCOLATION = 0;
@@ -49,7 +60,9 @@ public class InitialPercolationRule implements AetherRule {
     public InitialPercolationRule() {
 
     }
-
+    
+    @Id @GeneratedValue
+    @Column(name="initialpercolationrule")
     public long getId() {
         return id;
     }
@@ -58,6 +71,7 @@ public class InitialPercolationRule implements AetherRule {
         this.id = id;
     }
 
+    @Column
     public String getObjectType() {
         return objectType;
     }
@@ -66,6 +80,7 @@ public class InitialPercolationRule implements AetherRule {
         this.objectType = objectType;
     }
 
+    @Column
     public String getAction() {
         return action;
     }
@@ -74,6 +89,7 @@ public class InitialPercolationRule implements AetherRule {
         this.action = action;
     }
 
+    @Column
     public String getUserType() {
         return userType;
     }
@@ -82,6 +98,7 @@ public class InitialPercolationRule implements AetherRule {
         this.userType = userType;
     }
 
+    @Column
     public int getInitialLevel() {
         return initialLevel;
     }
@@ -90,6 +107,8 @@ public class InitialPercolationRule implements AetherRule {
         this.initialLevel = initialLevel;
     }
 
+    
+    @ManyToMany
     public List<RelationQuery> getRelationQueries() {
         return relationQueries;
     }
@@ -98,6 +117,7 @@ public class InitialPercolationRule implements AetherRule {
         this.relationQueries = relationQuery;
     }
 
+    @Column
     public boolean getActive() {
         return active;
     }
@@ -106,6 +126,7 @@ public class InitialPercolationRule implements AetherRule {
         this.active = active;
     }
 
+    @Column(columnDefinition="int(11) default '0'")
     public int getPercolationMode() {
         return percolationMode;
     }
@@ -114,6 +135,7 @@ public class InitialPercolationRule implements AetherRule {
         this.percolationMode = percolationMode;
     }
 
+    @Column
     public String getFocusProgressionCurve() {
         return focusProgressionCurve;
     }
@@ -122,6 +144,7 @@ public class InitialPercolationRule implements AetherRule {
         this.focusProgressionCurve = focusProgressionCurve;
     }
 
+    @Column
     public String getNimbusProgressionCurve() {
         return nimbusProgressionCurve;
     }
@@ -130,6 +153,7 @@ public class InitialPercolationRule implements AetherRule {
         this.nimbusProgressionCurve = nimbusProgressionCurve;
     }
 
+    @Column
     public int getInteractionType() {
         return interactionType;
     }
@@ -161,6 +185,7 @@ public class InitialPercolationRule implements AetherRule {
         this.description = description;
     }
 
+    @Column
     public String getDescription() {
         return description;
     }

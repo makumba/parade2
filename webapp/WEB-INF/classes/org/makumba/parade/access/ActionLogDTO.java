@@ -3,7 +3,6 @@ package org.makumba.parade.access;
 import java.util.Date;
 
 import org.makumba.parade.aether.ObjectTypes;
-import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.tools.TriggerFilter;
 
 /**
@@ -133,42 +132,6 @@ public class ActionLogDTO {
 
     public void setFile(String file) {
         this.file = file;
-    }
-
-    /**
-     * Populates an ActionLog
-     * 
-     * @param log
-     *            the ActionLog to be populated by this DTO
-     */
-    public void populate(ActionLog log) {
-        log.setId(id);
-        log.setContext(context);
-        log.setlogDate(date);
-        log.setPost(post);
-        log.setQueryString(queryString);
-        log.setUrl(url);
-        log.setUser(user);
-        log.setAction(action);
-        log.setOrigin(origin);
-        log.setParadecontext(paradecontext);
-        log.setFile(file);
-        log.setObjectType(objectType);
-    }
-
-    public ActionLogDTO(ActionLog log) {
-        this.id = log.getId();
-        this.context = log.getContext();
-        this.date = log.getlogDate();
-        this.post = log.getPost();
-        this.queryString = log.getQueryString();
-        this.url = log.getUrl();
-        this.user = log.getUser();
-        this.action = log.getAction();
-        this.origin = log.getOrigin();
-        this.paradecontext = log.getParadecontext();
-        this.file = log.getFile();
-        this.objectType = log.getObjectType();
     }
 
     public ActionLogDTO() { // empty constructor for TriggerFilter

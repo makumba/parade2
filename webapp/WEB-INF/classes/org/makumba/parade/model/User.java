@@ -1,5 +1,17 @@
 package org.makumba.parade.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class User {
 
     private long id;
@@ -22,6 +34,7 @@ public class User {
 
     private User mentor;
 
+    @Column
     public String getName() {
         return name;
     }
@@ -30,6 +43,7 @@ public class User {
         this.name = name;
     }
 
+    @Column
     public String getSurname() {
         return surname;
     }
@@ -38,6 +52,7 @@ public class User {
         this.surname = surname;
     }
 
+    @Column
     public String getNickname() {
         return nickname;
     }
@@ -46,6 +61,7 @@ public class User {
         this.nickname = nickname;
     }
 
+    @Column
     public String getEmail() {
         return email;
     }
@@ -54,6 +70,8 @@ public class User {
         this.email = email;
     }
 
+    @Id @GeneratedValue
+    @Column(name="user")
     public long getId() {
         return id;
     }
@@ -101,6 +119,7 @@ public class User {
         return new User("unknown", "unknown", "unknown", "unknown", "unknown@unknown.com");
     }
 
+    @Column
     public String getLogin() {
         return login;
     }
@@ -109,6 +128,8 @@ public class User {
         this.login = login;
     }
 
+    @ManyToOne
+    @JoinColumn(name="id_parade")
     public Parade getParade() {
         return parade;
     }
@@ -117,6 +138,7 @@ public class User {
         this.parade = parade;
     }
 
+    @Column
     public byte[] getJpegPhoto() {
         return jpegPhoto;
     }
@@ -125,6 +147,7 @@ public class User {
         this.jpegPhoto = jpegPhoto;
     }
 
+    @Column
     public String getCvsuser() {
         return cvsuser;
     }
@@ -137,6 +160,7 @@ public class User {
         this.mentor = mentor;
     }
 
+    @ManyToOne
     public User getMentor() {
         return mentor;
     }

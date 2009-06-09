@@ -20,6 +20,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
@@ -176,7 +177,7 @@ public class Row {
         return externalUser;
     }
 
-    @OneToMany(cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.File.class, fetch=FetchType.LAZY)
+    @OneToMany(cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.File.class)
     @org.hibernate.annotations.MapKey(columns={@Column(name="row",nullable=false)})
     @IndexColumn(name="path")
     @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
@@ -206,12 +207,13 @@ public class Row {
     }
 
     @ManyToOne
-    @JoinColumn(name="id_parade")
+    @JoinColumn(name="id_parade", insertable=false, updatable=false)
     public Parade getParade() {
         return parade;
     }
 
     @Column
+    @Index(name="IDX_ROWNAME")
     public String getRowname() {
         return rowname;
     }

@@ -8,12 +8,25 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.OrderBy;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
@@ -37,6 +50,8 @@ import org.makumba.parade.tools.ParadeLogger;
  * @author Manuel Gay
  * 
  */
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Parade {
 
     private static Logger logger = ParadeLogger.getParadeLogger(Parade.class.getName());
@@ -363,6 +378,7 @@ public class Parade {
         }
     }
 
+    @Transient
     private Map<String, Map<String, String>> getRowstoreDefinition() {
         Map<String, Map<String, String>> rowstore = rowproperties.getRowDefinitions();
         if (rowstore.isEmpty()) {
@@ -496,6 +512,7 @@ public class Parade {
 
     /** Model related fields and methods * */
 
+    @Id @GeneratedValue
     public Long getId() {
         return id;
     }
@@ -504,6 +521,8 @@ public class Parade {
         this.id = id;
     }
 
+    @OneToMany(cascade=javax.persistence.CascadeType.ALL, targetEntity=org.makumba.parade.model.Row.class)
+    @JoinColumn(name="id_parade")
     public Map<String, Row> getRows() {
         return rows;
     }
@@ -516,6 +535,7 @@ public class Parade {
 
     }
 
+    @Column
     public String getBaseDir() {
         return baseDir;
     }
@@ -524,6 +544,8 @@ public class Parade {
         this.baseDir = paradeBase;
     }
 
+    @OneToMany(cascade=javax.persistence.CascadeType.ALL, targetEntity=org.makumba.parade.model.Application.class)
+    @JoinColumn(name="id_parade")
     public Map<String, Application> getApplications() {
         return applications;
     }
@@ -532,6 +554,8 @@ public class Parade {
         this.applications = applications;
     }
 
+    @OneToMany(cascade=javax.persistence.CascadeType.ALL, targetEntity=org.makumba.parade.model.User.class)
+    @JoinColumn(name="id_parade")
     public Map<String, User> getUsers() {
         return users;
     }
@@ -540,6 +564,7 @@ public class Parade {
         this.users = users;
     }
 
+    @Transient
     public Map<String, Integer> getJNotifyWatches() {
         return JNotifyWatches;
     }

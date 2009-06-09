@@ -2,12 +2,24 @@ package org.makumba.aether.model;
 
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+
 /**
  * Percolation rule for rule-based percolation.
  * 
  * @author Manuel Gay
  * 
  */
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class PercolationRule implements AetherRule {
 
     private long id;
@@ -32,6 +44,8 @@ public class PercolationRule implements AetherRule {
 
     }
 
+    @Id @GeneratedValue
+    @Column(name="percolationrule")
     public long getId() {
         return id;
     }
@@ -40,6 +54,8 @@ public class PercolationRule implements AetherRule {
         this.id = id;
     }
 
+    @Column
+    @Index(name="IDX_SUBJECT")
     public String getSubject() {
         return subject;
     }
@@ -48,6 +64,8 @@ public class PercolationRule implements AetherRule {
         this.subject = subject;
     }
 
+    @Column
+    @Index(name="IDX_PREDICATE")
     public String getPredicate() {
         return predicate;
     }
@@ -56,6 +74,7 @@ public class PercolationRule implements AetherRule {
         this.predicate = predicate;
     }
 
+    @Column
     public String getObject() {
         return object;
     }
@@ -64,6 +83,7 @@ public class PercolationRule implements AetherRule {
         this.object = object;
     }
 
+    @Column
     public int getConsumption() {
         return consumption;
     }
@@ -72,6 +92,7 @@ public class PercolationRule implements AetherRule {
         this.consumption = consumption;
     }
 
+    @Column
     public String getDescription() {
         return description;
     }
@@ -80,6 +101,8 @@ public class PercolationRule implements AetherRule {
         this.description = description;
     }
 
+    @Column
+    @Index(name="IDX_ACTIVE")
     public boolean getActive() {
         return this.active;
     }
@@ -88,6 +111,7 @@ public class PercolationRule implements AetherRule {
         this.active = active;
     }
 
+    @ManyToMany
     public List<RelationQuery> getRelationQueries() {
         return relationQueries;
     }
@@ -106,6 +130,7 @@ public class PercolationRule implements AetherRule {
         this.propagationDepthLimit = propagationDepthLimit;
     }
 
+    @Column
     public int getPropagationDepthLimit() {
         return propagationDepthLimit;
     }

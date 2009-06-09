@@ -10,10 +10,8 @@
 				<include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
 				<include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
 				<include name="org/makumba/parade/access/ActionLogDTO*.class" />
-				<!-- Needed for the DTO -->
-				<include name="org/makumba/parade/model/ActionLog*.class" />
 				
-				<include name="org/makumba/parade/tools/DatabaseHandler*.class" />
+			    <include name="org/makumba/parade/tools/DatabaseHandler*.class" />
 				<include name="org/makumba/parade/tools/ParadeLogFormatter*.class" />
 				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
 				<include name="org/makumba/parade/tools/ParadeLogger*.class" />
