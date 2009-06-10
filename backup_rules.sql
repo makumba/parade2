@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: parade
 -- ------------------------------------------------------
--- Server version	5.0.51a-3ubuntu5.1
+-- Server version	5.0.67-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -35,7 +35,7 @@ CREATE TABLE `InitialPercolationRule` (
   `interactionType` varchar(255) default NULL,
   `description` varchar(255) default NULL,
   PRIMARY KEY  (`initialpercolationrule`)
-) ENGINE=INNODB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -58,9 +58,15 @@ SET character_set_client = utf8;
 CREATE TABLE `InitialPercolationRule__relationQueries` (
   `id_initialpercolationrule` bigint(20) NOT NULL,
   `elt` bigint(20) NOT NULL,
+  `InitialPercolationRule_initialpercolationrule` bigint(20) default NULL,
+  `relationQueries_relationquery` bigint(20) default NULL,
   KEY `FK91634F409CE9A215` (`elt`),
-  KEY `FK91634F408FE3CD7C` (`id_initialpercolationrule`)
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
+  KEY `FK91634F408FE3CD7C` (`id_initialpercolationrule`),
+  KEY `FK91634F40B7B4A1ED` (`InitialPercolationRule_initialpercolationrule`),
+  KEY `FK91634F409AD3301F` (`relationQueries_relationquery`),
+  CONSTRAINT `FK91634F409AD3301F` FOREIGN KEY (`relationQueries_relationquery`) REFERENCES `relationquery` (`relationquery`),
+  CONSTRAINT `FK91634F40B7B4A1ED` FOREIGN KEY (`InitialPercolationRule_initialpercolationrule`) REFERENCES `initialpercolationrule` (`initialpercolationrule`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -69,7 +75,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `InitialPercolationRule__relationQueries` WRITE;
 /*!40000 ALTER TABLE `InitialPercolationRule__relationQueries` DISABLE KEYS */;
-INSERT INTO `InitialPercolationRule__relationQueries` VALUES (1,5),(1,9),(1,1);
+INSERT INTO `InitialPercolationRule__relationQueries` VALUES (1,5,NULL,NULL),(1,9,NULL,NULL),(1,1,NULL,NULL),(0,0,1,4),(0,0,1,5),(0,0,2,9),(0,0,2,17);
 /*!40000 ALTER TABLE `InitialPercolationRule__relationQueries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +96,7 @@ CREATE TABLE `PercolationRule` (
   `active` bit(1) default NULL,
   `propagationDepthLimit` int(11) default NULL,
   PRIMARY KEY  (`percolationrule`)
-) ENGINE=INNODB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -113,9 +119,15 @@ SET character_set_client = utf8;
 CREATE TABLE `PercolationRule__relationQueries` (
   `id_initialpercolationrule` bigint(20) NOT NULL,
   `elt` bigint(20) NOT NULL,
+  `PercolationRule_percolationrule` bigint(20) default NULL,
+  `relationQueries_relationquery` bigint(20) default NULL,
   KEY `FK432EF01C9CE9A215` (`elt`),
-  KEY `FK432EF01C6E36F558` (`id_initialpercolationrule`)
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
+  KEY `FK432EF01C6E36F558` (`id_initialpercolationrule`),
+  KEY `FK432EF01CBA65DEC7` (`PercolationRule_percolationrule`),
+  KEY `FK432EF01C9AD3301F` (`relationQueries_relationquery`),
+  CONSTRAINT `FK432EF01C9AD3301F` FOREIGN KEY (`relationQueries_relationquery`) REFERENCES `relationquery` (`relationquery`),
+  CONSTRAINT `FK432EF01CBA65DEC7` FOREIGN KEY (`PercolationRule_percolationrule`) REFERENCES `percolationrule` (`percolationrule`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -124,7 +136,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `PercolationRule__relationQueries` WRITE;
 /*!40000 ALTER TABLE `PercolationRule__relationQueries` DISABLE KEYS */;
-INSERT INTO `PercolationRule__relationQueries` VALUES (2,5),(2,1),(5,4),(4,5),(4,4),(1,5),(9,9),(9,17),(11,9),(11,17);
+INSERT INTO `PercolationRule__relationQueries` VALUES (2,5,NULL,NULL),(2,1,NULL,NULL),(5,4,NULL,NULL),(4,5,NULL,NULL),(4,4,NULL,NULL),(1,5,NULL,NULL),(9,9,NULL,NULL),(9,17,NULL,NULL),(11,9,NULL,NULL),(11,17,NULL,NULL);
 /*!40000 ALTER TABLE `PercolationRule__relationQueries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,7 +153,7 @@ CREATE TABLE `RelationQuery` (
   `description` text,
   `arguments` varchar(255) default NULL,
   PRIMARY KEY  (`relationquery`)
-) ENGINE=INNODB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -150,7 +162,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `RelationQuery` WRITE;
 /*!40000 ALTER TABLE `RelationQuery` DISABLE KEYS */;
-INSERT INTO `RelationQuery` VALUES (1,'SELECT f.cvsURL as fromURL, \'checkedOutAs\' as type, f.fileURL() as toURL FROM File f WHERE f.fileURL() in(:fromURLSet) AND f.cvsURL is not null and concat(f.fileURL(), \'True\') not in(:fromURLAndTraversedCVSSet)','cvs:// , checkedOutAs, file:// - all the cvs files that are a version of a repository version (not-null CVS version) and where the percolationPath has no cvs:// prefix','fromURLSet, fromURLAndTraversedCVSSet'),(9,'SELECT f.parentURL() as toURL, \'parentOf\' as type, f.URL() as fromURL FROM File f WHERE f.URL() IN(:fromURLSet)','dir:// parentOf dir:// | file:// - finds the parent directory of the files in the initial fromURLSet','fromURLSet'),(4,'SELECT f.fileURL() as fromURL, \'versionOf\' as type, f.cvsURL as toURL FROM File f JOIN f.row r WHERE f.cvsURL in(:cvsURLSet) AND r.rowname not in(:rowNameSet)','file://, versionOf, cvs:// - all the checked out files of a cvs file that have a CVS URL set except the ones of the previous row','cvsURLSet, rowNameSet'),(17,'SELECT r.rowURL() as toURL, \'havingAsRoot\' as type, f.URL() as fromURL FROM File f, Row r WHERE f.path = r.rowpath and f.URL() IN(:fromURLSet)','row:// havingAsRoot dir:// - finds the row that has as root folder a directory',''),(5,'SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL from org.makumba.devel.relations.Relation r where r.toURL in(:fromURLSet)','fromURL, type, toURL - all the files that depend on this file (through the computed relations)','fromURLSet');
+INSERT INTO `RelationQuery` VALUES (1,'SELECT f.cvsURL as fromURL, \'checkedOutAs\' as type, f.fileURL() as toURL FROM File f WHERE f.fileURL() in(:fromURLSet) AND f.cvsURL is not null and concat(f.fileURL(), \'True\') not in(:fromURLAndTraversedCVSSet)','cvs:// , checkedOutAs, file:// - all the cvs files that are a version of a repository version (not-null CVS version) and where the percolationPath has no cvs:// prefix','fromURLSet, fromURLAndTraversedCVSSet'),(4,'SELECT f.fileURL() as fromURL, \'versionOf\' as type, f.cvsURL as toURL FROM File f JOIN f.row r WHERE f.cvsURL in(:cvsURLSet) AND r.rowname not in(:rowNameSet)','file://, versionOf, cvs:// - all the checked out files of a cvs file that have a CVS URL set except the ones of the previous row','cvsURLSet, rowNameSet'),(5,'SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL from org.makumba.devel.relations.Relation r where r.toURL in(:fromURLSet)','fromURL, type, toURL - all the files that depend on this file (through the computed relations)','fromURLSet'),(9,'SELECT f.parentURL() as toURL, \'parentOf\' as type, f.URL() as fromURL FROM File f WHERE f.URL() IN(:fromURLSet)','dir:// parentOf dir:// | file:// - finds the parent directory of the files in the initial fromURLSet','fromURLSet'),(17,'SELECT r.rowURL() as toURL, \'havingAsRoot\' as type, f.URL() as fromURL FROM File f, Row r WHERE f.path = r.rowpath and f.URL() IN(:fromURLSet)','row:// havingAsRoot dir:// - finds the row that has as root folder a directory','');
 /*!40000 ALTER TABLE `RelationQuery` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -163,4 +175,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2008-07-27 22:55:53
+-- Dump completed on 2009-06-10 10:42:31
