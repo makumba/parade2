@@ -525,16 +525,14 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             initialPercolationRules.clear();
             percolationRules.clear();
 
-            List<InitialPercolationRule> iprs = s.createCriteria(InitialPercolationRule.class).add(
-                    Restrictions.ne("active", false)).list();
+            List<InitialPercolationRule> iprs = s.createQuery("from InitialPercolationRule ipr where ipr.active = true").list();
 
             for (InitialPercolationRule initialPercolationRule : iprs) {
                 put(initialPercolationRules, initialPercolationRule.getObjectType() + "#"
                         + initialPercolationRule.getAction(), initialPercolationRule);
             }
 
-            List<PercolationRule> prs = s.createCriteria(PercolationRule.class).add(Restrictions.ne("active", false))
-                    .list();
+            List<PercolationRule> prs = s.createQuery("from PercolationRule r where r.active = true").list();
 
             for (PercolationRule percolationRule : prs) {
                 put(percolationRules, percolationRule.getSubject() + "#" + percolationRule.getPredicate() + "#"
