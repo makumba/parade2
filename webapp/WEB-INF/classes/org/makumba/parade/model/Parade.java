@@ -24,9 +24,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.MapKey;
-import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Cascade;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
@@ -523,6 +521,8 @@ public class Parade {
 
     @OneToMany(cascade=javax.persistence.CascadeType.ALL, targetEntity=org.makumba.parade.model.Row.class)
     @JoinColumn(name="id_parade")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+
     public Map<String, Row> getRows() {
         return rows;
     }
@@ -546,6 +546,7 @@ public class Parade {
 
     @OneToMany(cascade=javax.persistence.CascadeType.ALL, targetEntity=org.makumba.parade.model.Application.class)
     @JoinColumn(name="id_parade")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     public Map<String, Application> getApplications() {
         return applications;
     }
@@ -556,6 +557,7 @@ public class Parade {
 
     @OneToMany(cascade=javax.persistence.CascadeType.ALL, targetEntity=org.makumba.parade.model.User.class)
     @JoinColumn(name="id_parade")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     public Map<String, User> getUsers() {
         return users;
     }

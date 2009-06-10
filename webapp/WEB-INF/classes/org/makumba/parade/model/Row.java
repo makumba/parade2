@@ -20,6 +20,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.makumba.parade.aether.ObjectTypes;
@@ -178,6 +179,7 @@ public class Row {
     }
 
     @OneToMany(cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.File.class)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     @JoinColumn(name="row")
     public Map<String, File> getFiles() {
         return this.files;
@@ -228,6 +230,7 @@ public class Row {
 
     @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.AntTarget.class)
     @org.hibernate.annotations.MapKey(columns={@Column(name="row_id")})
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     public List<AntTarget> getTargets() {
         return targets;
     }
