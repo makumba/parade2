@@ -7,7 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -114,6 +116,7 @@ public class PercolationRule implements AetherRule {
     }
 
     @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(name="PercolationRule__relationQueries")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     public List<RelationQuery> getRelationQueries() {
         return relationQueries;
