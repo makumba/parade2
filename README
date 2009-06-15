@@ -25,15 +25,15 @@ This checkout provides you with two things:
 
 05. In "/webapp/WEB-INF/classes/Makumba.conf" make sure that "hibernate.hbm2ddl.auto" is set to create and not update during the first launch and if necessary configure password in "/webapp/WEB-INF/classes/Makumba.conf". Also verify that in this file the MySQL dialect is set to INNODB and not to default.
 
-06. Import the "/backup_rules.sql" file into your database for inserting the percolation rules
+06. Configure the parade2-tomcat runner (i.e. set the catalina_home var to your tomcat directory, if it's not already set)
 
-07. Configure the parade2-tomcat runner (i.e. set the catalina_home var to your tomcat directory, if it's not already set)
+07. Do a project clean first and then run parade2-tomcat
 
-08. Do a project clean first and then run parade2-tomcat
+08. When you see "INIT: Initialisation took ... " stop it again. Now you have a "/webapp/WEB-INF/classes/rows.properties" file
 
-09. When you see "INIT: Initialisation took ... " stop it again. Now you have a "/webapp/WEB-INF/classes/rows.properties" file
+09. Configure your rows in "/webapp/WEB-INF/classes/rows.properties" like it is done in the example at the top of the file
 
-10. Configure your rows in "/webapp/WEB-INF/classes/rows.properties" like it is done in the example at the top of the file
+10. Import the "/backup_rules.sql" file into your database for inserting the percolation rules
 
 11. In "/webapp/WEB-INF/classes/Makumba.conf" make sure that "hibernate.hbm2ddl.auto" is set to update and not create. Otherwise your database content will be deleted every time.
 
