@@ -2,8 +2,8 @@ $Id$
 
 If you intend to develop ParaDe, you probably should know how to configure it.
 This checkout provides you with two things:
-- one way to run ParaDe from Eclipse
-- one way to run ParaDe on a server
+- One way to run ParaDe from Eclipse
+- One way to run ParaDe on a server
 
 
 == Software that should be installed ==
@@ -21,23 +21,27 @@ This checkout provides you with two things:
 
 03. Configure the file "/tomcat.properties" (port, manager password, ...)
 
-04. Create database with the name "parade", and if necessary configure password in "/webapp/WEB-INF/classes/Makumba.conf". Verify that in this file the MySQL dialect is set to INNODB and not MyISAM
+04. Create database with the name "parade"
 
-05. Import the "/backup_rules.sql" file into your database for inserting the percolation rules
+05. In "/webapp/WEB-INF/classes/Makumba.conf" make sure that "hibernate.hbm2ddl.auto" is set to create and not update during the first launch and if necessary configure password in "/webapp/WEB-INF/classes/Makumba.conf". Also verify that in this file the MySQL dialect is set to INNODB and not to default.
 
-06. Configure the parade2-tomcat runner (i.e. set the catalina_home var to your tomcat directory, if it's not already set)
+06. Import the "/backup_rules.sql" file into your database for inserting the percolation rules
 
-07. Run parade2-tomcat
+07. Configure the parade2-tomcat runner (i.e. set the catalina_home var to your tomcat directory, if it's not already set)
 
-08. Stop it again :) now you have a "/webapp/WEB-INF/classes/rows.properties" file
+08. Do a project clean first and then run parade2-tomcat
 
-09. Configure your rows in "/webapp/WEB-INF/classes/rows.properties" like it is done in the example at the top of the file
+09. When you see "INIT: Initialisation took ... " stop it again. Now you have a "/webapp/WEB-INF/classes/rows.properties" file
 
-10. To enable aether: in "/webapp/WEB-INF/classes/parade.properties", uncomment the aether.enabled line and the aether.databaseName
+10. Configure your rows in "/webapp/WEB-INF/classes/rows.properties" like it is done in the example at the top of the file
 
-11. Run parade again, this time it will compute all the relationships (this can take a little time). You can activate this also trough the admin page (see below).
+11. In "/webapp/WEB-INF/classes/Makumba.conf" make sure that "hibernate.hbm2ddl.auto" is set to update and not create. Otherwise your database content will be deleted every time.
 
-12. That's it!
+12. To enable aether: in "/webapp/WEB-INF/classes/parade.properties", uncomment the aether properties and set aether.enabled to true
+
+13. Run parade again, You can activate the crawling to compute all the relationships trough the admin page (see below). This can take a little time
+
+14. That's it!
 
 
 == Useful things to know ==
@@ -49,3 +53,23 @@ http://localhost:5050/admin
 
 Aether page:
 http://localhost:5050/aether
+
+== Common problems ==
+- How do I create a new user?
+If you login with a non existing username you'll get a create new user page where you can create a new user.
+
+- There are no rows (except root) on the ParaDe mainpage
+If you changed your rows.properties file you need to register the new rows. On the admin page press the "register new rows" button.
+
+- My database is emptied every time I launch ParaDe.
+Make sure that in "/webapp/WEB-INF/classes/Makumba.conf" the property "hibernate.hbm2ddl.auto" is set to update and not create. Otherwise your database content will be deleted every time.
+
+- When I save a file no percolation happens
+Make sure that you've imported the "backup_rules.sql" in the database.
+
+- The crawling does not start from the admin page
+Stop and restart ParaDe and try it again. It is a little bug and happens sometimes.
+
+- I have errors during startup of ParaDe
+Make sure your database is named ParaDe and your username/password are correctly set. Make sure the database is set to INNODB.
+
