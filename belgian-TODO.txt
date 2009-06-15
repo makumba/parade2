@@ -1,44 +1,17 @@
-- Investigate the makumba.jar twice (lib and webinf/lib)
-- Provide the feature to clean the work directory of a row
+m Excel
+m dissapearance of high-nimbus events
+m if something in work of others is in my focus, then i should see it differently there
 
+indexes; look at queries and make indexes for all fields used in WHERE
+move myWork and workOfOthers low
+Rethink howto work with the checkboxes in mywork.
+Make my work update when a file is saved
 
+enable/disable percolation during crawling? Make methods like enable/disable in aether.java
 
-
-
-
-
-
-
-
-
-
-
-Actions are logged before they are executed. How would it be to log some of them (e.g. Struts actions) in the afterServlet
-
-Each Struts action handler should create its own ActionLog and AetherEvent. 
-
-
-Aether JSP: check them out
-
-
-commit button, none checked = null pointer exception
-ajax refresh reset the checkboxes
-
-MDD Test. change mdd-- get notified
-if changed a mdd with many relations, CPU raises- check if you can work
 
 row-same= same file
 CVS-same= file checked out from the same CVS file in different rows
-
-
-document:
-tom@tom-desktop:~$ cvs -d :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository login
-Logging in to :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository
-CVS password:
-tom@tom-desktop:~$ cvs -d :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository login
-
-The "more wisdom" button in tipOfTheDay.jsp doesn't work, it produces an errorpage when you click it.
-
 
 ++ Test Aether:
 ---------------
@@ -51,23 +24,25 @@ The "more wisdom" button in tipOfTheDay.jsp doesn't work, it produces an errorpa
 - work on my trainee's row
 - work: write, read, execute, commit	
 
+Focus widget, nimbus widget
+Percolation rules per user
+if something in work of others is in my focus, then i should see it differently there
+I should see how my work shows in work of others
+Things in mywork shouldn't disappear after 15-20min... Or until commit, or manual remove...
+Show my work/work of others on first page
+
+
+Actions are logged before they are executed. How would it be to log some of them (e.g. Struts actions) in the afterServlet
+Each Struts action handler should create its own ActionLog and AetherEvent. 
+
+++Aether JSP: check them out
+++Relation Crawler (mostly makumba)
+++quality of relations MakDemo?
 ++ Fix error of the icon next to changed in MyWork.jsp
 	-problem was the path to the file
 
-++ Look into percolation rules
 
-
-++Relation Crawler (mostly makumba)
-++quality of relations MakDemo?
-
-m checkout makumba, get rights in svn...
-m error invoking method setType on object of class org.makumba.forms.tags.NewTag with argument best.internal.Abbreviation
-
-++CVS write rights
-++blog write rights
-++membership on parade-developers
-++commit this file
-m --double files: ask manu, investigate, for now empty the db 
++++ error invoking method setType on object of class org.makumba.forms.tags.NewTag with argument best.internal.Abbreviation
 m jnotify
 
 ++import mak_demo on sunset.nada
@@ -75,10 +50,7 @@ m jnotify
 ++relation between CVS user and parade user
 ++start aether, import percolation rules
 ++Run relation crawler which find dependency between files
---find the relations in the database. look for user-row relations, cvs relations, makumba dependency relations
 ++start parade with java 1.5
-
-++checkout karamba from sunset in serveral rows for several CVS users
 
 ++fix blank username-password issue
 
@@ -95,9 +67,17 @@ m jnotify
 ++[@parade2]  	at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
 
 ++username missing on log (sometimes?)
+++Investigate the makumba.jar twice (lib and webinf/lib)
+- Provide the feature to clean the work directory of a row
 
 Whenever you "fix" something
 - if it doesn't work, put it in this file
 - if you can, commit it in code
 - if it's a howto, update some document (README == parade.sourceforge, code guide)
 - if it's something you wonder, send an email to parade-developers@lists.sourceforge.net
+
+document:
+tom@tom-desktop:~$ cvs -d :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository login
+Logging in to :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository
+CVS password:
+tom@tom-desktop:~$ cvs -d :pserver:maarten@sunset.nada.kth.se:2401/disk0/httpd/iplab/cvsRepository login
