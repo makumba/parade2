@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.ForeignKey;
 import org.makumba.aether.AetherEvent;
 
 /**
@@ -73,6 +74,7 @@ public class MatchedAetherEvent extends AetherEvent {
     }
 
     @ManyToOne
+    @ForeignKey(name="INITIALPERCOLATIONRULE")
     public InitialPercolationRule getInitialPercolationRule() {
         return initialPercolationRule;
     }
