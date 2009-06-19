@@ -110,10 +110,10 @@ public class InitialPercolationRule implements AetherRule {
         this.initialLevel = initialLevel;
     }
 
-    
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(name="InitialPercolationRule__relationQueries")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Column(name="initialPercolationRule")
     public List<RelationQuery> getRelationQueries() {
         return relationQueries;
     }

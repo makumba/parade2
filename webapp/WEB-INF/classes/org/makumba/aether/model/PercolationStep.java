@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Cache;
@@ -107,6 +108,7 @@ public class PercolationStep {
     @ManyToOne
     @ForeignKey(name="FK_PREVIOUS")
     @OnDelete(action=OnDeleteAction.CASCADE)
+    @JoinColumn(name="previous")
     public PercolationStep getPrevious() {
         return previous;
     }
@@ -118,6 +120,7 @@ public class PercolationStep {
     @ManyToOne
     @ForeignKey(name="FK_MATCHEDAETHEREVENT")
     @OnDelete(action=OnDeleteAction.CASCADE)
+    @JoinColumn(name="matchedAetherEvent")
     public MatchedAetherEvent getMatchedAetherEvent() {
         return matchedAetherEvent;
     }
@@ -129,6 +132,7 @@ public class PercolationStep {
     @ManyToOne
     @ForeignKey(name="FK_PERCOLATIONRULE")
     @OnDelete(action=OnDeleteAction.CASCADE)
+    @JoinColumn(name="percolationRule")
     public PercolationRule getPercolationRule() {
         return percolationRule;
     }
@@ -158,6 +162,7 @@ public class PercolationStep {
     @ManyToOne
     @ForeignKey(name="FK_ROOT")
     @OnDelete(action=OnDeleteAction.CASCADE)
+    @JoinColumn(name="root")
     public PercolationStep getRoot() {
         return root;
     }

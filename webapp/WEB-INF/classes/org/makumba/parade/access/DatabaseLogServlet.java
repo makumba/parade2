@@ -150,8 +150,7 @@ public class DatabaseLogServlet extends HttpServlet {
     private AetherEvent buildAetherEventFromLog(ActionLogDTO log, Session s, HttpServletRequest req) {
 
         if (log.getObjectType() == null) {
-            logger.severe("**********************************\n" + "Object type for ActionLog not set: "
-                    + log.toString());
+            //logger.severe("**********************************\n" + "Object type for ActionLog not set: " + log.toString());
             return null;
         }
 

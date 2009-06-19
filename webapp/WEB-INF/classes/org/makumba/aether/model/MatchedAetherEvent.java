@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -75,6 +76,7 @@ public class MatchedAetherEvent extends AetherEvent {
 
     @ManyToOne
     @ForeignKey(name="INITIALPERCOLATIONRULE")
+    @JoinColumn(name="initialPercolationRule")
     public InitialPercolationRule getInitialPercolationRule() {
         return initialPercolationRule;
     }
