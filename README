@@ -19,7 +19,7 @@ This checkout provides you with two things:
 
 02. Copy "/webapp/WEB-INF/classes/parade.properties.example" to "/webapp/WEB-INF/classes/parade.properties" and make sure you have the dummyAuthorizer enabled (so u can login as anyone)
 
-03. Configure the file "/tomcat.properties" (port, manager password, ...)
+03.  Copy "/tomcat.properties.example" to  "/tomcat.properties" And configure things like (port, manager password, ...)
 
 04. Create database with the name "parade"
 
