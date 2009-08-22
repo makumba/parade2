@@ -17,9 +17,7 @@
   <FRAME name="bottom" src="/aetherView.jsp" marginwidth="0" marginheight="0">
 </FRAMESET>
 <%} else {%>
-<FRAMESET rows="100%" border="0">  
-  <FRAME name="main" src="/showRows.jsp" marginwidth="0" marginheight="0">
-</FRAMESET>
+<jsp:include page="showRows.jsp">
 <% } %>
 
 </html>
