@@ -34,7 +34,10 @@
       <FRAME name="bottom" src="/aetherView.jsp" marginwidth="1" marginheight="1" scrolling="auto">
     </FRAMESET>
     <%} else {%>
+    <FRAMESET rows="*,25%">      
       <FRAME name="directory" src="/fileView/fileBrowser.jsp?context=<%=context %>&opResult=<%=opResult %>&path=<%=path %>&getPathFromSession=true">
+      <FRAME name="command" src="/commandView/tipOfTheDay.jsp" marginwidth="1" marginheight="1">
+    </FRAMESET>
     <% } %>
   </FRAMESET>
 </FRAMESET>
