@@ -6,7 +6,6 @@
 <html>
 <head>
 <title>Welcome to ParaDe!</title>
-	<link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/bottom.css" type="text/css">
   	<link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/icons_silk.css" type="text/css" media="all"/>
   	<link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/rowstore.css" type="text/css">
   	<link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/parade.css" type="text/css">
