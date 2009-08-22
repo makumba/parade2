@@ -20,17 +20,22 @@
 %>
 
 
-<%@page import="org.makumba.parade.init.InitServlet"%><HTML><HEAD><TITLE><%=context %> browser</TITLE>
+<%@page import="org.makumba.parade.init.InitServlet"%>
+<HTML><HEAD><TITLE><%=context %> browser</TITLE>
 
 </HEAD>
 <FRAMESET rows="30,*">  
   <FRAME name="header" src="/browserHeader.jsp?context=<%=context %>&getPathFromSession=true" marginwidth="1" marginheight="1">
   <FRAMESET cols="190,*">
     <FRAME name="tree" src="/servlet/browse?display=tree&context=<%=context %>" marginwidth="0" marginheight="5">
+    <% if(InitServlet.aetherEnabled) {%>
     <FRAMESET rows="*,25%">      
       <FRAME name="directory" src="/fileView/fileBrowser.jsp?context=<%=context %>&opResult=<%=opResult %>&path=<%=path %>&getPathFromSession=true">
       <FRAME name="bottom" src="/aetherView.jsp" marginwidth="1" marginheight="1" scrolling="auto">
     </FRAMESET>
+    <%} else {%>
+      <FRAME name="directory" src="/fileView/fileBrowser.jsp?context=<%=context %>&opResult=<%=opResult %>&path=<%=path %>&getPathFromSession=true">
+    <% } %>
   </FRAMESET>
 </FRAMESET>
 </HTML>
