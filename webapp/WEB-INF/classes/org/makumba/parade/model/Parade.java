@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import javax.persistence.Column;
@@ -155,18 +156,17 @@ public class Parade {
     private void removeUnmappedRows(Map<String, Map<String, String>> rowstore) {
 
         // does nothing for the moment because of http://opensource.atlassian.com/projects/hibernate/browse/HHH-2146
-        // FIXME uncomment this as soon as fix is released (and adopt new hibernate version)
-        /*
-         * 
-         * // removing deleted rows from cache Iterator<String> j = this.getRows().keySet().iterator(); Vector<String>
-         * toRemove = new Vector<String>(); while (j.hasNext()) { String key = j.next();
-         * 
-         * // if the new row store definition doesn't contain the row, we trash it if (!rowstore.containsKey(key)) {
-         * toRemove.add(key); } }
-         * 
-         * for (String rowName : toRemove) { logger.info("Dropping row " + rowName + " from cache.");
-         * this.getRows().remove(rowName); }
-         */
+      
+        // removing deleted rows from cache
+        Iterator<String> j = this.getRows().keySet().iterator(); Vector<String>
+        toRemove = new Vector<String>(); while (j.hasNext()) { String key = j.next();
+  
+        // if the new row store definition doesn't contain the row, we trash it if (!rowstore.containsKey(key)) {
+        toRemove.add(key); }
+        
+        for (String rowName : toRemove) { logger.info("Dropping row " + rowName + " from cache.");
+            this.getRows().remove(rowName);
+        }
     }
 
     /**
