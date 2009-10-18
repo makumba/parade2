@@ -51,7 +51,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                 Vector<String> mak = new Vector<String>();
                 if (libs == null) {
                     logger.warning("No WEB-INF/lib directory found for row " + r.getRowname()
-                            + ". Cannot detected Makumba version.");
+                            + ". Cannot detect Makumba version.");
                 } else {
                     for (String element : libs) {
                         if (element.indexOf("makumba") > -1 && element.endsWith(".jar")) {
