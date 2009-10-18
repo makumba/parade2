@@ -194,6 +194,8 @@ public class ParadeJNotifyListener implements JNotifyListener {
             session = InitServlet.getSessionFactory().openSession();
 
             Parade p = (Parade) session.get(Parade.class, new Long(1));
+            if(p == null)
+                return;
             Row r = findRowFromContext(rootPath, p);
             Transaction tx = session.beginTransaction();
 
@@ -225,6 +227,8 @@ public class ParadeJNotifyListener implements JNotifyListener {
             session = InitServlet.getSessionFactory().openSession();
 
             Parade p = (Parade) session.get(Parade.class, new Long(1));
+            if(p == null)
+                return;
             Row r = findRowFromContext(rootPath, p);
             Transaction tx = session.beginTransaction();
 
@@ -240,6 +244,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
     }
 
     private Row findRowFromContext(String rowPath, Parade p) {
+        
         Iterator<String> i = p.getRows().keySet().iterator();
 
         boolean row_found = false;
@@ -381,6 +386,8 @@ public class ParadeJNotifyListener implements JNotifyListener {
             s = InitServlet.getSessionFactory().openSession();
             Transaction tx = s.beginTransaction();
             Parade p = (Parade) s.get(Parade.class, new Long(1));
+            if(p == null)
+                return;
             Row r = findRowFromContext(root, p);
 
             if (r.getFiles().get(file) == null) {
