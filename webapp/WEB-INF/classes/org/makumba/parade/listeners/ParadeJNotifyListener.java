@@ -194,6 +194,10 @@ public class ParadeJNotifyListener implements JNotifyListener {
             session = InitServlet.getSessionFactory().openSession();
 
             Parade p = (Parade) session.get(Parade.class, new Long(1));
+            if(p == null) {
+                logger.warning("Could not acquire parade instance, jnotify event not logged. This may happen when parade build its cache the first time.");
+                return;
+            }
             Row r = findRowFromContext(rootPath, p);
             Transaction tx = session.beginTransaction();
 
@@ -225,6 +229,10 @@ public class ParadeJNotifyListener implements JNotifyListener {
             session = InitServlet.getSessionFactory().openSession();
 
             Parade p = (Parade) session.get(Parade.class, new Long(1));
+            if(p == null) {
+                logger.warning("Could not acquire parade instance, jnotify event not logged. This may happen when parade build its cache the first time.");
+                return;
+            }
             Row r = findRowFromContext(rootPath, p);
             Transaction tx = session.beginTransaction();
 
@@ -382,6 +390,10 @@ public class ParadeJNotifyListener implements JNotifyListener {
             s = InitServlet.getSessionFactory().openSession();
             Transaction tx = s.beginTransaction();
             Parade p = (Parade) s.get(Parade.class, new Long(1));
+            if(p == null) {
+                logger.warning("Could not acquire parade instance, jnotify event not logged. This may happen when parade build its cache the first time.");
+                return;
+            }
             Row r = findRowFromContext(root, p);
 
             if (r.getFiles().get(file) == null) {
