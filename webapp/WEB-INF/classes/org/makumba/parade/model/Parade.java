@@ -150,7 +150,8 @@ public class Parade {
             buildRow(rowDefinition);
         }
 
-        removeUnmappedRows(rowstore);
+        // FIXME does not yet work
+        //removeUnmappedRows(rowstore);
     }
 
     private void removeUnmappedRows(Map<String, Map<String, String>> rowstore) {
