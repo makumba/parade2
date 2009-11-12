@@ -122,8 +122,8 @@ public class Parade {
         for (Row row : getRows().values()) {
             softRowRefresh(row);
         }
-
-        removeUnmappedRows(getRowstoreDefinition());
+	// FIXME this is broken in hibernate
+        //removeUnmappedRows(getRowstoreDefinition());
 
     }
     
