@@ -35,12 +35,18 @@
 			<include name="makumba.jar" />
 			<include name="freemarker.jar" />
 			<include name="hibernate3.jar" />
+			<include name="hibernate-annotations.jar" />
+			<include name="hibernate-commons-annotations.jar" />
+			<include name="ejb3-persistence.jar" />
 			<include name="struts.jar" />
 			<include name="parser.jar" />
 			<include name="jfreechart-1.0.9.jar" />
 			<include name="cewolf-1.0.jar" />
 			<include name="oscache-2.4.1.jar" />
 			<include name="commons-collections-3.2.jar" />
+			<include name="commons-io-1.1.jar" />
+			<include name="commons-lang-2.3.jar" />
+			<include name="inieditor.jar" />
 		</fileset>
 		<fileset dir="lib">
 			<include name="*.jar" />
