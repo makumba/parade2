@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.persistence.MapKey;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -227,9 +228,9 @@ public class Row {
     public Integer getStatus() {
         return status;
     }
-
+    
     @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.AntTarget.class)
-    @org.hibernate.annotations.MapKey(columns={@Column(name="row_id")})
+    @MapKey(name="row")
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     public List<AntTarget> getTargets() {
         return targets;
