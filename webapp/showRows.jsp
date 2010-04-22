@@ -51,7 +51,7 @@
 		<td align="left"><a class="icon_list" title="All the logs"
 			href="log.jsp?context=all">[Log]</a>&nbsp;&nbsp; <a
 			class="icon_project" title="All the action logs"
-			href="actionLog.jsp?context=all">[Action log] (beta)</a>&nbsp;&nbsp;
+			href="actionLog.jsp?context=all">[Action log]</a>&nbsp;&nbsp;
 		<strong><a class="icon_members"
 			title="People who were active in the 20 past minutes">Currently
 		online:</a></strong> <mak:list from="ActionLog a, User u"
