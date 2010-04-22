@@ -48,7 +48,7 @@ public class Log {
         this.id = id;
     }
 
-    @Column
+    @Column(columnDefinition="longtext")
     public String getMessage() {
         return message;
     }

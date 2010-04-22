@@ -86,7 +86,7 @@ public class ActionLog {
         this.post = post;
     }
 
-    @Column
+    @Column(columnDefinition="longtext")
     public String getQueryString() {
         return queryString;
     }

@@ -96,7 +96,7 @@ public class PercolationRule implements AetherRule {
         this.consumption = consumption;
     }
 
-    @Column
+    @Column(columnDefinition="longtext")
     public String getDescription() {
         return description;
     }

@@ -141,7 +141,7 @@ public class PercolationStep {
         this.percolationRule = percolationRule;
     }
 
-    @Column
+    @Column(columnDefinition="longtext")
     public String getPercolationPath() {
         return percolationPath;
     }

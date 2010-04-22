@@ -138,7 +138,7 @@ public class User {
         this.parade = parade;
     }
 
-    @Column
+    @Column(columnDefinition="longtext")
     public byte[] getJpegPhoto() {
         return jpegPhoto;
     }
