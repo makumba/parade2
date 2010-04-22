@@ -137,12 +137,12 @@ public class File {
         this.isDir = isDir;
     }
 
-    @Column
+    @Column(columnDefinition="longtext")
     public String getPath() {
         return this.path;
     }
 
-    @Column
+    @Column(columnDefinition="longtext")
     public String getParentPath() {
         return parentPath;
     }
@@ -160,7 +160,7 @@ public class File {
         this.onDisk = onDisk;
     }
 
-    @Column
+    @Column(columnDefinition="longtext")
     public String getCvsURL() {
         return cvsURL;
     }
