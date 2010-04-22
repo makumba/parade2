@@ -15,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-import javax.persistence.MapKey;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -182,6 +181,7 @@ public class Row {
     @OneToMany(cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.File.class)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     @JoinColumn(name="row")
+    @org.hibernate.annotations.MapKey(columns={@Column(name="path", columnDefinition="longtext")}) 
     public Map<String, File> getFiles() {
         return this.files;
     }
@@ -229,9 +229,9 @@ public class Row {
         return status;
     }
     
-    @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.AntTarget.class)
-    @MapKey(name="row")
+    @OneToMany(cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.AntTarget.class)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    @org.hibernate.annotations.MapKey(columns={@Column(name="row_id")}) 
     public List<AntTarget> getTargets() {
         return targets;
     }
