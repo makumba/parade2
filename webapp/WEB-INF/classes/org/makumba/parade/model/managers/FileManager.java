@@ -166,7 +166,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     }
 
     private void makeParentDirs(Row row, File f) {
-        File parent = row.getFiles().get(f.getParentPath());
+        File parent = row.getFiles().get(f.getParentPath().replace('/', java.io.File.separatorChar));
         if (parent == null) {
             logger.warning("Creating new parent directory cache " + f.getParentPath() + " for file " + f.getPath());
             parent = setFileData(row, new java.io.File(f.getParentPath()), true);
