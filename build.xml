@@ -76,7 +76,15 @@
 	</path>
 
 	<target name="compile" description="compile the java files">
-		<!-- antcall target="clean" / -->
+		<!-- bug in ant 1.7.1 for package-info compilation -->
+		<touch>
+			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/package-info.java" />
+		</touch>
+		<javac srcdir="${webapp.path}/WEB-INF/classes" debug="on">
+			<classpath refid="generic.class.path" />
+			<include name="**/package-info.java" />
+		</javac>
+		
 		<javac srcdir="${webapp.path}/WEB-INF/classes" debug="on">
 			<classpath refid="generic.class.path" />
 		</javac>
