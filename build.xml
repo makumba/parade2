@@ -76,7 +76,7 @@
 	</path>
 
 	<target name="compile" description="compile the java files">
-		<!-- bug in ant 1.7.1 for package-info compilation -->
+		<!-- bug in ant 1.7.1 for package-info compilation, see https://issues.apache.org/bugzilla/show_bug.cgi?id=43114 -->
 		<touch>
 			<fileset dir="${webapp.path}/WEB-INF/classes" includes="**/package-info.java" />
 		</touch>
