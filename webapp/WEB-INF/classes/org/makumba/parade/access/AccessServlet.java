@@ -252,7 +252,9 @@ public class AccessServlet extends HttpServlet {
                 origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
                 origReq.setAttribute("org.makumba.parade.directoryAccessError", new Boolean(true));
               } else {
-                throw new RuntimeException(e);
+                  System.err.println("Exception happened during authentication: " + e.getMessage());
+                  origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
+                  origReq.setAttribute("org.makumba.parade.unauthorizedAccess", new Boolean(true));
               }
            }
     }
