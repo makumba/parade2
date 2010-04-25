@@ -144,11 +144,15 @@ public class TriggerFilter implements Filter {
         req = (ServletRequest) dummyReq.getAttribute("org.eu.best.tools.TriggerFilter.request");
 
         if (req == null) {
-            if (dummyReq.getAttribute("org.makumba.parade.unauthorizedAccess") != null) {
+            boolean unauthorizedAccess = (dummyReq.getAttribute("org.makumba.parade.unauthorizedAccess") != null);
+            boolean directoryServerError = (dummyReq.getAttribute("org.makumba.parade.directoryAccessError") != null);
+            if(unauthorizedAccess || directoryServerError) {
                 req = origReq;
-
+                String errorPageURI = "/unauthorized/index.jsp";
+                if(directoryServerError)
+                    errorPageURI = "/unauthorized/directoryServerError.jsp";
                 try {
-                    staticRootCtx.getRequestDispatcher("/unauthorized/index.jsp").forward(req, resp);
+                    staticRootCtx.getRequestDispatcher(errorPageURI).forward(req, resp);
                 } catch (ServletException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

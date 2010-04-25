@@ -17,6 +17,6 @@ public interface Authorizer {
      *            the password
      * @return <code>true</code> if authenticated, <code>false</code> otherwise
      */
-    boolean auth(String username, String password);
+    boolean auth(String username, String password) throws Exception;
 
 }

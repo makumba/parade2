@@ -24,7 +24,7 @@ public class HttpLogin {
         this.realm = realm;
     }
 
-    public boolean login(ServletRequest req, ServletResponse res) throws java.io.IOException {
+    public boolean login(ServletRequest req, ServletResponse res) throws Exception {
         String authString = ((HttpServletRequest) req).getHeader("Authorization");
         if (authString != null) {
             authString = new String(Base64.decode(authString.substring(6)));
@@ -39,7 +39,7 @@ public class HttpLogin {
         return false;
     }
 
-    protected boolean checkAuth(String user, String pass, HttpServletRequest req) {
+    protected boolean checkAuth(String user, String pass, HttpServletRequest req) throws Exception {
         boolean authenticated = a.auth(user, pass);
         if (authenticated) {
             logUserLogin(user);

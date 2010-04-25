@@ -18,11 +18,9 @@ import org.hibernate.Transaction;
 import org.makumba.parade.auth.Authorizer;
 import org.makumba.parade.auth.DatabaseAuthorizer;
 import org.makumba.parade.auth.DirectoryAuthorizer;
-import org.makumba.parade.auth.JNDIAuthorizer;
-import org.makumba.parade.auth.LDAPAuthorizer;
+import org.makumba.parade.auth.DirectoryAuthorizerException;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
-import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.User;
 import org.makumba.parade.tools.HttpLogin;
 import org.makumba.parade.tools.ParadeLogger;
@@ -73,14 +71,14 @@ public class AccessServlet extends HttpServlet {
                 ((DatabaseAuthorizer) auth).setDatabase(db);
             checker = new HttpLogin(auth, authMessage) {
                 @Override
-                public boolean login(ServletRequest req, ServletResponse res) throws java.io.IOException {
+                public boolean login(ServletRequest req, ServletResponse res) throws Exception {
                     HttpServletRequest req1 = (HttpServletRequest) req;
                     String user = (String) req1.getSession(true).getAttribute(PARADE_USER);
                     return user != null || super.login(req, res);
                 }
 
                 @Override
-                protected boolean checkAuth(String user, String pass, HttpServletRequest req) {
+                protected boolean checkAuth(String user, String pass, HttpServletRequest req) throws Exception {
                     boolean passes = super.checkAuth(user, pass, req);
                     if (passes) {
                         req.getSession(true).setAttribute(PARADE_USER, user);
@@ -154,7 +152,7 @@ public class AccessServlet extends HttpServlet {
         return true;
     }
 
-    HttpServletRequest checkLogin(ServletRequest req, ServletResponse resp) throws java.io.IOException {
+    HttpServletRequest checkLogin(ServletRequest req, ServletResponse resp) throws Exception {
 
         if (checker.login(req, (HttpServletResponse) req.getAttribute("org.eu.best.tools.TriggerFilter.response"))) {
             return new HttpServletRequestWrapper((HttpServletRequest) req) {
@@ -208,47 +206,55 @@ public class AccessServlet extends HttpServlet {
         // TODO implement equivalent of reloadLoggingConfig()
         setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
         ServletRequest req1 = req;
-        if (!shouldLogin(req) || (req1 = checkLogin(req, resp)) != null) {
-            // we set the output prefix again, now that we know the user
-            String user = setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
+        try {
+          if (!shouldLogin(req) || (req1 = checkLogin(req, resp)) != null) {
+              // we set the output prefix again, now that we know the user
+              String user = setOutputPrefix((HttpServletRequest) req, (HttpServletResponse) resp);
 
-            // we also set the userObject again and all the necessary attributes
-            User u = (User) ((HttpServletRequest) req).getSession(true).getAttribute("org.makumba.parade.userObject");
-            if (u == null) {
-                Session sess = null;
-                Transaction tx = null;
-                try {
-                    sess = InitServlet.getSessionFactory().openSession();
-                    tx = sess.beginTransaction();
+              // we also set the userObject again and all the necessary attributes
+              User u = (User) ((HttpServletRequest) req).getSession(true).getAttribute("org.makumba.parade.userObject");
+              if (u == null) {
+                  Session sess = null;
+                  Transaction tx = null;
+                  try {
+                      sess = InitServlet.getSessionFactory().openSession();
+                      tx = sess.beginTransaction();
 
-                    Query q;
-                    q = sess.createQuery("from User u where u.login = ?");
-                    q.setString(0, user);
+                      Query q;
+                      q = sess.createQuery("from User u where u.login = ?");
+                      q.setString(0, user);
 
-                    List<User> results = q.list();
+                      List<User> results = q.list();
 
-                    if (results.size() == 1) {
-                        // we know the guy, let's put more stuff in the session
-                        u = results.get(0);
-                        setUserAttributes(req, u);
-                    }
+                      if (results.size() == 1) {
+                          // we know the guy, let's put more stuff in the session
+                          u = results.get(0);
+                          setUserAttributes(req, u);
+                      }
 
-                } finally {
-                    tx.commit();
-                    sess.close();
-                }
-            }
+                  } finally {
+                      tx.commit();
+                      sess.close();
+                  }
+              }
 
-            // let's also put the user in the actionlog
-            ActionLogDTO log = (ActionLogDTO) req.getAttribute("org.eu.best.tools.TriggerFilter.actionlog");
-            log.setUser(user);
-            origReq.setAttribute("org.eu.best.tools.TriggerFilter.request", req1);
+              // let's also put the user in the actionlog
+              ActionLogDTO log = (ActionLogDTO) req.getAttribute("org.eu.best.tools.TriggerFilter.actionlog");
+              log.setUser(user);
+              origReq.setAttribute("org.eu.best.tools.TriggerFilter.request", req1);
 
-        } else {
-            origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
-            origReq.setAttribute("org.makumba.parade.unauthorizedAccess", new Boolean(true));
-        }
-
+          } else {
+              origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
+              origReq.setAttribute("org.makumba.parade.unauthorizedAccess", new Boolean(true));
+          }
+        } catch(Exception e) {
+              if(e instanceof DirectoryAuthorizerException) {
+                origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
+                origReq.setAttribute("org.makumba.parade.directoryAccessError", new Boolean(true));
+              } else {
+                throw new RuntimeException(e);
+              }
+           }
     }
 
     private void setUserAttributes(ServletRequest req, User u) {

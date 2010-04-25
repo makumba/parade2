@@ -59,7 +59,7 @@ public class JNDIAuthorizer implements DirectoryAuthorizer {
 
     private byte[] jpegPhoto;
 
-    public boolean auth(String username, String password) {
+    public boolean auth(String username, String password) throws Exception {
 
         if (username.equals(""))
             return false;

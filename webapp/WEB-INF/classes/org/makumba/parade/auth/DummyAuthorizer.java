@@ -7,7 +7,7 @@ package org.makumba.parade.auth;
  */
 public class DummyAuthorizer implements Authorizer {
 
-    public boolean auth(String username, String password) {
+    public boolean auth(String username, String password) throws Exception {
         return true;
     }
 
