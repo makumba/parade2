@@ -104,6 +104,7 @@ public class LDAPAuthorizer implements DirectoryAuthorizer {
         // connect to the server
 
         try {
+            lc.setSocketTimeOut(5000);
             lc.connect(ldapHost, ldapPort);
 
             // bind to the server
