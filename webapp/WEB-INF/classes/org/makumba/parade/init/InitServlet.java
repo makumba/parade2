@@ -1,6 +1,12 @@
 package org.makumba.parade.init;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +28,14 @@ import org.makumba.aether.Aether;
 import org.makumba.aether.AetherContext;
 import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.aether.ParadeRelationComputer;
+import org.makumba.parade.model.Application;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.tools.ParadeLogger;
+import org.makumba.parade.tools.TriggerFilter;
+import org.makumba.providers.MakumbaINIFileReader;
+
+import com.sun.jmx.snmp.daemon.CommunicationException;
 
 import freemarker.template.DefaultObjectWrapper;
 
@@ -86,6 +97,8 @@ public class InitServlet extends HttpServlet implements Runnable {
                 resources.add("org.makumba.aether.model.ALE");
 
             }
+            
+            createDummyDatabaseConnection();
 
             HibernateSFManager.setExternalConfigurationResources(resources);
             SessionFactory sf = HibernateSFManager.getSF();
@@ -95,8 +108,10 @@ public class InitServlet extends HttpServlet implements Runnable {
 
             // now it's ready to be available for other classes
             sessionFactory = sf;
+            
         } catch (Throwable t) {
-            logger.severe(t.getMessage());
+            logger.severe("Parade cannot continue due to no database connection.");
+            logger.severe("Parade stopping CAUSE: " + t.getMessage());
             t.printStackTrace();
         }
 
@@ -121,7 +136,10 @@ public class InitServlet extends HttpServlet implements Runnable {
 
     @Override
     public void init(ServletConfig conf) throws ServletException {
-        new Thread(this).start();
+        if(sessionFactory != null)
+            new Thread(this).start();
+        else
+            throw new Error("No Database");
     }
 
     public void run() {
@@ -192,8 +210,9 @@ public class InitServlet extends HttpServlet implements Runnable {
 
         long refresh = end - start;
         logger.info("INIT: Initialisation took " + refresh + " ms");
-
     }
+    
+    
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
@@ -209,6 +228,35 @@ public class InitServlet extends HttpServlet implements Runnable {
 
     public static Aether getAether() {
         return aether;
+    }
+    
+    public static void createDummyDatabaseConnection() throws Throwable{
+        // Get configuration from Makumba.conf
+        File f = new File((System.getProperty("user.dir") + "/webapp/WEB-INF/classes/").replace('/', File.separatorChar) + "Makumba.conf");
+        MakumbaINIFileReader makumbaConf = new MakumbaINIFileReader(f.toURL(), null);
+        String url = makumbaConf.getProperty("dataSource:parade", "connection.url");
+        String user = makumbaConf.getProperty("dataSource:parade", "connection.username");
+        String pass = makumbaConf.getProperty("dataSource:parade", "connection.password");
+        
+        
+        // Try to make connection to Database
+        DriverManager.getConnection(url, user, pass); 
+    }
+    
+    public static void shutdownTomcat(){
+        try {
+            Socket s = new Socket("localhost",5055);
+            PrintStream p = new PrintStream(s.getOutputStream());
+            p.print("SHUTDOWN");
+            p.close();
+            s.close();
+        } catch (UnknownHostException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
     }
 
 }
