@@ -7,7 +7,7 @@
 
 <p>Sorry, your login to ParaDe failed. Please contact ITA@BEST.eu.org.
 
-<% Throwable t = (Throwable) session.getAttribute("org.makumba.parade.error");
+<% Throwable t = (Throwable) session.getAttribute("org.makumba.parade.authenticationError");
 if(t != null) {
     t.fillInStackTrace();
     StringWriter sw = new StringWriter();

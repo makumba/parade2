@@ -146,7 +146,7 @@ public class TriggerFilter implements Filter {
         if (req == null) {
             boolean unauthorizedAccess = (dummyReq.getAttribute("org.makumba.parade.unauthorizedAccess") != null);
             boolean directoryServerError = (dummyReq.getAttribute("org.makumba.parade.directoryAccessError") != null);
-            boolean otherError = (dummyReq.getAttribute("org.makumba.parade.error") != null);
+            boolean otherError = (dummyReq.getAttribute("org.makumba.parade.authenticationError") != null);
             
             if(unauthorizedAccess || directoryServerError || otherError) {
                 req = origReq;
@@ -155,8 +155,8 @@ public class TriggerFilter implements Filter {
                     errorPageURI = "/unauthorized/directoryServerError.jsp";
                 } else if(otherError) {
                     // pass the exception to the session in order to be able to display it every time
-                    ((HttpServletRequest)req).getSession().setAttribute("org.makumba.parade.error", dummyReq.getAttribute("org.makumba.parade.error"));
                     errorPageURI = "/unauthorized/error.jsp";
+                    ((HttpServletRequest)req).getSession().setAttribute("org.makumba.parade.authenticationError", dummyReq.getAttribute("org.makumba.parade.authenticationError"));
                 }
                 try {
                     staticRootCtx.getRequestDispatcher(errorPageURI).forward(req, resp);

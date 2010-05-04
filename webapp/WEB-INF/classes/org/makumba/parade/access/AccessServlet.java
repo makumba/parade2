@@ -233,8 +233,10 @@ public class AccessServlet extends HttpServlet {
                       }
                       
                   } finally {
-                      tx.commit();
-                      sess.close();
+                      if(tx != null && sess != null) {
+                          tx.commit();
+                          sess.close();
+                      }
                   }
               }
 
@@ -253,8 +255,9 @@ public class AccessServlet extends HttpServlet {
                 origReq.setAttribute("org.makumba.parade.directoryAccessError", new Boolean(true));
               } else {
                   logger.warning("Exception happened during authentication: " + t.getMessage());
+                  t.printStackTrace();
                   origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
-                  origReq.setAttribute("org.makumba.parade.error", t);
+                  origReq.setAttribute("org.makumba.parade.authenticationError", t);
               }
            }
     }
