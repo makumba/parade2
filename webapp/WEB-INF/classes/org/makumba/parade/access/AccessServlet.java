@@ -231,7 +231,7 @@ public class AccessServlet extends HttpServlet {
                           u = results.get(0);
                           setUserAttributes(req, u);
                       }
-
+                      
                   } finally {
                       tx.commit();
                       sess.close();
@@ -247,14 +247,14 @@ public class AccessServlet extends HttpServlet {
               origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
               origReq.setAttribute("org.makumba.parade.unauthorizedAccess", new Boolean(true));
           }
-        } catch(Exception e) {
-              if(e instanceof DirectoryAuthorizerException) {
+        } catch(Throwable t) {
+              if(t instanceof DirectoryAuthorizerException) {
                 origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
                 origReq.setAttribute("org.makumba.parade.directoryAccessError", new Boolean(true));
               } else {
-                  System.err.println("Exception happened during authentication: " + e.getMessage());
+                  logger.warning("Exception happened during authentication: " + t.getMessage());
                   origReq.removeAttribute("org.eu.best.tools.TriggerFilter.request");
-                  origReq.setAttribute("org.makumba.parade.unauthorizedAccess", new Boolean(true));
+                  origReq.setAttribute("org.makumba.parade.error", t);
               }
            }
     }
