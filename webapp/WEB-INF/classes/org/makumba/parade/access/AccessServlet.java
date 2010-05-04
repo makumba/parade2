@@ -117,8 +117,10 @@ public class AccessServlet extends HttpServlet {
                             }
 
                         } finally {
-                            tx.commit();
-                            s.close();
+                            if(tx != null && s != null) {
+                                tx.commit();
+                                s.close();
+                            }
                         }
 
                     }
