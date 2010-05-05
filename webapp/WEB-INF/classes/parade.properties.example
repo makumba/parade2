@@ -7,7 +7,7 @@ parade.authorizerClass=org.makumba.parade.auth.LDAPAuthorizer
 parade.authorizationMessage=ParaDe 2, use password of your BEST private area account
 
 # LDAP authorizer properties
-parade.authorization.ldapHost=valladolid.BEST.eu.org
+parade.authorization.ldapHost=ldap.BEST.eu.org
 parade.authorization.baseDN=ou=Members,dc=BEST,dc=eu,dc=org
 
 # leave blank for no encryption (plain text) or specify a comma-sparated list of encryptions to try
