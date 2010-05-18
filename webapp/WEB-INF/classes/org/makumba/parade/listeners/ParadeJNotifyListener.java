@@ -18,6 +18,7 @@ import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
+import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.User;
@@ -72,9 +73,10 @@ public class ParadeJNotifyListener implements JNotifyListener {
         logger.fine("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
         // checkSpecialFile(rootPath, name);
 
-        if (isLocked(rootPath, name, JNotify.FILE_MODIFIED))
+        if (isLocked(rootPath, name, JNotify.FILE_MODIFIED)){
             return;
-
+        }
+       
         if (InitServlet.aetherEnabled) {
             updateRelations(rootPath, name);
         }
@@ -349,8 +351,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
                                         + (rootPath.endsWith(java.io.File.separator)
                                                 || name.startsWith(java.io.File.separator) ? "" : "/") + name);
             } catch (RelationComputationException e) {
-                logger
-                        .warning("Failed deleting relations for file " + name + " in " + rootPath + ": "
+                logger.warning("Failed deleting relations for file " + name + " in " + rootPath + ": "
                                 + e.getMessage());
             }
             logger.fine("Finished deleting relations for file " + name + " in " + rootPath);
@@ -396,7 +397,9 @@ public class ParadeJNotifyListener implements JNotifyListener {
             }
             Row r = findRowFromContext(root, p);
 
-            if (r.getFiles().get(file) == null) {
+            
+            if (r.getFiles().get(root + java.io.File.separator + file) == null) {
+                logger.warning("File cannot be found, jnotify event nog logged");
                 return;
             }
 
