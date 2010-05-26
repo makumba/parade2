@@ -5,7 +5,7 @@
 <%@page import="org.makumba.parade.tools.ParadeLogger"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="java.util.Date"%>
-<%@page import="org.makumba.parade.view.beans.IndexBean"%>
+<%@page import="org.makumba.parade.view.beans.AntBean"%>
 <%@page import="org.makumba.parade.model.Row"%>
 <%@page import="org.makumba.Pointer"%>
 <%@page import="org.makumba.parade.view.ParadeRefreshPolicy"%>
@@ -112,9 +112,9 @@ Hi <%=u.getNickname()%>! Have a nice time on ParaDe!<br>
 			<td><mak:value expr="row.branch" /></td>
 			<td><mak:value expr="row.buildfile" /><br>
 
-			<jsp:useBean id="indexBean"
-				class="org.makumba.parade.view.beans.IndexBean" /> <mak:value
-				expr="row.id" printVar="rowId" /> <c:set var="vWhere">t.row = row and t.target in (<%=indexBean.getAllowedAntOperations()%>)</c:set>
+			<jsp:useBean id="antBean"
+				class="org.makumba.parade.view.beans.AntBean" /> <mak:value
+				expr="row.id" printVar="rowId" /> <c:set var="vWhere">t.row = row and t.target in (<%=antBean.getAllowedAntOperations()%>)</c:set>
 			<mak:list from="AntTarget t" where="#{vWhere}" separator=", "
 				orderBy="t.target">
 				<a target="command"

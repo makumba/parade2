@@ -23,6 +23,7 @@ import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.model.User;
 import org.makumba.parade.tools.HttpLogin;
+import org.makumba.parade.tools.LogHandler;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.tools.TriggerFilter;
 
@@ -173,7 +174,7 @@ public class AccessServlet extends HttpServlet {
     String setOutputPrefix(HttpServletRequest req, HttpServletResponse resp) {
         String contextPath = req.getContextPath();
         if (contextPath.equals("")) {
-            contextPath = TriggerFilter.actionLog.get().getContext();
+            contextPath = LogHandler.actionLog.get().getContext();
         } else
             contextPath = contextPath.substring(1);
         String nm = (String) req.getSession(true).getAttribute(PARADE_USER);

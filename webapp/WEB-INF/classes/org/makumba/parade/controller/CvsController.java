@@ -18,6 +18,7 @@ import org.makumba.parade.tools.Execute;
 import org.makumba.parade.tools.HtmlUtils;
 import org.makumba.providers.QueryAnalysisProvider;
 import org.makumba.providers.QueryProvider;
+import org.makumba.providers.query.Pass1ASTPrinter;
 
 public class CvsController {
 
@@ -128,7 +129,7 @@ public class CvsController {
             // retrieve the File objects for each file based on its URL
             for (String file : files) {
                 String query = "select f.row.rowpath as rowpath, f as file from File f where f.fileURL() = :fileURL";
-                Object res = s.createQuery(qap.inlineFunctions(query)).setString("fileURL", file).uniqueResult();
+                Object res = s.createQuery(Pass1ASTPrinter.printAST(qap.inlineFunctions(query)).toString()).setString("fileURL", file).uniqueResult();
                 Object[] data = (Object[]) res;
                 modelFiles.put(data[0], data[1]);
             }

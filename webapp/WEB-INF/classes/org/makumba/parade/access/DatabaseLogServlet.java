@@ -34,6 +34,7 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Log;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.User;
+import org.makumba.parade.tools.LogHandler;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.tools.TriggerFilter;
 import org.makumba.parade.view.TickerTapeData;
@@ -264,7 +265,7 @@ public class DatabaseLogServlet extends HttpServlet {
         }
         // finally we also need to update the ActionLog in the thread
         log.setId(actionLog.getId());
-        TriggerFilter.actionLog.set(log);
+        LogHandler.actionLog.set(log);
 
         return true;
 
@@ -747,7 +748,7 @@ public class DatabaseLogServlet extends HttpServlet {
      * @return the current {@link ActionLog}, null if it should not be persisted.
      */
     private ActionLog retrieveActionLog(Session s) {
-        ActionLogDTO actionLogDTO = TriggerFilter.actionLog.get();
+        ActionLogDTO actionLogDTO = LogHandler.actionLog.get();
 
         if (!shouldLog(actionLogDTO) && STRICT_ACTIONLOG_FILTER) {
             return null;
@@ -762,7 +763,7 @@ public class DatabaseLogServlet extends HttpServlet {
             s.save(actionLog);
             tx.commit();
             actionLogDTO.setId(actionLog.getId());
-            TriggerFilter.actionLog.set(actionLogDTO);
+            LogHandler.actionLog.set(actionLogDTO);
         } else {
             actionLog = (ActionLog) s.get(ActionLog.class, actionLogDTO.getId());
         }

@@ -24,9 +24,9 @@ public class DatabaseHandler extends Handler {
 
     @Override
     public void publish(LogRecord record) {
-        Object[] params = { TriggerFilter.prefix.get() };
+        Object[] params = { LogHandler.prefix.get() };
         record.setParameters(params);
-        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", record);
+        LogHandler.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", record);
     }
 
 }

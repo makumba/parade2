@@ -6,7 +6,6 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,21 +20,15 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.makumba.HibernateSFManager;
 import org.makumba.aether.Aether;
 import org.makumba.aether.AetherContext;
 import org.makumba.parade.aether.MakumbaContextRelationComputer;
 import org.makumba.parade.aether.ParadeRelationComputer;
-import org.makumba.parade.model.Application;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.tools.ParadeLogger;
-import org.makumba.parade.tools.TriggerFilter;
-import org.makumba.providers.MakumbaINIFileReader;
-
-import com.sun.jmx.snmp.daemon.CommunicationException;
 
 import freemarker.template.DefaultObjectWrapper;
 
@@ -46,8 +39,6 @@ public class InitServlet extends HttpServlet implements Runnable {
     public static Date startupDate = new Date();
 
     static Logger logger = ParadeLogger.getParadeLogger(InitServlet.class.getName());
-
-    private static Configuration cfg;
 
     private static SessionFactory sessionFactory = null;
 
@@ -233,10 +224,10 @@ public class InitServlet extends HttpServlet implements Runnable {
     public static void createDummyDatabaseConnection() throws Throwable{
         // Get configuration from Makumba.conf
         File f = new File((System.getProperty("user.dir") + "/webapp/WEB-INF/classes/").replace('/', File.separatorChar) + "Makumba.conf");
-        MakumbaINIFileReader makumbaConf = new MakumbaINIFileReader(f.toURL(), null);
-        String url = makumbaConf.getProperty("dataSource:parade", "connection.url");
-        String user = makumbaConf.getProperty("dataSource:parade", "connection.username");
-        String pass = makumbaConf.getProperty("dataSource:parade", "connection.password");
+        //Configuration. = new Configuration(f.toURL(), null);
+        String url = "jdbc:mysql://localhost/parade";
+        String user = "root";
+        String pass = "";
         
         
         // Try to make connection to Database

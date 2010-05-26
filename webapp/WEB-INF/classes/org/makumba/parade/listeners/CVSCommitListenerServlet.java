@@ -14,6 +14,7 @@ import org.hibernate.Session;
 import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
+import org.makumba.parade.tools.LogHandler;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.tools.TriggerFilter;
 
@@ -112,7 +113,7 @@ public class CVSCommitListenerServlet extends HttpServlet {
         log.setFile(file);
         log.setQueryString("&module=" + module + "&newVersion=" + newRevision);
 
-        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+        LogHandler.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
     }
 
     public class Commit {

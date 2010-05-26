@@ -8,11 +8,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.hibernate.Hibernate;
+import org.apache.commons.lang.ArrayUtils;
 import org.makumba.parade.init.ParadeProperties;
-import org.makumba.parade.model.managers.CVSManager;
+import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.ServletContainer;
-import org.makumba.parade.tools.CVSRevisionComparator;
 
 /**
  * Bean that provides data for the file browser view
@@ -20,14 +19,40 @@ import org.makumba.parade.tools.CVSRevisionComparator;
  * @author Manuel Gay
  * 
  */
-public class FileBrowserBean extends ParadeBean {
+public class FileBrowserBean{
 
     private String path;
     
     private String absolutePath;
     
-    private CVSRevisionComparator c = new CVSRevisionComparator();
-
+    private Row row;
+    
+    public void setRow(){
+        row = new Row();
+    }
+    
+    // Set current row Information
+    public void setRowpath(String value){
+        this.row.setRowpath(value);
+    }
+    
+    public void setWebappPath(String value){
+        this.row.setWebappPath(value);
+    }
+    
+    public void setRowname(String value){
+        this.row.setRowname(value);
+    }
+    
+    public void setStatus(String value){
+        // Set row status based on status array in ServletContainer
+        this.row.setStatus(ArrayUtils.indexOf(ServletContainer.status, value.toLowerCase()));
+    }
+    
+    public void setModule(String value){
+        this.row.setModule(value);
+    }
+    
     public void setPath(String path) {
         // if this is the root of the row
         if (path == null || path.equals("null"))
@@ -70,7 +95,7 @@ public class FileBrowserBean extends ParadeBean {
     }
 
     /**
-     * absolue path on disk of the currently browsed directory
+     * absolute path on disk of the currently browsed directory
      */
     public String getAbsolutePath() {
         if(absolutePath == null) {
@@ -221,46 +246,4 @@ public class FileBrowserBean extends ParadeBean {
     public boolean isCVSConflict(String fileName) {
         return fileName.startsWith(".#");
     }
-    
-    public boolean getCvsNewerExists(String fileName, String cvsRevision) {
-        // let's see if there's a newer version of this on the repository
- 
-        boolean newerExists = false;
-        String repositoryRevision = "", rowRevision = "";
-
-        if (row.getApplication() != null) {
-            String fileCvsPath = row.getApplication().getName() + getPath(fileName).substring(row.getRowpath().length());
-            Hibernate.initialize(row.getApplication().getCvsfiles());
-            repositoryRevision = row.getApplication().getCvsfiles().get(fileCvsPath);
-            rowRevision = cvsRevision;
-
-            if (repositoryRevision != null && rowRevision != null) {
-
-                if (repositoryRevision.equals("1.1.1.1")) {
-                    repositoryRevision = "1.1";
-                }
-                if (rowRevision.equals("1.1.1.1")) {
-                    rowRevision = "1.1";
-                }
-
-                newerExists = c.compare(repositoryRevision, rowRevision) == 1;
-
-            } else {
-                return false;
-            }
-        }
-
-        return newerExists;
-        
-    }
-    
-    public boolean isCvsConflictOnUpdate(String fileName) {
-        return CVSManager.cvsConflictOnUpdate(fileName, getAbsolutePath());
-    }
-    
-    public String getCvsNewRevision(String fileName) {
-        String fileCvsPath = row.getApplication().getName() + getPath(fileName).substring(row.getRowpath().length());
-        return row.getApplication().getCvsfiles().get(fileCvsPath);
-    }
-    
 }

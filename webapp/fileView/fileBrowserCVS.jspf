@@ -1,14 +1,13 @@
 <%-- ParaDe file browser view - CVS: displays all the CVS-related information and links in the file browser --%>
-<mak:value expr="f.cvsStatus" var="cvsStatus" />
+
+<%@page import="org.makumba.parade.view.beans.CVSRevisionBean"%><mak:value expr="f.cvsStatus" var="cvsStatus" />
 <mak:value expr="f.cvsRevision" printVar="cvsRevision" />
 <mak:value expr="f.cvsCheckedOutRevision" printVar="cvsCheckedOutRevision" />
 <c:set var="cvsWebLink"><%=fileBrowserBean.getCVSWebLink(filePath) %></c:set>
 <c:set var="isCvsConflict"><%=fileBrowserBean.isCVSConflict(fileName) %></c:set>
-<c:set var="cvsNewerExists"><%=fileBrowserBean.getCvsNewerExists(fileName, cvsRevision) %></c:set>
-<c:if test="${cvsNewerExists}">
-  <c:set var="isCvsConflictOnUpdate"><%=fileBrowserBean.isCvsConflictOnUpdate(fileName) %></c:set>
-  <c:set var="cvsNewRevision"><%=fileBrowserBean.getCvsNewRevision(fileName) %></c:set>
-</c:if>
+
+<%-- CVSRevisionBean Operations --%>
+<c:set var="cvsNewerExists">false</c:set>
 
 <%-- CVS --%>
 <td>

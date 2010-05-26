@@ -55,7 +55,7 @@ public class HttpLogin {
         log.setDate(new Date());
         log.setUser(user);
 
-        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+        LogHandler.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
 
     }
 }

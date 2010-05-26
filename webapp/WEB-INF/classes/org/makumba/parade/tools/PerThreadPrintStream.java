@@ -73,7 +73,7 @@ public class PerThreadPrintStream extends java.io.PrintStream {
 
             // we issue a log so the catched text goes to the console, the db and the file
             LogRecord rec = new LogRecord(Level.INFO, msg);
-            Object[] params = { TriggerFilter.prefix.get() };
+            Object[] params = { LogHandler.prefix.get() };
             
             logger.getHandlers();
             

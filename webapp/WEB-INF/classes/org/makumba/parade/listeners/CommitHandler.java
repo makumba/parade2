@@ -14,6 +14,7 @@ import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.tools.CVSRevisionComparator;
+import org.makumba.parade.tools.LogHandler;
 import org.makumba.parade.tools.TriggerFilter;
 
 public class CommitHandler extends Thread {
@@ -141,7 +142,7 @@ public class CommitHandler extends Thread {
         log.setParadecontext(paradeContext);
         log.setContext(paradeContext);
 
-        TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+        LogHandler.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
     }
 
 }

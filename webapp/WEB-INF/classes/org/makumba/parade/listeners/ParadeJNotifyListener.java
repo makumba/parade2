@@ -24,6 +24,7 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.User;
 import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.model.managers.MakumbaManager;
+import org.makumba.parade.tools.LogHandler;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.tools.SimpleFileFilter;
 import org.makumba.parade.tools.TriggerFilter;
@@ -430,7 +431,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
                 }
             }
 
-            TriggerFilter.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
+            LogHandler.redirectToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
 
             tx.commit();
 

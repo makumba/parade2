@@ -89,7 +89,12 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
             } else {
 
                 java.io.File[] dir = currDir.listFiles();
-
+                
+                // Refresh files in root dir
+                if(row.getRowpath().compareTo(currDir.getPath()) == 0){
+                    refreshDirectory(row, currDir); 
+                }
+                
                 for (java.io.File d : dir) {
                     if (filter.accept(d) && !(d.getName() == null) && d.isDirectory()) {
                         refreshDirectory(row, d);
@@ -103,7 +108,6 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
     private void refreshDirectory(Row row, java.io.File currDir) {
         // getting the File object mapped to this dir
         File currFile = row.getFiles().get(currDir.getAbsolutePath());
-
         // you never know
         if (!(currFile == null) && currFile.getIsDir())
             readFiles(row, currFile);
@@ -216,7 +220,7 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
     }
 
     private void readFiles(Row r, File f) {
-
+        
         Set<String> files = new HashSet<String>();
 
         Set<String> entries = readCVSEntries(r, f, null, false);
@@ -649,7 +653,6 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
      */
     public synchronized static void updateMultipleCvsCache(String context, Collection<File> files) {
         CVSManager cvsMgr = new CVSManager();
-
         for (File f : files) {
             cvsMgr.fileRefresh(f.getRow(), f.getPath());
         }
@@ -666,7 +669,7 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
         return cvsConflictOnUpdate(f.getName(), f.getParentPath());
 
     }
-    
+
     public static boolean cvsConflictOnUpdate(String fileName, String fileParentPath) {
         boolean cvsConflictOnUpdate = false;
 
@@ -695,7 +698,7 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
 
         }
 
-        return cvsConflictOnUpdate;        
+        return cvsConflictOnUpdate;
     }
 
 }

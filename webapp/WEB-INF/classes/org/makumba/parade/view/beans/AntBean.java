@@ -2,38 +2,16 @@ package org.makumba.parade.view.beans;
 
 import java.util.Iterator;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
-import org.makumba.parade.model.Row;
 
-public class ParadeBean {
+/**
+ * Bean that provides data for the file browser view
+ * 
+ * @author Koen Speelmeijer
+ * 
+ */
 
-    protected Row row;
-
-    public ParadeBean() {
-        super();
-    }
-
-    public void setContext(String context) {
-    
-        Session s = null;
-        try {
-            s = InitServlet.getSessionFactory().openSession();
-            Transaction tx = s.beginTransaction();
-            row = (Row) s.createQuery("from Row r where r.rowname = :context").setString("context", context)
-                    .uniqueResult();
-            if (row == null) {
-                throw new RuntimeException("Could not find row " + context);
-            }
-            tx.commit();
-    
-        } finally {
-            if (s != null)
-                s.close();
-        }
-    }
+public class AntBean {
     
     protected String allowedOperations = new String();
 
@@ -57,5 +35,4 @@ public class ParadeBean {
 
     
     }
-
 }

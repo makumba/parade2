@@ -9,18 +9,26 @@
 
 <%-- Getting the bean that will compute some of the data --%>
 <% FileBrowserBean fileBrowserBean = new FileBrowserBean();
-   fileBrowserBean.setContext((String)pageContext.getAttribute("context"));
    fileBrowserBean.setPath((String)pageContext.getAttribute("path"));%>
-
 <%-- Re-setting the cleaned path --%>
 <c:set var="path"><%=fileBrowserBean.getPath() %></c:set>
 <c:set var="pathEncoded"><%=fileBrowserBean.encode(fileBrowserBean.getPath()) %></c:set>
-
-
+<mak:object from="Row r" where="r.rowname = :context">
+	<mak:value expr="r.application.id" var="applicationId" />
+	<mak:value expr="r.module" printVar="rowmodule" />
+	<mak:value expr="r.rowpath" printVar="rowpath" />
+	<mak:value expr="r.rowname" printVar="rowname" />
+	<mak:value expr="r.status" printVar="rowstatus" />
+	<mak:value expr="r.webappPath" printVar="webapppath" />
+	<% fileBrowserBean.setRow(); %>
+	<% fileBrowserBean.setModule(rowmodule); %>
+	<% fileBrowserBean.setRowpath(rowpath); %>
+	<% fileBrowserBean.setRowname(rowname); %>
+	<% fileBrowserBean.setStatus(rowstatus); %>
+	<% fileBrowserBean.setWebappPath(webapppath); %>
 <html>
 <head>
-<title>File browser for row ${param.context}</title>
-
+	<title>File browser for row <mak:value expr="r.rowname" /></title>
 <link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/files.css" type="text/css">
 <link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/parade.css" type="text/css">
 
@@ -113,6 +121,6 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
 </mak:list>
 
 </table>
-
 </body>
 </html>
+</mak:object>

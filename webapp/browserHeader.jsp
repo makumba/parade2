@@ -9,7 +9,8 @@
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 
-<html>
+
+<%@page import="org.apache.commons.lang.ArrayUtils"%><html>
 <head>
 <title>Header view for row ${param.context}</title>
 
@@ -62,11 +63,12 @@
         title='Tomcat documentation' target='directory'>Tomcat</a> <a href='http://www.makumba.org'
         title='Makumba documentation' target='directory'>Makumba</a></td>
 
-      <jsp:useBean id="browserHeaderBean" class="org.makumba.parade.view.beans.BrowserHeaderBean" />
+      <jsp:useBean id="antBean" class="org.makumba.parade.view.beans.AntBean" />
       <mak:value expr="row.id" printVar="rowId"/>
-      <jsp:setProperty name="browserHeaderBean" property="rowId" value="<%=rowId %>"/>
-      <td valign="top">&nbsp; ant: <c:set var="vWhere">t.row = row and t.target in (<%=browserHeaderBean.getAllowedAntOperations() %>)</c:set><mak:list from="AntTarget t" where="#{vWhere}" separator=", "><a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value expr="t.target"/></a></mak:list></td>
-      <td valign="top">&nbsp; webapp: <c:if test="${browserHeaderBean.webappStatus == 2}">
+      <mak:value expr="row.status" printVar="stringStatus"/>
+      <% int webAppStatus = ArrayUtils.indexOf(ServletContainer.status, stringStatus); %>
+      <td valign="top">&nbsp; ant: <c:set var="vWhere">t.row = row and t.target in (<%=antBean.getAllowedAntOperations() %>)</c:set><mak:list from="AntTarget t" where="#{vWhere}" separator=","><a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value expr="t.target"/></a></mak:list></td>
+      <td valign="top">&nbsp; webapp: <c:if test="${webAppStatus == 2}">
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextReload&getPathFromSession=true" target="command">reload</a>
         <a

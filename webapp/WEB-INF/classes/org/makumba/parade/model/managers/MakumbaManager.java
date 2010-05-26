@@ -16,7 +16,6 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
 import org.makumba.parade.tools.ParadeLogger;
-import org.makumba.providers.MakumbaINIFileReader;
 
 public class MakumbaManager implements RowRefresher, ParadeManager {
 
@@ -116,14 +115,7 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
                 return "No makumba configuration file found";
             }
             
-            MakumbaINIFileReader makumbaConf = null;
-            try {
-                makumbaConf = new MakumbaINIFileReader(f.toURL(), null);
-            } catch (IOException e) {
-                return "Invalid Makumba.conf";
-            }
-
-            return "Default database: " + makumbaConf.getProperty("dataSourceConfig", "defaultDataSource");
+            return "Default database: " + "";
 
         } else {
             try {

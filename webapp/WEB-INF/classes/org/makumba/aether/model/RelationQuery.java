@@ -18,6 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.makumba.aether.Aether;
 import org.makumba.providers.QueryAnalysisProvider;
 import org.makumba.providers.QueryProvider;
+import org.makumba.providers.query.Pass1ASTPrinter;
 
 @Entity
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
@@ -108,7 +109,7 @@ public class RelationQuery {
         }
 
         // inline all makumba query functions
-        String localQuery = qap.inlineFunctions(query);
+        String localQuery = Pass1ASTPrinter.printAST(qap.inlineFunctions(query)).toString();
 
         String args = ""; // for debug
         StringTokenizer st = new StringTokenizer(queryArguments, ",");

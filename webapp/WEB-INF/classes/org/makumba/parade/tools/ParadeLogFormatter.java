@@ -18,9 +18,9 @@ public class ParadeLogFormatter extends SimpleFormatter {
         if (formatted.indexOf(PARADE_PREFIX) != -1)
             formatted = formatted.substring(formatted.indexOf(PARADE_PREFIX));
         
-        TriggerFilter.computeActionLogAndSetPrefix(record);
+        LogHandler.computeActionLogAndSetPrefix(record);
         
-        String prefix = TriggerFilter.prefix.get();
+        String prefix = LogHandler.prefix.get();
 
         // if the prefix is null, this was tomcat
         if (prefix == null)
