@@ -66,7 +66,6 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         // let's compute all relations using the Makumba relations crawler
         // while we crawl, we adjust the MDD provider root to the webapp root
         RecordInfo.setWebappRoot(webappPath);
-        System.out.println("start files to crawl");
         List<String> filesToCrawl = getFilesToCrawl();
         
         for (String path : filesToCrawl) {
@@ -174,7 +173,6 @@ public class MakumbaContextRelationComputer implements RelationComputer {
                         "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND (f.path like '%.mdd' OR f.path like '%.jsp' OR f.path like '%.java') AND f.isDir = false AND f.row.id = :rowId  AND f.crawled < f.date",
                         params);
         //---
-        System.out.println("fail 2"); 
         for (Dictionary<String, Object> dictionary : v) {
             String path = (String) dictionary.get("path");
             res.add(path);
