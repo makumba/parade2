@@ -36,14 +36,23 @@ public class ParadeLogFormatter extends SimpleFormatter {
         try {
             while ((line = b.readLine()) != null) {
                 sb.append(prefix + line);
-                sb.append("\n");
+                if(addLine(record)){
+                    sb.append("\n");
+                }
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
+        if(record.getThrown() != null)
+            record.getThrown().printStackTrace();
+
         return sb.toString();
+    }
+    
+    private boolean addLine(LogRecord record){
+       return !record.getSourceClassName().equals("PerThreadPrintStream");
     }
 
 }

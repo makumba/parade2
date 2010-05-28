@@ -19,7 +19,7 @@ public class PerThreadPrintStream extends java.io.PrintStream {
     }
 
     private static Logger logger = ParadeLogger.getParadeLogger(PerThreadPrintStream.class.getName());
-    
+        
     public static DateFormat logDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     static Object dummy = "dummy";
@@ -55,7 +55,22 @@ public class PerThreadPrintStream extends java.io.PrintStream {
         super.write(b, 0, b.length);
         super.flush();
     }
-
+    
+    @Override
+    public void println(String s){
+        print(s);
+        newLine();
+    }
+    
+    private void newLine(){        
+        try {
+            outWrite("\r\n".getBytes(),0 , 2);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
     @Override
     public void write(byte[] buffer, int start, int len) {
 
@@ -70,10 +85,11 @@ public class PerThreadPrintStream extends java.io.PrintStream {
             }
             
             String msg = new String(buffer, start, len);
-
+            
             // we issue a log so the catched text goes to the console, the db and the file
             LogRecord rec = new LogRecord(Level.INFO, msg);
             Object[] params = { LogHandler.prefix.get() };
+            rec.setSourceClassName("PerThreadPrintStream");
             
             logger.getHandlers();
             
