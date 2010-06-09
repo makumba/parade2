@@ -11,7 +11,9 @@ public class ParadeLogFormatter extends SimpleFormatter {
     static final String TOMCAT_PREFIX = "[Tomcat]";
 
     static final String PARADE_PREFIX = "[ParaDe]";
-
+    
+    static final String lineSeparator = System.getProperty ( "line.separator" );
+    
     @Override
     public synchronized String format(LogRecord record) {
         String formatted = super.format(record);
@@ -37,7 +39,7 @@ public class ParadeLogFormatter extends SimpleFormatter {
             while ((line = b.readLine()) != null) {
                 sb.append(prefix + line);
                 if(addLine(record)){
-                    sb.append("\n");
+                    sb.append(lineSeparator);
                 }
             }
         } catch (IOException e) {

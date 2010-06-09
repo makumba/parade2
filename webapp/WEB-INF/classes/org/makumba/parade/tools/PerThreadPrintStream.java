@@ -20,6 +20,8 @@ public class PerThreadPrintStream extends java.io.PrintStream {
 
     private static Logger logger = ParadeLogger.getParadeLogger(PerThreadPrintStream.class.getName());
         
+    private static final String lineSeparator = System.getProperty ( "line.separator" );
+    
     public static DateFormat logDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     static Object dummy = "dummy";
@@ -64,7 +66,7 @@ public class PerThreadPrintStream extends java.io.PrintStream {
     
     private void newLine(){        
         try {
-            outWrite("\r\n".getBytes(),0 , 2);
+            outWrite(lineSeparator.getBytes(),0 , lineSeparator.length());
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
