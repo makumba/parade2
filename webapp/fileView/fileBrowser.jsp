@@ -109,7 +109,7 @@ if(confirm('Are you sure you want to delete the file '+name+' ?'))
     <%--Common values used by both file and cvs view --%>
     <mak:value expr="f.isDir" var="isDir"/>
     <mak:value expr="f.name" printVar="fileName"/>
-    <mak:value expr="f.path" printVar="filePath"/>
+    <mak:value expr="f.path" var="filePath"/>
     <mak:value expr="f.fileURL()" printVar="fileURL"/>
     <c:set var="relativeFilePath"><%=fileBrowserBean.getPath(fileName) %></c:set>
     <c:set var="encodedURL"><%=fileBrowserBean.encode(fileURL) %></c:set>

@@ -234,10 +234,10 @@ public class FileBrowserBean{
     /**
      * CVS repository link 
      */
-    public String getCVSWebLink(String filePath) {
+    public String getCVSWebLink(Object filePath) {
         String cvsWebLink="";
         String cvsweb = ParadeProperties.getParadeProperty("cvs.site");
-        String webPath = filePath.substring(row.getRowpath().length() + 1).replace(java.io.File.separatorChar, '/');
+        String webPath = filePath.toString().substring(row.getRowpath().length() + 1).replace(java.io.File.separatorChar, '/');
         cvsWebLink = cvsweb + row.getModule() + "/" + webPath;
         return cvsWebLink;
         
