@@ -35,9 +35,7 @@
 			<include name="makumba.jar" />
 			<include name="freemarker.jar" />
 			<include name="hibernate3.jar" />
-			<include name="hibernate-annotations.jar" />
-			<include name="hibernate-commons-annotations.jar" />
-			<include name="ejb3-persistence.jar" />
+			<include name="hibernate-jpa-2.0-api-1.0.0.Final.jar" />
 			<include name="struts.jar" />
 			<include name="parser.jar" />
 			<include name="jfreechart-1.0.9.jar" />
@@ -49,7 +47,6 @@
 			<include name="commons-configuration-1.6.jar" />
 			<include name="commons-cli-1.2.jar" />
 			<include name="antlr-2.7.6.jar" />
-
 		</fileset>
 		<fileset dir="lib">
 			<include name="*.jar" />
@@ -73,7 +70,9 @@
 			<include name="servlet-api.jar" />
 			<include name="commons-logging-api.jar" />
 			<include name="ant-1.6.5.jar" />
-			<include name="ant-launcher.jar" />
+		</fileset>
+		<fileset dir="${webapp.path}/WEB-INF/lib">
+			<include name="ant-launcher-1.6.5.jar" />
 		</fileset>
 		<pathelement path="globalClasses/" />
 	</path>
@@ -87,7 +86,7 @@
 			<classpath refid="generic.class.path" />
 			<include name="**/package-info.java" />
 		</javac>
-		
+
 		<javac srcdir="${webapp.path}/WEB-INF/classes" debug="on">
 			<classpath refid="generic.class.path" />
 		</javac>
@@ -111,7 +110,7 @@
 	<target name="cleanTomcat" description="cleans the tomcat, i.e. empties work/ and removes all context descriptors from conf except parade ones">
 		<delete>
 			<fileset dir="${basedir}/tomcat/work" />
-			<fileset dir="${basedir}/tomcat/conf/Catalina/localhost/" excludes="ROOT.xml,manager.xml,tomcat-docs.xml,**/CVS"/>
+			<fileset dir="${basedir}/tomcat/conf/Catalina/localhost/" excludes="ROOT.xml,manager.xml,tomcat-docs.xml,**/CVS" />
 		</delete>
 		<mkdir dir="${tomcat.home}/work" />
 
@@ -144,10 +143,10 @@
 
 		<!-- We also need to create a bunch of directories -->
 		<mkdir dir="tomcat/webapps_dummy" />
-		
+
 		<antcall target="globalClassesCopy" />
 	</target>
-			
+
 	<target name="globalClassesCopy">
 		<copy toDir="globalClasses/" overwrite="true">
 			<fileset dir="webapp/WEB-INF/classes">
@@ -156,21 +155,21 @@
 				<include name="org/makumba/parade/tools/HttpServletResponseDummy*.class" />
 				<include name="org/makumba/parade/tools/HttpServletRequestDummy*.class" />
 				<include name="org/makumba/parade/access/ActionLogDTO*.class" />
-								
+
 				<include name="org/makumba/parade/tools/DatabaseHandler*.class" />
 				<include name="org/makumba/parade/tools/ParadeLogFormatter*.class" />
 				<include name="org/makumba/parade/tools/PerThreadPrintStream*.class" />
 				<include name="org/makumba/parade/tools/ParadeLogger*.class" />
 				<include name="org/makumba/parade/tools/LogHandler*.class" />
-				
+
 				<include name="org/makumba/parade/listeners/ParadeSessionListener*.class" />
-				
+
 				<include name="org/makumba/parade/aether/ObjectTypes*.class" />
 				<include name="org/makumba/aether/UserTypes*.class" />
-				
+
 				<include name="org/makumba/commons/ServletObjects*.class" />
 
-				
+
 			</fileset>
 
 			<fileset dir=".">
@@ -178,7 +177,7 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="tomcat">
 		<antcall target="tomcat-start" />
 	</target>
@@ -190,12 +189,12 @@
 			<jvmarg value="-Dcatalina.base=tomcat" />
 			<jvmarg value="-Xms${tomcat.Xms}" />
 			<jvmarg value="-Xmx${tomcat.Xmx}" />
-            <jvmarg value="-XX:MaxPermSize=${tomcat.Xmx}" />
+			<jvmarg value="-XX:MaxPermSize=${tomcat.Xmx}" />
 			<jvmarg value="-Djava.library.path=." />
 			<jvmarg value="-Djava.util.logging.config.file=${basedir}/logging.properties" />
 			<jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" />
-			<jvmarg value="-XX:CompileCommand=exclude,com/bbn/openmap/layer/rpf/RpfFrame,decompressSubframe"/>
-            <jvmarg value="-client"/>
+			<jvmarg value="-XX:CompileCommand=exclude,com/bbn/openmap/layer/rpf/RpfFrame,decompressSubframe" />
+			<jvmarg value="-client" />
 			<arg value="start" />
 		</java>
 		<!-- give tomcat time to start up -->
@@ -213,55 +212,15 @@
 		<sleep seconds="5" />
 	</target>
 
-
-
-	<!-- OLD TARGETS - not necessarily in use anymore, should go away after a while -->
-
-
-	<!-- copy libs to tomcat common's lib for use by webapps -->
-	<target name="copyLibsToTomcat">
-		<copy toDir="${tomcat.home}/common/lib" overwrite="true">
-			<fileset dir="lib">
-				<include name="*.jar" />
-				<include name="*.zip" />
-				<exclude name="makumba.jar" />
-				<exclude name="antlr.jar" />
-				<!-- JSTL JARs -->
-				<exclude name="jstl.jar" />
-				<exclude name="jstl-standard.jar" />
-			</fileset>
-			<fileset dir="${webapp.path}/WEB-INF/lib">
-				<include name="*.jar" />
-				<include name="*.zip" />
-				<exclude name="makumba.jar" />
-				<exclude name="antlr.jar" />
-				<!-- JSTL JARs -->
-				<exclude name="jstl.jar" />
-				<exclude name="jstl-standard.jar" />
-			</fileset>
-
-			<fileset dir="webapp/WEB-INF/lib">
-				<include name="*.jar" />
-				<include name="*.zip" />
-				<exclude name="makumba.jar" />
-				<exclude name="antlr.jar" />
-				<!-- JSTL JARs -->
-				<exclude name="jstl.jar" />
-				<exclude name="jstl-standard.jar" />
-			</fileset>
-		</copy>
-	</target>
-	
-	
 	<target name="crawlRows" depends="compile">
 
 		<java classname="org.makumba.parade.tools.RowCrawler" fork="true" dir=".">
-            <jvmarg value="-Xms${tomcat.Xms}" />
-            <jvmarg value="-Xmx${tomcat.Xmx}" />
-            <jvmarg value="-XX:MaxPermSize=${tomcat.Xmx}" />
+			<jvmarg value="-Xms${tomcat.Xms}" />
+			<jvmarg value="-Xmx${tomcat.Xmx}" />
+			<jvmarg value="-XX:MaxPermSize=${tomcat.Xmx}" />
 			<classpath>
 				<pathelement path="${java.class.path}" />
-				<pathelement location="webapp/WEB-INF/classes"/>
+				<pathelement location="webapp/WEB-INF/classes" />
 				<fileset dir="${webapp.path}/WEB-INF/lib">
 					<include name="*.jar" />
 				</fileset>
@@ -273,5 +232,5 @@
 		</java>
 	</target>
 
-	
+
 </project>

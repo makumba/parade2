@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/makumba.jar"/>
 	<classpathentry kind="src" path="webapp/WEB-INF/classes"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
 	<classpathentry kind="lib" path="lib/ant-1.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/struts.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/freemarker.jar"/>
 	<classpathentry kind="lib" path="lib/ldap.jar" sourcepath="/jldap/com/novell/ldap"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/cewolf-1.0.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jcommon-1.0.8.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jfreechart-1.0.9.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/parser.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-collections-3.2.jar"/>
@@ -21,11 +18,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-lang-2.3.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-io-1.1.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/hibernate-annotations.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/hibernate-commons-annotations.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/inieditor.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/antlr-2.7.6.jar"/>
-	<classpathentry kind="lib" path="/makumba"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/makumba"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/ant-launcher-1.6.5.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jcommon-1.0.8.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
