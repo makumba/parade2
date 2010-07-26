@@ -1,7 +1,5 @@
 package org.makumba.parade.aether;
 
-import java.security.Timestamp;
-import java.sql.Time;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -22,8 +20,8 @@ import org.makumba.commons.NamedResources;
 import org.makumba.devel.relations.RelationCrawler;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Row;
+import org.makumba.providers.DataDefinitionProvider;
 import org.makumba.providers.TransactionProvider;
-import org.makumba.providers.datadefinition.makumba.RecordInfo;
 
 /**
  * Computes relations amongst files for a context using the Makumba framework
@@ -59,53 +57,51 @@ public class MakumbaContextRelationComputer implements RelationComputer {
     }
 
     public void computeRelations(boolean updateExistingRelations) throws RelationComputationException {
-        
+
         long start = new Date().getTime();
         logger.info("Starting crawling of row " + r.getRowname());
 
         // let's compute all relations using the Makumba relations crawler
         // while we crawl, we adjust the MDD provider root to the webapp root
-        RecordInfo.setWebappRoot(webappPath);
+        DataDefinitionProvider.setWebappRoot(webappPath);
         List<String> filesToCrawl = getFilesToCrawl();
-        
+
         for (String path : filesToCrawl) {
             logger.fine("Crawling file " + path);
             rc.crawl(path.substring(webappPath.length()));
         }
 
         // we set it back to null after the crawling and clean the cache
-        RecordInfo.setWebappRoot(null);
-        NamedResources.cleanStaticCache(RecordInfo.infos);
+        DataDefinitionProvider.setWebappRoot(null);
+        NamedResources.cleanStaticCache(DataDefinitionProvider.infos);
 
         rc.writeRelationsToDb(updateExistingRelations);
-        //+++
+        // +++
         setLastCrawledDate(filesToCrawl);
-        //---
+        // ---
         long end = new Date().getTime();
         logger.info("Crawling of row " + r.getRowname() + " took " + (end - start) + " ms");
-        
+
     }
-    
-    //+++
-    private void setLastCrawledDate(String file)
-    {
+
+    // +++
+    private void setLastCrawledDate(String file) {
         List<String> filesToCrawl = new LinkedList<String>();
         filesToCrawl.add(file);
         setLastCrawledDate(filesToCrawl);
-        
+
     }
-    
-    private void setLastCrawledDate(List<String> filesToCrawl)
-    {
+
+    private void setLastCrawledDate(List<String> filesToCrawl) {
         if (filesToCrawl.size() != 0) {
             Session s = null;
             try {
                 s = InitServlet.getSessionFactory().openSession();
                 Transaction tx = s.beginTransaction();
-                
-                Query q = s.createQuery("update File set crawled = " + new Long(new Date().getTime()) + " where path in ("
-                        + fileListToHQLSet(filesToCrawl) + ")");
-                
+
+                Query q = s.createQuery("update File set crawled = " + new Long(new Date().getTime())
+                        + " where path in (" + fileListToHQLSet(filesToCrawl) + ")");
+
                 q.executeUpdate();
                 tx.commit();
 
@@ -116,8 +112,9 @@ public class MakumbaContextRelationComputer implements RelationComputer {
             }
         }
     }
-    //---
-    
+
+    // ---
+
     private String fileListToHQLSet(List<String> files) {
         String res = "";
         Iterator<String> it = files.iterator();
@@ -134,20 +131,20 @@ public class MakumbaContextRelationComputer implements RelationComputer {
     public void updateRelation(String filePath) throws RelationComputationException {
 
         if (filePath.startsWith(webappPath)) {
-            String file = filePath; //+++
-            
+            String file = filePath; // +++
+
             logger.fine("Updating relations of " + filePath);
             filePath = filePath.substring(webappPath.length());
             if (!filePath.startsWith("/"))
                 filePath = "/" + filePath;
-            RecordInfo.setWebappRoot(webappPath);
+            DataDefinitionProvider.setWebappRoot(webappPath);
             rc.crawl(filePath);
-            RecordInfo.setWebappRoot(null);
-            NamedResources.cleanStaticCache(RecordInfo.infos);
+            DataDefinitionProvider.setWebappRoot(null);
+            NamedResources.cleanStaticCache(DataDefinitionProvider.infos);
             rc.writeRelationsToDb(true);
-            //+++
+            // +++
             setLastCrawledDate(file);
-            //---
+            // ---
         }
     }
 
@@ -158,7 +155,7 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         // we get only the files that are not UP_TO_DATE
         // and that were not previously crawled
         TransactionProvider tp = TransactionProvider.getInstance();
-       
+
         org.makumba.Transaction t = tp.getConnectionTo(ParadeRelationComputer.PARADE_DATABASE_NAME);
         Map<String, Object> params = new HashMap<String, Object>();
         String webappRoot = r.getRowpath() + "/" + r.getWebappPath();
@@ -167,12 +164,12 @@ public class MakumbaContextRelationComputer implements RelationComputer {
         params.put("webappRootLike", webappRoot + "%");
         params.put("relationsDb", ParadeRelationComputer.PARADE_DATABASE_NAME);
         params.put("rowId", r.getId().intValue());
-        //+++
+        // +++
         Vector<Dictionary<String, Object>> v = t
                 .executeQuery(
                         "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND (f.path like '%.mdd' OR f.path like '%.jsp' OR f.path like '%.java') AND f.isDir = false AND f.row.id = :rowId  AND f.crawled < f.date",
                         params);
-        //---
+        // ---
         for (Dictionary<String, Object> dictionary : v) {
             String path = (String) dictionary.get("path");
             res.add(path);
@@ -194,10 +191,10 @@ public class MakumbaContextRelationComputer implements RelationComputer {
     }
 
     public static void resetCrawlStatus(Row r, Session s) {
-        //+++
-        //Query q = s.createQuery("UPDATE File f set f.crawled = false where f.row.id = :rowid");
+        // +++
+        // Query q = s.createQuery("UPDATE File f set f.crawled = false where f.row.id = :rowid");
         Query q = s.createQuery("UPDATE File f set f.crawled = 0 where f.row.id = :rowid");
-        //---
+        // ---
         q.setParameter("rowid", r.getId());
         int u = q.executeUpdate();
         logger.fine("Reset the crawl status of " + u + " files");
