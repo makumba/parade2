@@ -39,8 +39,9 @@ import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 import net.contentobjects.jnotify.Util;
 
+@SuppressWarnings("all")
 public class JNotifyAdapterWin32 implements IJNotify {
-    private Hashtable _id2Data;
+    private final Hashtable _id2Data;
 
     public JNotifyAdapterWin32() {
         JNotify_win32.setNotifyListener(new IWin32NotifyListener() {

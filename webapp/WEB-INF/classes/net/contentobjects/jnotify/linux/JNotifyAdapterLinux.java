@@ -42,16 +42,17 @@ import net.contentobjects.jnotify.JNotifyListener;
 import net.contentobjects.jnotify.Util;
 
 /** TODO : added by omry at Dec 11, 2005 : Handle move events */
-
+@SuppressWarnings("all")
 public class JNotifyAdapterLinux implements IJNotify {
-    private Hashtable _linuxWd2Wd;
 
-    private Hashtable _id2Data;
+    private final Hashtable _linuxWd2Wd;
+
+    private final Hashtable _id2Data;
 
     /**
      * A set of files which was added by registerToSubTree (auto-watches)
      */
-    private Hashtable _autoWatchesPaths;
+    private final Hashtable _autoWatchesPaths;
 
     private static int _watchIDCounter = 0;
 
@@ -348,9 +349,9 @@ public class JNotifyAdapterLinux implements IJNotify {
 
         int _wd;
 
-        private int _linuxWd;
+        private final int _linuxWd;
 
-        private ArrayList _subWd;
+        private final ArrayList _subWd;
 
         int _mask;
 
