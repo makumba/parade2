@@ -1,7 +1,6 @@
 package org.makumba.aether.percolation;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +31,7 @@ import org.makumba.parade.aether.ObjectTypes;
  */
 public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
 
-    private Logger logger = Aether.getAetherLogger(SimplePercolationStrategy.class.getName());
+    private final Logger logger = Aether.getAetherLogger(SimplePercolationStrategy.class.getName());
 
     /**
      * The entry point for the percolation of an {@link AetherEvent}, that matches the event against the initial
@@ -57,6 +56,7 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
                 q.setParameter("objectType", e.getObjectType());
                 q.setParameter("action", e.getAction());
 
+                @SuppressWarnings("unchecked")
                 List<InitialPercolationRule> iprs = q.list();
                 for (InitialPercolationRule ipr : iprs) {
                     MatchedAetherEvent mae = buildMatchedAetherEvent(e, ipr, false, s);
@@ -174,7 +174,9 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
             q.setParameter("objectType", mae.getObjectType());
 
             // for each match
-            for (PercolationRule pr : (List<PercolationRule>) q.list()) {
+            @SuppressWarnings("unchecked")
+            List<PercolationRule> list = q.list();
+            for (PercolationRule pr : list) {
                 logger.fine("\t == Processing percolation rule match of rule " + pr.toString());
 
                 // record a new percolation step
@@ -210,7 +212,9 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
                     q.setParameter("objectType", ObjectTypes.typeFromURL((String) relation[2]));
 
                     // for each match
-                    for (PercolationRule pr : (List<PercolationRule>) q.list()) {
+                    @SuppressWarnings("unchecked")
+                    List<PercolationRule> list = q.list();
+                    for (PercolationRule pr : list) {
                         logger.fine("\t == Processing percolation rule match of rule " + pr.toString());
 
                         // we remove the consumption of the previous relation
@@ -295,11 +299,13 @@ public class SimplePercolationStrategy extends RuleBasedPercolationStrategy {
             }
 
         } else {
-            res
-                    .addAll((Collection<? extends Object[]>) s
-                            .createQuery(
-                                    "SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL, r.id as relationId from org.makumba.devel.relations.Relation r where r.fromURL = :fromURL")
-                            .setString("fromURL", ps.getPreviousURL()));
+            Query query = s
+                    .createQuery(
+                            "SELECT r.fromURL as fromURL, r.type as type, r.toURL as toURL, r.id as relationId from org.makumba.devel.relations.Relation r where r.fromURL = :fromURL")
+                    .setString("fromURL", ps.getPreviousURL());
+            @SuppressWarnings("unchecked")
+            List<Object[]> list = query.list();
+            res.addAll(list);
         }
 
         return res;

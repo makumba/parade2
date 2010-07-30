@@ -129,12 +129,14 @@ public class CvsController {
             // retrieve the File objects for each file based on its URL
             for (String file : files) {
                 String query = "select f.row.rowpath as rowpath, f as file from File f where f.fileURL() = :fileURL";
-                Object res = s.createQuery(Pass1ASTPrinter.printAST(qap.inlineFunctions(query)).toString()).setString("fileURL", file).uniqueResult();
+                Object res = s.createQuery(Pass1ASTPrinter.printAST(qap.inlineFunctions(query)).toString()).setString(
+                        "fileURL", file).uniqueResult();
                 Object[] data = (Object[]) res;
                 modelFiles.put(data[0], data[1]);
             }
 
             for (Object rowPath : modelFiles.keySet()) {
+                @SuppressWarnings("unchecked")
                 Collection<File> filesInRow = modelFiles.getCollection(rowPath);
 
                 Vector<String> cmd = new Vector<String>();

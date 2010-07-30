@@ -25,7 +25,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
@@ -50,7 +49,7 @@ import org.makumba.parade.tools.ParadeLogger;
  * 
  */
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Parade {
 
     private static Logger logger = ParadeLogger.getParadeLogger(Parade.class.getName());
@@ -65,7 +64,7 @@ public class Parade {
 
     private Map<String, User> users = new HashMap<String, User>();
 
-    private RowProperties rowproperties = new RowProperties();
+    private final RowProperties rowproperties = new RowProperties();
 
     public static Map<String, Integer> JNotifyWatches = new HashMap<String, Integer>();
 
@@ -122,11 +121,11 @@ public class Parade {
         for (Row row : getRows().values()) {
             softRowRefresh(row);
         }
-	// FIXME this is broken in hibernate
-        //removeUnmappedRows(getRowstoreDefinition());
+        // FIXME this is broken in hibernate
+        // removeUnmappedRows(getRowstoreDefinition());
 
     }
-    
+
     public void performPostRefreshOperations() {
         logger.info("Performing post-refresh tasks...");
         applMgr.checkoutAndCreateModuleRows();
@@ -151,26 +150,27 @@ public class Parade {
         }
 
         // FIXME does not yet work
-        //removeUnmappedRows(rowstore);
+        // removeUnmappedRows(rowstore);
     }
 
     private void removeUnmappedRows(Map<String, Map<String, String>> rowstore) {
 
         // does nothing for the moment because of http://opensource.atlassian.com/projects/hibernate/browse/HHH-2146
-      
+
         // removing deleted rows from cache
         Iterator<String> j = this.getRows().keySet().iterator();
         Vector<String> toRemove = new Vector<String>();
         while (j.hasNext()) {
             String key = j.next();
-  
+
             // if the new row store definition doesn't contain the row, we trash it
             if (!rowstore.containsKey(key)) {
                 toRemove.add(key);
             }
         }
-        
-        for (String rowName : toRemove) { logger.info("Dropping row " + rowName + " from cache.");
+
+        for (String rowName : toRemove) {
+            logger.info("Dropping row " + rowName + " from cache.");
             this.getRows().remove(rowName);
         }
     }
@@ -444,7 +444,7 @@ public class Parade {
         try {
             logger.info("Adding filesystem watch to row " + r.getRowname());
             watchID = JNotify.addWatch(path, mask, watchSubtree, new ParadeJNotifyListener());
-            
+
             JNotifyWatches.put(r.getRowname(), watchID);
             r.setWatchedByJNotify(true);
 
@@ -456,9 +456,9 @@ public class Parade {
         } catch (NullPointerException npe) {
             // do nothing. JNotify returns plenty of those.
             r.setWatchedByJNotify(true);
-        } catch(java.lang.ExceptionInInitializerError re) {
+        } catch (java.lang.ExceptionInInitializerError re) {
             // have JNotify shut up if we run parade on a mac
-            if(!re.getCause().getMessage().startsWith("Unsupported OS : mac os")) {
+            if (!re.getCause().getMessage().startsWith("Unsupported OS : mac os")) {
                 throw new RuntimeException(re);
             }
         }
@@ -516,7 +516,8 @@ public class Parade {
 
     /** Model related fields and methods * */
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     public Long getId() {
         return id;
     }
@@ -525,10 +526,8 @@ public class Parade {
         this.id = id;
     }
 
-    @OneToMany(cascade=javax.persistence.CascadeType.ALL, targetEntity=org.makumba.parade.model.Row.class)
-    @JoinColumn(name="id_parade")
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-
+    @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, targetEntity = org.makumba.parade.model.Row.class)
+    @JoinColumn(name = "id_parade")
     public Map<String, Row> getRows() {
         return rows;
     }
@@ -550,9 +549,8 @@ public class Parade {
         this.baseDir = paradeBase;
     }
 
-    @OneToMany(cascade=javax.persistence.CascadeType.ALL, targetEntity=org.makumba.parade.model.Application.class)
-    @JoinColumn(name="id_parade")
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, targetEntity = org.makumba.parade.model.Application.class)
+    @JoinColumn(name = "id_parade")
     public Map<String, Application> getApplications() {
         return applications;
     }
@@ -561,9 +559,8 @@ public class Parade {
         this.applications = applications;
     }
 
-    @OneToMany(cascade=javax.persistence.CascadeType.ALL, targetEntity=org.makumba.parade.model.User.class)
-    @JoinColumn(name="id_parade")
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, targetEntity = org.makumba.parade.model.User.class)
+    @JoinColumn(name = "id_parade")
     public Map<String, User> getUsers() {
         return users;
     }
@@ -582,11 +579,11 @@ public class Parade {
     }
 
     public void clearCollections() {
-        for(Row row : getRows().values()) {
+        for (Row row : getRows().values()) {
             antMgr.clearCollections(row);
-            
+
         }
-        
+
     }
 
 }

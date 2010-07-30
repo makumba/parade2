@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.makumba.commons.RuntimeWrappedException;
 import org.makumba.parade.tools.ParadeLogger;
 
 /**
@@ -107,7 +106,7 @@ public class RowProperties {
             }
         }
 
-        for (Enumeration e = state.keys(); e.hasMoreElements();) {
+        for (Enumeration<Object> e = state.keys(); e.hasMoreElements();) {
             String rowName = (String) e.nextElement();
             if (!rowName.startsWith("rowdata.")) {
 
@@ -141,7 +140,7 @@ public class RowProperties {
 
         String propName = "rowdata." + name + ".";
         String obs = "", webapp = "", user = "";
-        for (Enumeration e = state.keys(); e.hasMoreElements();) {
+        for (Enumeration<Object> e = state.keys(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
 
             if (key.startsWith(propName + "obs"))

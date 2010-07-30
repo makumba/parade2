@@ -19,6 +19,7 @@ import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+import org.hibernate.type.StringType;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.model.managers.FileManager;
@@ -60,10 +61,10 @@ public class File {
     private Date cvsDate;
 
     private Long crawled;
-    
-    private FileManager fileMgr = new FileManager();
-    
-    private CVSManager CVSMgr = new CVSManager();
+
+    private final FileManager fileMgr = new FileManager();
+
+    private final CVSManager CVSMgr = new CVSManager();
 
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
@@ -76,7 +77,7 @@ public class File {
     }
 
     @ManyToOne
-    @JoinColumn(name="row", insertable=false, updatable=false)
+    @JoinColumn(name = "row", insertable = false, updatable = false)
     public Row getRow() {
         return row;
     }
@@ -85,8 +86,9 @@ public class File {
         this.row = row;
     }
 
-    @Id @GeneratedValue
-    @Column(name="file")
+    @Id
+    @GeneratedValue
+    @Column(name = "file")
     public Long getId() {
         return id;
     }
@@ -108,7 +110,7 @@ public class File {
     public void setDate(Long date) {
         this.date = date;
     }
-    
+
     @Column
     public Long getSize() {
         return size;
@@ -119,7 +121,7 @@ public class File {
     }
 
     @Column
-    @Index(name="nameIndex")
+    @Index(name = "nameIndex")
     public String getName() {
         return name;
     }
@@ -137,12 +139,12 @@ public class File {
         this.isDir = isDir;
     }
 
-    @Column(columnDefinition="longtext")
+    @Column(columnDefinition = "longtext")
     public String getPath() {
         return this.path;
     }
 
-    @Column(columnDefinition="longtext")
+    @Column(columnDefinition = "longtext")
     public String getParentPath() {
         return parentPath;
     }
@@ -160,7 +162,7 @@ public class File {
         this.onDisk = onDisk;
     }
 
-    @Column(columnDefinition="longtext")
+    @Column(columnDefinition = "longtext")
     public String getCvsURL() {
         return cvsURL;
     }
@@ -277,9 +279,12 @@ public class File {
         q.setString("keyPath", keyPath);
         q.setString("rowname", row.getRowname());
 
-        children = q.list();
+        @SuppressWarnings("unchecked")
+        List<File> list = q.list();
+        children = list;
 
         // we need to initialise the file data of this file
+        @SuppressWarnings("unchecked")
         Iterator<File> i = q.iterate();
         while (i.hasNext()) {
             File f = i.next();
@@ -311,12 +316,14 @@ public class File {
         Query q = s
                 .createSQLQuery(
                         "SELECT path FROM File f JOIN Row r WHERE f.row = r.row AND f.parentPath = ? AND r.rowname = ? ORDER BY f.isDir DESC, f.path ASC")
-                .addScalar("path", Hibernate.STRING);
+                .addScalar("path", new StringType());
         q.setCacheable(true);
         q.setString(0, keyPath);
         q.setString(1, row.getRowname());
 
-        children = q.list();
+        @SuppressWarnings("unchecked")
+        List<String> list = q.list();
+        children = list;
 
         tx.commit();
         s.close();

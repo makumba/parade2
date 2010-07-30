@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -21,7 +20,6 @@ import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
-import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.AntTarget;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.ParadeManager;
@@ -89,8 +87,8 @@ public class AntManager implements RowRefresher, ParadeManager {
             project.init();
             ProjectHelper.getProjectHelper().parse(project, buildFile);
         } catch (Throwable t) {
-            ParadeLogger.getParadeLogger("org.makumba.parade.ant").log(
-                    java.util.logging.Level.WARNING, "project config error", t);
+            ParadeLogger.getParadeLogger("org.makumba.parade.ant").log(java.util.logging.Level.WARNING,
+                    "project config error", t);
             return null;
         }
 
@@ -103,23 +101,24 @@ public class AntManager implements RowRefresher, ParadeManager {
 
         return project;
     }
-    
+
     private class TargetComparator implements Comparator<AntTarget> {
 
         public int compare(AntTarget arg0, AntTarget arg1) {
             return arg0.getTarget().compareTo(arg1.getTarget());
         }
-        
+
     }
 
     private void setTargets(Row row, Project p) {
-        Enumeration ptargets = p.getTargets().elements();
-        
+        @SuppressWarnings("unchecked")
+        Enumeration<Target> ptargets = p.getTargets().elements();
+
         List<AntTarget> targets = row.getTargets();
-        
+
         while (ptargets.hasMoreElements()) {
-            Target currentTarget = (Target) ptargets.nextElement();
-            
+            Target currentTarget = ptargets.nextElement();
+
             targets.add(new AntTarget(currentTarget.getName(), row));
         }
         row.setTargets(targets);

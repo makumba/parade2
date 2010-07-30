@@ -1,8 +1,6 @@
 package org.makumba.aether.percolation;
 
-import java.util.AbstractList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -57,7 +55,7 @@ public class RuleBasedPercolator implements Percolator {
 
     static final int MAX_PERCOLATION_TIME = 5000000;
 
-    private Logger logger = Aether.getAetherLogger(RuleBasedPercolator.class.getName());
+    private final Logger logger = Aether.getAetherLogger(RuleBasedPercolator.class.getName());
 
     private SessionFactory sessionFactory;
 
@@ -120,9 +118,7 @@ public class RuleBasedPercolator implements Percolator {
     }
 
     protected void consumePercolationData() {
-        Iterator<PercolationData> i = ((AbstractList<PercolationData>) percolationQueue.clone()).iterator();
-        while (i.hasNext()) {
-            PercolationData d = i.next();
+        for (PercolationData d : new java.util.ArrayList<PercolationData>(percolationQueue)) {
             try {
                 strategy.percolate(d.getAetherEvent(), d.isVirtualPercolation(), sessionFactory);
             } catch (PercolationException e) {
@@ -133,7 +129,7 @@ public class RuleBasedPercolator implements Percolator {
         }
     }
 
-    private Vector<PercolationData> percolationQueue = new Vector<PercolationData>();
+    private final Vector<PercolationData> percolationQueue = new Vector<PercolationData>();
 
     private void addToPercolationQueue(AetherEvent e, boolean virtualPercolation) throws PercolationException {
 
@@ -159,6 +155,7 @@ public class RuleBasedPercolator implements Percolator {
             s = sessionFactory.openSession();
             tx = s.beginTransaction();
 
+            @SuppressWarnings("unchecked")
             List<InitialPercolationRule> rules = s.createQuery("from InitialPercolationRule r").list();
             logger.fine("Found " + rules.size() + " initial percolation rules");
             for (InitialPercolationRule r : rules) {
@@ -203,6 +200,7 @@ public class RuleBasedPercolator implements Percolator {
             s = sessionFactory.openSession();
             tx = s.beginTransaction();
 
+            @SuppressWarnings("unchecked")
             List<PercolationRule> rules = s.createQuery("from PercolationRule r").list();
             logger.fine("Found " + rules.size() + " percolation rules");
             for (PercolationRule r : rules) {
@@ -345,7 +343,7 @@ public class RuleBasedPercolator implements Percolator {
      *            a Hibernate {@link Session}
      */
     public void executeEnergyProgressionUpdate(Session s) {
-
+        @SuppressWarnings("unchecked")
         List<InitialPercolationRule> iprs = s.createQuery("from InitialPercolationRule ipr").list();
         for (InitialPercolationRule initialPercolationRule : iprs) {
             executeEnergyProgressionForProgressionCurve(initialPercolationRule, s);

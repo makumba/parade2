@@ -30,13 +30,11 @@ import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
 import org.makumba.parade.model.ActionLog;
-import org.makumba.parade.model.File;
 import org.makumba.parade.model.Log;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.User;
 import org.makumba.parade.tools.LogHandler;
 import org.makumba.parade.tools.ParadeLogger;
-import org.makumba.parade.tools.TriggerFilter;
 import org.makumba.parade.view.TickerTapeData;
 import org.makumba.parade.view.TickerTapeServlet;
 
@@ -59,18 +57,20 @@ public class DatabaseLogServlet extends HttpServlet {
      */
     private static final long serialVersionUID = 1L;
 
-    private Logger logger = ParadeLogger.getParadeLogger(DatabaseLogServlet.class.getName());
+    private final Logger logger = ParadeLogger.getParadeLogger(DatabaseLogServlet.class.getName());
 
     private RowProperties rp;
 
-    private HashMap<String, ActionLogDTO> commits = new HashMap<String, ActionLogDTO>();
+    private final HashMap<String, ActionLogDTO> commits = new HashMap<String, ActionLogDTO>();
 
+    @Override
     public void init(ServletConfig conf) {
         rp = new RowProperties();
     }
 
     private final static boolean STRICT_ACTIONLOG_FILTER = false;
 
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         try {
@@ -151,12 +151,13 @@ public class DatabaseLogServlet extends HttpServlet {
     private AetherEvent buildAetherEventFromLog(ActionLogDTO log, Session s, HttpServletRequest req) {
 
         if (log.getObjectType() == null) {
-            //logger.severe("**********************************\n" + "Object type for ActionLog not set: " + log.toString());
+            // logger.severe("**********************************\n" + "Object type for ActionLog not set: " +
+            // log.toString());
             return null;
         }
 
         Double initialLevelCoefficient = 0.5;
-        
+
         String objectURL = log.getObjectType().prefix();
         switch (log.getObjectType()) {
         case ROW:
@@ -177,30 +178,34 @@ public class DatabaseLogServlet extends HttpServlet {
         }
 
         if (log.getAction().equals(ActionTypes.SAVE.action())) {
-            //Get the correct filepath and the new source code and compare the new source with the old source of the file
-            String context = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("context");
-            String path = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("path");
-            String file = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("file");
+            // Get the correct filepath and the new source code and compare the new source with the old source of the
+            // file
+            String context = ((HttpServletRequest) req.getAttribute("org.eu.best.tools.TriggerFilter.request"))
+                    .getParameter("context");
+            String path = ((HttpServletRequest) req.getAttribute("org.eu.best.tools.TriggerFilter.request"))
+                    .getParameter("path");
+            String file = ((HttpServletRequest) req.getAttribute("org.eu.best.tools.TriggerFilter.request"))
+                    .getParameter("file");
             String absoluteFilePath = Parade.constructAbsolutePath(context, path) + java.io.File.separator + file;
-            
-            String newSource = ((HttpServletRequest)req.getAttribute("org.eu.best.tools.TriggerFilter.request")).getParameter("source").replace("\r", "").trim();
-            String oldSource = org.makumba.parade.tools.FileOperations.ReadFileToString(absoluteFilePath).replace("\r", "").trim();
-            
+
+            String newSource = ((HttpServletRequest) req.getAttribute("org.eu.best.tools.TriggerFilter.request"))
+                    .getParameter("source").replace("\r", "").trim();
+            String oldSource = org.makumba.parade.tools.FileOperations.ReadFileToString(absoluteFilePath).replace("\r",
+                    "").trim();
+
             double differenceResult = org.apache.commons.lang.StringUtils.getLevenshteinDistance(oldSource, newSource);
 
             if (differenceResult != 0) {
-                //file gets larger
+                // file gets larger
                 if (newSource.length() > oldSource.length()) {
-                    initialLevelCoefficient = Math.abs(differenceResult / newSource.length());    
+                    initialLevelCoefficient = Math.abs(differenceResult / newSource.length());
                 }
-                //file gets smaller or is same length but is changed
+                // file gets smaller or is same length but is changed
                 else {
                     initialLevelCoefficient = Math.abs(differenceResult / oldSource.length());
                 }
-            }
-            else
-            {
-                return null; //if the file has not been changed, don't create a new AetherEvent
+            } else {
+                return null; // if the file has not been changed, don't create a new AetherEvent
             }
         }
 
@@ -545,6 +550,8 @@ public class DatabaseLogServlet extends HttpServlet {
                 Transaction tx = s.beginTransaction();
                 Query q = s.createQuery("from User u where u.cvsuser = ?");
                 q.setString(0, log.getUser());
+
+                @SuppressWarnings("unchecked")
                 List<User> results = q.list();
                 if (results.size() > 0) {
                     User u = results.get(0);
@@ -559,9 +566,10 @@ public class DatabaseLogServlet extends HttpServlet {
                 tx.commit();
             }
         }
-        
-        if(actionType.equals("ant")) {
-            // FIXME there's probably much more to set than this, i.e. extend the ActionTypes to account for ant clean, compile...
+
+        if (actionType.equals("ant")) {
+            // FIXME there's probably much more to set than this, i.e. extend the ActionTypes to account for ant clean,
+            // compile...
             // and then set them here
             // for now we just set the object type
             log.setObjectType(ObjectTypes.ROW);

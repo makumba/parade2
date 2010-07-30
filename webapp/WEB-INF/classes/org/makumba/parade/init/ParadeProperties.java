@@ -9,7 +9,6 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
-import org.makumba.commons.RuntimeWrappedException;
 import org.makumba.parade.tools.ParadeLogger;
 
 public class ParadeProperties {
@@ -81,10 +80,11 @@ public class ParadeProperties {
 
     public static String getClassesPath() {
         URL u = RowProperties.class.getResource(DEFAULT_PROPERTYFILE);
-        if(u != null) {
+        if (u != null) {
             return new java.io.File(u.getPath()).getParent();
         } else {
-            throw new RuntimeException("Could not find parade.properties resource. Make sure you configured it in webapp/WEB-INF-classes !");
+            throw new RuntimeException(
+                    "Could not find parade.properties resource. Make sure you configured it in webapp/WEB-INF-classes !");
         }
     }
 

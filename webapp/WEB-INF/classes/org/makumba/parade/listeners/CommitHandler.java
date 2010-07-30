@@ -15,15 +15,14 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.tools.CVSRevisionComparator;
 import org.makumba.parade.tools.LogHandler;
-import org.makumba.parade.tools.TriggerFilter;
 
 public class CommitHandler extends Thread {
 
-    private CVSRevisionComparator c = new CVSRevisionComparator();
+    private final CVSRevisionComparator c = new CVSRevisionComparator();
 
-    private Vector<Commit> commits;
+    private final Vector<Commit> commits;
 
-    private Session s;
+    private final Session s;
 
     public CommitHandler(Vector<Commit> commits, Session s) {
         super();

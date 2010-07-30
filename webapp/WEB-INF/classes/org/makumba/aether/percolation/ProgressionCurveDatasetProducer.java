@@ -22,9 +22,9 @@ public class ProgressionCurveDatasetProducer implements DatasetProducer, Seriali
 
     private static final long serialVersionUID = 1L;
 
-    private String curve;
+    private final String curve;
 
-    private int scale;
+    private final int scale;
 
     public static final int MONTH_IN_HOURS = 24 * 7 * 4;
 
@@ -35,6 +35,8 @@ public class ProgressionCurveDatasetProducer implements DatasetProducer, Seriali
     /**
      * Produces some random data.
      */
+    @SuppressWarnings("unchecked")
+    @Override
     public Object produceDataset(Map params) throws DatasetProduceException {
         DefaultXYDataset dataset = new DefaultXYDataset();
 
@@ -68,6 +70,8 @@ public class ProgressionCurveDatasetProducer implements DatasetProducer, Seriali
         this.scale = scale;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
     public boolean hasExpired(Map arg0, Date arg1) {
         return true;
     }

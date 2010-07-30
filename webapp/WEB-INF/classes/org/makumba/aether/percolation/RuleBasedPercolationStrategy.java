@@ -3,6 +3,7 @@ package org.makumba.aether.percolation;
 import java.util.Iterator;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.makumba.aether.AetherEvent;
@@ -68,13 +69,15 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
         if (ipr.getUserType().equals(UserTypes.NONE.type())) {
             userGroup = "";
         }
+        Query q = s
+                .createQuery(
+                        "SELECT r.fromURL FROM org.makumba.devel.relations.Relation r WHERE r.toURL = :toURL AND r.type = 'owns'")
+                .setParameter("toURL", ObjectTypes.fileFromRow(e.getObjectURL()));
         if (ipr.getUserType().equals(UserTypes.ALL_BUT_OWNER.type())) {
 
             if (ActionTypes.isFileAction(e.getAction())) {
-                List<String> own = s
-                        .createQuery(
-                                "SELECT r.fromURL FROM org.makumba.devel.relations.Relation r WHERE r.toURL = :toURL AND r.type = 'owns'")
-                        .setParameter("toURL", ObjectTypes.fileFromRow(e.getObjectURL())).list();
+                @SuppressWarnings("unchecked")
+                List<String> own = q.list();
 
                 userGroup = "*";
                 for (String owner : own) {
@@ -86,10 +89,8 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
         if (ipr.getUserType().equals(UserTypes.OWNER.type())) {
 
             if (ActionTypes.isFileAction(e.getAction())) {
-                List<String> own = s
-                        .createQuery(
-                                "SELECT r.fromURL FROM org.makumba.devel.relations.Relation r WHERE r.toURL = :toURL AND r.type = 'owns'")
-                        .setParameter("toURL", ObjectTypes.fileFromRow(e.getObjectURL())).list();
+                @SuppressWarnings("unchecked")
+                List<String> own = q.list();
 
                 userGroup = "";
                 for (Iterator<String> iterator = own.iterator(); iterator.hasNext();) {
@@ -209,6 +210,8 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
                     minusUser = userGroup.substring(userGroup.indexOf("-") + 1);
                 }
 
+                Query query = s.createQuery("select login from User u where u.login != :minusUser").setString(
+                        "minusUser", minusUser);
                 if (!virtualPercolation) {
 
                     int updated = s
@@ -217,8 +220,8 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
                             .setString("minusUser", minusUser).setString("objectURL", objectURL).setParameter("energy",
                                     energy).executeUpdate();
                     if (updated == 0) {
-                        List<String> users = s.createQuery("select login from User u where u.login != :minusUser")
-                                .setString("minusUser", minusUser).list();
+                        @SuppressWarnings("unchecked")
+                        List<String> users = query.list();
                         for (String login : users) {
                             ALE f = new ALE(objectURL, login, 0, energy);
                             s.save(f);
@@ -231,8 +234,8 @@ public class RuleBasedPercolationStrategy implements PercolationStrategy {
                             .setString("minusUser", minusUser).setString("objectURL", objectURL).setParameter("energy",
                                     energy).executeUpdate();
                     if (updated == 0) {
-                        List<String> users = s.createQuery("select login from User u where u.login != :minusUser")
-                                .setString("minusUser", minusUser).list();
+                        @SuppressWarnings("unchecked")
+                        List<String> users = query.list();
                         for (String login : users) {
                             ALE f = new ALE(objectURL, login);
                             f.setVirtualNimbus(energy);

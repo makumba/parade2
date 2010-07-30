@@ -9,7 +9,6 @@ import org.makumba.parade.model.File;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.managers.CVSManager;
 import org.makumba.parade.tools.CVSRevisionComparator;
-import org.makumba.parade.tools.ParadeException;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.view.interfaces.ParadeView;
 

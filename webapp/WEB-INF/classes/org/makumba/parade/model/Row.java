@@ -8,11 +8,11 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
@@ -20,9 +20,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
 import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
@@ -49,8 +47,8 @@ public class Row {
             s = InitServlet.getSessionFactory().openSession();
             Transaction tx = s.beginTransaction();
 
-            module = (String) s.createQuery("select module from Row where rowname = :context").setString(
-                    "context", ObjectTypes.rowNameFromURL(fileURL)).uniqueResult();
+            module = (String) s.createQuery("select module from Row where rowname = :context").setString("context",
+                    ObjectTypes.rowNameFromURL(fileURL)).uniqueResult();
 
             tx.commit();
         } finally {
@@ -137,7 +135,7 @@ public class Row {
         return application;
     }
 
-    @Column(insertable=false, columnDefinition = "int(11) default 10")
+    @Column(insertable = false, columnDefinition = "int(11) default 10")
     public int getAutomaticCvsUpdate() {
         return automaticCvsUpdate;
     }
@@ -173,15 +171,14 @@ public class Row {
     }
 
     @ManyToOne
-    @JoinColumn(name="externalUser")
+    @JoinColumn(name = "externalUser")
     public User getExternalUser() {
         return externalUser;
     }
 
-    @OneToMany(cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.File.class)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    @JoinColumn(name="row")
-    @org.hibernate.annotations.MapKey(columns={@Column(name="path", columnDefinition="longtext")}) 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = org.makumba.parade.model.File.class)
+    @JoinColumn(name = "row")
+    @MapKeyColumn(name = "path", columnDefinition = "longtext")
     public Map<String, File> getFiles() {
         return this.files;
     }
@@ -191,8 +188,9 @@ public class Row {
         return hasMakumba;
     }
 
-    @Id @GeneratedValue
-    @Column(name="row")
+    @Id
+    @GeneratedValue
+    @Column(name = "row")
     public Long getId() {
         return id;
     }
@@ -208,13 +206,13 @@ public class Row {
     }
 
     @ManyToOne
-    @JoinColumn(name="id_parade", insertable=false, updatable=false)
+    @JoinColumn(name = "id_parade", insertable = false, updatable = false)
     public Parade getParade() {
         return parade;
     }
 
     @Column
-    @Index(name="IDX_ROWNAME")
+    @Index(name = "IDX_ROWNAME")
     public String getRowname() {
         return rowname;
     }
@@ -228,16 +226,15 @@ public class Row {
     public Integer getStatus() {
         return status;
     }
-    
-    @OneToMany(cascade=CascadeType.ALL, targetEntity=org.makumba.parade.model.AntTarget.class)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    @org.hibernate.annotations.MapKey(columns={@Column(name="row_id")}) 
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = org.makumba.parade.model.AntTarget.class)
+    @MapKeyColumn(name = "row_id")
     public List<AntTarget> getTargets() {
         return targets;
     }
 
     @ManyToOne
-    @JoinColumn(name="user")
+    @JoinColumn(name = "user")
     public User getUser() {
         return user;
     }
@@ -247,7 +244,7 @@ public class Row {
         return version;
     }
 
-    @Column(insertable=false, columnDefinition = "bit(1) default '\0'")
+    @Column(insertable = false, columnDefinition = "bit(1) default '\0'")
     public boolean getWatchedByJNotify() {
         return this.watchedByJNotify;
     }

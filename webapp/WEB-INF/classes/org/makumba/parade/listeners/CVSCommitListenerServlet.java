@@ -16,7 +16,6 @@ import org.makumba.parade.aether.ObjectTypes;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.tools.LogHandler;
 import org.makumba.parade.tools.ParadeLogger;
-import org.makumba.parade.tools.TriggerFilter;
 
 /**
  * This servlet listens to requests sent by the CVS hook and which notify about newly commited files
@@ -94,11 +93,11 @@ public class CVSCommitListenerServlet extends HttpServlet {
 
     }
 
-    private Vector<Commit> commitQueue = new Vector<Commit>();
+    private final Vector<Commit> commitQueue = new Vector<Commit>();
 
     private void handleFileCommit(Session s) {
 
-        CommitHandler ch = new CommitHandler((Vector<Commit>) commitQueue.clone(), s);
+        CommitHandler ch = new CommitHandler(new Vector<Commit>(commitQueue), s);
         ch.start();
         commitQueue.clear();
 
@@ -117,13 +116,13 @@ public class CVSCommitListenerServlet extends HttpServlet {
     }
 
     public class Commit {
-        private String module;
+        private final String module;
 
-        private String file;
+        private final String file;
 
-        private String newRevision;
+        private final String newRevision;
 
-        private String oldRevision;
+        private final String oldRevision;
 
         public String getModule() {
             return module;

@@ -15,12 +15,16 @@ import org.hibernate.usertype.UserType;
 
 /**
  * http://www.hibernate.org/272.html
+ * 
+ * TODO: replace NullableType with whatever deprecates it
  */
+@SuppressWarnings("deprecation")
 public class EnumUserType implements UserType, ParameterizedType {
     private static final String DEFAULT_IDENTIFIER_METHOD_NAME = "name";
 
     private static final String DEFAULT_VALUE_OF_METHOD_NAME = "valueOf";
 
+    @SuppressWarnings("unchecked")
     private Class<? extends Enum> enumClass;
 
     private Class<?> identifierType;
@@ -66,7 +70,7 @@ public class EnumUserType implements UserType, ParameterizedType {
         }
     }
 
-    public Class returnedClass() {
+    public Class<?> returnedClass() {
         return enumClass;
     }
 

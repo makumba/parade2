@@ -14,10 +14,10 @@ import java.util.logging.Logger;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.CacheMode;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 import org.makumba.aether.Aether;
 import org.makumba.aether.AetherEvent;
 import org.makumba.aether.PercolationException;
@@ -40,11 +40,11 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
     private static Logger logger = Aether.getAetherLogger(GroupedPercolationStrategy.class.getName());
 
-    private MultiValueMap initialPercolationRules = new MultiValueMap();
+    private final MultiValueMap initialPercolationRules = new MultiValueMap();
 
     private static MultiValueMap percolationRules = new MultiValueMap();
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public GroupedPercolationStrategy(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -73,6 +73,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                 tx = s.beginTransaction();
 
                 String iprMatchKey = e.getObjectType() + "#" + e.getAction();
+                @SuppressWarnings("unchecked")
                 Collection<InitialPercolationRule> ipr = initialPercolationRules.getCollection(iprMatchKey);
                 if (ipr != null) {
 
@@ -93,7 +94,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                         } else if (mae.getInitialPercolationRule().getInteractionType() == InitialPercolationRule.DIFFERED_INTERACTION) {
                             shouldCloseSession = false;
                             PercolationThread t = new PercolationThread(mae, s, tx, startQueries);
-                            //+++t.start();
+                            // +++t.start();
                             t.run();
 
                         }
@@ -119,13 +120,13 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
     public class PercolationThread extends Thread {
 
-        private MatchedAetherEvent mae;
+        private final MatchedAetherEvent mae;
 
-        private Session s;
+        private final Session s;
 
-        private Transaction tx;
+        private final Transaction tx;
 
-        private int startQueries;
+        private final int startQueries;
 
         @Override
         public void run() {
@@ -214,8 +215,8 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             PercolationStep ps = steps.get(i);
             s.save(ps);
 
-            if ( i % 50 == 0 ) { //20, same as the JDBC batch size
-                //flush a batch of inserts and release memory:
+            if (i % 50 == 0) { // 20, same as the JDBC batch size
+                // flush a batch of inserts and release memory:
                 s.flush();
                 s.clear();
             }
@@ -268,6 +269,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
 
             String percolationRuleMatchKey = ObjectTypes.USER.toString() + "#" + mae.getAction() + "#"
                     + mae.getObjectType();
+            @SuppressWarnings("unchecked")
             Collection<PercolationRule> prs = percolationRules.getCollection(percolationRuleMatchKey);
             if (prs != null) {
 
@@ -319,6 +321,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                         + "#" + ObjectTypes.typeFromURL((String) relation[2]);
 
                 // for each match
+                @SuppressWarnings("unchecked")
                 Collection<PercolationRule> matchedRules = percolationRules.getCollection(percolationRuleMatchKey);
                 if (matchedRules == null) {
                     matchedRules = new Vector<PercolationRule>();
@@ -447,10 +450,13 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
         // for each of the RelationQueries we need to generate the arguments in such a way that they are in fact sets
         // this helps the optimisation process a lot, but makes writing queries a rather cumbersome and difficult task
 
-        for (RelationQuery rq : (Collection<RelationQuery>) groupedQueries.keySet()) {
+        @SuppressWarnings("unchecked")
+        Collection<RelationQuery> keySet = groupedQueries.keySet();
+        for (RelationQuery rq : keySet) {
 
             Map<String, String> arguments = new HashMap<String, String>();
 
+            @SuppressWarnings("unchecked")
             Collection<PercolationStep> percolationSteps = groupedQueries.getCollection(rq);
 
             for (PercolationStep ps : percolationSteps) {
@@ -463,7 +469,7 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
                         ps.getPercolationPath().indexOf("cvs://") > 0 ? ps.getObjectURL() + "True" : ps.getObjectURL()
                                 + "False");
                 addSetArgument(arguments, "actorSet", ps.getMatchedAetherEvent().getActor());
-                
+
             }
 
             results.addAll(rq.execute(arguments, "fromURLSet", s));
@@ -473,12 +479,13 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
         return results;
     }
 
-    public static String[] supportedArguments = { "fromURLSet: the set of URLs to the previous objects (from which the relation comes)",
-        "cvsURLSet: the set of CVS URLs to the previous objects (as CVS URLs)",
-        "rowNameSet: the name of the row the previous objects belongs to",
-        "percolationPathSet: the set of percolation paths, i.e. of nodes traversed until now",
-        "fromURLAndTraversedCVSSet: the set of URLs to the previous objects followed by True or False according to whether a CVS relation was traversed",
-        "actorSet: the actor of the event we are propagating" };
+    public static String[] supportedArguments = {
+            "fromURLSet: the set of URLs to the previous objects (from which the relation comes)",
+            "cvsURLSet: the set of CVS URLs to the previous objects (as CVS URLs)",
+            "rowNameSet: the name of the row the previous objects belongs to",
+            "percolationPathSet: the set of percolation paths, i.e. of nodes traversed until now",
+            "fromURLAndTraversedCVSSet: the set of URLs to the previous objects followed by True or False according to whether a CVS relation was traversed",
+            "actorSet: the actor of the event we are propagating" };
 
     private static void addSetArgument(Map<String, String> arguments, String key, String value) {
         if (value == null || value.trim().length() == 0) {
@@ -525,14 +532,18 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
             initialPercolationRules.clear();
             percolationRules.clear();
 
-            List<InitialPercolationRule> iprs = s.createQuery("from InitialPercolationRule ipr where ipr.active = true").list();
+            Query query = s.createQuery("from InitialPercolationRule ipr where ipr.active = true");
+            @SuppressWarnings("unchecked")
+            List<InitialPercolationRule> iprs = query.list();
 
             for (InitialPercolationRule initialPercolationRule : iprs) {
                 put(initialPercolationRules, initialPercolationRule.getObjectType() + "#"
                         + initialPercolationRule.getAction(), initialPercolationRule);
             }
 
-            List<PercolationRule> prs = s.createQuery("from PercolationRule r where r.active = true").list();
+            Query Query = s.createQuery("from PercolationRule r where r.active = true");
+            @SuppressWarnings("unchecked")
+            List<PercolationRule> prs = Query.list();
 
             for (PercolationRule percolationRule : prs) {
                 put(percolationRules, percolationRule.getSubject() + "#" + percolationRule.getPredicate() + "#"
@@ -548,9 +559,10 @@ public class GroupedPercolationStrategy extends RuleBasedPercolationStrategy {
     }
 
     private void put(MultiValueMap map, String key, Object value) {
-        Collection c = map.getCollection(key);
+        @SuppressWarnings("unchecked")
+        Collection<Object> c = map.getCollection(key);
         if (c == null) {
-            c = new Vector();
+            c = new Vector<Object>();
         }
         c.add(value);
         map.putAll(key, c);

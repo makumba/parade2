@@ -90,7 +90,7 @@ public class JNDIAuthorizer implements DirectoryAuthorizer {
             mail = (String) a.get("mail").get();
             sn = (String) a.get("sn").get();
 
-            NamingEnumeration cns = a.get("cn").getAll();
+            NamingEnumeration<?> cns = a.get("cn").getAll();
             String cn = cns.next().toString();
 
             if (cns.hasMore()) {

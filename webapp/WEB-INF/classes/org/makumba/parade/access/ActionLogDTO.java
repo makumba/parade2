@@ -3,6 +3,7 @@ package org.makumba.parade.access;
 import java.util.Date;
 
 import org.makumba.parade.aether.ObjectTypes;
+import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.tools.TriggerFilter;
 
 /**

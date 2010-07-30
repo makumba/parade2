@@ -12,10 +12,10 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.type.StringType;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
@@ -82,7 +82,7 @@ public class FileViewManager implements TreeView {
         Query q = s
                 .createSQLQuery(
                         "SELECT * FROM File f JOIN Row r WHERE f.row = r.row AND f.isDir = '1' AND r.rowname = ? ORDER BY f.path ASC")
-                .addScalar("PATH", Hibernate.STRING).addScalar("NAME", Hibernate.STRING);
+                .addScalar("PATH", new StringType()).addScalar("NAME", new StringType());
         q.setString(0, r.getRowname());
 
         List<Object[]> l = q.list();

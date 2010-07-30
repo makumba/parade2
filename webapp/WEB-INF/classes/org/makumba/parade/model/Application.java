@@ -3,19 +3,19 @@ package org.makumba.parade.model;
 import java.util.Map;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.MapKey;
 
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Application {
 
     private long id;
@@ -48,9 +48,9 @@ public class Application {
         this.repository = repository;
     }
 
-    @CollectionOfElements
-    @MapKey(columns={@Column(name="filename")})
-    @Column(name="fileversion")
+    @ElementCollection
+    @MapKeyColumn(name = "filename")
+    @Column(name = "fileversion")
     public Map<String, String> getCvsfiles() {
         return cvsfiles;
     }
@@ -69,7 +69,8 @@ public class Application {
         this.webappPath = webappPath;
     }
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     public long getId() {
         return id;
     }
@@ -79,7 +80,7 @@ public class Application {
     }
 
     @ManyToOne
-    @JoinColumn(name="id_parade")
+    @JoinColumn(name = "id_parade")
     public Parade getParade() {
         return parade;
     }

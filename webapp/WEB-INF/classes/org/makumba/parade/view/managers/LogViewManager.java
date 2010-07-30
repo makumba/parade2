@@ -13,8 +13,6 @@ import org.hibernate.Session;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.model.ActionLog;
 import org.makumba.parade.model.Log;
-import org.makumba.parade.model.Parade;
-import org.makumba.parade.model.Row;
 import org.makumba.parade.tools.HtmlUtils;
 
 import freemarker.template.SimpleHash;

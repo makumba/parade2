@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public class HttpServletRequestDummy implements HttpServletRequest {
-    static Enumeration emptyEnumeration = new Enumeration() {
+    static Enumeration<Object> emptyEnumeration = new Enumeration<Object>() {
         public boolean hasMoreElements() {
             return false;
         }
@@ -19,7 +19,7 @@ public class HttpServletRequestDummy implements HttpServletRequest {
         }
     };
 
-    Hashtable map = new Hashtable();
+    Hashtable<String, Object> map = new Hashtable<String, Object>();
 
     public void setAttribute(String name, Object o) {
         map.put(name, o);
@@ -33,7 +33,7 @@ public class HttpServletRequestDummy implements HttpServletRequest {
         return map.get(name);
     }
 
-    public Enumeration getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         return map.keys();
     }
 
@@ -64,12 +64,12 @@ public class HttpServletRequestDummy implements HttpServletRequest {
         return null;
     }
 
-    public Enumeration getParameterNames() {
+    public Enumeration<Object> getParameterNames() {
         return emptyEnumeration;
     }
 
-    public java.util.Map getParameterMap() {
-        return new HashMap(1);
+    public java.util.Map<String, Object> getParameterMap() {
+        return new HashMap<String, Object>(1);
     }
 
     public java.lang.String getProtocol() {
@@ -104,7 +104,7 @@ public class HttpServletRequestDummy implements HttpServletRequest {
         return null;
     }
 
-    public Enumeration getLocales() {
+    public Enumeration<Object> getLocales() {
         return emptyEnumeration;
     }
 
@@ -136,11 +136,11 @@ public class HttpServletRequestDummy implements HttpServletRequest {
         return null;
     }
 
-    public Enumeration getHeaders(String name) {
+    public Enumeration<Object> getHeaders(String name) {
         return emptyEnumeration;
     }
 
-    public Enumeration getHeaderNames() {
+    public Enumeration<Object> getHeaderNames() {
         return emptyEnumeration;
     }
 

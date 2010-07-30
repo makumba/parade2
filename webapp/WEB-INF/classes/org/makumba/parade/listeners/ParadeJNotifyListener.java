@@ -18,7 +18,6 @@ import org.makumba.parade.aether.ActionTypes;
 import org.makumba.parade.init.InitServlet;
 import org.makumba.parade.init.ParadeProperties;
 import org.makumba.parade.init.RowProperties;
-import org.makumba.parade.model.File;
 import org.makumba.parade.model.Parade;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.model.User;
@@ -27,7 +26,6 @@ import org.makumba.parade.model.managers.MakumbaManager;
 import org.makumba.parade.tools.LogHandler;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.tools.SimpleFileFilter;
-import org.makumba.parade.tools.TriggerFilter;
 
 /**
  * Implementation of a JNotifyListener for ParaDe. See {@link http://jnotify.sourceforge.net/} for more information
@@ -40,15 +38,15 @@ public class ParadeJNotifyListener implements JNotifyListener {
 
     private static Logger logger = ParadeLogger.getParadeLogger(ParadeJNotifyListener.class.getName());
 
-    private MakumbaManager makMgr = new MakumbaManager();
+    private final MakumbaManager makMgr = new MakumbaManager();
 
     public static final String LOCK = ".parade-lock~";
 
     public static Vector<String> lockedDirectories = new Vector<String>();
 
-    private RowProperties rp = new RowProperties();
+    private final RowProperties rp = new RowProperties();
 
-    private SimpleFileFilter sf = new SimpleFileFilter();
+    private final SimpleFileFilter sf = new SimpleFileFilter();
 
     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
         logger
@@ -74,10 +72,10 @@ public class ParadeJNotifyListener implements JNotifyListener {
         logger.fine("JNotifyTest.fileModified() : wd #" + wd + " root = " + rootPath + ", " + name);
         // checkSpecialFile(rootPath, name);
 
-        if (isLocked(rootPath, name, JNotify.FILE_MODIFIED)){
+        if (isLocked(rootPath, name, JNotify.FILE_MODIFIED)) {
             return;
         }
-       
+
         if (InitServlet.aetherEnabled) {
             updateRelations(rootPath, name);
         }
@@ -197,8 +195,9 @@ public class ParadeJNotifyListener implements JNotifyListener {
             session = InitServlet.getSessionFactory().openSession();
 
             Parade p = (Parade) session.get(Parade.class, new Long(1));
-            if(p == null) {
-                logger.warning("Could not acquire parade instance, jnotify event not logged. This may happen when parade build its cache the first time.");
+            if (p == null) {
+                logger
+                        .warning("Could not acquire parade instance, jnotify event not logged. This may happen when parade build its cache the first time.");
                 return;
             }
             Row r = findRowFromContext(rootPath, p);
@@ -232,8 +231,9 @@ public class ParadeJNotifyListener implements JNotifyListener {
             session = InitServlet.getSessionFactory().openSession();
 
             Parade p = (Parade) session.get(Parade.class, new Long(1));
-            if(p == null) {
-                logger.warning("Could not acquire parade instance, jnotify event not logged. This may happen when parade build its cache the first time.");
+            if (p == null) {
+                logger
+                        .warning("Could not acquire parade instance, jnotify event not logged. This may happen when parade build its cache the first time.");
                 return;
             }
             Row r = findRowFromContext(rootPath, p);
@@ -251,7 +251,7 @@ public class ParadeJNotifyListener implements JNotifyListener {
     }
 
     private Row findRowFromContext(String rowPath, Parade p) {
-        
+
         Iterator<String> i = p.getRows().keySet().iterator();
 
         boolean row_found = false;
@@ -352,7 +352,8 @@ public class ParadeJNotifyListener implements JNotifyListener {
                                         + (rootPath.endsWith(java.io.File.separator)
                                                 || name.startsWith(java.io.File.separator) ? "" : "/") + name);
             } catch (RelationComputationException e) {
-                logger.warning("Failed deleting relations for file " + name + " in " + rootPath + ": "
+                logger
+                        .warning("Failed deleting relations for file " + name + " in " + rootPath + ": "
                                 + e.getMessage());
             }
             logger.fine("Finished deleting relations for file " + name + " in " + rootPath);
@@ -392,13 +393,13 @@ public class ParadeJNotifyListener implements JNotifyListener {
             s = InitServlet.getSessionFactory().openSession();
             Transaction tx = s.beginTransaction();
             Parade p = (Parade) s.get(Parade.class, new Long(1));
-            if(p == null) {
-                logger.warning("Could not acquire parade instance, jnotify event not logged. This may happen when parade build its cache the first time.");
+            if (p == null) {
+                logger
+                        .warning("Could not acquire parade instance, jnotify event not logged. This may happen when parade build its cache the first time.");
                 return;
             }
             Row r = findRowFromContext(root, p);
 
-            
             if (r.getFiles().get(root + java.io.File.separator + file) == null) {
                 logger.warning("File cannot be found, jnotify event nog logged");
                 return;

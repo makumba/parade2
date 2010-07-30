@@ -1,7 +1,6 @@
 package org.makumba.parade.tools;
 
 import java.io.BufferedReader;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,17 +22,17 @@ import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.init.InitServlet;
 
 /**
- * The LogHandler handles an advanced logging mechanism. For each access, an
- * {@link ActionLogDTO} object is created and passed to the beforeServlet, which populates it with relavant information
- * (e.g. the username of the person who did the access). The ActionLogDTO instance is then persisted a first time by the
- * DatabaseLogServlet, which ensures that the log is written to the database. The ActionLogDTO is as well hold in a
- * ThreadLocal so as to be accessible by other classes at any time during the access.<br>
+ * The LogHandler handles an advanced logging mechanism. For each access, an {@link ActionLogDTO} object is created and
+ * passed to the beforeServlet, which populates it with relavant information (e.g. the username of the person who did
+ * the access). The ActionLogDTO instance is then persisted a first time by the DatabaseLogServlet, which ensures that
+ * the log is written to the database. The ActionLogDTO is as well hold in a ThreadLocal so as to be accessible by other
+ * classes at any time during the access.<br>
  * The redirectToServlet() method enables any classes using it to redirect an object to a servlet (typically the
  * DatabaseLogServlet) so that they can be for instance persisted.<br>
  * Before performing the redirection, the TriggerFilter makes sure that there's an ActionLogDTO instance and tries to
  * heuristically determine the accessed context (or the context by which the access is made).<br>
- * Another point worth mentioning is that if the DatabaseLogServlet is not ready to log yet, the incoming log events
- * are being queued and then flushed as soon as the servlet is ready. <br>
+ * Another point worth mentioning is that if the DatabaseLogServlet is not ready to log yet, the incoming log events are
+ * being queued and then flushed as soon as the servlet is ready. <br>
  * This is probably the most complex mechanism of the whole application.<br>
  * <br>
  * 
@@ -41,7 +40,6 @@ import org.makumba.parade.init.InitServlet;
  * @author Manuel Gay
  * @author Koen Speelmeijer
  */
-
 
 public class LogHandler {
     // we need a context to be able to find others...
@@ -56,9 +54,9 @@ public class LogHandler {
     public static ThreadLocal<String> prefix = new ThreadLocal<String>();
 
     // guard that makes sure that we don't enter in an infinite logging loop
-    private static ThreadLocal guard = new ThreadLocal() {
+    private static ThreadLocal<Boolean> guard = new ThreadLocal<Boolean>() {
         @Override
-        public Object initialValue() {
+        public Boolean initialValue() {
             return false;
         }
     };
@@ -69,19 +67,19 @@ public class LogHandler {
             return new Boolean(false);
         }
     };
-    
+
     public static void setStaticContext(ServletContext context) {
         staticContext = context;
     }
-    
+
     public static void setCTX(ServletContext ctx) {
         staticRootCtx = ctx;
     }
-    
+
     public static void setActionLog(ActionLogDTO log) {
         actionLog.set(log);
     }
-    
+
     public static RequestDispatcher getRequestDispatcher(String pageURI) {
         return staticRootCtx.getRequestDispatcher(pageURI);
     }
@@ -91,17 +89,17 @@ public class LogHandler {
 
         ctx.getRequestDispatcher(servletName).include(req, resp);
     }
-    
+
     // we need a vector so adding from multiple threads simultaneously is safe
     static Vector<LogHandlerQueueData> queue = new Vector<LogHandlerQueueData>();
-    
+
     static {
         Object[] record = { new java.util.Date(), "Server restart" };
-        LogHandlerQueueData restart = new LogHandlerQueueData(
-                "/servlet/org.makumba.parade.access.DatabaseLogServlet", record);
+        LogHandlerQueueData restart = new LogHandlerQueueData("/servlet/org.makumba.parade.access.DatabaseLogServlet",
+                record);
         queue.add(restart);
     }
-    
+
     /**
      * Issues a request to a given servlet with a given object as attribute. This mechanism is for now only used by the
      * DatabaseLogServlet. Makes sure that an ActionLogDTO is available in the ThreadLocal and heuristically determines
@@ -113,44 +111,44 @@ public class LogHandler {
      *            the value of the attribute to pass
      */
     public static void redirectToServlet(String servletName, Object attributeValue) {
-    
+
         if (guard.get().equals(false)) {
             guard.set(true);
-    
+
             ActionLogDTO l = actionLog.get();
-    
+
             // if we're shutting down tomcat, we stop logging, or tomcat can't shutdown anymore
             if (shutDown.get()) {
                 return;
             }
-    
+
             ActionLogDTO log = computeActionLogAndSetPrefix(attributeValue);
-    
+
             try {
-    
+
                 // if this is a new ActionLog we log it first
                 if (log != l) {
                     directSendToServlet("/servlet/org.makumba.parade.access.DatabaseLogServlet", log);
                 }
-    
+
                 directSendToServlet(servletName, attributeValue);
-    
+
             } finally {
                 guard.set(false);
             }
         }
     }
-    
+
     public static ActionLogDTO computeActionLogAndSetPrefix(Object attributeValue) {
         ActionLogDTO log = computeHeuristicContextInformation(attributeValue);
         setPrefix();
         return log;
     }
-    
+
     private static void directSendToServlet(String servletName, Object attributeValue) {
         LogHandlerQueueData data = new LogHandlerQueueData(servletName, attributeValue);
         if (staticRootCtx != null) {
-            if(!data.sendTo(staticRootCtx)) {
+            if (!data.sendTo(staticRootCtx)) {
                 queue.add(data);
             }
         } else {
@@ -158,27 +156,27 @@ public class LogHandler {
             computeStaticRoot(data);
         }
     }
-    
+
     private static final String WEBAPP_CLASSLOADER = "WebappClassLoader";
-    
+
     private static final String TOMCAT_STARTUP = "org.apache.catalina.startup.Bootstrap.load";
-    
+
     private static final String TOMCAT_SHUTDOWN = "org.apache.catalina.startup.Catalina.stop";
-    
+
     private static final String MANAGER_DEPLOY = "Manager: install: Installing context configuration at";
-    
+
     private static final String MANAGER_UNDEPLOY = "Manager: undeploy: Undeploying web application at '/";
-    
+
     private static final String MANAGER_START = "Manager: start: Starting web application at '/";
-    
+
     private static final String MANAGER_STOP = "Manager: stop: Stopping web application at '/";
-    
+
     private static final String MANAGER_INIT = "Manager: init:";
-    
+
     private static final String MANAGER_LIST = "Manager: list:";
-    
+
     private static final String ROOT_XML_ERROR = "Error deploying configuration descriptor ROOT.xml";
-    
+
     /**
      * Tries to compute the context information, based on the thread
      * 
@@ -186,37 +184,37 @@ public class LogHandler {
      *            the ActionLogDTO in which to place the computed info
      */
     private static ActionLogDTO computeHeuristicContextInformation(Object attributeValue) {
-    
+
         ActionLogDTO log = actionLog.get();
-    
+
         String threadName = Thread.currentThread().getName();
-        
-        if(Thread.currentThread() == null || Thread.currentThread().getContextClassLoader() == null) {
+
+        if (Thread.currentThread() == null || Thread.currentThread().getContextClassLoader() == null) {
             handleOtherCases(log);
             return log;
         }
-        
+
         String classLoaderName = Thread.currentThread().getContextClassLoader().toString();
-        
+
         // let's figure out here if this is tomcat doing some stuff
         if (threadName.equals("main")) {
-    
+
             // log = createEmptyActionLogDTO("system");
-    
+
             // if we don't have a tomcatActionLog t1his means that probably we didn't start tomcat yet
             if (tomcatActionLog.get() == null && log == null) {
-    
+
                 log = createEmptyActionLogDTO("system");
-    
+
                 StringWriter s = new StringWriter();
                 new Throwable().printStackTrace(new PrintWriter(s));
-    
+
                 if (s.toString().indexOf(TOMCAT_STARTUP) > -1) {
                     // yes, it's definitely tomcat starting
-    
+
                     log.setAction("start");
                     log.setOrigin("tomcat");
-    
+
                     // we also want to keep this guy for the record
                     tomcatActionLog.set(log);
                 } else {
@@ -226,17 +224,17 @@ public class LogHandler {
                 }
                 // anyway, let's set our new log
                 actionLog.set(log);
-    
+
             } else if (tomcatActionLog.get() != null) {
                 // we are sure that tomcat is started
-    
+
                 StringWriter s = new StringWriter();
                 new Throwable().printStackTrace(new PrintWriter(s));
-    
+
                 if (s.toString().indexOf(TOMCAT_SHUTDOWN) > -1) {
-    
+
                     // tomcat shutting down, we want to register that
-    
+
                     if (log != null && !log.getAction().equals("stopping")) {
                         log = createEmptyActionLogDTO("system");
                         log.setAction("stopping");
@@ -255,28 +253,28 @@ public class LogHandler {
         } else if (!threadName.equals("main")) {
             // we are in another thread
             // and probably it's going to be some webapp
-    
+
             if (classLoaderName.indexOf(WEBAPP_CLASSLOADER) > -1) {
-    
+
                 // ok, let's try to figure out what happens
                 // let's first try to see if this is the manager
-    
+
                 if (attributeValue instanceof LogRecord) {
                     LogRecord record = (LogRecord) attributeValue;
                     String message = record.getMessage();
-    
+
                     if (message.indexOf(MANAGER_DEPLOY) > -1) {
                         // we are installing some context
                         log = createEmptyActionLogDTO("manager");
                         log.setAction("deploying");
                         log.setOrigin("tomcat");
-    
+
                         // TODO: read in the deploy file and fetch the context
                         // then store it in the log
-    
+
                         message = message.substring(MANAGER_DEPLOY.length() + " 'file:".length());
                         message = message.substring(0, message.indexOf("'"));
-    
+
                         String contextPath = null;
                         BufferedReader r = null;
                         try {
@@ -294,7 +292,7 @@ public class LogHandler {
                         }
                         if (contextPath != null)
                             log.setContext(contextPath);
-    
+
                         actionLog.set(log);
                     } else if (message.indexOf(MANAGER_UNDEPLOY) > -1) {
                         // the manager is undeploying someone
@@ -338,24 +336,24 @@ public class LogHandler {
                 } else {
                     handleOtherCases(log);
                 }
-    
+
                 handleOtherCases(log);
-    
+
             } else {
                 LogRecord record = (LogRecord) attributeValue;
-                
-                if(record.getMessage().contains(ROOT_XML_ERROR)) {
+
+                if (record.getMessage().contains(ROOT_XML_ERROR)) {
                     log = createEmptyActionLogDTO("tomcat");
                     log.setAction("initialising");
                     log.setOrigin("tomcat");
                     actionLog.set(log);
-    
+
                     Logger logger = ParadeLogger.getParadeLogger(TriggerFilter.class.getName());
                     logger.severe(record.getThrown().getMessage());
-                    
+
                     try {
                         InitServlet.createDummyDatabaseConnection();
-                    } catch(Throwable e) {
+                    } catch (Throwable e) {
                         logger.severe("Error connecting to database. MySQL.jar might be missing or corrupt.");
                         InitServlet.shutdownTomcat();
                         throw new Error("Could not initialize tomcat. Shutdown.");
@@ -365,9 +363,9 @@ public class LogHandler {
                 }
             }
         }
-    
+
         return log;
-    
+
     }
 
     private static void handleOtherCases(ActionLogDTO log) {
@@ -377,7 +375,7 @@ public class LogHandler {
             actionLog.set(log);
         }
     }
-    
+
     /**
      * Creates an empty ActionLogDTO with the given username
      * 
@@ -392,7 +390,7 @@ public class LogHandler {
         log.setUser(user);
         return log;
     }
-    
+
     /**
      * Attempts to compute a static root context. Adds elements to be logged to the queue and flushes as soon as we have
      * a root context.
@@ -407,14 +405,14 @@ public class LogHandler {
             return;
         }
         ServletContext ctx = null;
-    
+
         queue.add(data);
         // here queue has at least one member!
-    
+
         if ((ctx = staticContext) == null)
             // || (ctx= staticContext.getContext("/"))==null )
             return;
-        
+
         // we have a root context, we try to send the first guy
         Iterator<LogHandlerQueueData> i = queue.iterator();
         if (!i.next().sendTo(ctx))
@@ -423,11 +421,11 @@ public class LogHandler {
         // jackpot! the root context exists and is ready for action. we publish all shit before
         for (; i.hasNext();)
             i.next().sendTo(ctx);
-    
+
         // now we are ready to publish the static so all other losers can use it without coming into synchronized code
         staticRootCtx = ctx;
     }
-    
+
     /**
      * Based on the information in the ActionLogDTO, computes the prefix to appear in the logs:
      * <ul>
@@ -452,29 +450,29 @@ public class LogHandler {
             }
             if (user == null || user.equals("null"))
                 user = "(unknown user)";
-    
+
             if (prefix == null)
                 prefix = "[" + user + "@" + context + "]";
         } else {
             prefix = "(unknown user)@parade2";
         }
-    
+
         LogHandler.prefix.set(prefix);
     }
-    
+
     /**
      * This class stores information useful for the queuing mechanism described before.
      * 
      */
     static class LogHandlerQueueData {
-    
+
         LogHandlerQueueData(String servletName, Object attributeValue) {
             this.servletName = servletName;
             this.attributeValue = attributeValue;
             setPrefix();
             this.prefix = LogHandler.prefix.get();
         }
-    
+
         /**
          * Tries to invoke the stored servlet using a given rootContext
          * 
@@ -500,13 +498,13 @@ public class LogHandler {
             }
             return req.getAttribute("org.makumba.parade.servletSuccess") != null;
         }
-    
-        private String prefix;
-    
-        private String servletName;
-    
-        private Object attributeValue;
-    
+
+        private final String prefix;
+
+        private final String servletName;
+
+        private final Object attributeValue;
+
     }
 
 }

@@ -9,7 +9,6 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.makumba.aether.RelationComputer;
-import org.makumba.db.hibernate.HibernateTransactionProvider;
 import org.makumba.devel.relations.RelationCrawler;
 import org.makumba.parade.model.Row;
 import org.makumba.parade.tools.ParadeLogger;
@@ -23,7 +22,7 @@ import org.makumba.providers.TransactionProvider;
  */
 public class CVSModuleRelationComputer extends MakumbaContextRelationComputer implements RelationComputer {
 
-    private Logger logger;
+    private final Logger logger;
 
     public CVSModuleRelationComputer(Row r) {
         super(r);
@@ -53,14 +52,13 @@ public class CVSModuleRelationComputer extends MakumbaContextRelationComputer im
         params.put("relationsDb", ParadeRelationComputer.PARADE_DATABASE_NAME);
         params.put("rowId", r.getId().intValue());
 
-        //+++
+        // +++
         Vector<Dictionary<String, Object>> v = t
                 .executeQuery(
                         "SELECT f.path AS path FROM File f WHERE f.path like :webappRootLike AND (f.path like '%.mdd' OR f.path like '%.jsp' OR f.path like '%.java') AND f.isDir = false AND f.row.id = :rowId AND f.crawled < f.date",
                         params);
-        //---
-        
-        
+        // ---
+
         for (Dictionary<String, Object> dictionary : v) {
             String path = (String) dictionary.get("path");
             res.add(path);
