@@ -21,10 +21,10 @@ import org.makumba.providers.QueryProvider;
 import org.makumba.providers.query.Pass1ASTPrinter;
 
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class RelationQuery {
 
-    private Logger logger = Aether.getAetherLogger(RelationQuery.class.getName());
+    private final Logger logger = Aether.getAetherLogger(RelationQuery.class.getName());
 
     private static int executedQueries = 0;
 
@@ -36,10 +36,11 @@ public class RelationQuery {
 
     private String arguments;
 
-    private QueryAnalysisProvider qap = QueryProvider.getQueryAnalzyer("hql");
+    private final QueryAnalysisProvider qap = QueryProvider.getQueryAnalzyer("hql");
 
-    @Id @GeneratedValue
-    @Column(name="relationquery")
+    @Id
+    @GeneratedValue
+    @Column(name = "relationquery")
     public long getId() {
         return id;
     }
@@ -48,7 +49,7 @@ public class RelationQuery {
         this.id = id;
     }
 
-    @Column(nullable=false, columnDefinition="longtext")
+    @Column(nullable = false, columnDefinition = "longtext")
     public String getQuery() {
         return query;
     }
@@ -84,7 +85,7 @@ public class RelationQuery {
         return niceQuery;
     }
 
-    @Column(columnDefinition="longtext")
+    @Column(columnDefinition = "longtext")
     public String getDescription() {
         return description;
     }
@@ -129,11 +130,13 @@ public class RelationQuery {
         }
 
         logger.fine("Executing relation query:\n\n" + this + "\n\nwith arguments " + args);
-        List result = new LinkedList();
+        List<String[]> result = new LinkedList<String[]>();
         Query q = null;
         try {
             q = s.createQuery(localQuery);
-            result = q.list();
+            @SuppressWarnings("unchecked")
+            List<String[]> list = q.list();
+            result = list;
             executedQueries++;
             logger.fine("Got " + result.size() + " result(s)");
         } catch (NullPointerException e) {
