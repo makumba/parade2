@@ -82,5 +82,4 @@ public class AetherBean {
         return resourceLink;
     }
 
-
 }

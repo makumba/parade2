@@ -23,8 +23,9 @@ import org.makumba.parade.tools.ParadeException;
  * Struts Action for File
  * 
  * TODO refactor to use operations directly (see CvsAction)
+ * 
  * @author Manuel Gay
- *
+ * 
  */
 public class FileAction extends Action {
 
@@ -38,7 +39,7 @@ public class FileAction extends Action {
         String op = request.getParameter("op");
         String editor = request.getParameter("editor");
         String[] source = request.getParameterValues("source");
-        
+
         if (op != null && op.startsWith("deleteFile")) {
             String[] params = { request.getParameter("params"), path };
 
@@ -63,8 +64,8 @@ public class FileAction extends Action {
             ParadeJNotifyListener.updateRelations(Parade.constructAbsolutePath(context, ""), path
                     + (path.endsWith("/") || file.startsWith("/") ? "" : java.io.File.separator) + file);
             ParadeJNotifyListener.removeFileLock(absoluteFilePath);
-            
-            if(editor.equals("codepress")) {
+
+            if (editor.equals("codepress")) {
                 return (mapping.findForward("codePressEdit"));
             } else {
                 return (mapping.findForward("simpleEdit"));
@@ -86,7 +87,6 @@ public class FileAction extends Action {
             int fileSize = theFile.getFileSize();
             byte[] fileData = theFile.getFileData();
 
-            
             // upload the file
             boolean success = true;
             String result = "";

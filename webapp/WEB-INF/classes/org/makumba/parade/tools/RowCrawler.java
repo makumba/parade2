@@ -12,20 +12,22 @@ import org.makumba.parade.model.Row;
 
 /**
  * Standalone class that crawls all the rows loaded in parade
+ * 
  * @author Manuel Gay
- *
+ * 
  */
 public class RowCrawler {
-    
+
     public static void main(String[] args) {
 
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
-        
+
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        
+
         // building an AetherContext to get Aether
-        AetherContext ctx = new AetherContext(ParadeRelationComputer.PARADE_DATABASE_NAME, InitServlet.getSessionFactory());
+        AetherContext ctx = new AetherContext(ParadeRelationComputer.PARADE_DATABASE_NAME, InitServlet
+                .getSessionFactory());
 
         ctx.addRelationComputer(new ParadeRelationComputer());
 
@@ -43,7 +45,7 @@ public class RowCrawler {
                 MakumbaContextRelationComputer.resetCrawlStatus(r, s);
             }
         }
-        
+
         ParadeLogger.getParadeLogger("RowCrawler").info("INIT: Starting to crawl relations at " + new java.util.Date());
         long start = System.currentTimeMillis();
         System.out.flush();
@@ -55,11 +57,10 @@ public class RowCrawler {
 
         long refresh = end - start;
         ParadeLogger.getParadeLogger("RowCrawler").info("INIT: Crawling took " + refresh + " ms");
-        
+
         tx.commit();
         s.close();
-        
-    }
 
+    }
 
 }

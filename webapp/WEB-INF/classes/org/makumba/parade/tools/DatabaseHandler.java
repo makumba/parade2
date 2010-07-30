@@ -5,11 +5,12 @@ import java.util.logging.LogRecord;
 
 /**
  * java logging handler that sends a record to the database
+ * 
  * @author Manuel Gay
- *
+ * 
  */
 public class DatabaseHandler extends Handler {
-    
+
     @Override
     public void close() throws SecurityException {
         // TODO Auto-generated method stub

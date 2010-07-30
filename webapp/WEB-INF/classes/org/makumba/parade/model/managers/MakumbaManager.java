@@ -111,10 +111,10 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
         Properties p = new Properties();
         if (!f.exists()) {
             f = new File(root + "Makumba.conf");
-            if(!f.exists()) {
+            if (!f.exists()) {
                 return "No makumba configuration file found";
             }
-            
+
             return "Default database: " + "";
 
         } else {

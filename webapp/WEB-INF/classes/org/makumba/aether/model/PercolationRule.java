@@ -22,7 +22,7 @@ import org.hibernate.annotations.Index;
  * 
  */
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PercolationRule implements AetherRule {
 
     private long id;
@@ -47,8 +47,9 @@ public class PercolationRule implements AetherRule {
 
     }
 
-    @Id @GeneratedValue
-    @Column(name="percolationrule")
+    @Id
+    @GeneratedValue
+    @Column(name = "percolationrule")
     public long getId() {
         return id;
     }
@@ -58,7 +59,7 @@ public class PercolationRule implements AetherRule {
     }
 
     @Column
-    @Index(name="IDX_SUBJECT")
+    @Index(name = "IDX_SUBJECT")
     public String getSubject() {
         return subject;
     }
@@ -68,7 +69,7 @@ public class PercolationRule implements AetherRule {
     }
 
     @Column
-    @Index(name="IDX_PREDICATE")
+    @Index(name = "IDX_PREDICATE")
     public String getPredicate() {
         return predicate;
     }
@@ -95,7 +96,7 @@ public class PercolationRule implements AetherRule {
         this.consumption = consumption;
     }
 
-    @Column(columnDefinition="longtext")
+    @Column(columnDefinition = "longtext")
     public String getDescription() {
         return description;
     }
@@ -105,7 +106,7 @@ public class PercolationRule implements AetherRule {
     }
 
     @Column
-    @Index(name="IDX_ACTIVE")
+    @Index(name = "IDX_ACTIVE")
     public boolean getActive() {
         return this.active;
     }
@@ -114,8 +115,8 @@ public class PercolationRule implements AetherRule {
         this.active = active;
     }
 
-    @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name="PercolationRule__relationQueries")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "PercolationRule__relationQueries")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     public List<RelationQuery> getRelationQueries() {
         return relationQueries;

@@ -36,7 +36,7 @@ public class Aether {
         this.ctx = ctx;
         startup();
     }
-    
+
     public static Logger getAetherLogger(String className) {
         return Logger.getLogger("org.aether." + className);
     }
@@ -54,7 +54,8 @@ public class Aether {
 
         p = new RuleBasedPercolator();
         p.configure(ctx.getSessionFactory());
-        if(ParadeProperties.getParadeProperty("aether.crawlOnStartup") != null && ParadeProperties.getParadeProperty("aether.crawlOnStartup").equals("true")) {
+        if (ParadeProperties.getParadeProperty("aether.crawlOnStartup") != null
+                && ParadeProperties.getParadeProperty("aether.crawlOnStartup").equals("true")) {
             computeAllRelations(true);
         }
 
@@ -101,7 +102,8 @@ public class Aether {
 
         long end = System.currentTimeMillis();
         long refresh = end - start;
-        logger.info("AETHER: " + (virtualPercolation?"virtual ":"") + "percolation of event " + e.toString() + " took " + refresh + " ms");
+        logger.info("AETHER: " + (virtualPercolation ? "virtual " : "") + "percolation of event " + e.toString()
+                + " took " + refresh + " ms");
 
     }
 

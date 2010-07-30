@@ -64,13 +64,12 @@ public class LogViewServlet extends HttpServlet {
         RequestDispatcher header = null;
         RequestDispatcher footer = super.getServletContext().getRequestDispatcher("/layout/footer.jsp");
 
-        
         header = super.getServletContext().getRequestDispatcher(
                 "/layout/header.jsp?class=logs&pointToBottom=true&pageTitle=Logs%20for%20" + context);
         header.include(req, resp);
         out.println(logV.getLogView(s, context, filter, Integer.parseInt(years), (Integer.parseInt(months)) - 1,
                 (Integer.parseInt(days))));
-    
+
         footer.include(req, resp);
 
         s.close();

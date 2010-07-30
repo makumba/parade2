@@ -35,7 +35,7 @@ public class AdminAction extends DispatchAction {
 
             request.setAttribute("result", "New rows added!");
             request.setAttribute("success", new Boolean(true));
-            
+
             ParadeRefreshPolicy.setRowCacheStale(true);
 
             return mapping.findForward("index");
@@ -78,7 +78,7 @@ public class AdminAction extends DispatchAction {
 
             request.setAttribute("result", "Row " + context + " refreshed !");
             request.setAttribute("success", new Boolean(true));
-            
+
             ParadeRefreshPolicy.setRowCacheStale(true);
 
             return mapping.findForward("index");
@@ -112,7 +112,7 @@ public class AdminAction extends DispatchAction {
             request.setAttribute("success", new Boolean(true));
 
             ParadeRefreshPolicy.setRowCacheStale(true);
-            
+
             return mapping.findForward("index");
 
         } finally {
@@ -174,15 +174,15 @@ public class AdminAction extends DispatchAction {
             s.close();
         }
     }
-    
+
     public ActionForward crawlRows(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        
-        if(InitServlet.aetherEnabled) {
+
+        if (InitServlet.aetherEnabled) {
             Aether a = InitServlet.getAether();
-            
+
             a.computeAllRelations(request.getParameter("flush").equals("true"));
-            
+
             request.setAttribute("result", "Finished crawling through all contexts!");
             request.setAttribute("success", new Boolean(true));
         } else {

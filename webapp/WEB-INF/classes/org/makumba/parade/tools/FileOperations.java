@@ -4,29 +4,23 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
- 
-public class FileOperations
-{
-   public static String ReadFileToString(String path)
-   {
+
+public class FileOperations {
+    public static String ReadFileToString(String path) {
         return ReadFileToString(new File(path));
-   }
-   
-   public static String ReadFileToString(File file)
-   {
-        String encoding = null; //null = platform default
+    }
+
+    public static String ReadFileToString(File file) {
+        String encoding = null; // null = platform default
         String content = null;
- 
-        try
-        {
+
+        try {
             content = FileUtils.readFileToString(file, encoding);
-        } 
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         return content;
     }
 
-}                          
+}

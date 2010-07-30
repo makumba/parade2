@@ -88,7 +88,7 @@ public class InitServlet extends HttpServlet implements Runnable {
                 resources.add("org.makumba.aether.model.ALE");
 
             }
-            
+
             createDummyDatabaseConnection();
 
             HibernateSFManager.setExternalConfigurationResources(resources);
@@ -99,7 +99,7 @@ public class InitServlet extends HttpServlet implements Runnable {
 
             // now it's ready to be available for other classes
             sessionFactory = sf;
-            
+
         } catch (Throwable t) {
             logger.severe("Parade cannot continue due to no database connection.");
             logger.severe("Parade stopping CAUSE: " + t.getMessage());
@@ -127,7 +127,7 @@ public class InitServlet extends HttpServlet implements Runnable {
 
     @Override
     public void init(ServletConfig conf) throws ServletException {
-        if(sessionFactory != null)
+        if (sessionFactory != null)
             new Thread(this).start();
         else
             throw new Error("No Database");
@@ -189,7 +189,7 @@ public class InitServlet extends HttpServlet implements Runnable {
                     rowComputers.put(r.getRowpath(), c);
                 }
             }
-            aether = Aether.getAether(ctx);        
+            aether = Aether.getAether(ctx);
         }
 
         tx.commit();
@@ -202,8 +202,6 @@ public class InitServlet extends HttpServlet implements Runnable {
         long refresh = end - start;
         logger.info("INIT: Initialisation took " + refresh + " ms");
     }
-    
-    
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
@@ -220,23 +218,24 @@ public class InitServlet extends HttpServlet implements Runnable {
     public static Aether getAether() {
         return aether;
     }
-    
-    public static void createDummyDatabaseConnection() throws Throwable{
+
+    public static void createDummyDatabaseConnection() throws Throwable {
         // Get configuration from Makumba.conf
-        File f = new File((System.getProperty("user.dir") + "/webapp/WEB-INF/classes/").replace('/', File.separatorChar) + "Makumba.conf");
-        //Configuration. = new Configuration(f.toURL(), null);
+        File f = new File((System.getProperty("user.dir") + "/webapp/WEB-INF/classes/")
+                .replace('/', File.separatorChar)
+                + "Makumba.conf");
+        // Configuration. = new Configuration(f.toURL(), null);
         String url = "jdbc:mysql://localhost/parade";
         String user = "root";
         String pass = "";
-        
-        
+
         // Try to make connection to Database
-        DriverManager.getConnection(url, user, pass); 
+        DriverManager.getConnection(url, user, pass);
     }
-    
-    public static void shutdownTomcat(){
+
+    public static void shutdownTomcat() {
         try {
-            Socket s = new Socket("localhost",5055);
+            Socket s = new Socket("localhost", 5055);
             PrintStream p = new PrintStream(s.getOutputStream());
             p.print("SHUTDOWN");
             p.close();

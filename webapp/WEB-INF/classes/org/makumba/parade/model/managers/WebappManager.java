@@ -77,8 +77,8 @@ public class WebappManager implements RowRefresher, ParadeManager {
     public void setWebappInfo(Row row) {
 
         // checks if there's a WEB-INF dir
-        String webinfDir = row.getRowpath() + java.io.File.separator + row.getWebappPath()
-                + java.io.File.separator + "WEB-INF";
+        String webinfDir = row.getRowpath() + java.io.File.separator + row.getWebappPath() + java.io.File.separator
+                + "WEB-INF";
 
         if (!new java.io.File(webinfDir).isDirectory()) {
             logger.warning("No WEB-INF directory found for row " + row.getRowname() + ": directory " + webinfDir

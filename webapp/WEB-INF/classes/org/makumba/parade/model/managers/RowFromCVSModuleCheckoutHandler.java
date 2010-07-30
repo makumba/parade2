@@ -60,7 +60,7 @@ public class RowFromCVSModuleCheckoutHandler extends Thread {
 
             Row r = new Row();
             r.setRowname(a.getName() + "-module"); // just in case, this may conflict with existing rows of the same
-                                                   // name
+            // name
             logger.info("Registering special row " + r.getRowname());
             String canonicalPath = path;
             try {

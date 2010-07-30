@@ -14,7 +14,7 @@ import org.makumba.parade.access.ActionLogDTO;
 import org.makumba.parade.aether.ObjectTypes;
 
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ActionLog {
 
     private Long id;
@@ -86,7 +86,7 @@ public class ActionLog {
         this.post = post;
     }
 
-    @Column(columnDefinition="longtext")
+    @Column(columnDefinition = "longtext")
     public String getQueryString() {
         return queryString;
     }
@@ -113,8 +113,9 @@ public class ActionLog {
         this.user = user;
     }
 
-    @Id @GeneratedValue
-    @Column(name="actionlog")
+    @Id
+    @GeneratedValue
+    @Column(name = "actionlog")
     public Long getId() {
         return id;
     }
@@ -142,7 +143,7 @@ public class ActionLog {
     }
 
     @Column
-    @Type(type="objectType")
+    @Type(type = "objectType")
     public ObjectTypes getObjectType() {
         return objectType;
     }
@@ -150,7 +151,7 @@ public class ActionLog {
     public void setObjectType(ObjectTypes objectType) {
         this.objectType = objectType;
     }
-    
+
     /**
      * Populates this ActionLog with data from an ActionLogDTO
      */
@@ -168,6 +169,5 @@ public class ActionLog {
         this.url = dto.getUrl();
         this.user = dto.getUser();
     }
-    
-    
+
 }

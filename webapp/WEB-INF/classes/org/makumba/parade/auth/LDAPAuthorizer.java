@@ -150,9 +150,11 @@ public class LDAPAuthorizer implements DirectoryAuthorizer {
             return true;
 
         } catch (LDAPException e) {
-            if(e.getMessage().indexOf("Connect Error") > -1) {
-              System.err.println("LDAP AUTHORIZER ERROR: login failed due to connection error to the LDAP server for user " + username + ", loginDN " + loginDN);
-              throw new DirectoryAuthorizerException("Connection error to the LDAP server");
+            if (e.getMessage().indexOf("Connect Error") > -1) {
+                System.err
+                        .println("LDAP AUTHORIZER ERROR: login failed due to connection error to the LDAP server for user "
+                                + username + ", loginDN " + loginDN);
+                throw new DirectoryAuthorizerException("Connection error to the LDAP server");
             }
             System.err.println("LDAP AUTHORIZER ERROR: login failed for user " + username + ", loginDN " + loginDN);
             System.err.println("LDAP AURHORIZER ERROR: exception is: " + e.getMessage());

@@ -19,40 +19,40 @@ import org.makumba.parade.model.managers.ServletContainer;
  * @author Manuel Gay
  * 
  */
-public class FileBrowserBean{
+public class FileBrowserBean {
 
     private String path;
-    
+
     private String absolutePath;
-    
+
     private Row row;
-    
-    public void setRow(){
+
+    public void setRow() {
         row = new Row();
     }
-    
+
     // Set current row Information
-    public void setRowpath(String value){
+    public void setRowpath(String value) {
         this.row.setRowpath(value);
     }
-    
-    public void setWebappPath(String value){
+
+    public void setWebappPath(String value) {
         this.row.setWebappPath(value);
     }
-    
-    public void setRowname(String value){
+
+    public void setRowname(String value) {
         this.row.setRowname(value);
     }
-    
-    public void setStatus(String value){
+
+    public void setStatus(String value) {
         // Set row status based on status array in ServletContainer
         this.row.setStatus(ArrayUtils.indexOf(ServletContainer.status, value.toLowerCase()));
     }
-    
-    public void setModule(String value){
+
+    public void setModule(String value) {
         this.row.setModule(value);
     }
-    
+
     public void setPath(String path) {
         // if this is the root of the row
         if (path == null || path.equals("null"))
@@ -67,12 +67,12 @@ public class FileBrowserBean{
     public String getPath() {
         return this.path;
     }
-    
+
     /**
      * the path of a file/directory within the currently browsed directory
      */
     public String getPath(String fileName) {
-        if(path.equals("/")) {
+        if (path.equals("/")) {
             return fileName;
         } else {
             return (path.endsWith("/") ? path : path + "/") + fileName;
@@ -98,11 +98,12 @@ public class FileBrowserBean{
      * absolute path on disk of the currently browsed directory
      */
     public String getAbsolutePath() {
-        if(absolutePath == null) {
+        if (absolutePath == null) {
             if (path.equals("/"))
                 absolutePath = row.getRowpath();
             else
-                absolutePath = row.getRowpath() + java.io.File.separator + path.replace('/', java.io.File.separatorChar);
+                absolutePath = row.getRowpath() + java.io.File.separator
+                        + path.replace('/', java.io.File.separatorChar);
             if (absolutePath.endsWith(java.io.File.separator))
                 absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
 
@@ -148,7 +149,7 @@ public class FileBrowserBean{
         return row.getRowpath()
                 + (path.length() > 1 ? java.io.File.separator + path.replace('/', java.io.File.separatorChar) : "");
     }
-    
+
     /**
      * icons
      */
@@ -177,7 +178,7 @@ public class FileBrowserBean{
 
         return image;
     }
-    
+
     /**
      * computes correct link to a file
      */
@@ -204,45 +205,46 @@ public class FileBrowserBean{
                 dd = dd.substring(dd.indexOf("dataDefinitions") + 16, dd.lastIndexOf(".")).replace('/', '.');
                 addr = "/" + row.getRowname() + "/mak-tools/dataDefinitions/" + dd;
             }
-            if (fileName.endsWith(".jsp") || fileName.endsWith(".html") || fileName.endsWith(".htm") || fileName.endsWith(".txt")
-                    || fileName.endsWith(".gif") || fileName.endsWith(".png") || fileName.endsWith(".jpeg") || fileName.endsWith(".jpg")
-                    || fileName.endsWith(".css") || fileName.startsWith("readme"))
+            if (fileName.endsWith(".jsp") || fileName.endsWith(".html") || fileName.endsWith(".htm")
+                    || fileName.endsWith(".txt") || fileName.endsWith(".gif") || fileName.endsWith(".png")
+                    || fileName.endsWith(".jpeg") || fileName.endsWith(".jpg") || fileName.endsWith(".css")
+                    || fileName.startsWith("readme"))
                 addr = "/" + row.getRowname() + pathURI + fileNameNormal;
 
             if (fileName.endsWith(".jsp"))
                 addr += "x";
         }
-        
+
         return addr;
 
     }
-    
+
     /**
-     * encodes a string 
+     * encodes a string
      */
     public String encode(String string) {
         String encoded = "";
         try {
             encoded = URLEncoder.encode(string, "UTF-8");
-        } catch(UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return encoded;
     }
-    
 
     /**
-     * CVS repository link 
+     * CVS repository link
      */
     public String getCVSWebLink(Object filePath) {
-        String cvsWebLink="";
+        String cvsWebLink = "";
         String cvsweb = ParadeProperties.getParadeProperty("cvs.site");
-        String webPath = filePath.toString().substring(row.getRowpath().length() + 1).replace(java.io.File.separatorChar, '/');
+        String webPath = filePath.toString().substring(row.getRowpath().length() + 1).replace(
+                java.io.File.separatorChar, '/');
         cvsWebLink = cvsweb + row.getModule() + "/" + webPath;
         return cvsWebLink;
-        
+
     }
-    
+
     public boolean isCVSConflict(String fileName) {
         return fileName.startsWith(".#");
     }

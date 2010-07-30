@@ -47,7 +47,7 @@ public class AetherEvent implements Cloneable {
         this.eventDate = eventDate;
     }
 
-    @Index(name="IDX_OBJECTURL")
+    @Index(name = "IDX_OBJECTURL")
     public String getObjectURL() {
         return objectURL;
     }
@@ -56,7 +56,7 @@ public class AetherEvent implements Cloneable {
         return objectType;
     }
 
-    @Index(name="IDX_ACTOR")
+    @Index(name = "IDX_ACTOR")
     public String getActor() {
         return actor;
     }

@@ -36,7 +36,7 @@ public class ParadeRelationComputer implements RelationComputer {
     public void computeRelations(boolean updateExistingRelations) throws RelationComputationException {
 
         logger.fine("Computing all relations of " + getName());
-        
+
         Transaction t = tp.getConnectionTo(PARADE_DATABASE_NAME);
 
         computeRowUserRelations(t);
@@ -45,7 +45,7 @@ public class ParadeRelationComputer implements RelationComputer {
         // we populate the relations table with those relations
 
         // first we remove all the previous relations
-        
+
         Vector<Dictionary<String, Object>> old = t
                 .executeQuery(
                         "SELECT rel.id AS rel FROM org.makumba.devel.relations.Relation rel WHERE rel.type = 'traineeOf'",

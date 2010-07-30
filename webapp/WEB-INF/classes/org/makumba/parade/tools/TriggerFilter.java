@@ -37,7 +37,6 @@ public class TriggerFilter implements Filter {
 
     String beforeContext, afterContext, beforeServlet, afterServlet;
 
-
     public void init(FilterConfig conf) {
         context = conf.getServletContext();
         if (context.getContext("/") == context) {
@@ -98,10 +97,10 @@ public class TriggerFilter implements Filter {
         if (req == null) {
             boolean unauthorizedAccess = (dummyReq.getAttribute("org.makumba.parade.unauthorizedAccess") != null);
             boolean directoryServerError = (dummyReq.getAttribute("org.makumba.parade.directoryAccessError") != null);
-            if(unauthorizedAccess || directoryServerError) {
+            if (unauthorizedAccess || directoryServerError) {
                 req = origReq;
                 String errorPageURI = "/unauthorized/index.jsp";
-                if(directoryServerError)
+                if (directoryServerError)
                     errorPageURI = "/unauthorized/directoryServerError.jsp";
                 try {
                     LogHandler.getRequestDispatcher(errorPageURI).forward(req, resp);

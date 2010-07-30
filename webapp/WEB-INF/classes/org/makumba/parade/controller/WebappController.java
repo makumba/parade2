@@ -50,7 +50,7 @@ public class WebappController {
             makMgr.softRefresh(entryRow);
             opResult = webappMgr.servletContextRedeployRow(entryRow);
         }
-        
+
         ParadeRefreshPolicy.setRowCacheStale(true);
 
         tx.commit();

@@ -1,8 +1,7 @@
 package org.makumba.parade.auth;
 
-
 public interface DirectoryAuthorizer extends Authorizer {
-    
+
     public String getDisplayName();
 
     public String getGivenName();
@@ -16,6 +15,5 @@ public interface DirectoryAuthorizer extends Authorizer {
     public String getCn();
 
     public byte[] getJpegPhoto();
-
 
 }

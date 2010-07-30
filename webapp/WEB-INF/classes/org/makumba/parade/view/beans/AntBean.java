@@ -12,27 +12,28 @@ import org.makumba.parade.init.ParadeProperties;
  */
 
 public class AntBean {
-    
+
     protected String allowedOperations = new String();
 
     public String getAllowedAntOperations() {
-        
-        if(allowedOperations.length() == 0) {
-            
-            for (Iterator<String> iterator = ParadeProperties.getElements("ant.displayedOps").iterator(); iterator.hasNext();) {
+
+        if (allowedOperations.length() == 0) {
+
+            for (Iterator<String> iterator = ParadeProperties.getElements("ant.displayedOps").iterator(); iterator
+                    .hasNext();) {
                 String allowed = iterator.next();
-                if(allowed != null && allowed != "null" && allowed.length() > 0) {
-                    if(allowed.startsWith("#")) {
+                if (allowed != null && allowed != "null" && allowed.length() > 0) {
+                    if (allowed.startsWith("#")) {
                         allowed = allowed.substring(1);
                     }
-                    allowedOperations += "'"+allowed+"'";
-                    
-                    if(iterator.hasNext()) allowedOperations +=",";
+                    allowedOperations += "'" + allowed + "'";
+
+                    if (iterator.hasNext())
+                        allowedOperations += ",";
                 }
             }
         }
         return allowedOperations;
 
-    
     }
 }

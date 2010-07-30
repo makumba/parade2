@@ -23,7 +23,7 @@ import org.hibernate.annotations.OnDeleteAction;
  * 
  */
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PercolationStep {
 
     private long id;
@@ -64,8 +64,9 @@ public class PercolationStep {
 
     }
 
-    @Id @GeneratedValue
-    @Column(name="percolationstep")
+    @Id
+    @GeneratedValue
+    @Column(name = "percolationstep")
     public long getId() {
         return id;
     }
@@ -84,7 +85,7 @@ public class PercolationStep {
     }
 
     @Column
-    @Index(name="IDX_FOCUS")
+    @Index(name = "IDX_FOCUS")
     public int getFocus() {
         return focus;
     }
@@ -94,7 +95,7 @@ public class PercolationStep {
     }
 
     @Column
-    @Index(name="IDX_NIMBUS")
+    @Index(name = "IDX_NIMBUS")
     public int getNimbus() {
         return nimbus;
     }
@@ -104,9 +105,9 @@ public class PercolationStep {
     }
 
     @ManyToOne
-    @ForeignKey(name="FK_PREVIOUS")
-    @OnDelete(action=OnDeleteAction.CASCADE)
-    @JoinColumn(name="previous")
+    @ForeignKey(name = "FK_PREVIOUS")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "previous")
     public PercolationStep getPrevious() {
         return previous;
     }
@@ -116,9 +117,9 @@ public class PercolationStep {
     }
 
     @ManyToOne
-    @ForeignKey(name="FK_MATCHEDAETHEREVENT")
-    @OnDelete(action=OnDeleteAction.CASCADE)
-    @JoinColumn(name="matchedAetherEvent")
+    @ForeignKey(name = "FK_MATCHEDAETHEREVENT")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "matchedAetherEvent")
     public MatchedAetherEvent getMatchedAetherEvent() {
         return matchedAetherEvent;
     }
@@ -128,9 +129,9 @@ public class PercolationStep {
     }
 
     @ManyToOne
-    @ForeignKey(name="FK_PERCOLATIONRULE")
-    @OnDelete(action=OnDeleteAction.CASCADE)
-    @JoinColumn(name="percolationRule")
+    @ForeignKey(name = "FK_PERCOLATIONRULE")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "percolationRule")
     public PercolationRule getPercolationRule() {
         return percolationRule;
     }
@@ -139,7 +140,7 @@ public class PercolationStep {
         this.percolationRule = percolationRule;
     }
 
-    @Column(columnDefinition="longtext")
+    @Column(columnDefinition = "longtext")
     public String getPercolationPath() {
         return percolationPath;
     }
@@ -158,9 +159,9 @@ public class PercolationStep {
     }
 
     @ManyToOne
-    @ForeignKey(name="FK_ROOT")
-    @OnDelete(action=OnDeleteAction.CASCADE)
-    @JoinColumn(name="root")
+    @ForeignKey(name = "FK_ROOT")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "root")
     public PercolationStep getRoot() {
         return root;
     }
@@ -179,7 +180,7 @@ public class PercolationStep {
     }
 
     @Column
-    @Index(name="IDX_OBJECTURL")
+    @Index(name = "IDX_OBJECTURL")
     public String getObjectURL() {
         return objectURL;
     }
@@ -223,7 +224,6 @@ public class PercolationStep {
     public void setCreated(Date created) {
         this.created = created;
     }
-    
 
     public void setVirtualPercolation(boolean virtualPercolation) {
         this.virtualPercolation = virtualPercolation;
@@ -233,7 +233,6 @@ public class PercolationStep {
     public boolean getVirtualPercolation() {
         return virtualPercolation;
     }
-
 
     public PercolationStep(String previousURL, String objectURL, String userGroup, int focus, int nimbus,
             PercolationRule percolationRule, MatchedAetherEvent matchedAetherEvent, PercolationStep previous,

@@ -20,7 +20,7 @@ import org.makumba.aether.AetherEvent;
  * 
  */
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class MatchedAetherEvent extends AetherEvent {
 
     private long id;
@@ -46,8 +46,9 @@ public class MatchedAetherEvent extends AetherEvent {
         super();
     }
 
-    @Id @GeneratedValue
-    @Column(name="matchedaetherevent")
+    @Id
+    @GeneratedValue
+    @Column(name = "matchedaetherevent")
     public long getId() {
         return id;
     }
@@ -75,8 +76,8 @@ public class MatchedAetherEvent extends AetherEvent {
     }
 
     @ManyToOne
-    @ForeignKey(name="INITIALPERCOLATIONRULE")
-    @JoinColumn(name="initialPercolationRule")
+    @ForeignKey(name = "INITIALPERCOLATIONRULE")
+    @JoinColumn(name = "initialPercolationRule")
     public InitialPercolationRule getInitialPercolationRule() {
         return initialPercolationRule;
     }
@@ -89,7 +90,7 @@ public class MatchedAetherEvent extends AetherEvent {
     public int getInitialPercolationLevel() {
         return initialPercolationRule.getInitialLevel();
     }
-        
+
     @Override
     public String toString() {
         return this.actor + " (" + this.userType + ") --(" + this.action + ")--> " + this.objectURL + " ("

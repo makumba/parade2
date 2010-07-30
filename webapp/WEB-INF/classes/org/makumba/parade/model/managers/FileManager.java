@@ -35,6 +35,7 @@ import org.makumba.parade.tools.WordCount;
  */
 public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     static Logger logger = ParadeLogger.getParadeLogger(FileManager.class.getName());
+
     private FileFilter filter = new SimpleFileFilter();
 
     public void softRefresh(Row row) {
@@ -173,13 +174,12 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
     /* adding file to Row files */
     private void addFile(Row row, File fileData) {
-        //+++        
-        if (fileData.getCrawled() == null)
-        {
-            //set to 0 when you insert the file into the database so the crawler will crawl the file for the first time
-            fileData.setCrawled(new Long(0)); 
+        // +++
+        if (fileData.getCrawled() == null) {
+            // set to 0 when you insert the file into the database so the crawler will crawl the file for the first time
+            fileData.setCrawled(new Long(0));
         }
-        //---
+        // ---
         row.getFiles().put(fileData.getPath(), fileData);
 
         // logger.warning("Added file: "+fileData.getName());

@@ -10,7 +10,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ALE {
 
     private long id;
@@ -25,7 +25,7 @@ public class ALE {
 
     private int virtualFocus;
 
-    @Column(columnDefinition="int(11) default '0'")
+    @Column(columnDefinition = "int(11) default '0'")
     public int getVirtualFocus() {
         return virtualFocus;
     }
@@ -34,7 +34,7 @@ public class ALE {
         this.virtualFocus = virtualFocus;
     }
 
-    @Column(columnDefinition="int(11) default '0'")
+    @Column(columnDefinition = "int(11) default '0'")
     public int getVirtualNimbus() {
         return virtualNimbus;
     }
@@ -45,8 +45,8 @@ public class ALE {
 
     private int virtualNimbus;
 
-    @Column(columnDefinition="int(11) default '0'")
-    @Index(name="IDX_NIMBUS")
+    @Column(columnDefinition = "int(11) default '0'")
+    @Index(name = "IDX_NIMBUS")
     public int getNimbus() {
         return nimbus;
     }
@@ -55,8 +55,9 @@ public class ALE {
         this.nimbus = nimbus;
     }
 
-    @Id @GeneratedValue
-    @Column(name="ale")
+    @Id
+    @GeneratedValue
+    @Column(name = "ale")
     public long getId() {
         return id;
     }
@@ -66,7 +67,7 @@ public class ALE {
     }
 
     @Column
-    @Index(name="IDX_OBJECTURL")
+    @Index(name = "IDX_OBJECTURL")
     public String getObjectURL() {
         return objectURL;
     }
@@ -75,8 +76,8 @@ public class ALE {
         this.objectURL = objectURL;
     }
 
-    @Column(columnDefinition="int(11) default '0'")
-    @Index(name="IDX_FOCUS")
+    @Column(columnDefinition = "int(11) default '0'")
+    @Index(name = "IDX_FOCUS")
     public int getFocus() {
         return focus;
     }

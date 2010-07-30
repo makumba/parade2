@@ -11,7 +11,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User {
 
     private long id;
@@ -70,8 +70,9 @@ public class User {
         this.email = email;
     }
 
-    @Id @GeneratedValue
-    @Column(name="user")
+    @Id
+    @GeneratedValue
+    @Column(name = "user")
     public long getId() {
         return id;
     }
@@ -129,7 +130,7 @@ public class User {
     }
 
     @ManyToOne
-    @JoinColumn(name="id_parade")
+    @JoinColumn(name = "id_parade")
     public Parade getParade() {
         return parade;
     }
@@ -138,7 +139,7 @@ public class User {
         this.parade = parade;
     }
 
-    @Column(columnDefinition="longtext")
+    @Column(columnDefinition = "longtext")
     public byte[] getJpegPhoto() {
         return jpegPhoto;
     }

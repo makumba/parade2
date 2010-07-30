@@ -89,12 +89,12 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
             } else {
 
                 java.io.File[] dir = currDir.listFiles();
-                
+
                 // Refresh files in root dir
-                if(row.getRowpath().compareTo(currDir.getPath()) == 0){
-                    refreshDirectory(row, currDir); 
+                if (row.getRowpath().compareTo(currDir.getPath()) == 0) {
+                    refreshDirectory(row, currDir);
                 }
-                
+
                 for (java.io.File d : dir) {
                     if (filter.accept(d) && !(d.getName() == null) && d.isDirectory()) {
                         refreshDirectory(row, d);
@@ -220,7 +220,7 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
     }
 
     private void readFiles(Row r, File f) {
-        
+
         Set<String> files = new HashSet<String>();
 
         Set<String> entries = readCVSEntries(r, f, null, false);

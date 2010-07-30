@@ -19,7 +19,8 @@ public interface RelationComputer {
     /**
      * Computes all the relations
      * 
-     * @param updateExistingRelations whether existing relations in the database should be updated or flushed
+     * @param updateExistingRelations
+     *            whether existing relations in the database should be updated or flushed
      * 
      * @throws RelationComputationException
      *             when a computation exception occurs

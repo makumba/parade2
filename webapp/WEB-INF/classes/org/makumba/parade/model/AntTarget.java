@@ -11,17 +11,17 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AntTarget {
-    
+
     private Long id;
-    
+
     private String target;
-    
+
     private Row row;
 
     @ManyToOne
-    @JoinColumn(name="row_id")
+    @JoinColumn(name = "row_id")
     public Row getRow() {
         return row;
     }
@@ -30,8 +30,9 @@ public class AntTarget {
         this.row = row;
     }
 
-    @Id @GeneratedValue
-    @Column(name="anttarget")
+    @Id
+    @GeneratedValue
+    @Column(name = "anttarget")
     public Long getId() {
         return id;
     }
@@ -48,13 +49,13 @@ public class AntTarget {
     public void setTarget(String target) {
         this.target = target;
     }
-    
+
     public AntTarget(String target, Row row) {
         this.target = target;
         this.row = row;
     }
 
     public AntTarget() {
-        
+
     }
 }

@@ -21,7 +21,7 @@ import org.hibernate.annotations.Cascade;
  * 
  */
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class InitialPercolationRule implements AetherRule {
 
     public static final int NO_PERCOLATION = 0;
@@ -63,9 +63,10 @@ public class InitialPercolationRule implements AetherRule {
     public InitialPercolationRule() {
 
     }
-    
-    @Id @GeneratedValue
-    @Column(name="initialpercolationrule")
+
+    @Id
+    @GeneratedValue
+    @Column(name = "initialpercolationrule")
     public long getId() {
         return id;
     }
@@ -110,10 +111,10 @@ public class InitialPercolationRule implements AetherRule {
         this.initialLevel = initialLevel;
     }
 
-    @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name="InitialPercolationRule__relationQueries")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "InitialPercolationRule__relationQueries")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @Column(name="initialPercolationRule")
+    @Column(name = "initialPercolationRule")
     public List<RelationQuery> getRelationQueries() {
         return relationQueries;
     }
@@ -131,7 +132,7 @@ public class InitialPercolationRule implements AetherRule {
         this.active = active;
     }
 
-    @Column(columnDefinition="int(11) default '0'")
+    @Column(columnDefinition = "int(11) default '0'")
     public int getPercolationMode() {
         return percolationMode;
     }
