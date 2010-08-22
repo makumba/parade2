@@ -55,7 +55,7 @@
 		<strong><a class="icon_members"
 			title="People who were active in the 20 past minutes">Currently
 		online:</a></strong> <mak:list from="ActionLog a, User u"
-			where="a.user = u.login and a.logDate > (now() - 2000)"
+			where="a.user = u.login and a.logDate > (date_sub(now(), INTERVAL 20 MINUTE))"
 			groupBy="u.login">
 			<a href='userView.jsp?user=<mak:value expr="u.login"/>'><mak:value
 				expr="u.nickname" /></a>&nbsp;&nbsp;
