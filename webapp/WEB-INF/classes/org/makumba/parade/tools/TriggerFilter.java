@@ -103,13 +103,16 @@ public class TriggerFilter implements Filter {
                 if (directoryServerError)
                     errorPageURI = "/unauthorized/directoryServerError.jsp";
                 try {
-                    LogHandler.getRequestDispatcher(errorPageURI).forward(req, resp);
+                    ctx.getRequestDispatcher(errorPageURI).forward(req, resp);
+                    //LogHandler.getRequestDispatcher(errorPageURI).forward(req, resp);
                 } catch (ServletException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+                } catch(NullPointerException npe) {
+                    npe.printStackTrace();
                 }
                 // chain.doFilter(req, resp);
                 return;
