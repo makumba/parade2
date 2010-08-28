@@ -55,7 +55,7 @@
 		<strong><a class="icon_members"
 			title="People who were active in the 20 past minutes">Currently
 		online:</a></strong> <mak:list from="ActionLog a, User u"
-			where="a.user = u.login and (unix_timestamp(a.logDate) > ( unix_timestamp(now()) - 20 * 60)))"
+			where="a.user = u.login and (unix_timestamp(a.logDate) > ( unix_timestamp(now()) - 20 * 60))"
 			groupBy="u.login">
 			<a href='userView.jsp?user=<mak:value expr="u.login"/>'><mak:value
 				expr="u.nickname" /></a>&nbsp;&nbsp;
