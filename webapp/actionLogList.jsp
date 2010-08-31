@@ -26,7 +26,7 @@
 <c:if test="${empty day || day == 'null'}"><c:set var="day"><%=now.get(Calendar.DAY_OF_MONTH)%></c:set></c:if>
 <c:if test="${empty filter || filter == 'null'}"><c:set var="filter">none</c:set></c:if>
 
-<c:set var="alWhere">day(al.logDate) >= :day and month(al.logDate) >= :month and year(al.logDate) >= :year</c:set>
+<c:set var="alWhere">dayOfMonth(al.logDate) >= :day and month(al.logDate) >= :month and year(al.logDate) >= :year</c:set>
 <c:if test="${not empty param.context}">
   <c:if test="${param.context != 'all'}">
     <c:set var="alWhere">${alWhere} and al.context = :context</c:set>
