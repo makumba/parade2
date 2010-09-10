@@ -65,22 +65,23 @@
 
       <jsp:useBean id="antBean" class="org.makumba.parade.view.beans.AntBean" />
       <mak:value expr="row.id" printVar="rowId"/>
-      <mak:value expr="row.status" printVar="stringStatus"/>
-      <% int webAppStatus = ArrayUtils.indexOf(ServletContainer.status, stringStatus); %>
+      <mak:value expr="row.status" var="rowStatus"/>
+      <%-- FIX: Row status could be a string for improved legibility --%>
+      <%-- int webAppStatus = ArrayUtils.indexOf(ServletContainer.status, stringStatus); --%>
       <td valign="top">&nbsp; ant: <c:set var="vWhere">t.row = row and t.target in (<%=antBean.getAllowedAntOperations() %>)</c:set><mak:list from="AntTarget t" where="#{vWhere}" separator=","><a target="command" href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value expr="t.target"/></a></mak:list></td>
-      <td valign="top">&nbsp; webapp: <c:if test="${webAppStatus == 2}">
+      <td valign="top">&nbsp; webapp: <c:if test="${rowStatus == 2}">
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextReload&getPathFromSession=true" target="command">reload</a>
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextStop&getPathFromSession=true" target="command">stop</a>
-      </c:if> <c:if test="${requestScope.status == 1}">
+      </c:if> <c:if test="${rowStatus == 1}">
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextStart&getPathFromSession=true" target="command">start</a>
-      </c:if> <c:if test="${requestScope.status != 0}">
+      </c:if> <c:if test="${rowStatus != 0}">
         <a href="/Webapp.do?display=index&context=${rowName}&path=${path}&op=servletContextRedeploy" target="command">redeploy</a>
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextRemove&getPathFromSession=true" target="command">uninstall</a>
-      </c:if> <c:if test="${requestScope.status == 0}">
+      </c:if> <c:if test="${rowStatus == 0}">
         <a
           href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextInstall&getPathFromSession=true" target="command">install</a>
       </c:if></td>
