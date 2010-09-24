@@ -251,7 +251,8 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     }
 
     public String newFile(Row r, String path, String entry) {
-        java.io.File f = new java.io.File((path + "/" + entry).replace('/', java.io.File.separatorChar));
+        String absolutePath = (path + "/" + entry + "/").replace('/', java.io.File.separatorChar);
+        java.io.File f = new java.io.File(absolutePath);
         if (f.exists() && f.isFile())
             return "This file already exists";
         boolean success = false;
@@ -259,7 +260,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             success = f.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
-            return ("Error while trying to create file " + entry);
         }
         if (success) {
             return "OK#" + f.getName();
@@ -278,9 +278,27 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         if (success) {
             return "OK#" + f.getName();
         }
-        return "Error while trying to create directory " + absolutePath
+        return "Error while trying to create directory " + f.getAbsolutePath()
                 + ". Make sure ParaDe has the security rights to write on the filesystem.";
+    }
 
+    /**
+     * @author Joao Andrade
+     * @param r
+     * @param path
+     * @param entry
+     * @return
+     */
+    public String deleteDir(Row r, String path, String entry) {
+        java.io.File f = new java.io.File(path + java.io.File.separator + entry);
+        if (f.list().length > 0) {
+            return "Error while trying to delete directory " + f.getName() + "</br>" + "The directory must be empty.";
+        } else if (f.delete()) {
+            return "OK#" + f.getName();
+        }
+        logger.severe("Error while trying to delete directory " + f.getAbsolutePath() + " " + "\n" + "Reason: exists: "
+                + f.exists() + ", canRead: " + f.canRead() + ", canWrite: " + f.canWrite());
+        return "Error while trying to delete directory " + f.getName();
     }
 
     public String deleteFile(Row r, String path, String entry) {
