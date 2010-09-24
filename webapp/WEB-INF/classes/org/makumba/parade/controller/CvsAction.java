@@ -21,7 +21,7 @@ public class CvsAction extends DispatchAction {
         String[] params = request.getParameterValues("params");
         String path = params[0];
 
-        // we need to convert the relative path displayed in the webapp to something usable
+        // we need to convert the relative path displayed in the webapp to something usable)
         params[0] = Parade.constructAbsolutePath(context, params[0]);
 
         Object[] result = CvsController.onCheck(context, params);
@@ -30,8 +30,7 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
     public ActionForward update(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -41,7 +40,7 @@ public class CvsAction extends DispatchAction {
         String[] params = request.getParameterValues("params");
         String path = params[0];
 
-        // we need to convert the relative path displayed in the webapp to something usable
+        // we need to convert the relative path displayed in the webapp to something usable)
         params[0] = Parade.constructAbsolutePath(context, params[0]);
 
         Object[] result = CvsController.onUpdate(context, params);
@@ -50,8 +49,7 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
     public ActionForward rupdate(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -61,7 +59,7 @@ public class CvsAction extends DispatchAction {
         String[] params = request.getParameterValues("params");
         String path = params[0];
 
-        // we need to convert the relative path displayed in the webapp to something usable
+        // we need to convert the relative path displayed in the webapp to something usable)
         params[0] = Parade.constructAbsolutePath(context, params[0]);
 
         Object[] result = CvsController.onRUpdate(context, params);
@@ -70,8 +68,7 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
     public ActionForward commit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -100,8 +97,7 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
     public ActionForward diff(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -111,7 +107,7 @@ public class CvsAction extends DispatchAction {
         String file = request.getParameter("file");
         String path = request.getParameter("path");
 
-        // we reconstruct the absolute paths (the ones passed as params are relative
+        // we reconstruct the absolute paths (the ones passed as params are relative)
         String absolutePath = Parade.constructAbsolutePath(context, path);
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
@@ -121,8 +117,7 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
     public ActionForward add(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -132,7 +127,7 @@ public class CvsAction extends DispatchAction {
         String file = request.getParameter("file");
         String path = request.getParameter("path");
 
-        // we reconstruct the absolute paths (the ones passed as params are relative
+        // we reconstruct the absolute paths (the ones passed as params are relative)
         String absolutePath = Parade.constructAbsolutePath(context, path);
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
@@ -142,8 +137,7 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
     public ActionForward addbin(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -153,7 +147,7 @@ public class CvsAction extends DispatchAction {
         String file = request.getParameter("file");
         String path = request.getParameter("path");
 
-        // we reconstruct the absolute paths (the ones passed as params are relative
+        // we reconstruct the absolute paths (the ones passed as params are relative)
         String absolutePath = Parade.constructAbsolutePath(context, path);
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
@@ -163,8 +157,7 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
     public ActionForward updatefile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -174,7 +167,7 @@ public class CvsAction extends DispatchAction {
         String file = request.getParameter("file");
         String path = request.getParameter("path");
 
-        // we reconstruct the absolute paths (the ones passed as params are relative
+        // we reconstruct the absolute paths (the ones passed as params are relative)
         String absolutePath = Parade.constructAbsolutePath(context, path);
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
@@ -184,8 +177,7 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
     public ActionForward overridefile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -195,7 +187,7 @@ public class CvsAction extends DispatchAction {
         String file = request.getParameter("file");
         String path = request.getParameter("path");
 
-        // we reconstruct the absolute paths (the ones passed as params are relative
+        // we reconstruct the absolute paths (the ones passed as params are relative)
         String absolutePath = Parade.constructAbsolutePath(context, path);
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
@@ -207,8 +199,7 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
     public ActionForward deletefile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -218,7 +209,7 @@ public class CvsAction extends DispatchAction {
         String file = request.getParameter("file");
         String path = request.getParameter("path");
 
-        // we reconstruct the absolute paths (the ones passed as params are relative
+        // we reconstruct the absolute paths (the ones passed as params are relative)
         String absolutePath = Parade.constructAbsolutePath(context, path);
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
@@ -228,8 +219,35 @@ public class CvsAction extends DispatchAction {
         request.setAttribute("context", context);
         request.setAttribute("path", path);
 
-        return (mapping.findForward("command"));
-
+        return mapping.findForward("command");
     }
 
+    /**
+     * @author Joao Andrade
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public ActionForward deleteDirectory(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        String context = request.getParameter("context");
+        String file = request.getParameter("file");
+        String path = request.getParameter("path");
+
+        // we reconstruct the absolute paths (the ones passed as params are relative)
+        String absolutePath = Parade.constructAbsolutePath(context, path);
+        String absoluteFilePath = Parade.constructAbsolutePath(context, file);
+
+        Object[] result = CvsController.onDeleteDirectory(context, absolutePath, absoluteFilePath);
+        request.setAttribute("result", (String) result[0]);
+        request.setAttribute("success", (Boolean) result[1]);
+        request.setAttribute("context", context);
+        request.setAttribute("path", path);
+
+        return mapping.findForward("command");
+    }
 }
