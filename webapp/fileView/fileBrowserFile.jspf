@@ -2,53 +2,91 @@
 <mak:value expr="f.date" var="fileDate" />
 <mak:value expr="f.onDisk" var="isOnDisk" />
 <mak:value expr="f.size" var="fileSize" />
-<c:set var="fileLinkAddress"><%=fileBrowserBean.getFileLinkAddress(fileName) %></c:set>
-<c:set var="encodedName"><%=fileBrowserBean.encode(fileName) %></c:set>
-<% pageContext.setAttribute("fileAge", (new Date()).getTime() - (Long)fileDate); %>
-<c:set var="ageNice"><%= DisplayFormatter.readableTime((Long)pageContext.getAttribute("fileAge")) %></c:set>
-<c:set var="sizeNice"><%= DisplayFormatter.readableBytes((Long)fileSize) %></c:set>
-<% pageContext.setAttribute("isEmpty", ((Long)fileSize) < 0l); %>
+<c:set var="fileLinkAddress"><%=fileBrowserBean.getFileLinkAddress(fileName)%></c:set>
+<c:set var="encodedName"><%=fileBrowserBean.encode(fileName)%></c:set>
+<%
+	pageContext.setAttribute("fileAge", (new Date()).getTime()
+			- (Long) fileDate);
+%>
+<c:set var="ageNice"><%=DisplayFormatter.readableTime((Long) pageContext
+						.getAttribute("fileAge"))%></c:set>
+<c:set var="sizeNice"><%=DisplayFormatter.readableBytes((Long) fileSize)%></c:set>
+<%
+	pageContext.setAttribute("isEmpty", ((Long) fileSize) < 0l);
+%>
 
 <c:choose>
-  <%-- DIRECTORY --%>
-  <c:when test="${isDir}">
-    <td><img src='/images/folder.gif'></td>
-    <td colspan='2'><a href='/fileView/fileBrowser.jsp?context=${context}&path=${relativeFilePath}'>${fileName}</a></td>
-  </c:when>
-  <%-- FILE --%>
-  <c:otherwise>
-    <td><img src='/images/<%=fileBrowserBean.getFileIcon(fileName) %>.gif'></td>
-    <td>
-    <c:choose>
-      <c:when test="${fileLinkAddress != ''}">
-        <a href='${fileLinkAddress}'>${fileName}</a>
-      </c:when>
-      <c:otherwise>${fileName}</c:otherwise>
-    </c:choose>
-    </td>
-    <td align='right'>
-    <c:if test="${isOnDisk}">
-      <a href='/codePressEditor.jsp?context=${context}&path=${path}&file=${encodedName}'><img src='/images/edit.gif' alt='Edit ${fileName} with javascript editor'></a>
-      <a href='/simpleFileEditor.jsp?context=${context}&path=${path}&file=${encodedName}' title='Edit ${fileName} with old editor'>(E)</a>
-      &nbsp;&nbsp;
-      <a href="javascript:deleteFile('${path}','${fileName}')"><img src='/images/delete.gif' alt='Delete ${fileName}'></a>
-    </c:if>
-    </td>
-  </c:otherwise>
+	<%-- FILE --%>
+	<c:when test="${!isDir}">
+		<td><img
+			src='/images/<%=fileBrowserBean.getFileIcon(fileName)%>.gif'></td>
+		<td><c:choose>
+			<c:when test="${fileLinkAddress != ''}">
+				<a href='${fileLinkAddress}'>${fileName}</a>
+			</c:when>
+			<c:otherwise>${fileName}</c:otherwise>
+		</c:choose></td>
+	</c:when>
+	<%-- DIRECTORY --%>
+	<c:otherwise>
+		<td><img src='/images/folder.gif'></td>
+		<td><a
+			href='/fileView/fileBrowser.jsp?context=${context}&path=${relativeFilePath}'>${fileName}</a></td>
+	</c:otherwise>
 </c:choose>
+
 <c:choose>
-  <c:when test="${isDir}"><td></td></c:when>
-  <c:otherwise><td><a title='${fileAge}'>${ageNice}</a></td></c:otherwise>
+	<c:when test="${isOnDisk}">
+		<c:choose>
+			<%-- FILE --%>
+			<c:when test="${!isDir}">
+				<td align='right'><a
+					href='/codePressEditor.jsp?context=${context}&path=${path}&file=${encodedName}'><img
+					src='/images/edit.gif'
+					alt='Edit ${fileName} with javascript editor'></a> <a
+					href='/simpleFileEditor.jsp?context=${context}&path=${path}&file=${encodedName}'
+					title='Edit ${fileName} with old editor'>(E)</a> &nbsp;&nbsp; <a
+					href="javascript:deleteFile('${path}','${fileName}')"><img
+					src='/images/delete.gif' alt='Delete ${fileName}'></a></td>
+			</c:when>
+			<%-- DIRECTORY --%>
+			<c:otherwise>
+				<td align='right'><a
+					href="javascript:deleteFolder('${path}','${fileName}')"><img
+					src='/images/delete.gif' alt='Delete ${fileName}'></a></td>
+			</c:otherwise>
+		</c:choose>
+	</c:when>
+	<c:otherwise>
+		<td></td>
+	</c:otherwise>
 </c:choose>
+
 <c:choose>
-  <c:when test="${!isDir}">
-    <c:choose>
-      <c:when test="${!isEmpty}"><td><a title='${fileSize} bytes'>${sizeNice}</a></td></c:when>
-      <c:otherwise><td><em>empty</em></td></c:otherwise>
-    </c:choose>
-  </c:when>
-  <c:otherwise>
-    </td><td>
-  </c:otherwise>
+	<%-- FILE --%>
+	<c:when test="${!isDir}">
+		<td><a title='${fileAge}'>${ageNice}</a></td>
+	</c:when>
+	<%-- DIRECTORY --%>
+	<c:otherwise>
+		<td></td>
+	</c:otherwise>
 </c:choose>
-</td>
+
+<c:choose>
+	<%-- FILE --%>
+	<c:when test="${!isDir}">
+		<c:choose>
+			<c:when test="${!isEmpty}">
+				<td><a title='${fileSize} bytes'>${sizeNice}</a></td>
+			</c:when>
+			<c:otherwise>
+				<td><em>empty</em></td>
+			</c:otherwise>
+		</c:choose>
+	</c:when>
+	<%-- DIRECTORY --%>
+	<c:otherwise>
+		<td></td>
+	</c:otherwise>
+</c:choose>
