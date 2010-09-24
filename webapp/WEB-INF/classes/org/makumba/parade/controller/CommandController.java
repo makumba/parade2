@@ -1,6 +1,8 @@
 package org.makumba.parade.controller;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -14,43 +16,39 @@ import org.makumba.parade.model.managers.FileManager;
 public class CommandController {
 
     public static Object[] onNewFile(String context, String[] params) {
-
-        Object[] result = fileHandler(context, params, "newFile");
-        return result;
+        return handleFileAction(context, params, "newFile");
     }
 
     public static Object[] onNewDir(String context, String[] params) {
-
-        Object[] result = fileHandler(context, params, "newDir");
-        return result;
+        return handleFileAction(context, params, "newDir");
     }
 
     public static Object[] onDeleteFile(String context, String[] params) {
-        Object[] result = fileHandler(context, params, "deleteFile");
-
-        return result;
+        return handleFileAction(context, params, "deleteFile");
     }
 
-    private static Object[] fileHandler(String context, String[] params, String action) {
-        Object[] obj = new Object[2];
+    public static Object[] onDeleteDir(String context, String[] params) {
+        return handleFileAction(context, params, "deleteDir");
+    }
+
+    private static Object[] handleFileAction(String context, String[] params, String action) {
         String result = new String();
         String filename = params[0];
         String relativePath = params[1];
-
-        FileManager fileMgr = new FileManager();
 
         Session s = null;
         Transaction tx = null;
         boolean success = false;
         Row row = null;
-
         try {
             s = InitServlet.getSessionFactory().openSession();
             tx = s.beginTransaction();
 
             Parade p = (Parade) s.get(Parade.class, new Long(1));
 
-            row = p.getRows().get(context);
+            row = p.getRows().get(context); // FIXME Joao: there should be a getRow method in paraDe
+
+            // FIXME Joao: Should throw an exception
             if (row == null) {
                 tx.commit();
                 s.close();
@@ -74,33 +72,40 @@ public class CommandController {
             }
 
             ParadeJNotifyListener.createFileLock(path + java.io.File.separator + filename);
-
-            // security check - if the path of the file is outisde the path of the row, we deny any action
             try {
+                // security check - if the path of the file is outside the path of the row, we deny any action
                 if ((new java.io.File(path).getCanonicalPath().length() < new java.io.File(absolutePath)
                         .getCanonicalPath().length())) {
                     result = "Error: you can't access files outside of the row";
-                } else if (action.equals("newFile"))
-                    result = fileMgr.newFile(row, path, filename);
-                else if (action.equals("newDir"))
-                    result = fileMgr.newDir(row, path, filename);
-                else if (action.equals("deleteFile"))
-                    result = fileMgr.deleteFile(row, path, filename);
+                }
+                Class<?> clazz = FileManager.class;
+                Method m = clazz.getMethod(action, Row.class, String.class, String.class);
+                result = (String) m.invoke(new FileManager(), row, path, filename);
+                success = result.startsWith("OK");
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                result = "Error: Invalid file action.";
+                e.printStackTrace();
             }
 
-            success = result.startsWith("OK");
             if (success) {
-                // updates the caches
-                // TODO add other caches (e.g. tracker) here
-                FileManager.updateSimpleFileCache(context, path, filename);
-                CVSManager.updateSimpleCvsCache(context, path + java.io.File.separator + filename);
+                updateCaches(context, filename, path);
             }
 
             ParadeJNotifyListener.removeFileLock(path + java.io.File.separator + filename);
-
         } finally {
             tx.commit();
             s.close();
@@ -108,21 +113,22 @@ public class CommandController {
 
         if (success) {
             if (action.equals("newFile"))
-                return res(CommandController.creationFileOK(row.getRowname(), relativePath, filename), success);
+                result = CommandController.creationFileOK(row.getRowname(), relativePath, filename);
             if (action.equals("newDir"))
-                return res(CommandController.creationDirOK(filename), success);
+                result = CommandController.creationDirOK(row.getRowname(), relativePath, filename);
             if (action.equals("deleteFile"))
-                return res(CommandController.deletionFileOK(result.substring(result.indexOf("#") + 1)), success);
-        } else {
-            if (action.equals("newFile"))
-                return res(result, success);
-            if (action.equals("newDir"))
-                return res(result, success);
-            if (action.equals("deleteFile"))
-                return res(result, success);
+                result = CommandController.deletionFileOK(result.substring(result.indexOf("#") + 1));
+            if (action.equals("deleteDir"))
+                result = CommandController.deletionDirectoryOK(filename);
         }
+        return res(result, success);
+    }
 
-        return obj;
+    private static void updateCaches(String context, String filename, String path) {
+        // updates the caches
+        // TODO add other caches (e.g. tracker) here
+        FileManager.updateSimpleFileCache(context, path, filename);
+        CVSManager.updateSimpleCvsCache(context, path + java.io.File.separator + filename);
     }
 
     private static Object[] res(String message, boolean status) {
@@ -138,11 +144,17 @@ public class CommandController {
                 + path + "&file=" + filename + "&editor=codepress'>Edit</a></b>";
     }
 
-    public static String creationDirOK(String filename) {
-        return "New directory " + filename + " created. ";
+    // FIXME
+    public static String creationDirOK(String rowname, String path, String filename) {
+        return "New directory " + filename + " created. " + "<a href='/File.do?op=editFile&context=" + rowname
+                + "&path=" + path + "&file=" + filename + "'>Go back</a></b>";
     }
 
     public static String deletionFileOK(String filename) {
         return "File " + filename + " deleted";
+    }
+
+    public static String deletionDirectoryOK(String filename) {
+        return "Directory " + filename + " deleted";
     }
 }
