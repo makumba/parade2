@@ -67,12 +67,19 @@
     <script language="JavaScript">
 <!--
 function deleteFile(path, name) {
-if(confirm('Are you sure you want to delete the file '+name+' ?'))
-{
-  url='/File.do?context=${context}&path=${pathEncoded}&op=deleteFile&params='+encodeURIComponent(name);
-  location.href=url;
+	if(confirm('Are you sure you want to delete the file '+name+' ?')) {
+  		url='/File.do?op=deleteFile&context=${context}&path=${pathEncoded}&params='+encodeURIComponent(name);
+  		location.href=url;
+	}
 }
+
+function deleteFolder(path, name) {
+	if(confirm('Are you sure you want to delete the directory '+name+' ?')) {
+  		url='/File.do?op=deleteDir&context=${context}&path=${pathEncoded}&params='+encodeURIComponent(name);
+  		location.href=url;
+	}
 }
+
 -->
 </script>
     <th>CVS <a href='/Cvs.do?op=check&context=${context}&params=${path}' target='command' title='CVS check status'><img
