@@ -1,144 +1,205 @@
 <%-- ParaDe file browser view - CVS: displays all the CVS-related information and links in the file browser --%>
 
-<%@page import="org.makumba.parade.view.beans.CVSRevisionBean"%><mak:value expr="f.cvsStatus" var="cvsStatus" />
+<%@page import="org.makumba.parade.view.beans.CVSRevisionBean"%><mak:value
+	expr="f.cvsStatus" var="cvsStatus" />
 <mak:value expr="f.cvsRevision" printVar="cvsRevision" />
-<mak:value expr="f.cvsCheckedOutRevision" printVar="cvsCheckedOutRevision" />
-<c:set var="cvsWebLink"><%=fileBrowserBean.getCVSWebLink(filePath) %></c:set>
-<c:set var="isCvsConflict"><%=fileBrowserBean.isCVSConflict(fileName) %></c:set>
+<mak:value expr="f.cvsCheckedOutRevision"
+	printVar="cvsCheckedOutRevision" />
+<c:set var="cvsWebLink"><%=fileBrowserBean.getCVSWebLink(filePath)%></c:set>
+<c:set var="isCvsConflict"><%=fileBrowserBean.isCVSConflict(fileName)%></c:set>
 
 <%-- CVSRevisionBean Operations --%>
 <c:set var="cvsNewerExists">false</c:set>
 
 <%-- CVS --%>
-<td>
-<c:if test="${empty cvsStatus}">
-  <c:choose>
-    <c:when test="${isDir}">
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=add' title='CVS add dir'><img src='/images/cvs-add-dir.gif' alt='add'></a>
-    </c:when>
-    <c:otherwise>
-      <c:choose>
-        <c:when test="${isCvsConflict}">
-<a title='Backup of your working file, can be deleted once you resolved its conflicts with CVS'>Conflict Backup</a>
-        </c:when>
-        <c:otherwise>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=add' title='CVS add text file'><img src='/images/cvs-add.gif' alt='add'></a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=addbin' title='CVS add binary/image file'><img src='/images/cvs-add-binary.gif' alt='add binary'></a>
-        </c:otherwise>
-      </c:choose>
-    </c:otherwise>
-  </c:choose>
-</c:if>
-
-<c:if test="${not empty cvsStatus}">
-
-<c:choose>
-<c:when test="${cvsNewerExists && cvsStatus != 5}">
-<c:choose>
-<c:when test="${isCvsConflictOnUpdate}">
-<img src='/images/exclamation.gif' title='There is a newer file on the repository with revision ${cvsNewRevision}, and updating will provoke a CVS conflict.'>
-<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile' title='CVS update this file. This will lead to a conflict.'><img src='/images/cvs-update.gif' alt='CVS update this file. This will lead to a conflict.'></a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=overridefile' title='Override local changes and replace with file from repository'><img src='/images/cvs-override.gif' alt='Override local changes and replace with file from repository'></a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
-</c:when>
-<c:otherwise>
-<img src='/images/error.gif' title='There is a newer file on the repository with revision ${cvsNewRevision}. Consider updating this file.'>
-<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile' title='CVS update file from repository'><img src='/images/cvs-update.gif' alt='CVS update'></a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
-</c:otherwise>
-</c:choose>
-</c:when>
-<c:otherwise>
-<c:choose>
-
-<%-- IGNORED --%>
-<c:when test="${cvsStatus == 101}">
-<div class='cvs-ignored'>ignored</div>
-</c:when>
-
-<%-- UNKNOWN --%>
-<c:when test="${cvsStatus == -1}">
-???
-</c:when>
-
-<%-- UP_TO_DATE --%>
-<c:when test="${cvsStatus == 100}">
-<c:choose>
-<c:when test="${isDir}">
-<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
-</c:when>
-<c:otherwise>
-<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
-</c:otherwise>
-</c:choose>
-</c:when>
-
-<%-- LOCALLY_MODIFIED --%>
-<c:when test="${cvsStatus == 1}">
-<c:choose>
-<c:when test="${isDir}">
-<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
-</c:when>
-<c:otherwise>
-<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
-<a target='command' href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}' title='CVS commit (place new file version on repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
-</c:otherwise>
-</c:choose>
-</c:when>
-
-<%-- NEEDS_CHECKOUT --%>
-<c:when test="${cvsStatus == 2}">
-<c:choose>
-<c:when test="${isDir}">
-<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
-</c:when>
-<c:otherwise>
-<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile' title='CVS update file from repository'><img src='/images/cvs-update.gif' alt='CVS checkout'></a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deletefile' title='CVS delete file from repository'><img src='/images/cvs-remove.gif' alt='CVS remove'></a>
-</c:otherwise>
-</c:choose>
-</c:when>
-
-<%-- NEEDS_UPDATE --%>
-<c:when test="${cvsStatus == 3}">
-<c:choose>
-<c:when test="${isDir}">
-<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
-</c:when>
-<c:otherwise>
-<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile' title='CVS update file from repository'><img src='/images/cvs-update.gif' alt='CVS update'></a>
-</c:otherwise>
-</c:choose>
-</c:when>
-
-<%-- ADDED --%>
-<c:when test="${cvsStatus == 4}">
-<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
-<a target='command' href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}' title='CVS commit to repository (will add file to repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
-</c:when>
-
-<%-- DELETED --%>
-<c:when test="${cvsStatus == 5}">
-<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
-<a target='command' href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}' title='CVS commit to repository (will delete file from repository)'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
-</c:when>
-
-<%-- CONFLICT --%>
-<c:when test="${cvsStatus == 6}">
-<a href='${cvsWebLink}' title='CVS log'><b><font color='red'>Conflict</font></b></a>
-<a target='command' href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}' title='CVS commit to repository'><img src='/images/cvs-committ.gif' alt='CVS commit'></a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=overridefile' title='Override local changes and replace with file from repository'><img src='/images/cvs-override.gif' alt='Override local changes and replace with file from repository'></a>
-<a target='command' href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=diff' title='CVS diff (compare with repository version)'><img src='/images/cvs-diff.gif' alt='CVS diff'></a>
-</c:when>
-
-</c:choose>
-</c:otherwise>
-</c:choose>
-</c:if>
-
-</td>
+<td><c:if test="${empty cvsStatus}">
+	<c:choose>
+		<%-- DIRECTORY --%>
+		<c:when test="${isDir}">
+			<a target='command'
+				href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=add'
+				title='CVS add dir'><img src='/images/cvs-add-dir.gif' alt='add'></a>
+		</c:when>
+		<c:otherwise>
+			<%-- FILE --%>
+			<c:choose>
+				<c:when test="${isCvsConflict}">
+					<a
+						title='Backup of your working file, can be deleted once you resolved its conflicts with CVS'>Conflict
+					Backup</a>
+				</c:when>
+				<c:otherwise>
+					<a target='command'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=add'
+						title='CVS add text file'><img src='/images/cvs-add.gif'
+						alt='add'></a>
+					<a target='command'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=addbin'
+						title='CVS add binary/image file'><img
+						src='/images/cvs-add-binary.gif' alt='add binary'></a>
+				</c:otherwise>
+			</c:choose>
+		</c:otherwise>
+	</c:choose>
+</c:if> <c:if test="${not empty cvsStatus}">
+	<c:choose>
+		<c:when test="${cvsNewerExists && cvsStatus != 5}">
+			<c:choose>
+				<c:when test="${isCvsConflictOnUpdate}">
+					<img src='/images/exclamation.gif'
+						title='There is a newer file on the repository with revision ${cvsNewRevision}, and updating will provoke a CVS conflict.'>
+					<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
+					<a target='command'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile'
+						title='CVS update this file. This will lead to a conflict.'><img
+						src='/images/cvs-update.gif'
+						alt='CVS update this file. This will lead to a conflict.'></a>
+					<a target='command'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=overridefile'
+						title='Override local changes and replace with file from repository'><img
+						src='/images/cvs-override.gif'
+						alt='Override local changes and replace with file from repository'></a>
+					<a target='command'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=diff'
+						title='CVS diff (compare with repository version)'><img
+						src='/images/cvs-diff.gif' alt='CVS diff'></a>
+				</c:when>
+				<c:otherwise>
+					<img src='/images/error.gif'
+						title='There is a newer file on the repository with revision ${cvsNewRevision}. Consider updating this file.'>
+					<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
+					<a target='command'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile'
+						title='CVS update file from repository'><img
+						src='/images/cvs-update.gif' alt='CVS update'></a>
+					<a target='command'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=diff'
+						title='CVS diff (compare with repository version)'><img
+						src='/images/cvs-diff.gif' alt='CVS diff'></a>
+				</c:otherwise>
+			</c:choose>
+		</c:when>
+		<c:otherwise>
+			<c:choose>
+				<%-- IGNORED --%>
+				<c:when test="${cvsStatus == 101}">
+					<div class='cvs-ignored'>ignored</div>
+				</c:when>
+				<%-- UNKNOWN --%>
+				<c:when test="${cvsStatus == -1}">
+					???
+				</c:when>
+				<%-- UP_TO_DATE --%>
+				<c:when test="${cvsStatus == 100}">
+					<c:choose>
+						<c:when test="${isDir}">
+							<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
+							<a target='command'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deleteDirectory'
+								title='CVS delete directory from repository'><img
+								src='/images/cvs-remove.gif' alt='CVS remove'></a>
+						</c:when>
+						<c:otherwise>
+							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
+						</c:otherwise>
+					</c:choose>
+				</c:when>
+				<%-- LOCALLY_MODIFIED --%>
+				<c:when test="${cvsStatus == 1}">
+					<c:choose>
+						<c:when test="${isDir}">
+							<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
+						</c:when>
+						<c:otherwise>
+							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
+							<a target='command'
+								href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}'
+								title='CVS commit (place new file version on repository)'><img
+								src='/images/cvs-committ.gif' alt='CVS commit'></a>
+							<a target='command'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=diff'
+								title='CVS diff (compare with repository version)'><img
+								src='/images/cvs-diff.gif' alt='CVS diff'></a>
+						</c:otherwise>
+					</c:choose>
+				</c:when>
+				<%-- NEEDS_CHECKOUT --%>
+				<c:when test="${cvsStatus == 2}">
+					<c:choose>
+						<c:when test="${isDir}">
+							<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
+							<a target='command'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deleteDirectory'
+								title='CVS delete directory from repository'><img
+								src='/images/cvs-remove.gif' alt='CVS remove'></a>
+						</c:when>
+						<c:otherwise>
+							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
+							<a target='command'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile'
+								title='CVS update file from repository'><img
+								src='/images/cvs-update.gif' alt='CVS checkout'></a>
+							<a target='command'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deletefile'
+								title='CVS delete file from repository'><img
+								src='/images/cvs-remove.gif' alt='CVS remove'></a>
+						</c:otherwise>
+					</c:choose>
+				</c:when>
+				<%-- NEEDS_UPDATE --%>
+				<c:when test="${cvsStatus == 3}">
+					<c:choose>
+						<c:when test="${isDir}">
+							<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
+							<a target='command'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deleteDirectory'
+								title='CVS delete directory from repository'><img
+								src='/images/cvs-remove.gif' alt='CVS remove'></a>
+						</c:when>
+						<c:otherwise>
+							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
+							<a target='command'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile'
+								title='CVS update file from repository'><img
+								src='/images/cvs-update.gif' alt='CVS update'></a>
+						</c:otherwise>
+					</c:choose>
+				</c:when>
+				<%-- ADDED --%>
+				<c:when test="${cvsStatus == 4}">
+					<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
+					<a target='command'
+						href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}'
+						title='CVS commit to repository (will add file to repository)'><img
+						src='/images/cvs-committ.gif' alt='CVS commit'></a>
+				</c:when>
+				<%-- DELETED --%>
+				<c:when test="${cvsStatus == 5}">
+					<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
+					<a target='command'
+						href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}'
+						title='CVS commit to repository (will delete file from repository)'><img
+						src='/images/cvs-committ.gif' alt='CVS commit'></a>
+				</c:when>
+				<%-- CONFLICT --%>
+				<c:when test="${cvsStatus == 6}">
+					<a href='${cvsWebLink}' title='CVS log'><b><font
+						color='red'>Conflict</font></b></a>
+					<a target='command'
+						href='/commandView/cvsCommit.jsp?context=${context}&path=${path}&file=${encodedURL}'
+						title='CVS commit to repository'><img
+						src='/images/cvs-committ.gif' alt='CVS commit'></a>
+					<a target='command'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=overridefile'
+						title='Override local changes and replace with file from repository'><img
+						src='/images/cvs-override.gif'
+						alt='Override local changes and replace with file from repository'></a>
+					<a target='command'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=diff'
+						title='CVS diff (compare with repository version)'><img
+						src='/images/cvs-diff.gif' alt='CVS diff'></a>
+				</c:when>
+			</c:choose>
+		</c:otherwise>
+	</c:choose>
+</c:if></td>
