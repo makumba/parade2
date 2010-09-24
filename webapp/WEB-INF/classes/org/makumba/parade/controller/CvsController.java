@@ -290,6 +290,42 @@ public class CvsController {
 
         return res;
     }
+    
+    /**
+     * 
+     * @author Joao Andrade
+     * @param context
+     * @param absolutePath
+     * @param absoluteFilePath
+     * @return
+     */
+    public static Object[] onDeleteDirectory(String context, String absolutePath, String absoluteFilePath) {
+        java.io.File f = new java.io.File(absoluteFilePath);
+        java.io.File p = new java.io.File(absolutePath);
+
+        Vector<String> cmd = new Vector<String>();
+        cmd.add("cvs");
+        cmd.add("update");
+        cmd.add("-P");
+        cmd.add(f.getName());
+
+        StringWriter result = new StringWriter();
+        PrintWriter out = new PrintWriter(result);
+
+        ParadeJNotifyListener.createFileLock(absoluteFilePath);
+        Execute.exec(cmd, p, getPrintWriterCVS(out));
+        FileManager.updateSimpleFileCache(context, absolutePath, f.getName());
+        CVSManager.updateSimpleCvsCache(context, absoluteFilePath);
+        ParadeJNotifyListener.removeFileLock(absoluteFilePath);
+        
+        // cvs recursive update modifies state of file and of cvs data, recursively
+        FileManager.updateDirectoryCache(context, absolutePath, false);
+        CVSManager.updateCvsCache(context, absolutePath, false);
+
+        Object[] res = { result.toString(), new Boolean(true) };
+
+        return res;
+    }
 
     /* displays output with colors */
     public static PrintWriter getPrintWriterCVS(PrintWriter out) {
