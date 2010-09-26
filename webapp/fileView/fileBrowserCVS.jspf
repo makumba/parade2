@@ -94,10 +94,6 @@
 					<c:choose>
 						<c:when test="${isDir}">
 							<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
-							<a target='command'
-								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deleteDirectory'
-								title='CVS delete directory from repository'><img
-								src='/images/cvs-remove.gif' alt='CVS remove'></a>
 						</c:when>
 						<c:otherwise>
 							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
@@ -109,6 +105,10 @@
 					<c:choose>
 						<c:when test="${isDir}">
 							<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
+							<a target='command'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deleteDirectory'
+								title='CVS delete directory from repository'><img
+								src='/images/cvs-remove.gif' alt='CVS remove'></a>
 						</c:when>
 						<c:otherwise>
 							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
@@ -128,10 +128,6 @@
 					<c:choose>
 						<c:when test="${isDir}">
 							<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
-							<a target='command'
-								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deleteDirectory'
-								title='CVS delete directory from repository'><img
-								src='/images/cvs-remove.gif' alt='CVS remove'></a>
 						</c:when>
 						<c:otherwise>
 							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
@@ -151,10 +147,6 @@
 					<c:choose>
 						<c:when test="${isDir}">
 							<a href='${cvsWebLink}' title='CVS log'>(dir)</a>
-							<a target='command'
-								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deleteDirectory'
-								title='CVS delete directory from repository'><img
-								src='/images/cvs-remove.gif' alt='CVS remove'></a>
 						</c:when>
 						<c:otherwise>
 							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
