@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -290,15 +291,34 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
      * @return
      */
     public String deleteDir(Row r, String path, String entry) {
-        java.io.File f = new java.io.File(path + java.io.File.separator + entry);
-        if (f.list().length > 0) {
-            return "Error while trying to delete directory " + f.getName() + "</br>" + "The directory must be empty.";
-        } else if (f.delete()) {
-            return "OK#" + f.getName();
+        String fileName = path + java.io.File.separator + entry;
+        java.io.File f = new java.io.File(fileName);
+        String result = null;
+        int nFiles = f.list().length;
+
+        // FIXME a bit of an hack, but until non-empty folder deletion gets implemented this will do
+        if (Arrays.asList(f.list()).contains("CVS") && nFiles == 1) {
+            String cvsFolderName = fileName + java.io.File.separator + "CVS";
+            java.io.File cvsFolder = new java.io.File(cvsFolderName);
+            for (String cvsFileName: cvsFolder.list()) {
+                java.io.File cvsFile = new java.io.File(cvsFolderName + java.io.File.separator + cvsFileName);
+                cvsFile.delete();
+            }
+            cvsFolder.delete();
+            // we assume something went wrong
+            result = "Error while trying to delete directory " + f.getName() + "</br>"
+            + "The directory must be empty.";
         }
-        logger.severe("Error while trying to delete directory " + f.getAbsolutePath() + " " + "\n" + "Reason: exists: "
-                + f.exists() + ", canRead: " + f.canRead() + ", canWrite: " + f.canWrite());
-        return "Error while trying to delete directory " + f.getName();
+        // end of hack
+        if (f.delete()) {
+            // nothing went wrong, the result gets updated
+            result = "OK#" + f.getName();
+        } else {
+            result = "Error while trying to delete directory " + f.getName();
+            logger.severe("Error while trying to delete directory " + f.getAbsolutePath() + " " + "\n"
+                    + "Reason: exists: " + f.exists() + ", canRead: " + f.canRead() + ", canWrite: " + f.canWrite());
+        }
+        return result;
     }
 
     public String deleteFile(Row r, String path, String entry) {
