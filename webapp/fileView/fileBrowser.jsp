@@ -64,7 +64,7 @@
     <th><a href='/fileView/fileBrowser.jsp?context=${context}&path=${path}&order=age' title='Order by age'>Age</a></th>
     <th><a href='/fileView/fileBrowser.jsp?context=${context}&path=${path}&order=size' title='Order by size'>Size</a></th>
 
-    <script language="JavaScript">
+			<script language="JavaScript">
 <!--
 function deleteFile(path, name) {
 	if(confirm('Are you sure you want to delete the file '+name+' ?')) {
@@ -117,6 +117,7 @@ function deleteFolder(path, name) {
     <mak:value expr="f.isDir" var="isDir"/>
     <mak:value expr="f.name" printVar="fileName"/>
     <mak:value expr="f.path" var="filePath"/>
+    <mak:value expr="f.onDisk" var="isOnDisk" />
     <mak:value expr="f.fileURL()" printVar="fileURL"/>
     <c:set var="relativeFilePath"><%=fileBrowserBean.getPath(fileName) %></c:set>
     <c:set var="encodedURL"><%=fileBrowserBean.encode(fileURL) %></c:set>

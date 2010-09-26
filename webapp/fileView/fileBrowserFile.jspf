@@ -1,6 +1,5 @@
 <%-- ParaDe file browser view - file: displays all the file-related information and links --%>
 <mak:value expr="f.date" var="fileDate" />
-<mak:value expr="f.onDisk" var="isOnDisk" />
 <mak:value expr="f.size" var="fileSize" />
 <c:set var="fileLinkAddress"><%=fileBrowserBean.getFileLinkAddress(fileName)%></c:set>
 <c:set var="encodedName"><%=fileBrowserBean.encode(fileName)%></c:set>
