@@ -1,10 +1,13 @@
 <%-- ParaDe file browser view - file: displays all the file-related information and links --%>
+<%@page import="org.makumba.parade.tools.DisplayFormatter"%>
+<jsp:useBean id="now" class="java.util.Date" />
+
 <mak:value expr="f.date" var="fileDate" />
 <mak:value expr="f.size" var="fileSize" />
-<c:set var="fileLinkAddress"><%=fileBrowserBean.getFileLinkAddress(fileName)%></c:set>
-<c:set var="encodedName"><%=fileBrowserBean.encode(fileName)%></c:set>
+<c:set var="fileLinkAddress"><%=fileBrowser.getFileLinkAddress(fileName)%></c:set>
+<c:set var="encodedName"><%=fileBrowser.encode(fileName)%></c:set>
 <%
-	pageContext.setAttribute("fileAge", (new Date()).getTime()
+	pageContext.setAttribute("fileAge", now.getTime()
 			- (Long) fileDate);
 %>
 <c:set var="ageNice"><%=DisplayFormatter.readableTime((Long) pageContext
@@ -14,11 +17,26 @@
 	pageContext.setAttribute("isEmpty", ((Long) fileSize) < 0l);
 %>
 
+<script language="JavaScript">
+<!--
+function deleteFile(path, name) {
+	if(confirm('Are you sure you want to delete the file '+name+' ?')) {
+  		url='/File.do?op=deleteFile&context=${context}&path=${pathEncoded}&params='+encodeURIComponent(name);
+  		location.href=url;
+	}
+}
+function deleteFolder(path, name) {
+	if(confirm('Are you sure you want to delete the directory '+name+' ?')) {
+  		url='/File.do?op=deleteDir&context=${context}&path=${pathEncoded}&params='+encodeURIComponent(name);
+  		location.href=url;
+	}
+}
+-->
+</script>
 <c:choose>
 	<%-- FILE --%>
 	<c:when test="${!isDir}">
-		<td><img
-			src='/images/<%=fileBrowserBean.getFileIcon(fileName)%>.gif'></td>
+		<td><img src='/images/<%=fileBrowser.getFileIcon(fileName)%>.gif'></td>
 		<td><c:choose>
 			<c:when test="${fileLinkAddress != ''}">
 				<a href='${fileLinkAddress}'>${fileName}</a>
@@ -33,7 +51,6 @@
 			href='/fileView/fileBrowser.jsp?context=${context}&path=${relativeFilePath}'>${fileName}</a></td>
 	</c:otherwise>
 </c:choose>
-
 <c:choose>
 	<c:when test="${isOnDisk}">
 		<c:choose>
@@ -60,7 +77,6 @@
 		<td></td>
 	</c:otherwise>
 </c:choose>
-
 <c:choose>
 	<%-- FILE --%>
 	<c:when test="${!isDir}">
@@ -71,7 +87,6 @@
 		<td></td>
 	</c:otherwise>
 </c:choose>
-
 <c:choose>
 	<%-- FILE --%>
 	<c:when test="${!isDir}">
