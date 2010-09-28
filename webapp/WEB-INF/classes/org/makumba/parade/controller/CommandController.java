@@ -44,10 +44,10 @@ public class CommandController {
             s = InitServlet.getSessionFactory().openSession();
             tx = s.beginTransaction();
 
+            // FIXME refactor: start of separate function
             Parade p = (Parade) s.get(Parade.class, new Long(1));
-
-            row = p.getRows().get(context); // FIXME Joao: there should be a getRow method in paraDe
-
+            // FIXME Joao: there should be a getRow method in paraDe
+            row = p.getRows().get(context); 
             // FIXME Joao: Should throw an exception
             if (row == null) {
                 tx.commit();
@@ -55,9 +55,8 @@ public class CommandController {
                 return res("Unknown context " + context, false);
             }
 
-            String path = new String();
+            String path;
             String absolutePath = row.getRowpath();
-
             if (relativePath == null || relativePath == "")
                 path = absolutePath;
             if (relativePath.equals("/"))
@@ -70,6 +69,7 @@ public class CommandController {
             } else {
                 path = absolutePath;
             }
+            // end of separate function
 
             ParadeJNotifyListener.createFileLock(path + java.io.File.separator + filename);
             try {
@@ -110,16 +110,16 @@ public class CommandController {
             tx.commit();
             s.close();
         }
-
+ 
         if (success) {
             if (action.equals("newFile"))
-                result = CommandController.creationFileOK(row.getRowname(), relativePath, filename);
+                result = CommandController.newFileOK(filename);
             if (action.equals("newDir"))
-                result = CommandController.creationDirOK(row.getRowname(), relativePath, filename);
+                result = CommandController.newDirOK(filename);
             if (action.equals("deleteFile"))
-                result = CommandController.deletionFileOK(result.substring(result.indexOf("#") + 1));
+                result = CommandController.deleteFileOK(result.substring(result.indexOf("#") + 1));
             if (action.equals("deleteDir"))
-                result = CommandController.deletionDirectoryOK(filename);
+                result = CommandController.deleteDirOK(filename);
         }
         return res(result, success);
     }
@@ -138,23 +138,21 @@ public class CommandController {
         return obj;
     }
 
-    // TODO move this somewhere else
-    public static String creationFileOK(String rowname, String path, String filename) {
-        return "New file " + filename + " created. " + "<a href='/File.do?op=editFile&context=" + rowname + "&path="
-                + path + "&file=" + filename + "&editor=codepress'>Edit</a></b>";
+    // TODO move all this somewhere else
+    public static String newFileOK(String filename) {
+        return "New file " + filename + " created.";
     }
 
-    // FIXME
-    public static String creationDirOK(String rowname, String path, String filename) {
-        return "New directory " + filename + " created. " + "<a href='/File.do?op=editFile&context=" + rowname
-                + "&path=" + path + "&file=" + filename + "'>Go back</a></b>";
+    public static String newDirOK(String filename) {
+        return "New directory " + filename + " created.";
     }
 
-    public static String deletionFileOK(String filename) {
+    public static String deleteFileOK(String filename) {
         return "File " + filename + " deleted";
     }
 
-    public static String deletionDirectoryOK(String filename) {
+    public static String deleteDirOK(String filename) {
         return "Directory " + filename + " deleted";
     }
+    // end of move all this somewhere else
 }
