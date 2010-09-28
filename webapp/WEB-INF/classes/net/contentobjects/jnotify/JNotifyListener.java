@@ -29,14 +29,13 @@
  * Author : Omry Yadan
  ******************************************************************************/
 
+
 package net.contentobjects.jnotify;
 
-public interface JNotifyListener {
-    public void fileCreated(int wd, String rootPath, String name);
-
-    public void fileDeleted(int wd, String rootPath, String name);
-
-    public void fileModified(int wd, String rootPath, String name);
-
-    public void fileRenamed(int wd, String rootPath, String oldName, String newName);
+public interface JNotifyListener
+{
+	public void fileCreated(int wd, String rootPath, String name);
+	public void fileDeleted(int wd, String rootPath, String name);
+	public void fileModified(int wd, String rootPath, String name);
+	public void fileRenamed(int wd, String rootPath, String oldName, String newName);
 }
