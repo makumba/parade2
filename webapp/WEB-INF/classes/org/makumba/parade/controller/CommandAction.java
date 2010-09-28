@@ -14,42 +14,33 @@ public class CommandAction extends DispatchAction {
             HttpServletResponse response) throws Exception {
 
         String context = request.getParameter("context");
-        String op = request.getParameter("op");
-        String[] params = request.getParameterValues("params");
-        String path = params[1];
+        String path = request.getParameter("path");
+        String[] params = {request.getParameter("params"), path};
 
-        if (op != null && op.startsWith("newFile")) {
-            Object[] result = CommandController.onNewFile(context, params);
-            request.setAttribute("result", result[0]);
-            request.setAttribute("success", result[1]);
-            request.setAttribute("context", context);
-            request.setAttribute("path", path);
-            request.setAttribute("display", "file");
+        Object[] result = CommandController.onNewFile(context, params);
+        request.setAttribute("result", (String) result[0]);
+        request.setAttribute("success", (Boolean) result[1]);
+        request.setAttribute("context", context);
+        request.setAttribute("path", path);
+        request.setAttribute("display", "file");
 
-        }
-
-        return (mapping.findForward("files"));
-
+        return mapping.findForward("files");
     }
 
     public ActionForward newDir(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
         String context = request.getParameter("context");
-        String op = request.getParameter("op");
-        String[] params = request.getParameterValues("params");
-        String path = params[1];
+        String path = request.getParameter("path");
+        String[] params = {request.getParameter("params"), path};
 
-        if (op != null && op.startsWith("newDir")) {
-            Object[] result = CommandController.onNewDir(context, params);
-            request.setAttribute("result", result[0]);
-            request.setAttribute("success", result[1]);
-            request.setAttribute("context", context);
-            request.setAttribute("path", path);
-            request.setAttribute("display", "file");
-        }
+        Object[] result = CommandController.onNewDir(context, params);
+        request.setAttribute("result", (String) result[0]);
+        request.setAttribute("success", (Boolean) result[1]);
+        request.setAttribute("context", context);
+        request.setAttribute("path", path);
+        request.setAttribute("display", "file");
 
-        return (mapping.findForward("files"));
-
+        return mapping.findForward("files");
     }
 }
