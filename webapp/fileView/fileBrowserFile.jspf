@@ -7,15 +7,13 @@
 <c:set var="fileLinkAddress"><%=fileBrowser.getFileLinkAddress(fileName)%></c:set>
 <c:set var="encodedName"><%=fileBrowser.encode(fileName)%></c:set>
 <%
-	pageContext.setAttribute("fileAge", now.getTime()
-			- (Long) fileDate);
+	pageContext
+			.setAttribute("fileAge", now.getTime() - (Long) fileDate);
+	pageContext.setAttribute("isEmpty", ((Long) fileSize) < 0l);
 %>
 <c:set var="ageNice"><%=DisplayFormatter.readableTime((Long) pageContext
 						.getAttribute("fileAge"))%></c:set>
 <c:set var="sizeNice"><%=DisplayFormatter.readableBytes((Long) fileSize)%></c:set>
-<%
-	pageContext.setAttribute("isEmpty", ((Long) fileSize) < 0l);
-%>
 
 <script language="JavaScript">
 <!--
