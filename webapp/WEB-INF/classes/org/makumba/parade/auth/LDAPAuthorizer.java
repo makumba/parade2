@@ -129,7 +129,7 @@ public class LDAPAuthorizer implements DirectoryAuthorizer {
             displayName = attributeSet.getAttribute("displayName").getStringValue();
             givenName = attributeSet.getAttribute("givenName").getStringValue();
             employeeType = attributeSet.getAttribute("sn").getStringValue();
-            mail = attributeSet.getAttribute("mail").getStringValue();
+   //FIXME uncomment         mail = attributeSet.getAttribute("mail").getStringValue();
             sn = attributeSet.getAttribute("sn").getStringValue();
 
             String[] cns = attributeSet.getAttribute("cn").getStringValueArray();
