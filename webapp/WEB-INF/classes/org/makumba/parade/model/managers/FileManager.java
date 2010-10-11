@@ -2,6 +2,8 @@ package org.makumba.parade.model.managers;
 
 import java.io.BufferedWriter;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,6 +24,7 @@ import org.makumba.parade.model.Row;
 import org.makumba.parade.model.interfaces.FileRefresher;
 import org.makumba.parade.model.interfaces.ParadeManager;
 import org.makumba.parade.model.interfaces.RowRefresher;
+import org.makumba.parade.tools.ParadeException;
 import org.makumba.parade.tools.ParadeLogger;
 import org.makumba.parade.tools.SimpleFileFilter;
 import org.makumba.parade.tools.WordCount;
@@ -41,7 +44,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
     public void softRefresh(Row row) {
         // TODO Auto-generated method stub
-
     }
 
     /*
@@ -191,7 +193,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         File fileData = null;
         String path = null;
         try {
-            path = (file.getCanonicalPath());
+            path = file.getCanonicalPath();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -248,39 +250,68 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
 
     public void newRow(String name, Row r, Map<String, String> m) {
         // TODO Auto-generated method stub
-
     }
 
-    public String newFile(Row r, String path, String entry) {
-        String absolutePath = (path + "/" + entry + "/").replace('/', java.io.File.separatorChar);
-        java.io.File f = new java.io.File(absolutePath);
-        if (f.exists() && f.isFile())
-            return "This file already exists";
-        boolean success = false;
+    /**
+     * @author Joao Andrade
+     * @param action
+     * @param context
+     * @param fullname
+     * @return
+     */
+    // TODO Joao - refactor
+    public static String check(String action, String context, String fullname) {
+        String result = null;
+        java.io.File f = new java.io.File(fullname);
+        if (!isInsideRow(context, fullname)) {
+            result = "Error: you can't access files outside of the row";
+        } else if (action.startsWith("new") && f.exists()) {
+            result = "Error: a file with that name already exists.";
+        } else if (action.startsWith("delete") && !f.exists()) {
+            result = "Error: a file with that name doesn't exist.";
+        }
+        return result;
+    }
+
+    public static String newFile(String fullname) {
+        String result = null;
+        java.io.File f = new java.io.File(fullname);
         try {
-            success = f.createNewFile();
+            if (f.createNewFile()) {
+                result = "New file " + f.getName() + " created.";
+            } else {
+                result = "Error: couldn't create file " + f.getAbsolutePath();
+            }
         } catch (IOException e) {
+            result = "Error: couldn't write. Make sure ParaDe has the security rights to write on the filesystem.";
             e.printStackTrace();
         }
-        if (success) {
-            return "OK#" + f.getName();
-        }
-        return "Error while trying to create file " + entry;
+        return result;
     }
 
-    public String newDir(Row r, String path, String entry) {
-        String absolutePath = (path + "/" + entry + "/").replace('/', java.io.File.separatorChar);
-        java.io.File f = new java.io.File(absolutePath);
-        if (f.exists() && f.isDirectory())
-            return "This directory already exists";
-
-        boolean success = f.mkdir();
-
-        if (success) {
-            return "OK#" + f.getName();
+    public static String newDir(String fullname) {
+        String result = null;
+        java.io.File f = new java.io.File(fullname);
+        if (f.mkdir()) {
+            result = "New directory " + f.getName() + " created.";
+        } else {
+            result = "Error: couldn't create directory " + f.getAbsolutePath()
+                    + ". Make sure ParaDe has the security rights to write on the filesystem.";
         }
-        return "Error while trying to create directory " + f.getAbsolutePath()
-                + ". Make sure ParaDe has the security rights to write on the filesystem.";
+        return result;
+    }
+
+    public static String deleteFile(String fullname) {
+        String result = null;
+        java.io.File f = new java.io.File(fullname);
+        if (f.delete()) {
+            result = "File " + f.getName() + " deleted";
+        } else {
+            logger.severe("Error: couldn't delete file " + f.getAbsolutePath() + " " + "\n" + "Reason: exists: "
+                    + f.exists() + ", canRead: " + f.canRead() + ", canWrite: " + f.canWrite());
+            result = "Error while trying to delete file " + f.getName() + ".";
+        }
+        return result;
     }
 
     /**
@@ -290,103 +321,161 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
      * @param entry
      * @return
      */
-    public String deleteDir(Row r, String path, String entry) {
-        String fileName = path + java.io.File.separator + entry;
-        java.io.File f = new java.io.File(fileName);
+    public static String deleteDir(String fullname) {
         String result = null;
+        java.io.File f = new java.io.File(fullname);
+        String reason = "</br> ";
         int nFiles = f.list().length;
 
-        // FIXME a bit of an hack, but until non-empty folder deletion gets implemented this will do
+        // FIXME Joao - a bit of an hack, but until non-empty folder deletion gets implemented this will do
         if (Arrays.asList(f.list()).contains("CVS") && nFiles == 1) {
-            String cvsFolderName = fileName + java.io.File.separator + "CVS";
+            String cvsFolderName = f.getPath() + java.io.File.separator + "CVS";
             java.io.File cvsFolder = new java.io.File(cvsFolderName);
-            for (String cvsFileName: cvsFolder.list()) {
+            for (String cvsFileName : cvsFolder.list()) {
                 java.io.File cvsFile = new java.io.File(cvsFolderName + java.io.File.separator + cvsFileName);
                 cvsFile.delete();
             }
             cvsFolder.delete();
-            // we assume something went wrong
-            result = "Error while trying to delete directory " + f.getName() + "</br>"
-            + "The directory must be empty.";
+        } else if (nFiles > 0) {
+            reason += "The directory must be empty.";
         }
         // end of hack
+
         if (f.delete()) {
-            // nothing went wrong, the result gets updated
-            result = "OK#" + f.getName();
+            result = "Directory " + f.getName() + " deleted";
         } else {
-            result = "Error while trying to delete directory " + f.getName();
-            logger.severe("Error while trying to delete directory " + f.getAbsolutePath() + " " + "\n"
-                    + "Reason: exists: " + f.exists() + ", canRead: " + f.canRead() + ", canWrite: " + f.canWrite());
+            logger.severe("Error couldn't delete directory " + f.getAbsolutePath() + " " + "\n" + "Reason: exists: "
+                    + f.exists() + ", canRead: " + f.canRead() + ", canWrite: " + f.canWrite());
+            result = "Error while trying to delete directory " + f.getName() + ".";
+        }
+        return result + reason;
+    }
+
+    /**
+     * @author Joao Andrade
+     * @param f
+     * @return
+     */
+    // TODO review the code
+    public static String saveFile(String fullname, String content) {
+        String result = null;
+        java.io.File f = new java.io.File(fullname);
+
+        if (content == null) {
+            throw new ParadeException("Cannot save file: ParaDe did not receive any contents from your browser."
+                    + " If you use the Codepress editor, make sure that JavaScript is enabled"
+                    + " and try reloading the edit page.");
+        }
+
+        // we save
+        if (f.getParent() != null) {
+            java.io.File d = new java.io.File(f.getParent());
+            d.mkdirs();
+        }
+        try {
+            f.createNewFile();
+
+            // FIXME fishy windows line-break code. see if that doesn't cause trouble
+            boolean windows = System.getProperty("line.separator").length() > 1;
+            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(f)));
+            for (int i = 0; i < content.length(); i++) {
+                if (windows || content.charAt(i) != '\r')
+                    pw.print(content.charAt(i));
+            }
+            pw.close();
+            result = "File " + f.getName() + " saved successfully.";
+        } catch (IOException e) {
+            result = "Error while trying to save file " + f.getName() + ".";
+            logger.severe("Error while creating file:\n" + e.getMessage());
         }
         return result;
     }
 
-    public String deleteFile(Row r, String path, String entry) {
-        java.io.File f = new java.io.File(path + java.io.File.separator + entry);
-        boolean success = f.delete();
-        if (success) {
-            return "OK#" + f.getName();
+    public static String uploadFile(String fullname, byte[] content) {
+        String result = null;
+
+        try {
+            FileOutputStream fileOut = new FileOutputStream(fullname);
+            fileOut.write(content);
+            fileOut.flush();
+            fileOut.close();
+            result = "File " + fullname + " uploaded successfully";
+        } catch (FileNotFoundException e) {
+            result = "Error: File " + fullname + " wasn't found.";
+        } catch (IOException e) {
+            result = "Error: File " + fullname + " couldn't be written.";
         }
-        logger.severe("Error while trying to delete file " + f.getAbsolutePath() + " " + "\n" + "Reason: exists: "
-                + f.exists() + ", canRead: " + f.canRead() + ", canWrite: " + f.canWrite());
-        return "Error while trying to delete file " + f.getName();
+        return result;
     }
-
-    public void fileRefresh(Row row, String absolutePath) {
-        java.io.File f = new java.io.File(absolutePath);
-        File cacheFile = null;
-        if (!f.exists() && (cacheFile = row.getFiles().get(absolutePath)) != null) {
+    
+    public void fileRefresh(Row row, String fullname) {
+        java.io.File f = new java.io.File(fullname);
+        boolean isCached = row.getFiles().get(fullname) != null;
+        if (!f.exists() && isCached) {
             // file was deleted but cache still exists
-            removeFileCache(cacheFile);
-            return;
-        } else if (!f.exists() && row.getFiles().get(absolutePath) == null) {
-            return;
+            removeFileCache(row.getFiles().get(fullname));
+        } else if (f.exists() && !isCached) {
+            // file exists but it isn't cached
+            cacheFile(row, f, true);
+        } else {
+            // refresh file information
+            cacheFile(row, f, true);
         }
-        cacheFile(row, f, true);
-
     }
 
     public void removeFileCache(Row r, String path, String entry) {
         File cacheFile = r.getFiles().get(path + java.io.File.separator + entry);
-        if (cacheFile == null)
-            return;
-
-        removeFileCache(cacheFile);
+        if (cacheFile != null) {
+            removeFileCache(cacheFile);
+        }
     }
 
-    public void removeFileCache(File file) {
+    public void removeFileCache(File f) {
         // if there is CVS data for this file we keep it and set is as virtual
-        if (file.getCvsStatus() != null) {
-            file.setOnDisk(false);
-        } else
-            file.getRow().getFiles().remove(file.getPath());
+        if (f.getCvsStatus() != null) {
+            f.setOnDisk(false);
+        } else {
+            f.getRow().getFiles().remove(f.getPath());
+        }
+    }
+    
+    /**
+     * @author Joao Andrade
+     * @param context
+     * @param fullname
+     */
+    public static void updateSimpleCaches(String context, String fullname) {
+        // updates the caches
+        // TODO add other caches (e.g. tracker) here
+        FileManager.updateSimpleFileCache(context, fullname);
+        CVSManager.updateSimpleCvsCache(context, fullname);
     }
 
-    public static void updateSimpleFileCache(String context, String path, String filename) {
-        logger.fine("Refreshing file cache for file " + filename + " in path " + path + " of row " + context);
+    public static void updateSimpleFileCache(String context, String fullname) {
+        logger.fine("Refreshing file cache for file " + fullname + " of row " + context);
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         Row r = Row.getRow(p, context);
         Transaction tx = s.beginTransaction();
         FileManager fileMgr = new FileManager();
-        fileMgr.fileRefresh(r, path + java.io.File.separator + filename);
+        fileMgr.fileRefresh(r, fullname);
         tx.commit();
         s.close();
-        logger.fine("Finished refreshing file cache for file " + filename + " in path " + path + " of row " + context);
+        logger.fine("Finished refreshing file cache for file " + fullname + " of row " + context);
     }
 
     /* updates the File cache of a directory */
     public static void updateDirectoryCache(String context, String path, boolean local) {
-        FileManager fileMgr = new FileManager();
+        logger.fine("Refreshing file cache for directory " + path + " of row " + context);
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
         Row r = Row.getRow(p, context);
         Transaction tx = s.beginTransaction();
-
+        FileManager fileMgr = new FileManager();
         fileMgr.directoryRefresh(r, path, local);
-
         tx.commit();
         s.close();
+        logger.fine("Finished refreshing file cache for directory " + path + " of row " + context);
     }
 
     public static void fileWrite(java.io.File file, String content) throws IOException {
@@ -405,5 +494,39 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
                 }
             }
         }
+    }
+
+    /**
+     * @author Joao Andrade
+     * @param context
+     * @param relativePath
+     * @param filename
+     * @return
+     */
+    public static String getFullname(String context, String relativePath, String filename) {
+        String path = Parade.constructAbsolutePath(context, relativePath);
+        return (path + "/" + filename).replace('/', java.io.File.separatorChar);
+    }
+
+    public static boolean isInsideRow(String rowName, String path) {
+        // FIXME Joao - this idiom appears a lot on paraDe and should be simplified
+        Session s = InitServlet.getSessionFactory().openSession();
+        Parade p = (Parade) s.get(Parade.class, new Long(1));
+        Row row = p.getRow(rowName);
+        s.close();
+        // end of idiom
+
+        String rowPath = row.getRowpath();
+        try {
+            // security check - if the path of the file is outside the path of the row, we deny any action
+            if ((new java.io.File(path).getCanonicalPath().length() < new java.io.File(rowPath).getCanonicalPath()
+                    .length())) {
+                return false;
+            }
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        return true;
     }
 }
