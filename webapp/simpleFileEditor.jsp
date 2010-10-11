@@ -5,38 +5,40 @@
 
 <c:set var="context" value="${param.context}" />
 <c:if test="${empty context}">
-  <c:set var="context" value="${requestScope.context}" />
+	<c:set var="context" value="${requestScope.context}" />
 </c:if>
 
 <c:set var="path" value="${param.path}" />
 <c:if test="${empty path}">
-  <c:set var="path" value="${requestScope.path}" />
+	<c:set var="path" value="${requestScope.path}" />
 </c:if>
 
 <c:set var="file" value="${param.file}" />
 <c:if test="${empty file}">
-  <c:set var="file" value="${requestScope.file}" />
+	<c:set var="file" value="${requestScope.file}" />
 </c:if>
 
 <c:set var="source" value="${param.source}" />
 <c:if test="${empty source}">
-  <c:set var="source" value="${requestScope.source}" />
+	<c:set var="source" value="${requestScope.source}" />
 </c:if>
 
-<jsp:useBean id="fileEditorBean" class="org.makumba.parade.view.beans.FileEditorBean" />
-<jsp:setProperty name="fileEditorBean" property="context" value="${context}"/>
-<jsp:setProperty name="fileEditorBean" property="path" value="${path}"/>
-<jsp:setProperty name="fileEditorBean" property="file" value="${file}"/>
-<jsp:setProperty name="fileEditorBean" property="source" value="${source}"/>
-
-
-
+<jsp:useBean id="fileEditorBean"
+	class="org.makumba.parade.view.beans.FileEditorBean" />
+<jsp:setProperty name="fileEditorBean" property="context"
+	value="${context}" />
+<jsp:setProperty name="fileEditorBean" property="path" value="${path}" />
+<jsp:setProperty name="fileEditorBean" property="file" value="${file}" />
+<jsp:setProperty name="fileEditorBean" property="source"
+	value="${source}" />
 
 <html>
 <head>
 <title>File editor - ${file}</title>
 
-<link rel="StyleSheet" href="${pageContext.request.contextPath}/layout/style/parade.css" type="text/css">
+<link rel="StyleSheet"
+	href="${pageContext.request.contextPath}/layout/style/parade.css"
+	type="text/css">
 
 <script language="JavaScript">
 <!--
@@ -152,15 +154,28 @@ function setModified(){
 
 </head>
 
-<body bgcolor="#dddddd" TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" BOTTOMMARGIN="0" marginwidth="0" marginheight="0" STYLE="margin: 0px" onload="javascript:onLoad();" onresize="javascript:onResize();">
-<form name="sourceEdit" method="post" action="/File.do?op=saveFile&context=${context}&path=${path}&file=${file}&editor=old" style="margin:0px;">
-<input type="submit" name="Submit" value="(S)ave!" ACCESSKEY="S" disabled onclick="javascript:setBunload(false);">
-<a href="browse.jsp?context=${context}&getPathFromSession=false" target="_top" title="${context}">${context}</a>:<a href="/fileView/fileBrowser.jsp?context=${context}&path=${path}">${path}</a>/<b>${file}</b>
-| <a href="simpleFileEditor.jsp?context=${context}&path=${path}&file=${file}" title="get the file from disk again, undo all changes since last save">Revert</a> 
-| <input type="text" value="Loading..." name="pagestatus" disabled size="10" style="border:0px; background-color:#dddddd; font-color:red;">
+<body bgcolor="#dddddd" TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0"
+	BOTTOMMARGIN="0" marginwidth="0" marginheight="0" STYLE="margin: 0px"
+	onload="javascript:onLoad();" onresize="javascript:onResize();">
+<form name="sourceEdit" method="post"
+	action="/File.do?op=saveFile&context=${context}&path=${path}&file=${file}&editor=simple"
+	style="margin: 0px;"><input type="submit" name="Submit"
+	value="(S)ave!" ACCESSKEY="S" disabled
+	onclick="javascript:setBunload(false);"> <a
+	href="browse.jsp?context=${context}&getPathFromSession=false"
+	target="_top" title="${context}">${context}</a>:<a
+	href="/fileView/fileBrowser.jsp?context=${context}&path=${path}">${path}</a>/<b>${file}</b>
+| <a
+	href="simpleFileEditor.jsp?context=${context}&path=${path}&file=${file}"
+	title="get the file from disk again, undo all changes since last save">Revert</a>
+| <input type="text" value="Loading..." name="pagestatus" disabled
+	size="10"
+	style="border: 0px; background-color: #dddddd; font-color: red;">
 <br>
 
-<textarea name="source" style="width:100%;height:92%" cols="90" rows="23" wrap="virtual" onKeypress="setModified()" STYLE="font-face:Lucida Console; font-size:8pt">${fileEditorBean.content}</textarea>
+<textarea name="source" style="width: 100%; height: 92%" cols="90"
+	rows="23" wrap="virtual" onKeypress="setModified()"
+	STYLE="font-face:Lucida Console; font-size:8pt">${fileEditorBean.content}</textarea>
 
 </form>
 
