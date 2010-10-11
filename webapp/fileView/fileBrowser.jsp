@@ -85,13 +85,13 @@
 				href='/fileView/fileBrowser.jsp?context=${context}&path=${path}&order=size'
 				title='Order by size'>Size</a></th>
 			<th>CVS <a
-				href='/Cvs.do?op=check&context=${context}&params=${path}'
+				href='/Cvs.do?op=check&context=${context}&path=${path}'
 				target='command' title='CVS check status'><img
 				src='/images/cvs-query.gif' alt='CVS check status' border='0'></a>
-			<a href='/Cvs.do?op=update&context=${context}&params=${path}'
+			<a href='/Cvs.do?op=update&context=${context}&path=${path}'
 				target='command' title='CVS local update'><img
 				src='/images/cvs-update.gif' alt='CVS local update' border='0'></a>
-			<a href='/Cvs.do?op=rupdate&context=${context}&params=${path}'
+			<a href='/Cvs.do?op=rupdate&context=${context}&path=${path}'
 				target='command' title='CVS recursive update'><img
 				src='/images/cvs-update.gif' alt='CVS recursive update' border='0'></a></th>
 		</tr>
