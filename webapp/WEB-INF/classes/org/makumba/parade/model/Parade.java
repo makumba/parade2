@@ -67,6 +67,8 @@ public class Parade {
     private final RowProperties rowproperties = new RowProperties();
 
     public static Map<String, Integer> JNotifyWatches = new HashMap<String, Integer>();
+    
+    private static Hashtable<String, String> absoluteFilePathCache = new Hashtable<String, String>();
 
     // ParaDe managers
 
@@ -112,9 +114,8 @@ public class Parade {
                 hardRowRefresh(r);
             }
         }
-
+        
         logger.info("ParaDe-wide refresh finished");
-
     }
 
     public void softRefresh() {
@@ -290,7 +291,7 @@ public class Parade {
     }
 
     /**
-     * Performs hard refresh for a row, i.e. calls the softRefrsh() method for all the row managers
+     * Performs soft refresh for a row, i.e. calls the softRefresh() method for all the row managers
      * 
      * @param r
      *            the Row to refresh
@@ -304,7 +305,7 @@ public class Parade {
     }
 
     /**
-     * Performs soft refresh for a row, i.e. calls the refreshRow() method for all the row managers
+     * Performs hard refresh for a row, i.e. calls the hardRefresh() method for all the row managers
      * 
      * @param r
      *            the Row to refresh
@@ -315,7 +316,6 @@ public class Parade {
         antMgr.hardRefresh(r);
         webappMgr.hardRefresh(r);
         makMgr.hardRefresh(r);
-
     }
 
     /**
@@ -390,6 +390,15 @@ public class Parade {
         }
         return rowstore;
     }
+    
+    /**
+     * @author Joao Andrade
+     * @param rowName
+     * @return
+     */
+    public Row getRow(String rowName) {
+        return getRows().get(rowName);
+    }
 
     /**
      * Refreshes the application cache for each application, i.e. tries to fetch the files and revisions of a module on
@@ -402,7 +411,7 @@ public class Parade {
     }
 
     /**
-     * Initialises the file system monitoring using JNotify ({@link http://jnotify.sourceforge.net/})
+     * Initializes the file system monitoring using JNotify ({@link http://jnotify.sourceforge.net/})
      */
     public void addJNotifyListeners() {
 
@@ -464,8 +473,6 @@ public class Parade {
         }
     }
 
-    private static Hashtable<String, String> absoluteFilePathCache = new Hashtable<String, String>();
-
     /**
      * Builds the absolute path of a file, based on its context
      * 
@@ -497,21 +504,19 @@ public class Parade {
         tx.commit();
         s.close();
 
-        if (relativePath == null || relativePath == "")
+        if (relativePath == null || relativePath == "" || relativePath.equals("/")) {
             return absolutePath;
+        }
 
-        if (relativePath.equals("/"))
-            return absolutePath;
-
-        if (relativePath.endsWith("/"))
+        if (relativePath.endsWith("/")) {
             relativePath = relativePath.substring(0, relativePath.length() - 1);
+        }
         absolutePath = entryRow.getRowpath() + java.io.File.separator
                 + relativePath.replace('/', java.io.File.separatorChar);
 
         absoluteFilePathCache.put(context + relativePath, absolutePath);
 
         return absolutePath;
-
     }
 
     /** Model related fields and methods * */
@@ -581,9 +586,6 @@ public class Parade {
     public void clearCollections() {
         for (Row row : getRows().values()) {
             antMgr.clearCollections(row);
-
         }
-
     }
-
 }
