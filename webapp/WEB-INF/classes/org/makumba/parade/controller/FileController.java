@@ -1,43 +1,57 @@
 package org.makumba.parade.controller;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Logger;
 
+import org.makumba.parade.listeners.ParadeJNotifyListener;
+import org.makumba.parade.model.Parade;
+import org.makumba.parade.model.managers.FileManager;
 import org.makumba.parade.tools.ParadeLogger;
 
 public class FileController {
 
     static Logger logger = ParadeLogger.getParadeLogger(FileController.class.getName());
 
-    public static void saveFile(String absoluteFilePath, String[] source) {
+    public static Response onDeleteFile(String context, String path, String filename) {
+        String fullname = FileManager.getFullname(context, path, filename);
 
-        java.io.File f = new java.io.File(absoluteFilePath);
-        java.io.File d;
-        String content = source[0];
-
-        // we save
-        if (f.getParent() != null) {
-            d = new java.io.File(f.getParent());
-            d.mkdirs();
+        ParadeJNotifyListener.createFileLock(fullname);
+        String result = FileManager.check("delete", context, fullname);
+        if (result == null) {
+            result = FileManager.deleteFile(fullname);
         }
-        try {
-            f.createNewFile();
+        ParadeJNotifyListener.removeFileLock(fullname);
 
-            // FIXME fishy windows line-break code. see if that doesn't cause trouble
-            boolean windows = System.getProperty("line.separator").length() > 1;
-            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(f)));
-            for (int i = 0; i < content.length(); i++) {
-                if (windows || content.charAt(i) != '\r')
-                    pw.print(content.charAt(i));
-            }
-            pw.close();
-        } catch (IOException e) {
-            logger.severe("Error while creating file:\n" + e.getMessage());
-        }
-
+        FileManager.updateSimpleCaches(context, fullname);
+        return new Response(result);
     }
 
+    public static Response onDeleteDir(String context, String path, String filename) {
+        String fullname = FileManager.getFullname(context, path, filename);
+
+        ParadeJNotifyListener.createFileLock(fullname);
+        String result = FileManager.check("delete", context, fullname);
+        if (result == null) {
+            result = FileManager.deleteDir(fullname);
+        }
+        ParadeJNotifyListener.removeFileLock(fullname);
+
+        FileManager.updateSimpleCaches(context, fullname);
+        return new Response(result);
+    }
+
+    public static Response onSaveFile(String context, String path, String filename, String[] source) {
+        String fullname = FileManager.getFullname(context, path, filename);
+        
+        ParadeJNotifyListener.createFileLock(fullname);
+        String result = FileManager.check("save", context, fullname);
+        if (result == null) {
+            result = FileManager.saveFile(fullname, source[0]);
+        }
+        ParadeJNotifyListener.updateRelations(Parade.constructAbsolutePath(context, ""), path
+                + (path.endsWith("/") || filename.startsWith("/") ? "" : java.io.File.separator) + filename);
+        ParadeJNotifyListener.removeFileLock(fullname);
+        
+        FileManager.updateSimpleCaches(context, fullname);
+        return new Response(result);
+    }
 }
