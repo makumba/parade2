@@ -53,12 +53,11 @@
 
             <forward name="simpleEdit" path="/simpleFileEditor.jsp" />
             <forward name="codePressEdit" path="/codePressEditor.jsp" />
-
 		</action>
 
 		<!-- File upload -->
 		<action path="/FileUpload"
-			type="org.makumba.parade.controller.FileAction" name="FileUpload"
+			type="org.makumba.parade.controller.CommandAction" name="FileUpload"
 			scope="request" validate="true" parameter="op"
 			input="/webapp/commandView/uploadFile.jsp">
 
@@ -108,7 +107,6 @@
 			<forward name="logs" path="/servlet/logs" />
 
 		</action>
-
 
 		<!-- User creation view -->
 		<action path="/User"
