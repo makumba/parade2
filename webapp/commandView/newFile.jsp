@@ -14,7 +14,7 @@
 <form action="/Command.do" target="directory" method="GET"><input
 	type=hidden value="${context}" name=context> <input type=hidden
 	value="newFile" name="op"> Create new file: <input type="text"
-	name="params"> <input type=hidden value="${path}" name="path">
+	name="file"> <input type=hidden value="${path}" name="path">
 <input type=submit value=Create> <br>
 <font style="font-size: smaller;">(in ${context}/${path})</font></form>
 

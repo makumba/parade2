@@ -11,13 +11,13 @@
 
 <c:set var="contentType" value="${requestScope.contentType}" />
 <c:set var="contentLength" value="${requestScope.contentLength}" />
-<c:set var="saveFilePath" value="${requestScope.saveFilePath}" />
+<c:set var="file" value="${requestScope.file}" />
 
 <h4>Uploading file:</h4>
 file: ${context}/${path}<br>
 content type: ${contentType}<br>
 content length: ${contentLength}<br>
-Saving to file: ${saveFilePath}...
+Saving to file: ${file}...
 <font color="green">Success!</font>
 
 
