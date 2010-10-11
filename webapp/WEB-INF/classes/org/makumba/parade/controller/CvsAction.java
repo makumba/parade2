@@ -18,18 +18,17 @@ public class CvsAction extends DispatchAction {
             HttpServletResponse response) throws Exception {
 
         String context = request.getParameter("context");
-        String[] params = request.getParameterValues("params");
-        String path = params[0];
+        String path = request.getParameter("path");
 
         // we need to convert the relative path displayed in the webapp to something usable)
-        params[0] = Parade.constructAbsolutePath(context, params[0]);
+        String absolutePath = Parade.constructAbsolutePath(context, path);
 
-        Object[] result = CvsController.onCheck(context, params);
+        Object[] result = CvsController.onCheck(context, absolutePath);
+        
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -37,18 +36,17 @@ public class CvsAction extends DispatchAction {
             HttpServletResponse response) throws Exception {
 
         String context = request.getParameter("context");
-        String[] params = request.getParameterValues("params");
-        String path = params[0];
+        String path = request.getParameter("path");
 
         // we need to convert the relative path displayed in the webapp to something usable)
-        params[0] = Parade.constructAbsolutePath(context, params[0]);
+        String absolutePath = Parade.constructAbsolutePath(context, path);
 
-        Object[] result = CvsController.onUpdate(context, params);
+        Object[] result = CvsController.onUpdate(context, absolutePath);
+      
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -56,18 +54,17 @@ public class CvsAction extends DispatchAction {
             HttpServletResponse response) throws Exception {
 
         String context = request.getParameter("context");
-        String[] params = request.getParameterValues("params");
-        String path = params[0];
+        String path = request.getParameter("path");
 
         // we need to convert the relative path displayed in the webapp to something usable)
-        params[0] = Parade.constructAbsolutePath(context, params[0]);
+        String absolutePath = Parade.constructAbsolutePath(context, path);
 
-        Object[] result = CvsController.onRUpdate(context, params);
+        Object[] result = CvsController.onRUpdate(context, absolutePath);
+        
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -92,11 +89,11 @@ public class CvsAction extends DispatchAction {
         path = Parade.constructAbsolutePath(context, path);
 
         Object[] result = CvsController.onCommit(context, files, message);
+        
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -112,11 +109,11 @@ public class CvsAction extends DispatchAction {
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
         Object[] result = CvsController.onDiff(context, absolutePath, absoluteFilePath);
+    
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -132,11 +129,11 @@ public class CvsAction extends DispatchAction {
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
         Object[] result = CvsController.onAdd(context, absolutePath, absoluteFilePath);
+        
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -152,11 +149,11 @@ public class CvsAction extends DispatchAction {
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
         Object[] result = CvsController.onAddBinary(context, absolutePath, absoluteFilePath);
+        
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -172,11 +169,11 @@ public class CvsAction extends DispatchAction {
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
         Object[] result = CvsController.onUpdateFile(context, absolutePath, absoluteFilePath);
+        
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -191,14 +188,14 @@ public class CvsAction extends DispatchAction {
         String absolutePath = Parade.constructAbsolutePath(context, path);
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
-        String[] params = { file.substring(path.length() + 1), path };
-        Object[] result = CommandController.onDeleteFile(context, params);
-        result = CvsController.onUpdateFile(context, absolutePath, absoluteFilePath);
-        request.setAttribute("result", (String) result[0]);
-        request.setAttribute("success", (Boolean) result[1]);
+        // FIXME Joao - errors from FileController aren't checked
+        Response result = FileController.onDeleteFile(context, path, file.substring(path.length() + 1));
+        Object[] result2 = CvsController.onUpdateFile(context, absolutePath, absoluteFilePath);
+
+        request.setAttribute("result", (String) result2[0]);
+        request.setAttribute("success", (Boolean) result2[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -214,11 +211,11 @@ public class CvsAction extends DispatchAction {
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
         Object[] result = CvsController.onDeleteFile(context, absolutePath, absoluteFilePath);
+        
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 
@@ -243,11 +240,11 @@ public class CvsAction extends DispatchAction {
         String absoluteFilePath = Parade.constructAbsolutePath(context, file);
 
         Object[] result = CvsController.onDeleteDirectory(context, absolutePath, absoluteFilePath);
+        
         request.setAttribute("result", (String) result[0]);
         request.setAttribute("success", (Boolean) result[1]);
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward("command");
     }
 }
