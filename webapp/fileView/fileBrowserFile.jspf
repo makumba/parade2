@@ -19,13 +19,13 @@
 <!--
 function deleteFile(path, name) {
 	if(confirm('Are you sure you want to delete the file '+name+' ?')) {
-  		url='/File.do?op=deleteFile&context=${context}&path=${pathEncoded}&params='+encodeURIComponent(name);
+  		url='/File.do?op=deleteFile&context=${context}&path=${pathEncoded}&file='+encodeURIComponent(name);
   		location.href=url;
 	}
 }
 function deleteFolder(path, name) {
 	if(confirm('Are you sure you want to delete the directory '+name+' ?')) {
-  		url='/File.do?op=deleteDir&context=${context}&path=${pathEncoded}&params='+encodeURIComponent(name);
+  		url='/File.do?op=deleteDir&context=${context}&path=${pathEncoded}&file='+encodeURIComponent(name);
   		location.href=url;
 	}
 }
