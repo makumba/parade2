@@ -68,6 +68,8 @@ public class File {
 
     /* Calls the refresh() directoryRefresh() on the directory managers */
     public void refresh() {
+        // FIXME Joao - these methods should be static in order to remove
+        // the fileMgr and CVSMgr attributes which are doing nothing heres
         fileMgr.directoryRefresh(row, this.getPath(), false);
         CVSMgr.directoryRefresh(row, this.getPath(), false);
     }
