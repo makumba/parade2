@@ -116,7 +116,7 @@ public class LDAPAuthorizer implements DirectoryAuthorizer {
                 lc.bind(ldapVersion, loginDN, password.getBytes("UTF8"));
             }
 
-            String returnAttrs[] = { "displayName", "givenName", "employeeType", "sn", "mail", "cn", "jpegPhoto" };
+            String returnAttrs[] = { "displayName", "givenName", "employeeType", "sn", "email", "cn", "jpegPhoto" };
 
             LDAPEntry entry = lc.read(loginDN, returnAttrs);
 
