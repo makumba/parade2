@@ -10,20 +10,26 @@
 		<th>Action</th>
 	</thead>
 
-	<mak:list from="Row r" where="r.user != null AND r.rowname != '(root)' AND NOT (r.rowname like '%-module')" orderBy="r.rowname">
+	<mak:list from="Row r"
+		where="r.user != null AND r.rowname != '(root)' AND NOT (r.rowname like '%-module')"
+		orderBy="r.rowname">
 		<tr>
 			<td><mak:value expr="r.rowname" /></td>
 			<td><mak:value expr="r.user.name" /></td>
 			<td><mak:value expr="r.externalUser.name" /></td>
-			<td><a class="icon_edit" href="rowEdit.jsp?row=<mak:value expr="r.id"/>"></a></td>
+			<td><a class="icon_edit"
+				href="rowEdit.jsp?row=<mak:value expr="r.id"/>"></a></td>
 		</tr>
 	</mak:list>
-	<mak:list from="Row r" where="r.user = null AND r.rowname != '(root)' AND NOT (r.rowname like '%-module')" orderBy="r.rowname">
+	<mak:list from="Row r"
+		where="r.user = null AND r.rowname != '(root)' AND NOT (r.rowname like '%-module')"
+		orderBy="r.rowname">
 		<tr>
 			<td><mak:value expr="r.rowname" /></td>
 			<td></td>
 			<td></td>
-			<td><a class="icon_edit" href="rowEdit.jsp?row=<mak:value expr="r.id"/>"></a></td>
+			<td><a class="icon_edit"
+				href="rowEdit.jsp?row=<mak:value expr="r.id"/>"></a></td>
 		</tr>
 	</mak:list>
 </table>
