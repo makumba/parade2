@@ -22,6 +22,10 @@ public class Response {
     private void setMessage(String message) {
         this.message = message;
     }
+    
+    public void appendMessage(String message) {
+        this.message += message;
+    }
 
     public String getMessage() {
         return message;
