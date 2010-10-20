@@ -8,16 +8,16 @@
 		context = "all";
 %>
 
-<HTML>
-<HEAD>
-<TITLE><%=context%> logs</TITLE>
-</HEAD>
-<FRAMESET rows="30,*">
-	<FRAME name="logmenu" marginwidth="1" marginheight="1"
+<html>
+<head>
+<title><%=context%> logs</title>
+</head>
+<frameset rows="30,*">
+	<frame name="logmenu" marginwidth="1" marginheight="1"
 		noresize="noresize"
-		src="/logHeader.jsp?logtype=actionlog&context=<%=context %>&year=<%=request.getParameter("year")%>&month=<%=request.getParameter("month")%>&day=<%=request.getParameter("day")%>">
-	<FRAME name="logview"
-		src="/actionLogList.jsp?context=<%=context %>&year=<%=request.getParameter("year")%>&month=<%=request.getParameter("month")%>&day=<%=request.getParameter("day")%>"
+		src='/logHeader.jsp?logtype=actionlog&amp;context=<%=context%>&amp;year=<%=request.getParameter("year")%>&amp;month=<%=request.getParameter("month")%>&amp;day=<%=request.getParameter("day")%>'>
+	<frame name="logview"
+		src='/actionLogList.jsp?context=<%=context%>&amp;year=<%=request.getParameter("year")%>&amp;month=<%=request.getParameter("month")%>&amp;day=<%=request.getParameter("day")%>'
 		marginwidth="1" marginheight="1">
-</FRAMESET>
-</HTML>
+</frameset>
+</html>
