@@ -4,7 +4,6 @@
 %>
 <%@page import="java.util.*"%>
 <%@page import="java.text.DateFormat"%>
-<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="org.makumba.parade.init.InitServlet"%>
 
 <h1>System Information</h1>
@@ -86,9 +85,9 @@ Server software:
 				line = line + 1;
 		%>
 		</th>
-	<tr bgcolor="#<%if (line % 2 == 0) {%>eeeeee<%} else {%>ffffff<%}%>">
-		<td valign="top"><%=key%>:&nbsp;</td>
-		<td><pre><%=key.endsWith("path") ? sysprops.getProperty(key)
+		<tr bgcolor="#<%if (line % 2 == 0) {%>eeeeee<%} else {%>ffffff<%}%>">
+			<td valign="top"><%=key%>:&nbsp;</td>
+			<td><pre><%=key.endsWith("path") ? sysprops.getProperty(key)
 						.replace(
 								sysprops.getProperty("path.separator")
 										.charAt(0), '\n') : (((String) sysprops
@@ -96,8 +95,9 @@ Server software:
 						+ sysprops.getProperty(key) + ">"
 						+ sysprops.getProperty(key) + "</a>" : sysprops
 						.getProperty(key)%></pre>
-	</tr>
-	<%
+		</tr>
+		<%
 			}
 		%>
+	
 </table>
