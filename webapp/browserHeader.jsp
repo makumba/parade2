@@ -1,9 +1,5 @@
 <%-- ParaDe browser header: shows the header of the browser view --%>
-<%@page import="org.makumba.parade.init.InitServlet"%>
-<%@page import="org.hibernate.Session"%>
-<%@page import="org.hibernate.Transaction"%>
 <%@page import="org.makumba.parade.model.Row"%>
-<%@page import="org.makumba.parade.model.managers.ServletContainer"%>
 <%@ taglib uri="http://www.makumba.org/view-hql" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 
@@ -46,7 +42,6 @@
 		<mak:value expr="row.rowname" printVar="rowName" />
 		<mak:value expr="row.id" printVar="rowId" />
 		<mak:value expr="row.status" var="rowStatus" />
-
 		<tr>
 			<td valign="top">
 			<form action="/browse.jsp?getPathFromSession=true" target="_top"
@@ -72,13 +67,13 @@
 				target='directory'>Tomcat</a> <a href='http://www.makumba.org'
 				title='Makumba documentation' target='directory'>Makumba</a></td>
 
-			<%-- FIXME: Joao - Row status could be a string for improved legibility --%>
 			<td valign="top">&nbsp; ant: <c:set var="vWhere">t.row = row and t.target in (<%=antBean.getAllowedAntOperations()%>)</c:set><mak:list
 				from="AntTarget t" where="#{vWhere}" separator=",">
 				<a target="command"
-					href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value
+					href="/Ant.do?display=command&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value
 					expr="t.target" /></a>
 			</mak:list></td>
+
 			<td valign="top">&nbsp; webapp: <c:if test="${rowStatus == 2}">
 				<a
 					href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextReload&getPathFromSession=true"
@@ -92,7 +87,7 @@
 					target="command">start</a>
 			</c:if> <c:if test="${rowStatus != 0}">
 				<a
-					href="/Webapp.do?display=index&context=${rowName}&path=${path}&op=servletContextRedeploy"
+					href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextRedeploy"
 					target="command">redeploy</a>
 				<a
 					href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextRemove&getPathFromSession=true"
@@ -102,13 +97,13 @@
 					href="/Webapp.do?display=command&context=${rowName}&path=${path}&op=servletContextInstall&getPathFromSession=true"
 					target="command">install</a>
 			</c:if></td>
+
 			<td valign="top" style="float: right;" align="right">&nbsp;<a
 				href="/systemInfo.jsp" target="directory">System</a></td>
-			<td valign="top" style="float: right;" align="right"></td>
 
+			<td valign="top" style="float: right;" align="right"></td>
 		</tr>
 	</mak:object>
 </table>
-
 </body>
 </html>
