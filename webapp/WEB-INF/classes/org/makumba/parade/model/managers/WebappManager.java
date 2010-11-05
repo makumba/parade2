@@ -55,7 +55,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
     }
 
     private synchronized ServletContainer getServletContainer() {
-        if (container == null)
+        if (container == null) {
             try {
                 container = (ServletContainer) ParadeProperties.class.getClassLoader().loadClass(
                         config.getProperty("parade.servletContext.servletContainer")).newInstance();
@@ -69,6 +69,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
             } catch (Throwable t) {
                 logger.severe("Error getting servlet container: " + t.getMessage());
             }
+        }
 
         return container;
     }
@@ -185,7 +186,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
         return "Error: you cannot uninstall ParaDe !";
     }
 
-    private boolean isParadeCheck(Row row) {
+    private static boolean isParadeCheck(Row row) {
         if (isParade(row)) {
             // row.put("result", "You can only reload Parade!");
             return true;
@@ -193,7 +194,7 @@ public class WebappManager implements RowRefresher, ParadeManager {
         return false;
     }
 
-    private boolean isParade(Row row) {
+    private static boolean isParade(Row row) {
         try {
             return row.getRowpath().equals(new File(ParadeProperties.getParadeBase()).getCanonicalPath());
         } catch (Throwable t) {
