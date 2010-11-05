@@ -44,7 +44,6 @@ public class AdminAction extends DispatchAction {
             tx.commit();
             s.close();
         }
-
     }
 
     public ActionForward refreshRow(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -214,7 +213,6 @@ public class AdminAction extends DispatchAction {
                 request.setAttribute("success", new Boolean(true));
 
             } else {
-
                 request.setAttribute("result", "Couldn't refresh crawl status of context " + context
                         + ": context not found");
                 request.setAttribute("success", new Boolean(false));
