@@ -43,7 +43,6 @@
 		<forward name="command" path="/commandView/commandOutput.jsp" />
 	</global-forwards>
 
-
 	<!-- ========== Action Mapping Definitions ============================== -->
 	<action-mappings>
 
@@ -72,6 +71,9 @@
 		<!-- Edit view -->
 		<action path="/Edit"
 			type="org.makumba.parade.controller.EditAction" parameter="op">
+			
+			<forward name="simple" path="/simpleFileEditor.jsp" />
+            <forward name="codePress" path="/codePressEditor.jsp" />
 		</action>
 
 		<!-- CVS view -->
@@ -81,14 +83,14 @@
 
 		<!-- Webapp view -->
 		<action path="/Webapp"
-			type="org.makumba.parade.controller.WebappAction">
+			type="org.makumba.parade.controller.WebappAction" parameter="op">
 
 			<forward name="index" path="/index.jsp" />
 		</action>
 
 		<!-- Ant view -->
 		<action path="/Ant"
-			type="org.makumba.parade.controller.AntAction">
+			type="org.makumba.parade.controller.AntAction" parameter="op">
 
 			<forward name="index" path="/index.jsp" />
 		</action>
@@ -105,7 +107,6 @@
 			type="org.makumba.parade.controller.LogsAction">
 
 			<forward name="logs" path="/servlet/logs" />
-
 		</action>
 
 		<!-- User creation view -->
@@ -114,11 +115,9 @@
 
 			<forward name="index" path="/index.jsp" />
 			<forward name="newuser" path="/servlet/user" />
-
 		</action>
 
 	</action-mappings>
-
 
 	<!-- ========== Controller Configuration ================================ -->
 
