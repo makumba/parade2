@@ -72,7 +72,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         }
 
         root.refresh();
-
     }
 
     /**
@@ -127,7 +126,6 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -252,30 +250,14 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         // TODO Auto-generated method stub
     }
 
-    /**
-     * @author Joao Andrade
-     * @param action
-     * @param context
-     * @param fullname
-     * @return
-     */
-    // TODO Joao - refactor
-    public static String check(String action, String context, String fullname) {
-        String result = null;
-        java.io.File f = new java.io.File(fullname);
-        if (!isInsideRow(context, fullname)) {
-            result = "Error: you can't access files outside of the row";
-        } else if (action.startsWith("new") && f.exists()) {
-            result = "Error: a file with that name already exists.";
-        } else if (action.startsWith("delete") && !f.exists()) {
-            result = "Error: a file with that name doesn't exist.";
-        }
-        return result;
-    }
-
     public static String newFile(String fullname) {
         String result = null;
         java.io.File f = new java.io.File(fullname);
+
+        if (f.exists()) {
+            return "Error: a file with that name already exists.";
+        }
+
         try {
             if (f.createNewFile()) {
                 result = "New file " + f.getName() + " created.";
@@ -292,6 +274,11 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     public static String newDir(String fullname) {
         String result = null;
         java.io.File f = new java.io.File(fullname);
+
+        if (f.exists()) {
+            return "Error: a file with that name already exists.";
+        }
+
         if (f.mkdir()) {
             result = "New directory " + f.getName() + " created.";
         } else {
@@ -304,6 +291,11 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
     public static String deleteFile(String fullname) {
         String result = null;
         java.io.File f = new java.io.File(fullname);
+
+        if (!f.exists()) {
+            return "Error: a file with that name doesn't exist.";
+        }
+
         if (f.delete()) {
             result = "File " + f.getName() + " deleted";
         } else {
@@ -325,9 +317,13 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         String result = null;
         java.io.File f = new java.io.File(fullname);
         String reason = "</br> ";
-        int nFiles = f.list().length;
+
+        if (!f.exists()) {
+            return "Error: a file with that name doesn't exist.";
+        }
 
         // FIXME Joao - a bit of an hack, but until non-empty folder deletion gets implemented this will do
+        int nFiles = f.list().length;
         if (Arrays.asList(f.list()).contains("CVS") && nFiles == 1) {
             String cvsFolderName = f.getPath() + java.io.File.separator + "CVS";
             java.io.File cvsFolder = new java.io.File(cvsFolderName);
@@ -407,7 +403,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         }
         return result;
     }
-    
+
     public void fileRefresh(Row row, String fullname) {
         java.io.File f = new java.io.File(fullname);
         boolean isCached = row.getFiles().get(fullname) != null;
@@ -438,7 +434,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
             f.getRow().getFiles().remove(f.getPath());
         }
     }
-    
+
     /**
      * @author Joao Andrade
      * @param context
@@ -455,7 +451,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         logger.fine("Refreshing file cache for file " + fullname + " of row " + context);
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        Row r = Row.getRow(p, context);
+        Row r = p.getRow(context);
         Transaction tx = s.beginTransaction();
         FileManager fileMgr = new FileManager();
         fileMgr.fileRefresh(r, fullname);
@@ -469,7 +465,7 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
         logger.fine("Refreshing file cache for directory " + path + " of row " + context);
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        Row r = Row.getRow(p, context);
+        Row r = p.getRow(context);
         Transaction tx = s.beginTransaction();
         FileManager fileMgr = new FileManager();
         fileMgr.directoryRefresh(r, path, local);
@@ -503,30 +499,25 @@ public class FileManager implements RowRefresher, FileRefresher, ParadeManager {
      * @param filename
      * @return
      */
-    public static String getFullname(String context, String relativePath, String filename) {
+    public static String getFullFilename(String context, String relativePath, String filename) {
         String path = Parade.constructAbsolutePath(context, relativePath);
         return (path + "/" + filename).replace('/', java.io.File.separatorChar);
     }
 
-    public static boolean isInsideRow(String rowName, String path) {
-        // FIXME Joao - this idiom appears a lot on paraDe and should be simplified
-        Session s = InitServlet.getSessionFactory().openSession();
-        Parade p = (Parade) s.get(Parade.class, new Long(1));
+    /**
+     * @author Joao Andrade
+     * @param rowName
+     * @param path
+     * @return
+     */
+    public static Boolean isInsideRow(String rowName, String path) {
+        Session session = InitServlet.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        Parade p = (Parade) session.get(Parade.class, new Long(1));
         Row row = p.getRow(rowName);
-        s.close();
-        // end of idiom
-
-        String rowPath = row.getRowpath();
-        try {
-            // security check - if the path of the file is outside the path of the row, we deny any action
-            if ((new java.io.File(path).getCanonicalPath().length() < new java.io.File(rowPath).getCanonicalPath()
-                    .length())) {
-                return false;
-            }
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        return true;
+        Boolean isInside = row.isInside(path);
+        tx.commit();
+        session.close();
+        return isInside;
     }
 }
