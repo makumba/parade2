@@ -394,10 +394,19 @@ public class Parade {
     /**
      * @author Joao Andrade
      * @param rowName
-     * @return
+     * @return the row with a given name
      */
     public Row getRow(String rowName) {
         return getRows().get(rowName);
+    }
+    
+    /**
+     * @author Joao Andrade
+     * @param userName
+     * @return
+     */
+    public User getUser(String login) {
+        return getUsers().get(login);
     }
 
     /**
