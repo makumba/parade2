@@ -130,7 +130,5 @@ public class MakumbaManager implements RowRefresher, ParadeManager {
 
     public void newRow(String name, Row r, Map<String, String> m) {
         // TODO Auto-generated method stub
-
     }
-
 }

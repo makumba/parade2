@@ -45,7 +45,6 @@ public class AntManager implements RowRefresher, ParadeManager {
                 setTargets(row, p);
             }
         }
-
     }
 
     private java.io.File setBuildFile(Row row) {
@@ -61,7 +60,6 @@ public class AntManager implements RowRefresher, ParadeManager {
         }
 
         return buildFile;
-
     }
 
     private java.io.File setBuildFilePath(Row row, File dir) {
@@ -107,7 +105,6 @@ public class AntManager implements RowRefresher, ParadeManager {
         public int compare(AntTarget arg0, AntTarget arg1) {
             return arg0.getTarget().compareTo(arg1.getTarget());
         }
-
     }
 
     private void setTargets(Row row, Project p) {
@@ -127,7 +124,6 @@ public class AntManager implements RowRefresher, ParadeManager {
 
     public void newRow(String name, Row r, Map<String, String> m) {
         // TODO Auto-generated method stub
-
     }
 
     public String executeAntCommand(Row r, String command) {
@@ -136,8 +132,9 @@ public class AntManager implements RowRefresher, ParadeManager {
         long memSize = rt.totalMemory() - rt.freeMemory();
 
         String buildFilePath = r.getBuildfile();
-        if (buildFilePath.equals("No build file found"))
-            return ("No build file found");
+        if (buildFilePath.equals("No build file found")) {
+            return "No build file found";
+        }
         java.io.File buildFile = new java.io.File(buildFilePath);
 
         OutputStream result = new ByteArrayOutputStream();
