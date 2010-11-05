@@ -12,11 +12,12 @@ public class FileController {
     static Logger logger = ParadeLogger.getParadeLogger(FileController.class.getName());
 
     public static Response onDeleteFile(String context, String path, String filename) {
-        String fullname = FileManager.getFullname(context, path, filename);
+        String fullname = FileManager.getFullFilename(context, path, filename);
+        String result = "Error: you can't access files outside of the row";
 
         ParadeJNotifyListener.createFileLock(fullname);
-        String result = FileManager.check("delete", context, fullname);
-        if (result == null) {
+        // security check - if the path of the file is outside the path of the row, we deny any action
+        if (FileManager.isInsideRow(context, path)) {
             result = FileManager.deleteFile(fullname);
         }
         ParadeJNotifyListener.removeFileLock(fullname);
@@ -26,11 +27,12 @@ public class FileController {
     }
 
     public static Response onDeleteDir(String context, String path, String filename) {
-        String fullname = FileManager.getFullname(context, path, filename);
+        String fullname = FileManager.getFullFilename(context, path, filename);
+        String result = "Error: you can't access files outside of the row";
 
         ParadeJNotifyListener.createFileLock(fullname);
-        String result = FileManager.check("delete", context, fullname);
-        if (result == null) {
+        // security check - if the path of the file is outside the path of the row, we deny any action
+        if (FileManager.isInsideRow(context, path)) { 
             result = FileManager.deleteDir(fullname);
         }
         ParadeJNotifyListener.removeFileLock(fullname);
@@ -40,17 +42,18 @@ public class FileController {
     }
 
     public static Response onSaveFile(String context, String path, String filename, String[] source) {
-        String fullname = FileManager.getFullname(context, path, filename);
-        
+        String fullname = FileManager.getFullFilename(context, path, filename);
+        String result = "Error: you can't access files outside of the row";
+
         ParadeJNotifyListener.createFileLock(fullname);
-        String result = FileManager.check("save", context, fullname);
-        if (result == null) {
+        // security check - if the path of the file is outside the path of the row, we deny any action
+        if (FileManager.isInsideRow(context, path)) {
             result = FileManager.saveFile(fullname, source[0]);
         }
         ParadeJNotifyListener.updateRelations(Parade.constructAbsolutePath(context, ""), path
                 + (path.endsWith("/") || filename.startsWith("/") ? "" : java.io.File.separator) + filename);
         ParadeJNotifyListener.removeFileLock(fullname);
-        
+
         FileManager.updateSimpleCaches(context, fullname);
         return new Response(result);
     }
