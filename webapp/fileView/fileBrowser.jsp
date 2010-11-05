@@ -91,7 +91,7 @@
 			<a href='/Cvs.do?op=update&context=${context}&path=${path}'
 				target='command' title='CVS local update'><img
 				src='/images/cvs-update.gif' alt='CVS local update' border='0'></a>
-			<a href='/Cvs.do?op=rupdate&context=${context}&path=${path}'
+			<a href='/Cvs.do?op=rUpdate&context=${context}&path=${path}'
 				target='command' title='CVS recursive update'><img
 				src='/images/cvs-update.gif' alt='CVS recursive update' border='0'></a></th>
 		</tr>

@@ -55,10 +55,10 @@ function deleteFolder(path, name) {
 			<%-- FILE --%>
 			<c:when test="${!isDir}">
 				<td align='right'><a
-					href='/codePressEditor.jsp?context=${context}&path=${path}&file=${encodedName}'><img
+					href='/Edit.do?op=editFile&editor=codePress&context=${context}&path=${path}&file=${encodedName}'><img
 					src='/images/edit.gif'
 					alt='Edit ${fileName} with javascript editor'></a> <a
-					href='/simpleFileEditor.jsp?context=${context}&path=${path}&file=${encodedName}'
+					href='/Edit.do?op=editFile&editor=simple&context=${context}&path=${path}&file=${encodedName}'
 					title='Edit ${fileName} with old editor'>(E)</a> &nbsp;&nbsp; <a
 					href="javascript:deleteFile('${path}','${fileName}')"><img
 					src='/images/delete.gif' alt='Delete ${fileName}'></a></td>

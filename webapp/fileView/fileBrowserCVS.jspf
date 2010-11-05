@@ -34,7 +34,7 @@
 						title='CVS add text file'><img src='/images/cvs-add.gif'
 						alt='add'></a>
 					<a target='command'
-						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=addbin'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=addBin'
 						title='CVS add binary/image file'><img
 						src='/images/cvs-add-binary.gif' alt='add binary'></a>
 				</c:otherwise>
@@ -57,12 +57,12 @@
 						title='There is a newer file on the repository with revision ${cvsNewRevision}, and updating will provoke a CVS conflict.'>
 					<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
 					<a target='command'
-						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updateFile'
 						title='CVS update this file. This will lead to a conflict.'><img
 						src='/images/cvs-update.gif'
 						alt='CVS update this file. This will lead to a conflict.'></a>
 					<a target='command'
-						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=overridefile'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=overrideFile'
 						title='Override local changes and replace with file from repository'><img
 						src='/images/cvs-override.gif'
 						alt='Override local changes and replace with file from repository'></a>
@@ -76,7 +76,7 @@
 						title='There is a newer file on the repository with revision ${cvsNewRevision}. Consider updating this file.'>
 					<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
 					<a target='command'
-						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updateFile'
 						title='CVS update file from repository'><img
 						src='/images/cvs-update.gif' alt='CVS update'></a>
 					<a target='command'
@@ -135,11 +135,11 @@
 						<c:otherwise>
 							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
 							<a target='command'
-								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updateFile'
 								title='CVS update file from repository'><img
 								src='/images/cvs-update.gif' alt='CVS checkout'></a>
 							<a target='command'
-								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deletefile'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=deleteFile'
 								title='CVS delete file from repository'><img
 								src='/images/cvs-remove.gif' alt='CVS remove'></a>
 						</c:otherwise>
@@ -154,7 +154,7 @@
 						<c:otherwise>
 							<a href='${cvsWebLink}' title='CVS log'>${cvsRevision}</a>
 							<a target='command'
-								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updatefile'
+								href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=updateFile'
 								title='CVS update file from repository'><img
 								src='/images/cvs-update.gif' alt='CVS update'></a>
 						</c:otherwise>
@@ -185,7 +185,7 @@
 						title='CVS commit to repository'><img
 						src='/images/cvs-committ.gif' alt='CVS commit'></a>
 					<a target='command'
-						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=overridefile'
+						href='/Cvs.do?context=${context}&path=${path}&file=${relativeFilePath}&op=overrideFile'
 						title='Override local changes and replace with file from repository'><img
 						src='/images/cvs-override.gif'
 						alt='Override local changes and replace with file from repository'></a>
