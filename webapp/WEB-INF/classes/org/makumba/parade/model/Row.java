@@ -1,5 +1,6 @@
 package org.makumba.parade.model;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,15 +59,6 @@ public class Row {
         return module;
     }
 
-    public static Row getRow(Parade p, String context) {
-
-        Row r = p.getRows().get(context);
-        if (r == null)
-            return null;
-        else
-            return r;
-    }
-
     private Application application;
 
     // 10 = No, 20 = Yes
@@ -113,6 +105,26 @@ public class Row {
     private boolean watchedByJNotify = false;
 
     private String webappPath;
+    
+    /**
+     * @author Joao Andrade
+     * @param path
+     * @return
+     */
+    public Boolean isInside(String path) {
+        String rowPath = getRowpath();
+
+        Integer pathLength = 0;
+        Integer rowPathLength = 0;
+        try {
+            pathLength = new java.io.File(path).getCanonicalPath().length();
+            rowPathLength = new java.io.File(rowPath).getCanonicalPath().length();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // FIXME Joao - should do the check in a better way
+        return pathLength >= rowPathLength;
+    }
 
     @Transient
     public List<String> getAllowedOperations() {
@@ -350,5 +362,4 @@ public class Row {
     public String toString() {
         return getRowname() + " - " + getDescription();
     }
-
 }
