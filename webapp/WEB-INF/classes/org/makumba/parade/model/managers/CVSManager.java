@@ -609,7 +609,7 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
         CVSManager cvsMgr = new CVSManager();
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        Row r = Row.getRow(p, context);
+        Row r = p.getRow(context);
         Transaction tx = s.beginTransaction();
         cvsMgr.directoryRefresh(r, path, local);
         tx.commit();
@@ -633,7 +633,7 @@ public class CVSManager implements FileRefresher, RowRefresher, ParadeManager {
         CVSManager cvsMgr = new CVSManager();
         Session s = InitServlet.getSessionFactory().openSession();
         Parade p = (Parade) s.get(Parade.class, new Long(1));
-        Row r = Row.getRow(p, context);
+        Row r = p.getRow(context);
         Transaction tx = s.beginTransaction();
 
         cvsMgr.fileRefresh(r, absolutePath);
