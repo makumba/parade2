@@ -9,6 +9,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 public class AntAction extends Action {
+    
+    private AntController antCtrl = new AntController();
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -23,15 +25,12 @@ public class AntAction extends Action {
         if (path == null)
             path = "";
 
-        AntController antCtrl = new AntController();
-        Object result[] = antCtrl.onAntAction(context, op);
+        Response result = antCtrl.onAntAction(context, op);
 
-        request.setAttribute("result", result[0]);
-        request.setAttribute("success", result[1]);
+        request.setAttribute("result", result.getMessage());
+        request.setAttribute("success", result.isSuccess());
         request.setAttribute("context", context);
         request.setAttribute("path", path);
-
         return mapping.findForward(display);
-
     }
 }

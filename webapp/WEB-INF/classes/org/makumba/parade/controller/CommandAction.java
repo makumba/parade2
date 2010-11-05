@@ -21,13 +21,8 @@ public class CommandAction extends DispatchAction {
 
         Boolean success = result.isSuccess();
         if (success) {
-            // FIXME re-enable Edit file link in a hack-free way
-            // result += " <a href='/File.do?op=editFile&context=" + context + "&path=" + path + "&file=" + filename
-            // + "&editor=codepress'>Edit</a></b>";
-            /*
-             * result += " <a href='simpleFileEditor.jsp?context=" + row.getRowname() + "&path=" + path + "&file=" +
-             * path + java.io.File.separator + filename + "&editor=codepress'>Edit</a></b>";
-             */
+            result.appendMessage(" <a href='/Edit.do?op=editFile&context=" + context + "&path=" + path + "&file="
+                    + file + "&editor=simple'>Edit</a></b>");
         }
 
         request.setAttribute("result", result.getMessage());
