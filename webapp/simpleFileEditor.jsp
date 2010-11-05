@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@ taglib uri="http://www.makumba.org/presentation" prefix="mak"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
-
+<jsp:useBean id="fileEditorBean"
+	class="org.makumba.parade.view.beans.FileEditorBean" />
 
 <c:set var="context" value="${param.context}" />
 <c:if test="${empty context}">
@@ -23,8 +24,6 @@
 	<c:set var="source" value="${requestScope.source}" />
 </c:if>
 
-<jsp:useBean id="fileEditorBean"
-	class="org.makumba.parade.view.beans.FileEditorBean" />
 <jsp:setProperty name="fileEditorBean" property="context"
 	value="${context}" />
 <jsp:setProperty name="fileEditorBean" property="path" value="${path}" />
@@ -92,7 +91,7 @@ function resizeTA(TA) {
     }
   }
 
-  if (! usingIE ) {
+  if (!usingIE) {
     return; // this javascript below does not work for netscape
   }
 
@@ -138,12 +137,12 @@ function unloadMess(){
     return mess;
 }
 
-function setBunload(on){
+function setBunload(on) {
     window.onbeforeunload = (on) ? unloadMess : null;
 }
 
 // to be called when the content of the big textarea changes
-function setModified(){
+function setModified() {
     document.sourceEdit.pagestatus.value='MODIFIED';
     document.sourceEdit.Submit.disabled=false;
     setBunload(true);
@@ -157,8 +156,9 @@ function setModified(){
 <body bgcolor="#dddddd" TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0"
 	BOTTOMMARGIN="0" marginwidth="0" marginheight="0" STYLE="margin: 0px"
 	onload="javascript:onLoad();" onresize="javascript:onResize();">
+
 <form name="sourceEdit" method="post"
-	action="/File.do?op=saveFile&context=${context}&path=${path}&file=${file}&editor=simple"
+	action="/Edit.do?op=saveFile&editor=simple&context=${context}&path=${path}&file=${file}"
 	style="margin: 0px;"><input type="submit" name="Submit"
 	value="(S)ave!" ACCESSKEY="S" disabled
 	onclick="javascript:setBunload(false);"> <a
@@ -166,7 +166,7 @@ function setModified(){
 	target="_top" title="${context}">${context}</a>:<a
 	href="/fileView/fileBrowser.jsp?context=${context}&path=${path}">${path}</a>/<b>${file}</b>
 | <a
-	href="simpleFileEditor.jsp?context=${context}&path=${path}&file=${file}"
+	href="Edit.do?op=revertFile&editor=simple&context=${context}&path=${path}&file=${file}"
 	title="get the file from disk again, undo all changes since last save">Revert</a>
 | <input type="text" value="Loading..." name="pagestatus" disabled
 	size="10"
@@ -176,7 +176,6 @@ function setModified(){
 <textarea name="source" style="width: 100%; height: 92%" cols="90"
 	rows="23" wrap="virtual" onKeypress="setModified()"
 	STYLE="font-face:Lucida Console; font-size:8pt">${fileEditorBean.content}</textarea>
-
 </form>
 
 </body>
