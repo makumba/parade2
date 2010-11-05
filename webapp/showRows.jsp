@@ -24,13 +24,15 @@
 	type="text/css">
 </head>
 <body>
-<CENTER><%@include file="setParameters.jspf"%>
+<center><%@include file="setParameters.jspf"%>
 
 <%
 	// set the User
-	User u = (User) ((HttpServletRequest) request).getSession(true).getAttribute("org.makumba.parade.userObject");
+	User u = (User) ((HttpServletRequest) request).getSession(true)
+			.getAttribute("org.makumba.parade.userObject");
 	if (u == null) {
-		RequestDispatcher dispatcher = super.getServletContext().getRequestDispatcher("/servlet/user");
+		RequestDispatcher dispatcher = super.getServletContext()
+				.getRequestDispatcher("/servlet/user");
 		dispatcher.forward(request, response);
 	}
 %> <c:if test="${not empty result}">
@@ -51,11 +53,11 @@
 		<td align="left"><a class="icon_list" title="All the logs"
 			href="log.jsp?context=all">[Log]</a>&nbsp;&nbsp; <a
 			class="icon_project" title="All the action logs"
-			href="actionLog.jsp?context=all">[Action log]</a>&nbsp;&nbsp;
-		<strong><a class="icon_members"
+			href="actionLog.jsp?context=all">[Action log]</a>&nbsp;&nbsp; <strong><a
+			class="icon_members"
 			title="People who were active in the 20 past minutes">Currently
 		online:</a></strong> <mak:list from="ActionLog a, User u"
-			where="a.user = u.login and (unix_timestamp(a.logDate) > ( unix_timestamp(now()) - 20 * 60))"
+			where="a.user = u.login and (unix_timestamp(a.logDate) &gt; ( unix_timestamp(now()) - 20 * 60))"
 			groupBy="u.login">
 			<a href='userView.jsp?user=<mak:value expr="u.login"/>'><mak:value
 				expr="u.nickname" /></a>&nbsp;&nbsp;
@@ -74,7 +76,7 @@ Hi <%=u.getNickname()%>! Have a nice time on ParaDe!<br>
 <br>
 <br>
 <br>
-<TABLE class='rowstore'>
+<table class='rowstore'>
 	<tr>
 		<th class='rowstore'>Name, Path</th>
 		<th class='rowstore'>Description</th>
@@ -90,11 +92,12 @@ Hi <%=u.getNickname()%>! Have a nice time on ParaDe!<br>
 
 	<mak:list from="Row row" orderBy="row.rowname asc" countVar="row_index">
 		<tr
-			class="<mak:if test="row.rowNotWatched()">notWatched</mak:if><mak:if test="row.rowWatched()"><c:choose><c:when test="${(row_index % 2) == 0}">odd</c:when><c:otherwise>even</c:otherwise></c:choose></mak:if>">
+			class='<mak:if test="row.rowNotWatched()">notWatched</mak:if><mak:if test="row.rowWatched()"><c:choose><c:when test="${(row_index % 2) == 0}">odd</c:when><c:otherwise>even</c:otherwise></c:choose></mak:if>'>
 			<td align='center'><mak:if test="row.rowNotWatched()">
-				<img src="/images/exclamation.gif">&nbsp;This row is not watched by JNotify and won't work properly! Please restart ParaDe and read the logs to get more information.<br>
+				<img src="/images/exclamation.gif" alt="">&nbsp;This row is not watched by JNotify and won't work properly! Please restart ParaDe and read the logs to get more information.<br>
 				<br>
-			</mak:if> <a target="_top" href='/browse.jsp?context=<mak:value expr="row.rowname"/>'> <mak:value
+			</mak:if> <a target="_top"
+				href='/browse.jsp?context=<mak:value expr="row.rowname"/>'> <mak:value
 				expr="row.rowname" /></a> <mak:if test="row.rowname = '(root)'">
 				<a target="_top" href=''>(Surf)</a>
 			</mak:if><mak:if test="row.rowname != '(root)'">
@@ -118,7 +121,7 @@ Hi <%=u.getNickname()%>! Have a nice time on ParaDe!<br>
 			<mak:list from="AntTarget t" where="#{vWhere}" separator=", "
 				orderBy="t.target">
 				<a target="command"
-					href="/Ant.do?display=index&context=<mak:value expr="row.rowname"/>&path=&op=<mak:value expr="t.target"/>"><mak:value
+					href='/Ant.do?display=index&amp;context=<mak:value expr="row.rowname"/>&amp;path=&amp;op=<mak:value expr="t.target"/>'><mak:value
 					expr="t.target" /></a>
 			</mak:list></td>
 			<td><mak:value expr="row.webappPath" /></td>
@@ -132,30 +135,30 @@ Hi <%=u.getNickname()%>! Have a nice time on ParaDe!<br>
 				<div class="started">started</div>
 			</mak:if> <mak:if test="row.status = 2">
 				<a
-					href='/Webapp.do?display=index&context=<mak:value expr="row.rowname"/>&path=<mak:value expr="row.webappPath"/>&op=servletContextReload'>reload</a>
+					href='/Webapp.do?display=index&amp;context=<mak:value expr="row.rowname"/>&amp;path=<mak:value expr="row.webappPath"/>&amp;op=servletContextReload'>reload</a>
 				<a
-					href='/Webapp.do?display=index&context=<mak:value expr="row.rowname"/>&path=<mak:value expr="row.webappPath"/>&op=servletContextStop'>stop</a>
+					href='/Webapp.do?display=index&amp;context=<mak:value expr="row.rowname"/>&amp;path=<mak:value expr="row.webappPath"/>&amp;op=servletContextStop'>stop</a>
 			</mak:if> <mak:if test="row.status = 1">
 				<a
-					href='/Webapp.do?display=index&context=<mak:value expr="row.rowname"/>&path=<mak:value expr="row.webappPath"/>&op=servletContextStart'>start</a>
+					href='/Webapp.do?display=index&amp;context=<mak:value expr="row.rowname"/>&amp;path=<mak:value expr="row.webappPath"/>&amp;op=servletContextStart'>start</a>
 			</mak:if> <mak:if test="row.status != 0">
 				<a
-					href='/Webapp.do?display=index&context=<mak:value expr="row.rowname"/>&path=<mak:value expr="row.webappPath"/>&op=servletContextRedeploy'>redeploy</a>
+					href='/Webapp.do?display=index&amp;context=<mak:value expr="row.rowname"/>&amp;path=<mak:value expr="row.webappPath"/>&amp;op=servletContextRedeploy'>redeploy</a>
 				<a
-					href='/Webapp.do?display=index&context=<mak:value expr="row.rowname"/>&path=<mak:value expr="row.webappPath"/>&op=servletContextRemove'>uninstall</a>
+					href='/Webapp.do?display=index&amp;context=<mak:value expr="row.rowname"/>&amp;path=<mak:value expr="row.webappPath"/>&amp;op=servletContextRemove'>uninstall</a>
 			</mak:if> <mak:if test="row.status = 0">
 				<a
-					href='/Webapp.do?display=index&context=<mak:value expr="row.rowname"/>&path=<mak:value expr="row.webappPath"/>&op=servletContextInstall'>install</a>
+					href='/Webapp.do?display=index&amp;context=<mak:value expr="row.rowname"/>&amp;path=<mak:value expr="row.webappPath"/>&amp;op=servletContextInstall'>install</a>
 			</mak:if></td>
 			<mak:value expr="row.version" printVar="version" />
-			<td <%if (version.startsWith("Error")) {%> class="error" <%}%>><mak:value
+			<td <%if (version.startswith("error")) {%> class="error" <%}%>><mak:value
 				expr="row.version" /><br>
 			<font style="font-size: smaller;"><mak:value expr="row.db" /></font>
 			</td>
 		</tr>
 	</mak:list>
-</TABLE>
-</CENTER>
+</table>
+</center>
 <br>
 <br>
 <br>
