@@ -12,14 +12,14 @@ import org.makumba.parade.tools.ParadeLogger;
 
 public class AntController {
 
+    private AntManager antMgr = new AntManager();
+    
     static Logger logger = ParadeLogger.getParadeLogger(InitServlet.class.getName());
 
-    public Object[] onAntAction(String context, String op) {
+    public Response onAntAction(String context, String op) {
         logger.fine("ANT Controller: running operation " + op + " on context " + context);
 
-        AntManager antMgr = new AntManager();
-
-        String opResult = "";
+        String result = null;
 
         Session s = InitServlet.getSessionFactory().openSession();
         Transaction tx = s.beginTransaction();
@@ -29,18 +29,15 @@ public class AntController {
         Row entryRow = null;
 
         if (context != null)
-            entryRow = Row.getRow(p, context);
+            entryRow = p.getRow(context);
 
-        opResult = antMgr.executeAntCommand(entryRow, op);
+        result = antMgr.executeAntCommand(entryRow, op);
 
         // fileMgr.rowRefresh(entryRow);
 
         tx.commit();
         s.close();
 
-        Object[] res = { opResult, new Boolean(true) };
-
-        return res;
+        return new Response(result);
     }
-
 }
