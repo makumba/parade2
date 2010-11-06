@@ -57,7 +57,7 @@
 			class="icon_members"
 			title="People who were active in the 20 past minutes">Currently
 		online:</a></strong> <mak:list from="ActionLog a, User u"
-			where="a.user = u.login and (unix_timestamp(a.logDate) &gt; ( unix_timestamp(now()) - 20 * 60))"
+			where="a.user = u.login and (unix_timestamp(a.logDate) > ( unix_timestamp(now()) - 20 * 60))"
 			groupBy="u.login">
 			<a href='userView.jsp?user=<mak:value expr="u.login"/>'><mak:value
 				expr="u.nickname" /></a>&nbsp;&nbsp;
@@ -151,7 +151,7 @@ Hi <%=u.getNickname()%>! Have a nice time on ParaDe!<br>
 					href='/Webapp.do?display=index&amp;context=<mak:value expr="row.rowname"/>&amp;path=<mak:value expr="row.webappPath"/>&amp;op=servletContextInstall'>install</a>
 			</mak:if></td>
 			<mak:value expr="row.version" printVar="version" />
-			<td <%if (version.startswith("error")) {%> class="error" <%}%>><mak:value
+			<td <%if (version.startsWith("error")) {%> class="error" <%}%>><mak:value
 				expr="row.version" /><br>
 			<font style="font-size: smaller;"><mak:value expr="row.db" /></font>
 			</td>
