@@ -113,7 +113,7 @@ public class BrowserServlet extends HttpServlet {
                 RequestDispatcher header = null;
                 RequestDispatcher footer = super.getServletContext().getRequestDispatcher("/layout/footer.jsp");
 
-                // switiching to the right display
+                // switching to the right display
                 String page = "";
                 if (display.equals("header")) {
                     header = super.getServletContext().getRequestDispatcher(
