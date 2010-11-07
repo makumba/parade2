@@ -37,8 +37,9 @@ public class BrowserServlet extends HttpServlet {
 
         // fetching parameters
         String display = req.getParameter("display");
-        if (display == null)
+        if (display == null) {
             display = (String) req.getAttribute("display");
+        }
 
         String context = req.getParameter("context");
         if (context == null)
