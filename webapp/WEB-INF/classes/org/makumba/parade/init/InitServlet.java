@@ -61,6 +61,11 @@ public class InitServlet extends HttpServlet implements Runnable {
         initSessionFactory();
     }
 
+    public static boolean isAetherEnabled() {
+        return ParadeProperties.getParadeProperty("aether.enabled") != null
+                && ParadeProperties.getParadeProperty("aether.enabled").equals("true");
+    }
+
     private static void initSessionFactory() {
         /* Initializing Makumba-driven Hibernate */
         Vector<String> resources = new Vector<String>();
@@ -75,8 +80,7 @@ public class InitServlet extends HttpServlet implements Runnable {
             resources.add("org.makumba.parade.model.Application");
             resources.add("org.makumba.parade.model.User");
 
-            if (aetherEnabled) {
-
+            if (isAetherEnabled()) {
                 // Aether XMLs
                 // In a standalone Aether those would be in initialised by an own Aether sessionFactory
                 // but that seems a bit too resource-consuming, and we anyway need to query this model
@@ -86,7 +90,6 @@ public class InitServlet extends HttpServlet implements Runnable {
                 resources.add("org.makumba.aether.model.RelationQuery");
                 resources.add("org.makumba.aether.model.MatchedAetherEvent");
                 resources.add("org.makumba.aether.model.ALE");
-
             }
 
             createDummyDatabaseConnection();
@@ -105,35 +108,19 @@ public class InitServlet extends HttpServlet implements Runnable {
             logger.severe("Parade stopping CAUSE: " + t.getMessage());
             t.printStackTrace();
         }
-
-        /* Initalising Freemarker */
-        try {
-
-            freemarkerCfg = new freemarker.template.Configuration();
-
-            String templatesPath = new java.io.File(ParadeProperties.getClassesPath()
-                    + "/org/makumba/parade/view/templates").getPath();
-
-            freemarkerCfg.setDirectoryForTemplateLoading(new File(templatesPath));
-
-            freemarkerCfg.setObjectWrapper(new DefaultObjectWrapper());
-
-        } catch (Throwable t) {
-            logger.severe(t.getMessage());
-            t.printStackTrace();
-        }
-
     }
 
     @Override
     public void init(ServletConfig conf) throws ServletException {
-        if (sessionFactory != null)
+        if (sessionFactory != null) {
             new Thread(this).start();
-        else
+        } else {
             throw new Error("No Database");
+        }
     }
 
     public void run() {
+        // Joao - FIXME: remove
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -170,7 +157,7 @@ public class InitServlet extends HttpServlet implements Runnable {
         }
         Hibernate.initialize(p.getRows());
 
-        if (aetherEnabled) {
+        if (isAetherEnabled()) {
 
             AetherContext ctx = new AetherContext(ParadeRelationComputer.PARADE_DATABASE_NAME, getSessionFactory());
 
