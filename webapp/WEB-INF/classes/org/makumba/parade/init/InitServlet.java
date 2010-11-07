@@ -108,6 +108,24 @@ public class InitServlet extends HttpServlet implements Runnable {
             logger.severe("Parade stopping CAUSE: " + t.getMessage());
             t.printStackTrace();
         }
+
+        // Joao - FIXME: remove after ftl disappear
+        /* Initalising Freemarker */
+        try {
+
+            freemarkerCfg = new freemarker.template.Configuration();
+
+            String templatesPath = new java.io.File(ParadeProperties.getClassesPath()
+                    + "/org/makumba/parade/view/templates").getPath();
+
+            freemarkerCfg.setDirectoryForTemplateLoading(new File(templatesPath));
+
+            freemarkerCfg.setObjectWrapper(new DefaultObjectWrapper());
+
+        } catch (Throwable t) {
+            logger.severe(t.getMessage());
+            t.printStackTrace();
+        }
     }
 
     @Override
