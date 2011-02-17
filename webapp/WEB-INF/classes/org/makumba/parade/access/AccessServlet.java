@@ -62,8 +62,9 @@ public class AccessServlet extends HttpServlet {
 
         String authClass = ParadeProperties.getParadeProperty("parade.authorizerClass");
         String authMessage = ParadeProperties.getParadeProperty("parade.authorizationMessage");
-        if (authClass == null)
+        if (authClass == null) {
             return;
+        }
         String db = ParadeProperties.getParadeProperty("parade.authorizationDB");
         Authorizer auth = null;
         try {
@@ -139,8 +140,9 @@ public class AccessServlet extends HttpServlet {
     }
 
     boolean shouldLogin(ServletRequest req) {
-        if (checker == null)
+        if (checker == null) {
             return false;
+        }
         if (((HttpServletRequest) req).getContextPath().equals("/manager")) {
             ((HttpServletRequest) req).getSession(true).setAttribute(PARADE_USER, "tomcat-manager");
             return false;
@@ -179,9 +181,9 @@ public class AccessServlet extends HttpServlet {
         } else
             contextPath = contextPath.substring(1);
         String nm = (String) req.getSession(true).getAttribute(PARADE_USER);
-        if (nm == null)
+        if (nm == null) {
             nm = "(unknown user)";
-
+        }
         ServletContext ctx = (ServletContext) req.getAttribute("org.eu.best.tools.TriggerFilter.context");
 
         try {
