@@ -227,8 +227,8 @@ public class InitServlet extends HttpServlet implements Runnable {
     public static void createDummyDatabaseConnection() throws Throwable {
         // Get configuration from Makumba.conf
         File f = new File((System.getProperty("user.dir") + "/webapp/WEB-INF/classes/")
-                .replace('/', File.separatorChar)
-                + "Makumba.conf");
+.replace('/', File.separatorChar)
+                        + "Makumba.conf");
         // Configuration. = new Configuration(f.toURL(), null);
         String url = "jdbc:mysql://localhost/parade";
         String user = "root";
