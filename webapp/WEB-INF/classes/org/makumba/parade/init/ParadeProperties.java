@@ -24,26 +24,20 @@ public class ParadeProperties {
     static Logger logger = ParadeLogger.getParadeLogger(ParadeProperties.class.getName());
 
     static {
-
         try {
             paradeConfig = new Properties();
             paradeConfig.load(ParadeProperties.class.getResourceAsStream(DEFAULT_PROPERTYFILE));
-
         } catch (Throwable t) {
-            logger
-                    .severe("Error while loading parade.properties. Make sure you have configured a parade.properties in webapp/WEB-INF/classes (you can copy the example file)");
+            logger.severe("Error while loading parade.properties. Make sure you have configured a parade.properties in webapp/WEB-INF/classes (you can copy the example file)");
         }
 
         try {
             tomcatConfig = new Properties();
             tomcatConfig.load(new FileInputStream(new java.io.File(getParadeBase()) + DEFAULT_TOMCATPROPERTYFILE));
-
         } catch (Throwable t) {
-            logger
-                    .severe("Error while loading tomcat.properties. Make sure you have configured a tomcat.properties in parade's root dir (you can copy the example file)");
+            logger.severe("Error while loading tomcat.properties. Make sure you have configured a tomcat.properties in parade's root dir (you can copy the example file)");
 
         }
-
     }
 
     public static String getParadeProperty(String configProperty) {
@@ -58,8 +52,9 @@ public class ParadeProperties {
         List<String> l = new LinkedList<String>();
 
         String s = getParadeProperty(configProperty);
-        if (s == null)
+        if (s == null) {
             return null;
+        }
         StringTokenizer st = new StringTokenizer(s, ",");
         while (st.hasMoreElements()) {
             l.add((st.nextToken()).trim());
