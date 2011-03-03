@@ -60,6 +60,8 @@
 			</select> <input type='submit' value='Go!'></form>
 			</td>
 
+			<td><a target="_top" href='<mak:value expr="row.rowname"/>'>(Surf)</a></td>
+
 			<td valign="top">[<a href='/log.jsp?context=${rowName}'
 				title='${rowName} log' target='_new'>log</a>] <a
 				href='/log.jsp?context=all' title='Server log' target='directory'>all
