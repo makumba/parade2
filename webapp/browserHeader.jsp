@@ -60,7 +60,12 @@
 			</select> <input type='submit' value='Go!'></form>
 			</td>
 
-			<td><a target="_top" href='<mak:value expr="row.rowname"/>'>(Surf)</a></td>
+			<td><mak:if test="row.rowname != '(root)'">
+				<mak:if test="row.status = 2">
+					<a target="_top" href='<mak:value expr="row.rowname"/>'>(Surf)</a>
+				</mak:if>
+				<mak:if test="row.status != 2">(Surf)</mak:if>
+			</mak:if></td>
 
 			<td valign="top">[<a href='/log.jsp?context=${rowName}'
 				title='${rowName} log' target='_new'>log</a>] <a
