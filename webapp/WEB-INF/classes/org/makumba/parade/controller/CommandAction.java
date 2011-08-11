@@ -10,6 +10,11 @@ import org.apache.struts.actions.DispatchAction;
 
 public class CommandAction extends DispatchAction {
 
+    public ActionForward reset(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        Runtime.getRuntime().exec("./home/projects/parade/eec/eec-reset-script/reset");
+    }
+
     public ActionForward newFile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
