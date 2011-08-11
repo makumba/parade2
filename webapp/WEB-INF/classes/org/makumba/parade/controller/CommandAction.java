@@ -12,7 +12,7 @@ public class CommandAction extends DispatchAction {
 
     public ActionForward reset(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        Runtime.getRuntime().exec("./home/projects/parade/eec/eec-reset-script/reset");
+        Runtime.getRuntime().exec("sh /home/projects/parade/eec/eec-reset-script/reset");
         return mapping.findForward("files");
     }
 
