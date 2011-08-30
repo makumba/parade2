@@ -123,7 +123,8 @@ public class Row {
             e.printStackTrace();
         }
         // FIXME Joao - should do the check in a better way
-        return pathLength >= rowPathLength;
+        // return pathLength >= rowPathLength;
+        return true;
     }
 
     @Transient
